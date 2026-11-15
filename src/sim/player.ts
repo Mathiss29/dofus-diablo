@@ -30,6 +30,7 @@ import { avantImpact61, dommages61, echangeBalise61, hit61, viseBalise61, impact
 import { SORTS, dmgMoyen, gradeAuNiveau, niveauRequis, type PaireSorts, type SortGrade, type SortOfficiel } from './sorts';
 import { porteeSort } from './apercu';
 import { aimanter, alchiRhetorique, apresCoupEniripsa, envol, impactEniripsa, majEniripsa } from './eniripsa';
+import { arriveeBond, avantImpactOuginak, coupRecuOuginak, impactOuginak, interditBete, majOuginak, porteeBete, subisOuginak, type EtatOuginak } from './ouginak';
 import { arbrePassage, avantImpactSadida, impactSadida, majSadida, partagerDon, sentierDeRonces } from './sadida';
 import { avantImpactEcaflip, chateauBrise, impactEcaflip, majEcaflip, neuviemeVie, type Carte, type MainGagnante } from './ecaflip';
 import { impactSorts06, pasJoueur06 } from './sorts06';
@@ -232,6 +233,8 @@ export class Player extends Entity {
   renvoiT = 0; renvoiPart = 0;
   /** Sadida : propagations récentes de l'Infection (1A), ennemi du ralliement (6B) et secondes qui restent. */
   sadiProp: number[] = []; sadiCible: number | null = null; sadiCibleT = 0;
+  /** Ouginak : état (Proie, Roquet, cumuls), Forme Bestiale (3 crans de Rage, 2A) et secondes de l'animation de transformation (1A). */
+  oug: EtatOuginak | null = null; ougBete = false; ougTransfoT = 0;
   /** Don Naturel (Sadida 5A) : secondes de partage des dommages, et le Sadida qui l'a donné. */
   donT = 0; donDe = -1;
   /** Dernier souffle (légendaire Sacrieur D) : dernière fois qu'il a sauvé le perso. */
@@ -348,7 +351,7 @@ export class Player extends Entity {
     return !this.v03 || !o || o.pom === undefined || o.pom === 1 || this.aPouvoir(id, 'pom') > 0;
   }
   /** Portée ajoutée par la stat Portée de l'équipement, en px (0 si le sort n'a pas une portée modifiable). */
-  porteeStat(id: SkillId): number { return this.porteeModifiable(id) ? this.stat('portee') * CASE : 0; }
+  porteeStat(id: SkillId): number { const d = this.ougBete ? this.spell(id) : undefined; return this.porteeModifiable(id) && !(d && porteeBete(this, d) != null) ? this.stat('portee') * CASE : 0; }
   /** Le sort demande-t-il une ligne de vue vers la case visée (officiel, sauf pouvoir « ligne de vue désactivée ») ? */
   demandeVue(id: SkillId): boolean { return this.official(id)?.ldv === 1 && !this.aPouvoir(id, 'ldv') && !(this.e61?.acuiteT ?? 0); }   // Acuité Absolue
   /** Pour tirer le pouvoir d'un Légendaire : classe, sorts connus, sorts du jeu à venir. */
@@ -366,14 +369,14 @@ export class Player extends Entity {
   etatPouvoir(id: string): { actif: true } | { actif: false; raison: string } {
     const c = PC_PAR_ID[id];
     if (c) {   // légendaire de classe inventé : sa classe, et son sort connu
-      if (c.classe !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur', forgelance: 'Forgelance', eniripsa: 'Eniripsa', enutrof: 'Enutrof', ecaflip: 'Écaflip', sadida: 'Sadida' } as Record<string, string>)[c.classe] ?? 'une autre classe'}` };
+      if (c.classe !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur', forgelance: 'Forgelance', eniripsa: 'Eniripsa', enutrof: 'Enutrof', ecaflip: 'Écaflip', sadida: 'Sadida', ouginak: 'Ouginak' } as Record<string, string>)[c.classe] ?? 'une autre classe'}` };
       if (this.knows(c.sort)) return { actif: true };
       const o = this.official(c.sort), n = o ? this.requiredLevel(o) : 0;
       return { actif: false, raison: n > this.level ? `s'éveille au niveau ${n}` : 'variante non choisie' };
     }
     const p = POUVOIR_PAR_ID[id];
     if (!p) return { actif: true };
-    if (classeDuPouvoir(id) !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur', forgelance: 'Forgelance', eniripsa: 'Eniripsa', enutrof: 'Enutrof', ecaflip: 'Écaflip', sadida: 'Sadida' } as Record<string, string>)[classeDuPouvoir(id)] ?? 'une autre classe'}` };
+    if (classeDuPouvoir(id) !== this.cls.sorts) return { actif: false, raison: `pouvoir de ${({ iop: 'Iop', cra: 'Crâ', osamodas: 'Osamodas', sacrieur: 'Sacrieur', forgelance: 'Forgelance', eniripsa: 'Eniripsa', enutrof: 'Enutrof', ecaflip: 'Écaflip', sadida: 'Sadida', ouginak: 'Ouginak' } as Record<string, string>)[classeDuPouvoir(id)] ?? 'une autre classe'}` };
     const k = Object.keys(this.cls.spells).find(x => this.cls.spells[x].dofusId === p.dofusId);
     if (!k) return { actif: false, raison: 'sort pas encore en jeu' };
     if (this.knows(k)) return { actif: true };
@@ -462,7 +465,7 @@ export class Player extends Entity {
   ecaPattesA = -99; ecaVieA = -999;
   courir(k: number, t: number) { this.courseK = this.courseT > 0 ? Math.max(this.courseK, k) : k; this.courseT = Math.max(this.courseT, t); }
   slow(t: number, k: number) { if (this.insensibleT > 0) return; k *= fuiteFactor(this.fuite); this.slowK = this.slowT > 0 ? Math.max(this.slowK, k) : k; if (t >= this.slowT) this.slowT0 = t; this.slowT = Math.max(this.slowT, t); }
-  get speed(): number { return this.cls.speed * (1 + vitesseAgilite(this.stat('agilite'))) * this.vitesseTest * (this.slowT > 0 ? 1 - this.slowK : 1) * (this.courseT > 0 ? 1 + this.courseK : 1) * (1 + this.bonusMetier('pecheur')); }
+  get speed(): number { return this.cls.speed * (1 + vitesseAgilite(this.stat('agilite'))) * this.vitesseTest * (this.slowT > 0 ? 1 - this.slowK : 1) * (this.courseT > 0 ? 1 + this.courseK : 1) * (1 + this.bonusMetier('pecheur')) * (this.ougBete ? 1 + this.cls.ouginak!.bete.vitesse : 1); }
   /** Partie de test (5D) : course ×3. */
   vitesseTest = 1;
   /** Tacle et Fuite (base Agilité / 10), Retrait et Esquive PA / PM (base Sagesse / 10), comme dans Dofus. */
@@ -595,7 +598,7 @@ export class Player extends Entity {
     const c = E[el] ? this.stat(E[el]) : this.stat('force');
     const flat = this.stat('dommages') + this.stat((`dommages${el[0].toUpperCase()}${el.slice(1)}`) as Stat);
     const S = this.cls.souffrance, n = S ? this.souffrance : 0;   // Souffrance : dommages finaux en plus
-    return Math.max(1, (base * (1 + Math.max(-50, c + this.stat('puissance')) / 100) + flat) * (n ? 1 + S!.finaux[n - 1] / 100 : 1) * dommages61(this));   // Berserk
+    return Math.max(1, (base * (1 + Math.max(-50, c + this.stat('puissance')) / 100) + flat) * (n ? 1 + S!.finaux[n - 1] / 100 : 1) * dommages61(this) * (this.ougBete ? 1 + this.cls.ouginak!.bete.dommages : 1));   // Forme Bestiale : dommages finaux   // Berserk
   }
   /** Partie de test (4A) : passe directement au niveau n. Tous les points sont rendus (5 par niveau) ; carac donnée = ils y vont tous (au coût officiel), le reste en Vitalité.
    *  Les objets d'un niveau trop haut retournent dans le sac, les sorts pas encore connus quittent la barre. */
@@ -877,6 +880,7 @@ export class Player extends Entity {
     if (!sp && id !== 'attaque') return false;
     if (sp && this.cd[id] > 0) return false;
     if (sp && id !== 'arme' && (!this.knows(id) || !this.castsLeft(id))) return false;
+    if (interditBete(this, sp)) return false;   // Ouginak : sorts défensifs interdits en Forme Bestiale
     if (id === this.autoAttack && this.autoCd > 0) return false;
     if (!this.hasResource(id)) return false;
     if (this.state === 'free' || !this.skill) return true;
@@ -902,7 +906,8 @@ export class Player extends Entity {
     const def = this.spell(id);
     if (!def) return {};
     const g = def.pm ? null : this.grade(id);
-    const range = g && (def.hit.shape === 'projectile' || def.hit.shape === 'point') ? g.po[1] * CASE + CASE / 2 : undefined;
+    const pb = this.ougBete ? porteeBete(this, def) : null;   // Ouginak en Forme Bestiale : sorts offensifs à 2 cases
+    const range = g && (def.hit.shape === 'projectile' || def.hit.shape === 'point') ? (pb != null ? Math.min(pb, g.po[1] * CASE + CASE / 2) : g.po[1] * CASE + CASE / 2) : undefined;
     let explode: number | undefined;
     if (def.grow) {
       const n = (this.casts[id] ?? []).filter(t => this.age - t < TOUR).length;
@@ -918,6 +923,7 @@ export class Player extends Entity {
     if (this.lance && (def?.lance?.surLance || def?.lance?.saut)) return { x: this.lance.x, y: this.lance.y };
     if (this.lance && def?.lance?.epilogue) return { x: this.lance.x, y: this.lance.y };
     if (def?.sadida?.passage) { const a = arbrePassage(this, aim, world); if (a) return { x: a.x, y: a.y }; }   // Passage racinaire : jusqu'à un de tes Arbres
+    if (def?.ouginak?.bond) { const a = arriveeBond(this, aim, world); if (a) return a; }   // Ouginak (17A) : jusqu'à la Proie sous la souris
     if (def?.hit.shape === 'point' && !def.move) {   // case visée, ramenée à la portée du sort
       if (this.cls.eniripsa) aim = aimanter(this, def, aim, world);   // Eniripsa 3A : un Mot à cible unique s'aimante sur le perso le plus proche
       const R = (this.shot(id).range ?? def.hit.range) + this.porteeStat(id) + (def.souffrance6?.po && this.souffrance >= 6 ? def.souffrance6.po * CASE : 0), dx = aim.x - this.x, dy = aim.y - this.y, d = Math.hypot(dx, dy);
@@ -968,7 +974,7 @@ export class Player extends Entity {
     const { x: tx, y: ty } = this.landing(id, aim, world);
     if (!def.invoque && !def.move) viseBalise61(this, aim, world);
     // Rage pleine : ce sort est renforcé (pas les déplacements)
-    const boosted = this.rageFull && def.move?.kind !== 'leap' && this.cls.rage.mode !== 'eveil';   // l'Éveil ne renforce pas les sorts
+    const boosted = this.rageFull && def.move?.kind !== 'leap' && this.cls.rage.mode !== 'eveil' && this.cls.rage.mode !== 'bete';   // ni la Rage de l'Ouginak (Forme Bestiale)   // l'Éveil ne renforce pas les sorts
     if (boosted) { this.rage = 0; world.emit({ k: 'rageSpent', spell: id }); if (this.pcv('pc-eniripsa-J')) this.rage = this.cls.rage.max * this.pcv('pc-eniripsa-J') / 100; }   // Verbe intarissable
     // Grade officiel : coût, relance (tours × 3 s), dommages (grade atteint / grade 1), portée des flèches (cases × 48 px)
     const g = def.pm ? null : this.grade(id), g0 = this.official(id)?.grades[0];
@@ -1017,6 +1023,7 @@ export class Player extends Entity {
     if (this.cls.coffre) majEnutrof(this, dt, world);
     if (this.cls.poker) majEcaflip(this, dt, world);
     if (this.sadiCibleT > 0) majSadida(this, dt);
+    if (this.cls.ouginak) majOuginak(this, dt, world);
     if (this.donT > 0) this.donT = Math.max(0, this.donT - dt);
     if (this.poinconT > 0) pasJoueur06(this, dt, world);
     if (this.e61) maj61(this, dt, world);
@@ -1034,7 +1041,7 @@ export class Player extends Entity {
     if (this.subisT > 0 && (this.subisT -= dt) <= 0) this.subis = 1;
     if (this.dernierMotPris && this.hp >= this.maxHp * 0.2) this.dernierMotPris = false;
     if (this.pacifiste > 0) this.pacifiste -= dt;
-    if (this.rage > 0 && this.age - this.lastHitAt > 6) this.rage = Math.max(0, this.rage - 8 * dt);   // 26B : la jauge retombe hors combat
+    if (this.rage > 0 && this.cls.rage.mode !== 'bete' && this.age - this.lastHitAt > 6) this.rage = Math.max(0, this.rage - 8 * dt);   // 26B : la jauge retombe hors combat
     this.potionCd = Math.max(0, this.potionCd - dt);
     this.pa = Math.min(this.paMax, this.pa + this.cls.pa.regen * (1 + (this.encourage?.regen ?? 0)) * dt);   // Mot Stimulant
     const minor = this.fxIdoles?.chargesMoins && this.pmMax <= 1 ? 0.5 : 1;   // Minor : une seule charge, elle revient deux fois moins vite
@@ -1291,6 +1298,7 @@ export class Player extends Entity {
       const eca = this.cls.poker ? avantImpactEcaflip(this, d, world) : null;   // Écaflip : Main gagnante, Dames, dé du Yams, élément de Tromperie
       if (eca) mult *= eca.mult;
       if (d.e61) mult *= avantImpact61(this, s.id, d, s.tx, s.ty, s.gm, world);   // Épée du Destin, Flèche Dévorante, Bain de Sang
+      if (d.ouginak && this.cls.ouginak && !mv) mult *= avantImpactOuginak(this, s.id, d, s, world);   // Ouginak : bond sur la Proie, cumul sur la Proie
       const base = d.dmgPV ? this.hp * d.dmgPV : d.dmg * s.gm;
       const attire = d.attire && { px: ((this.souffrance >= 6 && d.souffrance6?.attire) || d.attire.cases) * CASE, vers: d.attire.vers };
       const hit = { dmg: (base + (s.id === this.cls.basic ? this.weaponDamage() : 0)) * mult, attire, supplice: d.supplice, knock: d.knock * sig('knock'), element: eca?.element ?? d.element, vsSummon: d.vsSummon && 1 + (d.vsSummon - 1) * sig('summon'), vsElite: sig('summon') > 1,
@@ -1345,6 +1353,7 @@ export class Player extends Entity {
       if (eni && !pasDeCoup) { apresCoupEniripsa(this, d, s.tx, s.ty, rEni, world.degatsCoup, world); alchiRhetorique(this, d, s.tx, s.ty, rEni, world); }
       if (d.enutrof) impactEnutrof(this, d, s.tx, s.ty, hits, world);
       if (sadi) impactSadida(this, s.id, d, s.tx, s.ty, size, hit, sadi, s.gm, world);
+      if (d.ouginak && this.cls.ouginak) impactOuginak(this, s.id, d, s.tx, s.ty, size, hits, world);
       if (d.ecaflip && this.cls.poker) impactEcaflip(this, s.id, d, s.tx, s.ty, hits, base * mult, world);
       if (d.s06) { const z = impactSorts06(this, s.id, d, s.tx, s.ty, hits, hit, world); if (z) size = z; }   // sorts 61-90 (0.6)
       if (d.envol) envol(this, s.sx, s.sy, s.tx, s.ty, world);   // Mot d'Envol : échange de place avec l'allié visé
@@ -1751,7 +1760,7 @@ export class Player extends Entity {
     const S = this.cls.souffrance, sf = S ? this.souffrance : 0;   // Souffrance : dommages subis réduits
     const gf = this.arme ? this.pcv('pc-forgelance-E') : 0;   // Garde de fer : Garde plus forte
     const garde = this.arme ? (gf ? 1 - gf / 100 : this.cls.lance!.garde) : 1;   // Forgelance Armé : la Garde (×0,85, officiel)
-    let dmg = Math.max(1, Math.round((raw - this.stat(`red${E}` as Stat)) * (1 - Math.min(50, this.stat(`res${E}` as Stat)) / 100) * this.subis * (sf ? S!.subis[sf - 1] / 100 : 1) * garde));
+    let dmg = Math.max(1, Math.round((raw - this.stat(`red${E}` as Stat)) * (1 - Math.min(50, this.stat(`res${E}` as Stat)) / 100) * this.subis * (sf ? S!.subis[sf - 1] / 100 : 1) * garde * (this.cls.ouginak ? subisOuginak(this) : 1)));   // Ouginak : chaque cran de Rage protège
     // Couronne d'Épines : les coups de mêlée sont renvoyés à celui qui frappe
     if (this.renvoiT > 0) {
       const auContact = !(loin ?? Math.hypot(fromX - this.x, fromY - this.y) > CASE * 1.6), ea = auContact ? 100 : this.pcv('pc-sacrieur-O');   // Épines acérées : aussi à distance
@@ -1782,6 +1791,7 @@ export class Player extends Entity {
     world.emit(gros ? { k: 'impact', hitstop: G.fige, shake: G.secousse, big: true } : { k: 'impact', hitstop: 0.04, shake: 0.006, big: false });
     if (gros) world.emit({ k: 'grosCoup' });
     this.addRage(this.cls.rage.perHurt, world);
+    if (this.cls.ouginak) coupRecuOuginak(this, dmg, world);   // 3B : gros coups encaissés = Rage
     this.passifsDofus(fromX, fromY, loin, world);
     if (this.cls.souffrance) {
       if (dmg > 0) this.chatiments();

@@ -101,10 +101,12 @@ for sid in L(B['breedSpellsId']):
 # Récolte (maquette Armes 9A) : animations officielles des métiers (bone_1-metier), l'outil est dessiné dans l'animation
 METIERS = ['AnimCueillir0', 'AnimFaucher', 'AnimHache', 'AnimPioche', 'AnimPeche']
 base = ['AnimStatiqueCombat0', 'AnimStatiqueExplo0', 'AnimCourse', 'AnimArme0', 'AnimHit', 'AnimMort'] + [f'AnimArme{t}' for t in (2, 3, 4, 5, 6, 7, 8, 19, 22, 271)] + METIERS
-wanted = list(dict.fromkeys(base + wanted_spells))
+# EXTRA=AnimAttaque1815,... : animations du squelette qu'aucun sort n'utilise (Ouginak : transformation en Bête) ;
+# EXTRA_NOMS=AnimDash_1_START,... : animations au nom hors norme, prises telles quelles (ruée de l'Ouginak)
+wanted = list(dict.fromkeys(base + wanted_spells + [a for a in os.environ.get('EXTRA', '').split(',') if a]))
 EIGHT = {'AnimCourse', 'AnimStatiqueExplo0'}
 orients = lambda a: (0, 1, 2, 5, 6) if a in EIGHT else (1, 5)
-names = {f'{a}_{o}' for a in wanted for o in orients(a)}
+names = {f'{a}_{o}' for a in wanted for o in orients(a)} | {a for a in os.environ.get('EXTRA_NOMS', '').split(',') if a}
 
 # --- Animations du squelette ----------------------------------------------------------------------------------
 graphiques, noeuds, anims, shots, textures = [], [], {}, {}, []
@@ -192,7 +194,7 @@ def export_skin(sid):
     json.dump({'tex': f'skin_{sid}.webp', 'parts': parts}, open(os.path.join(out, f'skin_{sid}.json'), 'w'), separators=(',', ':'))
 
 
-cle = {8: 'iop', 9: 'cra', 2: 'osamodas', 11: 'sacrieur', 20: 'forgelance', 7: 'eniripsa', 3: 'enutrof', 6: 'ecaflip', 10: 'sadida'}.get(classe, str(classe))
+cle = {8: 'iop', 9: 'cra', 2: 'osamodas', 11: 'sacrieur', 20: 'forgelance', 7: 'eniripsa', 3: 'enutrof', 6: 'ecaflip', 10: 'sadida', 18: 'ouginak'}.get(classe, str(classe))
 pj = os.path.join(out, 'persos.json')
 P = json.load(open(pj)) if os.path.exists(pj) else {}
 for g, sx in ((0, 'm'), (1, 'f')):

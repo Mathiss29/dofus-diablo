@@ -6663,5 +6663,586 @@
     }
    }
   }
+ },
+ "ouginak": {
+  "name": "Ouginak",
+  "hp": 240,
+  "speed": 230,
+  "radius": 16,
+  "iframesOnHit": 0.45,
+  "healOnKill": 3,
+  "critChance": 0.15,
+  "critMult": 1.6,
+  "pa": {
+   "max": 6,
+   "regen": 1.25
+  },
+  "pm": {
+   "max": 2,
+   "recharge": 3.5
+  },
+  "potion": {
+   "charges": 3,
+   "heal": 0.35,
+   "cooldown": 1
+  },
+  "xpBase": 200,
+  "maxLevel": 200,
+  "attaque": {
+   "name": "Coup de poing",
+   "element": "terre",
+   "comboWindow": 0.45,
+   "combo": [
+    {
+     "duration": 0.28,
+     "impactAt": 0.07,
+     "cancelAt": 0.13,
+     "dmg": 14,
+     "range": 78,
+     "arc": 110,
+     "knock": 210,
+     "step": 120,
+     "hitstop": 0.05,
+     "shake": 0.0035
+    },
+    {
+     "duration": 0.28,
+     "impactAt": 0.07,
+     "cancelAt": 0.13,
+     "dmg": 14,
+     "range": 78,
+     "arc": 110,
+     "knock": 210,
+     "step": 120,
+     "hitstop": 0.05,
+     "shake": 0.0035
+    },
+    {
+     "duration": 0.4,
+     "impactAt": 0.11,
+     "cancelAt": 0.22,
+     "dmg": 30,
+     "range": 92,
+     "arc": 160,
+     "knock": 480,
+     "step": 220,
+     "hitstop": 0.085,
+     "shake": 0.008
+    }
+   ]
+  },
+  "rage": {
+   "name": "Rage",
+   "max": 3,
+   "perHit": 0,
+   "perHurt": 0,
+   "bonus": 0,
+   "signature": 1,
+   "mode": "bete"
+  },
+  "ouginak": {
+   "_doc": "Ouginak (maquettes « Classes : 14A+14C 15A+15B 16A+16B 17A » et « Ouginak : 1A+1B 2A 3A+3B 4A … », 15 nov. 2026). Rage officielle (état 513) : 3 états, chacun réduit les dommages subis de subisParEtat ; au 3e, Forme Bestiale (Bestialité Ouginak 23988 : +vitesse, +dommages finaux, sorts offensifs à portee cases sauf « garde », sorts défensifs interdits), qui tient tant que la Rage reste à 3 (2A). La Rage perd un cran toutes les baisse s sans frapper (14C) ; +1 quand un coup ou les coups de fenetre s ôtent part des PV max (3B). Proie (état 516) : frapper la Proie soigne de soin × les dommages (effet officiel 786, 15 %) ; le premier monstre frappé sans Proie le devient (15B). Roquet (monstre 5865) : bête permanente dès le niveau du Lance-roquet, revient retour s après sa mort (16B). Voir src/sim/ouginak.ts.",
+   "subisParEtat": 0.08,
+   "baisse": 5,
+   "bete": {
+    "vitesse": 0.2,
+    "dommages": 0.2,
+    "portee": 2,
+    "echelle": 1.15
+   },
+   "proie": {
+    "soin": 0.15
+   },
+   "encaisse": {
+    "part": 0.15,
+    "fenetre": 3
+   },
+   "roquet": {
+    "retour": 10
+   },
+   "bond": {
+    "proie": 8
+   }
+  },
+  "mobility": "bond_bete",
+  "sorts": "ouginak",
+  "clicDroit": "molosse",
+  "niveau1": [
+   13748
+  ],
+  "spells": {
+   "molosse": {
+    "name": "Molosse",
+    "dofusId": 13756,
+    "icon": 12031,
+    "element": "terre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Terre aux ennemis et réduit les dommages subis par le lanceur.\n\nAugmente la Rage (nécessite une cible).",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 28.5,
+    "knock": 0,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 120,
+     "radius": 30
+    },
+    "ouginak": {
+     "rage": 1,
+     "subis": {
+      "n": 0.1,
+      "t": 3
+     }
+    }
+   },
+   "os_a_moelle": {
+    "name": "Os à Moelle",
+    "dofusId": 13762,
+    "icon": 12032,
+    "element": "eau",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Eau.\nLes dommages du sort sont augmentés après chaque lancer si la cible est la Proie.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 19.5,
+    "knock": 0,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 312,
+     "radius": 30
+    },
+    "ouginak": {
+     "croit": {
+      "per": 0.12,
+      "max": 5,
+      "t": 6
+     }
+    }
+   },
+   "charogne": {
+    "name": "Charogne",
+    "dofusId": 13766,
+    "icon": 12033,
+    "element": "air",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Érode la cible et occasionne des dommages Air.\n\nAugmente la Rage (nécessite une cible).",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 28.5,
+    "knock": 0,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 30
+    },
+    "erosion": 0.1,
+    "ouginak": {
+     "rage": 1
+    }
+   },
+   "traque": {
+    "name": "Traque",
+    "dofusId": 13755,
+    "icon": 12034,
+    "element": "feu",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Feu.\nRapproche le lanceur vers la cible avant d'appliquer les effets si c'est la Proie.\n\nLe sort n'est pas soumis aux contraintes de lancer sous Forme Bestiale.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 30.0,
+    "knock": 0,
+    "fx": "line",
+    "hit": {
+     "shape": "point",
+     "range": 312,
+     "radius": 30
+    },
+    "ouginak": {
+     "bondProie": true,
+     "garde": true
+    }
+   },
+   "proie": {
+    "name": "Proie",
+    "dofusId": 13748,
+    "icon": 12938,
+    "element": "neutre",
+    "pa": 1,
+    "cooldown": 0,
+    "desc": "Applique l'état Proie sur l'ennemi ciblé.\nLes entités qui attaquent la cible sont soignées d'une partie des dommages occasionnés.\n\nFixe le temps de relance du sort à 0 si la Proie est achevée.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 312,
+     "radius": 30
+    },
+    "ouginak": {
+     "proie": true
+    }
+   },
+   "convergence": {
+    "name": "Convergence",
+    "dofusId": 13770,
+    "icon": 12036,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Rapproche le lanceur vers l'allié ciblé ou attire l'ennemi ciblé.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "line",
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 30
+    },
+    "attire": {
+     "cases": 4,
+     "vers": "lanceur"
+    },
+    "ouginak": {
+     "rejoint": true
+    }
+   },
+   "lance_roquet": {
+    "name": "Lance-roquet",
+    "dofusId": 13774,
+    "icon": 12037,
+    "element": "neutre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Invoque un Roquet maîtrisable qui peut voler de la vie dans l'élément Neutre.\n\nLorsque le lanceur occasionne des dommages avec ses sorts Ouginak, le Roquet se rapproche vers la Proie et l'attaque s'il est à portée.\nLes dommages sont réduits de moitié en-dehors de son tour de jeu.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 168,
+     "radius": 0
+    },
+    "rage": "summon",
+    "ouginak": {
+     "roquet": true
+    }
+   },
+   "amarok": {
+    "name": "Amarok",
+    "dofusId": 13802,
+    "icon": 12079,
+    "element": "terre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Augmente les résistances en mêlée du lanceur et des alliés et occasionne des dommages Terre aux ennemis en zone.\nLes dommages de zone ne sont pas dégressifs.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 28.5,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "circle",
+     "radius": 80
+    },
+    "ouginak": {
+     "subis": {
+      "n": 0.1,
+      "t": 3
+     }
+    }
+   },
+   "cubitus": {
+    "name": "Cubitus",
+    "dofusId": 13760,
+    "icon": 13809,
+    "element": "eau",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Vole de la vie dans l'élément Eau.\nDonne 1 PM au lanceur si la cible est la Proie.\n\nLe sort n'est pas soumis aux contraintes de lancer sous Forme Bestiale.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 16.5,
+    "knock": 0,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 408,
+     "radius": 30
+    },
+    "lifesteal": 0.5,
+    "ouginak": {
+     "garde": true,
+     "courseProie": {
+      "k": 0.1,
+      "t": 3
+     }
+    }
+   },
+   "arcanin": {
+    "name": "Arcanin",
+    "dofusId": 13771,
+    "icon": 12041,
+    "element": "neutre",
+    "pa": 1,
+    "cooldown": 0,
+    "desc": "Augmente la Puissance du lanceur.\n\nNécessite et diminue la Rage.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "circle",
+     "radius": 40
+    },
+    "self": true,
+    "buff": {
+     "stat": "puissance",
+     "n": 50,
+     "t": 9
+    },
+    "ouginak": {
+     "consomme": 1
+    }
+   },
+   "rabattage": {
+    "name": "Rabattage",
+    "dofusId": 13754,
+    "icon": 12042,
+    "element": "feu",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Vole de la vie dans l'élément Feu.\nVole des PM avant d'appliquer les effets si la cible est la Proie.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 28.5,
+    "knock": 0,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 30
+    },
+    "lifesteal": 0.5,
+    "ouginak": {
+     "volVitesse": {
+      "k": 0.3,
+      "t": 3
+     }
+    }
+   },
+   "carcasse": {
+    "name": "Carcasse",
+    "dofusId": 13768,
+    "icon": 12043,
+    "element": "air",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Air.\nLes dommages du sort sont augmentés après chaque lancer si la cible est la Proie.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 9.0,
+    "knock": 0,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 312,
+     "radius": 30
+    },
+    "ouginak": {
+     "croit": {
+      "per": 0.25,
+      "max": 6,
+      "t": 6
+     }
+    }
+   },
+   "pelage_protecteur": {
+    "name": "Pelage Protecteur",
+    "dofusId": 13772,
+    "icon": 12045,
+    "element": "neutre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Applique 2 boucliers et l'état Pelage Protecteur sur l'allié ciblé :\n• Retire le second bouclier et l'état et augmente la Rage si la cible subit des dommages de poussée.\n\nNe peut pas être utilisé sous Forme Bestiale.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "circle",
+     "radius": 40
+    },
+    "self": true,
+    "shield": {
+     "part": 0.24,
+     "t": 6
+    },
+    "ouginak": {
+     "defensif": true,
+     "pelage": true
+    }
+   },
+   "chasse": {
+    "name": "Chasse",
+    "dofusId": 13795,
+    "icon": 12064,
+    "element": "feu",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Feu aux ennemis et repousse la cible.\nRapproche le lanceur vers la cible avant d'appliquer les effets si c'est la Proie.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 39.8,
+    "knock": 330,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 30
+    },
+    "ouginak": {
+     "bondProie": true
+    }
+   },
+   "tibia": {
+    "name": "Tibia",
+    "dofusId": 13763,
+    "icon": 12040,
+    "element": "eau",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Eau aux ennemis et repousse les cibles en zone.\nLes dommages de zone ne sont pas dégressifs.\n\nAugmente la Rage.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 39.8,
+    "knock": 300,
+    "fx": "burst",
+    "hit": {
+     "shape": "circle",
+     "radius": 110
+    },
+    "ouginak": {
+     "rage": 1
+    }
+   },
+   "apaisement": {
+    "name": "Apaisement",
+    "dofusId": 13769,
+    "icon": 12048,
+    "element": "neutre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Soigne l'allié ciblé.\nNécessite et diminue la Rage.\n\nRetire également les effets de la Forme Bestiale.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "circle",
+     "radius": 40
+    },
+    "self": true,
+    "ouginak": {
+     "consomme": "tout",
+     "apaise": {
+      "soin": 0.08,
+      "parRage": 0.06
+     }
+    }
+   },
+   "bond_bete": {
+    "name": "Bond de la bête",
+    "icon": 12034,
+    "element": "neutre",
+    "cooldown": 0.4,
+    "desc": "Bondit de 4 cases ; jusqu'à la Proie (8 cases au plus) si elle est sous la souris. Ruée officielle de l'Ouginak (AnimDash). Choix « Classes : 17A ».",
+    "duration": 0.34,
+    "impactAt": 0.26,
+    "cancelAt": 0.32,
+    "dmg": 0,
+    "knock": 0,
+    "hitstop": 0,
+    "shake": 0.004,
+    "fx": "land",
+    "hit": {
+     "shape": "circle",
+     "radius": 40
+    },
+    "pm": 1,
+    "move": {
+     "kind": "leap",
+     "maxRange": 192,
+     "height": 40
+    },
+    "self": true,
+    "ouginak": {
+     "bond": true
+    }
+   }
+  }
  }
 }

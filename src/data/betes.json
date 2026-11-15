@@ -1644,5 +1644,40 @@
    }
   },
   "_doc": "La Fourbe (invoquée par la Surpuissante, sort officiel La Fourbe 29619) : Bouture officielle = -1 Portée au monstre le plus proche à 6 cases et +1 Portée aux sorts du Sadida, 6 s, toutes les 6 s. Part avec la Surpuissante."
+ },
+ "oug_roquet": {
+  "dofusId": 5865,
+  "name": "Roquet",
+  "look": 9183,
+  "atlas": "oug_roquet",
+  "rang": 1,
+  "element": "neutre",
+  "suivant": null,
+  "pv": 0.5,
+  "sorts": [
+   {
+    "id": 13752,
+    "name": "Accrocs",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "anim": 0,
+    "zone": "P1",
+    "effets": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 12,
+      "max": 14,
+      "vol": true
+     }
+    ],
+    "desc": "Vole de la vie dans l'élément Neutre.\nLe vol de vie est plus important sur les invocations.",
+    "gfx": 9184
+   }
+  ],
+  "_doc": "Roquet de l'Ouginak (monstre officiel 5865, os 9183, Lance-roquet) : Accrocs officiel (vol de vie Neutre). Bête permanente dès le niveau 15 (« Classes : 16B »), revient 10 s après sa mort ; mord la Proie de son maître en priorité (src/sim/ouginak.ts)."
  }
 }

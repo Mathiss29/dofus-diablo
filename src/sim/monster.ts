@@ -90,6 +90,8 @@ export class Monster extends Entity {
   saigne = 0; saigneT = 0; saigneAcc = 0;
   /** Sadida : Infecté (s restantes), poison continu (dégâts par s, durée, reste à afficher, élément),
    *  ronces au sol (retrait de PM visible, 8B), Sève Paralysante (n'esquive plus les retraits de PM). */
+  /** Ouginak : Proie de ce joueur (id), frapper ce monstre soigne (15A). */
+  proieDe: number | null = null;
   infecteT = 0; poison = 0; poisonT = 0; poisonAcc = 0; poisonEl: Element = 'terre'; ronceT = 0; seveT = 0;
   /** Portée retirée (cases) à ses sorts à distance pendant poMalusT s (Flèche Détonante). */
   poMalus = 0; poMalusT = 0;

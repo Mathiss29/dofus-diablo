@@ -16455,5 +16455,1807 @@
     "pom": 0
    }
   ]
+ ],
+ "ouginak": [
+  [
+   {
+    "id": 13756,
+    "name": "Molosse",
+    "icon": 12031,
+    "desc": "Occasionne des dommages Terre aux ennemis et réduit les dommages subis par le lanceur.\n\nAugmente la Rage (nécessite une cible).",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 3,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       18,
+       20
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 66,
+      "pa": 3,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       24,
+       27
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 132,
+      "pa": 3,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       31,
+       34
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 13787,
+    "name": "Mâchoire",
+    "icon": 12061,
+    "desc": "Augmente l'Esquive PM du lanceur et des alliés, retire de l'Esquive PM et occasionne des dommages Feu aux ennemis en zone.\n\nAugmente la Rage.",
+    "grades": [
+     {
+      "niv": 95,
+      "pa": 3,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       23,
+       25
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 162,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       28,
+       31
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13762,
+    "name": "Os à Moelle",
+    "icon": 12032,
+    "desc": "Occasionne des dommages Eau.\nLes dommages du sort sont augmentés après chaque lancer si la cible est la Proie.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       12,
+       14
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 67,
+      "pa": 3,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       16,
+       19
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 133,
+      "pa": 3,
+      "po": [
+       1,
+       8
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       21,
+       24
+      ],
+      "element": "eau"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 13793,
+    "name": "Muselière",
+    "icon": 12069,
+    "desc": "Occasionne des dommages Terre.\nAugmente les dommages du sort pour chaque ennemi au contact du lanceur avant d'appliquer les effets si la cible est la Proie.",
+    "grades": [
+     {
+      "niv": 100,
+      "pa": 5,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       30,
+       33
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 167,
+      "pa": 5,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       37,
+       41
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13766,
+    "name": "Charogne",
+    "icon": 12033,
+    "desc": "Érode la cible et occasionne des dommages Air.\n\nAugmente la Rage (nécessite une cible).",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       18,
+       20
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 68,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       25,
+       27
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 134,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       29,
+       32
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 13799,
+    "name": "Radius",
+    "icon": 12063,
+    "desc": "Échange de position avec la cible et occasionne des dommages Eau aux ennemis.\n\nAugmente la Rage (nécessite une cible).",
+    "grades": [
+     {
+      "niv": 105,
+      "pa": 3,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       26,
+       29
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 172,
+      "pa": 3,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       32,
+       36
+      ],
+      "element": "eau"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13755,
+    "name": "Traque",
+    "icon": 12034,
+    "desc": "Occasionne des dommages Feu.\nRapproche le lanceur vers la cible avant d'appliquer les effets si c'est la Proie.\n\nLe sort n'est pas soumis aux contraintes de lancer sous Forme Bestiale.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       19,
+       21
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 69,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       25,
+       28
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 136,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       31,
+       35
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 1,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 13804,
+    "name": "Dépeçage",
+    "icon": 12085,
+    "desc": "Réduit les soins reçus par la cible et occasionne des dommages Air.\n\nAugmente la Rage (nécessite une cible).",
+    "grades": [
+     {
+      "niv": 110,
+      "pa": 4,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       34,
+       38
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 177,
+      "pa": 4,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       40,
+       45
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 1,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13748,
+    "name": "Proie",
+    "icon": 12938,
+    "desc": "Applique l'état Proie sur l'ennemi ciblé.\nLes entités qui attaquent la cible sont soignées d'une partie des dommages occasionnés.\n\nFixe le temps de relance du sort à 0 si la Proie est achevée.",
+    "grades": [
+     {
+      "niv": 5,
+      "pa": 1,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 1,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 72,
+      "pa": 1,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 1,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 139,
+      "pa": 1,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 1,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 13786,
+    "name": "Gibier",
+    "icon": 12060,
+    "desc": "Applique l'état Proie sur l'ennemi ciblé et augmente les dommages qu'il subit.\n\nFixe le temps de relance du sort à 0 si la Proie est achevée.",
+    "grades": [
+     {
+      "niv": 115,
+      "pa": 1,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 1,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 182,
+      "pa": 1,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 1,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13770,
+    "name": "Convergence",
+    "icon": 12036,
+    "desc": "Rapproche le lanceur vers l'allié ciblé ou attire l'ennemi ciblé.",
+    "grades": [
+     {
+      "niv": 10,
+      "pa": 2,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0
+     },
+     {
+      "niv": 77,
+      "pa": 2,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0
+     },
+     {
+      "niv": 144,
+      "pa": 2,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0
+     }
+    ],
+    "ligne": 1,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 13806,
+    "name": "Pistage",
+    "icon": 12066,
+    "desc": "Repousse la cible et rapproche le lanceur vers elle.",
+    "grades": [
+     {
+      "niv": 120,
+      "pa": 2,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 187,
+      "pa": 2,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0
+     }
+    ],
+    "ligne": 1,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13774,
+    "name": "Lance-roquet",
+    "icon": 12037,
+    "desc": "Invoque un Roquet maîtrisable qui peut voler de la vie dans l'élément Neutre.\n\nLorsque le lanceur occasionne des dommages avec ses sorts Ouginak, le Roquet se rapproche vers la Proie et l'attaque s'il est à portée.\nLes dommages sont réduits de moitié en-dehors de son tour de jeu.",
+    "grades": [
+     {
+      "niv": 15,
+      "pa": 3,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 82,
+      "pa": 3,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 149,
+      "pa": 3,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 13792,
+    "name": "Gangrène",
+    "icon": 12068,
+    "desc": "Érode l'ennemi ciblé.\n\nAugmente la Rage (nécessite une cible).",
+    "grades": [
+     {
+      "niv": 125,
+      "pa": 3,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 192,
+      "pa": 3,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13802,
+    "name": "Amarok",
+    "icon": 12079,
+    "desc": "Augmente les résistances en mêlée du lanceur et des alliés et occasionne des dommages Terre aux ennemis en zone.\nLes dommages de zone ne sont pas dégressifs.",
+    "grades": [
+     {
+      "niv": 20,
+      "pa": 3,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       18,
+       20
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 87,
+      "pa": 3,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       23,
+       25
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 154,
+      "pa": 3,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       28,
+       31
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 13758,
+    "name": "Cerbère",
+    "icon": 12049,
+    "desc": "Applique un bouclier sur le lanceur et occasionne des dommages Terre aux ennemis en zone.\nLes dommages du sort sont plus importants selon la Rage du lanceur et le bouclier n'est pas appliqué sous Forme Bestiale.",
+    "grades": [
+     {
+      "niv": 130,
+      "pa": 4,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       13,
+       16
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 197,
+      "pa": 4,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       15,
+       18
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 1,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13760,
+    "name": "Cubitus",
+    "icon": 13809,
+    "desc": "Vole de la vie dans l'élément Eau.\nDonne 1 PM au lanceur si la cible est la Proie.\n\nLe sort n'est pas soumis aux contraintes de lancer sous Forme Bestiale.",
+    "grades": [
+     {
+      "niv": 25,
+      "pa": 2,
+      "po": [
+       1,
+       8
+      ],
+      "relance": 0,
+      "parTour": 4,
+      "parCible": 2,
+      "dmg": [
+       10,
+       12
+      ],
+      "element": "eau",
+      "vol": true
+     },
+     {
+      "niv": 92,
+      "pa": 2,
+      "po": [
+       1,
+       9
+      ],
+      "relance": 0,
+      "parTour": 4,
+      "parCible": 2,
+      "dmg": [
+       14,
+       16
+      ],
+      "element": "eau",
+      "vol": true
+     },
+     {
+      "niv": 159,
+      "pa": 2,
+      "po": [
+       1,
+       10
+      ],
+      "relance": 0,
+      "parTour": 4,
+      "parCible": 2,
+      "dmg": [
+       16,
+       18
+      ],
+      "element": "eau",
+      "vol": true
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 13788,
+    "name": "Calcanéus",
+    "icon": 13810,
+    "desc": "Vole de la vie dans l'élément Eau aux ennemis et attire la cible.\nL'attirance est plus importante sur la Proie.\n\nLe sort n'est pas soumis aux contraintes de lancer sous Forme Bestiale.",
+    "grades": [
+     {
+      "niv": 135,
+      "pa": 2,
+      "po": [
+       1,
+       12
+      ],
+      "relance": 0,
+      "parTour": 4,
+      "parCible": 2,
+      "dmg": [
+       19,
+       21
+      ],
+      "element": "eau",
+      "vol": true
+     }
+    ],
+    "ligne": 1,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13771,
+    "name": "Arcanin",
+    "icon": 12041,
+    "desc": "Augmente la Puissance du lanceur.\n\nNécessite et diminue la Rage.",
+    "grades": [
+     {
+      "niv": 30,
+      "pa": 1,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 97,
+      "pa": 1,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 164,
+      "pa": 1,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 13797,
+    "name": "Caninos",
+    "icon": 12071,
+    "desc": "Soigne le lanceur.\n\nNécessite et diminue la Rage.",
+    "grades": [
+     {
+      "niv": 140,
+      "pa": 1,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13754,
+    "name": "Rabattage",
+    "icon": 12042,
+    "desc": "Vole de la vie dans l'élément Feu.\nVole des PM avant d'appliquer les effets si la cible est la Proie.",
+    "grades": [
+     {
+      "niv": 35,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       18,
+       20
+      ],
+      "element": "feu",
+      "vol": true
+     },
+     {
+      "niv": 102,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       23,
+       25
+      ],
+      "element": "feu",
+      "vol": true
+     },
+     {
+      "niv": 169,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       29,
+       31
+      ],
+      "element": "feu",
+      "vol": true
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 13790,
+    "name": "Aboi",
+    "icon": 12073,
+    "desc": "Vole de la vie dans l'élément Feu.\nRéduit les Résistances Poussée si la cible est la Proie.",
+    "grades": [
+     {
+      "niv": 145,
+      "pa": 2,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 0,
+      "parTour": 4,
+      "parCible": 2,
+      "dmg": [
+       20,
+       22
+      ],
+      "element": "feu",
+      "vol": true
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13768,
+    "name": "Carcasse",
+    "icon": 12043,
+    "desc": "Occasionne des dommages Air.\nLes dommages du sort sont augmentés après chaque lancer si la cible est la Proie.",
+    "grades": [
+     {
+      "niv": 40,
+      "pa": 2,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 4,
+      "parCible": 2,
+      "dmg": [
+       5,
+       7
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 107,
+      "pa": 2,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 4,
+      "parCible": 2,
+      "dmg": [
+       7,
+       9
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 174,
+      "pa": 2,
+      "po": [
+       1,
+       8
+      ],
+      "relance": 0,
+      "parTour": 4,
+      "parCible": 2,
+      "dmg": [
+       9,
+       11
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 13796,
+    "name": "Battue",
+    "icon": 12082,
+    "desc": "Occasionne des dommages Air aux ennemis et augmente la Puissance du lanceur et des alliés en zone.",
+    "grades": [
+     {
+      "niv": 150,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       27,
+       30
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13772,
+    "name": "Pelage Protecteur",
+    "icon": 12045,
+    "desc": "Applique 2 boucliers et l'état Pelage Protecteur sur l'allié ciblé :\n• Retire le second bouclier et l'état et augmente la Rage si la cible subit des dommages de poussée.\n\nNe peut pas être utilisé sous Forme Bestiale.",
+    "grades": [
+     {
+      "niv": 45,
+      "pa": 3,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 112,
+      "pa": 3,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 179,
+      "pa": 3,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 13798,
+    "name": "Férocité",
+    "icon": 12076,
+    "desc": "Applique l'état Férocité sur l'allié ciblé :\n• Applique un bouclier sur le lanceur et la cible si cette dernière est attirée, poussée, transposée, téléportée ou subit une tentative de retrait de PM.\n• Applique un bouclier supplémentaire si la cible est le lanceur.\n\nNe peut pas être utilisé sous Forme Bestiale.",
+    "grades": [
+     {
+      "niv": 155,
+      "pa": 2,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 1,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13795,
+    "name": "Chasse",
+    "icon": 12064,
+    "desc": "Occasionne des dommages Feu aux ennemis et repousse la cible.\nRapproche le lanceur vers la cible avant d'appliquer les effets si c'est la Proie.",
+    "grades": [
+     {
+      "niv": 50,
+      "pa": 4,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       25,
+       28
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 117,
+      "pa": 4,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       33,
+       37
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 184,
+      "pa": 4,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       39,
+       44
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 13800,
+    "name": "Vertèbre",
+    "icon": 12062,
+    "desc": "Applique un poison Eau de début de tour sur l'ennemi ciblé.\nLe poison ne peut pas être désenvoûté s'il est appliqué sur la Proie.",
+    "grades": [
+     {
+      "niv": 160,
+      "pa": 4,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       32,
+       36
+      ],
+      "element": "eau"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13763,
+    "name": "Tibia",
+    "icon": 12040,
+    "desc": "Occasionne des dommages Eau aux ennemis et repousse les cibles en zone.\nLes dommages de zone ne sont pas dégressifs.\n\nAugmente la Rage.",
+    "grades": [
+     {
+      "niv": 55,
+      "pa": 4,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       25,
+       28
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 122,
+      "pa": 4,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       32,
+       36
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 189,
+      "pa": 4,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       40,
+       45
+      ],
+      "element": "eau"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 13794,
+    "name": "Humérus",
+    "icon": 12070,
+    "desc": "Téléporte le lanceur symétriquement par rapport à la cible et occasionne des dommages Terre aux ennemis.\n\nAugmente la Rage (nécessite une cible).",
+    "grades": [
+     {
+      "niv": 165,
+      "pa": 4,
+      "po": [
+       1,
+       1
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       41,
+       46
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13769,
+    "name": "Apaisement",
+    "icon": 12048,
+    "desc": "Soigne l'allié ciblé.\nNécessite et diminue la Rage.\n\nRetire également les effets de la Forme Bestiale.",
+    "grades": [
+     {
+      "niv": 60,
+      "pa": 3,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 127,
+      "pa": 3,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 194,
+      "pa": 3,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 13791,
+    "name": "Affection",
+    "icon": 12078,
+    "desc": "Soigne le lanceur et l'allié ciblé et échange de position avec ce dernier.\nNécessite et diminue la Rage.\n\nRetire également les effets de la Forme Bestiale.",
+    "grades": [
+     {
+      "niv": 170,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13757,
+    "name": "Dogue",
+    "icon": 12039,
+    "desc": "Vole de la vie dans l'élément Terre.\nRetire de la Fuite si la cible est la Proie.",
+    "grades": [
+     {
+      "niv": 65,
+      "pa": 2,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 0,
+      "parTour": 4,
+      "parCible": 2,
+      "dmg": [
+       10,
+       12
+      ],
+      "element": "terre",
+      "vol": true
+     },
+     {
+      "niv": 131,
+      "pa": 2,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 0,
+      "parTour": 4,
+      "parCible": 2,
+      "dmg": [
+       13,
+       15
+      ],
+      "element": "terre",
+      "vol": true
+     },
+     {
+      "niv": 198,
+      "pa": 2,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 0,
+      "parTour": 4,
+      "parCible": 2,
+      "dmg": [
+       17,
+       19
+      ],
+      "element": "terre",
+      "vol": true
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 13789,
+    "name": "Dépouille",
+    "icon": 12074,
+    "desc": "Occasionne des dommages Air.\nAugmente les dommages du sort pour chaque allié au contact de la cible avant d'appliquer les effets si c'est la Proie.",
+    "grades": [
+     {
+      "niv": 175,
+      "pa": 5,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       35,
+       39
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13781,
+    "name": "Panique",
+    "icon": 12050,
+    "desc": "Repousse les cibles depuis le centre en zone autour de la cible.\nRetire également des PM et de la Fuite à la Proie si elle est touchée.",
+    "grades": [
+     {
+      "niv": 70,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     },
+     {
+      "niv": 137,
+      "pa": 2,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 13801,
+    "name": "Poursuite",
+    "icon": 12080,
+    "desc": "Pose un glyphe qui augmente les PM des alliés.\n\nApplique également l'état Poursuite sur la Proie si elle est sur la case ciblée :\n• Pose de nouveau le glyphe sous la cible au début de son tour.\nCet effet est appliqué uniquement si la cible est toujours la Proie.",
+    "grades": [
+     {
+      "niv": 180,
+      "pa": 2,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 1,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13773,
+    "name": "Aboiement",
+    "icon": 12052,
+    "desc": "Augmente les PM de la cible, la rend Inébranlable et lui applique l'état Aboiement :\n• Retire les états et augmente la Rage si la cible subit des dommages en mêlée.",
+    "grades": [
+     {
+      "niv": 75,
+      "pa": 2,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 142,
+      "pa": 2,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 13803,
+    "name": "Rogne",
+    "icon": 12081,
+    "desc": "Augmente la Puissance, les Dommages Poussée et le Tacle de l'allié ciblé et lui applique l'état Rogne :\n• Augmente ces mêmes caractéristiques sur le lanceur si la cible subit des dommages (cumulable 5 fois).\n\nAugmente la Rage.",
+    "grades": [
+     {
+      "niv": 185,
+      "pa": 2,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13765,
+    "name": "Limier",
+    "icon": 12053,
+    "desc": "Occasionne des dommages Air.\nAttire les entités vers la cible en zone avant d'appliquer les effets si c'est la Proie.\n\nLe sort n'est pas soumis aux contraintes de lancer sous Forme Bestiale.",
+    "grades": [
+     {
+      "niv": 80,
+      "pa": 3,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       23,
+       25
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 147,
+      "pa": 3,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       28,
+       31
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 13753,
+    "name": "Tétanisation",
+    "icon": 12057,
+    "desc": "Occasionne des dommages Feu et retire des PM.\n\nAugmente la Rage (nécessite une cible).",
+    "grades": [
+     {
+      "niv": 190,
+      "pa": 4,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       41,
+       46
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 13749,
+    "name": "Flair",
+    "icon": 12054,
+    "desc": "Téléporte le lanceur sur la première case disponible au contact de la Proie.\n\nSi la Proie est dans la zone d'effet : téléporte le lanceur sur la case ciblée.\n\nNécessite et diminue la Rage.",
+    "grades": [
+     {
+      "niv": 85,
+      "pa": 3,
+      "po": [
+       1,
+       63
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 152,
+      "pa": 3,
+      "po": [
+       1,
+       63
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 13805,
+    "name": "Acharnement",
+    "icon": 12083,
+    "desc": "Applique l'état Pesanteur sur l'ennemi ciblé.\nSi l'ennemi est la Proie :\n• Augmente également les dommages subis par la cible.\n• Téléporte les Roquets du lanceur à son contact.\n\nAugmente la Rage (nécessite une cible).",
+    "grades": [
+     {
+      "niv": 195,
+      "pa": 2,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 1,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 14357,
+    "name": "Appel de la Meute",
+    "icon": 12056,
+    "desc": "Réduit le temps de relance du sort Lance-roquet du lanceur.\n• Si la cible est le lanceur : attire tous les alliés vers la cible.\n• Si la cible est la Proie : érode la cible et attire tous les alliés vers elle.\nL'attirance est plus importante si la cible est la Proie.",
+    "grades": [
+     {
+      "niv": 90,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 157,
+      "pa": 2,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 2,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 14321,
+    "name": "Nouvelle Lune",
+    "icon": 12084,
+    "desc": "Réduit la durée des effets sur le lanceur et le transforme en Bête.\n\nNe peut pas être utilisé sous Forme Bestiale.",
+    "grades": [
+     {
+      "niv": 200,
+      "pa": 2,
+      "po": [
+       0,
+       0
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   }
+  ]
  ]
 }

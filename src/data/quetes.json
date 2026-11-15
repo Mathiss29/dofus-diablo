@@ -2196,6 +2196,163 @@
        }
       ]
      }
+    ],
+    "ouginak": [
+     {
+      "nom": "Premiers pas",
+      "bulle": "Bienvenue sur Incarnam, jeune Ouginak ! Contemple les Dofus, puis clique sur le sol et suis le chemin. Je t'attends dans la salle suivante.",
+      "objectifs": [
+       {
+        "t": "aller",
+        "texte": "Passer dans la salle suivante (clic gauche)",
+        "carte": "temple_2"
+       }
+      ]
+     },
+     {
+      "nom": "La salle d'entraînement",
+      "pnj": "ganymede_temple",
+      "objectifs": [
+       {
+        "t": "aller",
+        "texte": "Rejoindre Ganymède",
+        "pnj": "ganymede_temple"
+       }
+      ]
+     },
+     {
+      "nom": "Frapper",
+      "pnj": "ganymede_temple",
+      "bulle": "Des esprits de feu se sont glissés dans le Temple. Clique sur l'un d'eux : tu le poursuis et tu le frappes. Ton premier coup en fait ta Proie.",
+      "objectifs": [
+       {
+        "t": "vaincre",
+        "texte": "Vaincre un monstre (clic dessus)",
+        "n": 1,
+        "sousZone": 446
+       }
+      ]
+     },
+     {
+      "nom": "Marquer la Proie",
+      "pnj": "ganymede_temple",
+      "bulle": "Tes sorts sont sur & é \" '. Touche ' : Proie. Marque un esprit : chaque coup porté à ta Proie te soigne, et l'achever recharge le sort.",
+      "halo": 3,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "sort": "proie",
+        "texte": "Marquer une Proie (')"
+       }
+      ]
+     },
+     {
+      "nom": "Montrer les crocs",
+      "pnj": "ganymede_temple",
+      "bulle": "Clic droit : Molosse. Mords au contact : tu prends moins de coups et ta Rage monte d'un cran. Elle retombe si tu restes 5 s sans frapper.",
+      "halo": 6,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "sort": "molosse",
+        "texte": "Mordre avec Molosse (clic droit)"
+       }
+      ]
+     },
+     {
+      "nom": "La Rage monte",
+      "pnj": "ganymede_temple",
+      "bulle": "Touche é : Charogne. Elle ronge les PV max et donne aussi un cran de Rage. Au 3e cran, tu deviens la Bête : plus vite, plus fort, tout au corps à corps.",
+      "halo": 1,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "sort": "charogne",
+        "texte": "Lancer Charogne (é)"
+       },
+       {
+        "t": "vaincre",
+        "texte": "Vaincre deux esprits",
+        "n": 2,
+        "sousZone": 446
+       }
+      ]
+     },
+     {
+      "nom": "La traque",
+      "pnj": "ganymede_temple",
+      "bulle": "Touche \" : Traque. Sur ta Proie, tu bondis d'abord à son contact. Au niveau 15, ton Roquet te rejoindra pour mordre ta Proie avec toi.",
+      "halo": 2,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "sort": "traque",
+        "texte": "Lancer Traque sur ta Proie (\")"
+       }
+      ]
+     },
+     {
+      "nom": "Se déplacer vite",
+      "pnj": "ganymede_temple",
+      "bulle": "Espace : Bond de la bête. Tu bondis de 4 cases ; si ta Proie est sous la souris, tu sautes jusqu'à elle.",
+      "halo": 7,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "quoi": "mobilite",
+        "texte": "Bondir avec Espace"
+       }
+      ]
+     },
+     {
+      "nom": "Premières armes",
+      "pnj": "ganymede_temple",
+      "bulle": "Voici ton équipement : un Marteau Martel et la panoplie de l'Intrépide. I ouvre ton sac : équipe tout.",
+      "donner": {
+       "ouginak": [
+        "9961",
+        "10801",
+        "10800",
+        "10784",
+        "10785",
+        "10799",
+        "10794",
+        "10798"
+       ]
+      },
+      "objectifs": [
+       {
+        "t": "equiper",
+        "objet": "9961",
+        "texte": "Équiper ton marteau (I)"
+       },
+       {
+        "t": "equiper",
+        "objets": [
+         "10801",
+         "10800",
+         "10784",
+         "10785",
+         "10799",
+         "10794",
+         "10798"
+        ],
+        "texte": "Équiper la panoplie de l'Intrépide"
+       }
+      ]
+     },
+     {
+      "nom": "Descendre sur Incarnam",
+      "pnj": "ganymede_temple",
+      "bulle": "Tu es prêt. Parle-moi et je t'envoie au village, près de Lykhen. Le Zaap de la Route des âmes sera ton point de retour si tu tombes.",
+      "objectifs": [
+       {
+        "t": "parler",
+        "texte": "Parler à Ganymède pour descendre au village",
+        "pnj": "ganymede_temple"
+       }
+      ]
+     }
     ]
    },
    "recompense": {

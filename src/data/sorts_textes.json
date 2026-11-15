@@ -3818,5 +3818,410 @@
    "texte": "Saute jusqu'à 4 cases, ou prends la place d'un de tes Arbres à 8 cases : il prend la tienne.",
    "ambiance": "« Sous terre, la forêt est un seul chemin. »"
   }
+ },
+ "ouginak": {
+  "13756": {
+   "role": "base",
+   "etiquettes": [
+    "Mêlée",
+    "Renforce"
+   ],
+   "accroche": "Le premier coup de crocs.",
+   "texte": "Frappe en Terre au contact, monte la Rage d'un cran et réduit tes dommages subis 3 s. Ton Roquet mord la Proie touchée.",
+   "ambiance": "« Le loup ne prévient pas. »"
+  },
+  "13762": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Cumul"
+   ],
+   "accroche": "Plus il ronge, plus il mord.",
+   "texte": "Frappe en Eau jusqu'à 6 cases. Sur la Proie, chaque lancer fait un peu plus mal que le précédent pendant 6 s."
+  },
+  "13766": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Érosion"
+   ],
+   "accroche": "La blessure qui ne se referme pas.",
+   "texte": "Frappe en Air jusqu'à 4 cases, ronge les PV max de la cible et monte la Rage d'un cran."
+  },
+  "13755": {
+   "role": "dep",
+   "etiquettes": [
+    "Distance",
+    "Déplacement"
+   ],
+   "accroche": "Elle ne court jamais assez vite.",
+   "texte": "Frappe en Feu jusqu'à 6 cases. Sur la Proie, tu bondis d'abord à son contact ; garde sa portée en Forme Bestiale."
+  },
+  "13748": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Soin"
+   ],
+   "accroche": "Celle-là, elle est à toi.",
+   "texte": "Marque un ennemi : quiconque le frappe se soigne de 15 % des dommages. Achever la Proie recharge le sort ; sans Proie, ton premier coup en marque une.",
+   "ambiance": "« Le flair ne trompe pas. »"
+  },
+  "13770": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Attire",
+    "Allié",
+    "Déplacement"
+   ],
+   "accroche": "Tous vers le même point.",
+   "texte": "Attire l'ennemi visé jusqu'à toi, ou te rapproche de l'allié visé."
+  },
+  "13774": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation"
+   ],
+   "accroche": "Le meilleur ami du chasseur.",
+   "texte": "Appelle ton Roquet au point visé : il te suit pour de bon, mord ta Proie et revient 10 s après sa chute.",
+   "ambiance": "« Il a plus de crocs que de cervelle. »"
+  },
+  "13802": {
+   "role": "zone",
+   "etiquettes": [
+    "Autour de toi",
+    "Renforce"
+   ],
+   "accroche": "Le grondement de la meute.",
+   "texte": "Frappe en Terre tout autour de toi et réduit tes dommages subis 3 s."
+  },
+  "13760": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Vol de vie"
+   ],
+   "accroche": "L'os qui revient toujours.",
+   "texte": "Vole de la vie en Eau jusqu'à 8 cases. Sur la Proie, tu cours 10 % plus vite 3 s ; garde sa portée en Forme Bestiale."
+  },
+  "13771": {
+   "role": "soutien",
+   "etiquettes": [
+    "Renforce"
+   ],
+   "accroche": "La rage qui se canalise.",
+   "texte": "Consomme un cran de Rage s'il y en a : +50 Puissance pendant 9 s."
+  },
+  "13754": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Vol de vie",
+    "Ralentit"
+   ],
+   "accroche": "Ramener le gibier au troupeau.",
+   "texte": "Vole de la vie en Feu jusqu'à 4 cases. Sur la Proie, elle ralentit et tu cours plus vite 3 s."
+  },
+  "13768": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Cumul"
+   ],
+   "accroche": "Les restes du festin.",
+   "texte": "Petits coups d'Air jusqu'à 6 cases, 4 charges. Sur la Proie, chaque lancer fait plus mal que le précédent pendant 6 s."
+  },
+  "13772": {
+   "role": "soutien",
+   "etiquettes": [
+    "Bouclier"
+   ],
+   "accroche": "Le poil se hérisse.",
+   "texte": "Pose deux boucliers sur toi pendant 6 s ; s'ils cèdent sous les coups, la Rage monte d'un cran. Interdit en Forme Bestiale."
+  },
+  "13795": {
+   "role": "gros",
+   "etiquettes": [
+    "Distance",
+    "Repousse",
+    "Déplacement"
+   ],
+   "accroche": "La curée commence.",
+   "texte": "Gros coup de Feu jusqu'à 4 cases qui repousse. Sur la Proie, tu bondis d'abord à son contact."
+  },
+  "13763": {
+   "role": "zone",
+   "etiquettes": [
+    "Autour de toi",
+    "Repousse"
+   ],
+   "accroche": "L'os qui fait le vide.",
+   "texte": "Frappe en Eau tout autour de toi, repousse tout le monde et monte la Rage d'un cran."
+  },
+  "13769": {
+   "role": "soutien",
+   "etiquettes": [
+    "Soin"
+   ],
+   "accroche": "La bête se couche.",
+   "texte": "Consomme toute la Rage pour te soigner, d'autant plus qu'elle était haute, et met fin à la Forme Bestiale."
+  },
+  "13757": {
+   "role": "base",
+   "etiquettes": [
+    "Mêlée",
+    "Vol de vie"
+   ],
+   "accroche": "Il ne lâche plus.",
+   "texte": "Vole de la vie en Terre au contact. Sur la Proie, elle ne peut plus fuir pendant 3 s."
+  },
+  "13781": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Repousse",
+    "Ralentit"
+   ],
+   "accroche": "Tout le monde recule.",
+   "texte": "Repousse tout ce qui entoure la cible ; si la Proie est prise dedans, elle ralentit."
+  },
+  "13773": {
+   "role": "soutien",
+   "etiquettes": [
+    "Renforce",
+    "Allié"
+   ],
+   "accroche": "Un aboiement qui fige le sang.",
+   "texte": "Toi ou l'allié visé courez plus vite et ne pouvez plus être repoussés. Le prochain coup reçu au contact retire l'effet et monte la Rage."
+  },
+  "13765": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Attire"
+   ],
+   "accroche": "Il sent tout, de loin.",
+   "texte": "Frappe en Air jusqu'à 3 cases. Sur la Proie, attire d'abord les ennemis autour d'elle ; garde sa portée en Forme Bestiale."
+  },
+  "13749": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement"
+   ],
+   "accroche": "Nulle part où se cacher.",
+   "texte": "Consomme un cran de Rage : tu apparais au contact de la Proie, où qu'elle soit à l'écran."
+  },
+  "14357": {
+   "role": "soutien",
+   "etiquettes": [
+    "Allié",
+    "Érosion",
+    "Invocation"
+   ],
+   "accroche": "Hurler pour rassembler.",
+   "texte": "Ton Roquet revient plus vite. Sur la Proie : elle est rongée et ton Roquet (et tes alliés) bondit vers elle."
+  },
+  "13787": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone",
+    "Ralentit"
+   ],
+   "accroche": "La mâchoire qui claque.",
+   "texte": "Frappe en Feu en zone jusqu'à 5 cases, ralentit les ennemis touchés et monte la Rage."
+  },
+  "13793": {
+   "role": "gros",
+   "etiquettes": [
+    "Mêlée"
+   ],
+   "accroche": "Pris dans la nasse.",
+   "texte": "Gros coup de Terre au contact. Sur la Proie, plus fort pour chaque ennemi collé à toi."
+  },
+  "13799": {
+   "role": "dep",
+   "etiquettes": [
+    "Mêlée",
+    "Déplacement"
+   ],
+   "accroche": "L'os qui fait volte-face.",
+   "texte": "Échange ta place avec la cible et frappe en Eau, puis monte la Rage."
+  },
+  "13804": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Affaiblit"
+   ],
+   "accroche": "Il ne restera rien.",
+   "texte": "Frappe en Air jusqu'à 4 cases, réduit les soins reçus par la cible et monte la Rage."
+  },
+  "13786": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Affaiblit"
+   ],
+   "accroche": "Le gibier de choix.",
+   "texte": "Marque un ennemi comme Proie : il prend plus de dommages. Achever la Proie recharge le sort."
+  },
+  "13806": {
+   "role": "dep",
+   "etiquettes": [
+    "Repousse",
+    "Déplacement"
+   ],
+   "accroche": "Sur ses talons.",
+   "texte": "Repousse la cible et te rapproche d'elle aussitôt."
+  },
+  "13792": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Érosion"
+   ],
+   "accroche": "La plaie qui pourrit.",
+   "texte": "Ronge les PV max de l'ennemi visé et monte la Rage."
+  },
+  "13758": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone",
+    "Bouclier"
+   ],
+   "accroche": "Trois têtes valent mieux qu’une.",
+   "texte": "Frappe en Terre en zone, plus fort selon ta Rage, et te pose un bouclier hors Forme Bestiale."
+  },
+  "13788": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Vol de vie",
+    "Attire"
+   ],
+   "accroche": "Le talon qui ramène.",
+   "texte": "Vole de la vie en Eau jusqu'à 12 cases et attire la cible, plus loin si c'est la Proie ; garde sa portée en Forme Bestiale."
+  },
+  "13797": {
+   "role": "soutien",
+   "etiquettes": [
+    "Soin"
+   ],
+   "accroche": "Lécher ses plaies.",
+   "texte": "Consomme un cran de Rage pour te soigner."
+  },
+  "13790": {
+   "role": "base",
+   "etiquettes": [
+    "Mêlée",
+    "Vol de vie"
+   ],
+   "accroche": "Un jappement qui mord.",
+   "texte": "Vole de la vie en Feu tout près. Sur la Proie, elle se laisse repousser plus loin."
+  },
+  "13796": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone",
+    "Renforce"
+   ],
+   "accroche": "Rabattre le gibier.",
+   "texte": "Frappe en Air en zone jusqu'à 6 cases et donne de la Puissance à toi et aux alliés pris dedans."
+  },
+  "13798": {
+   "role": "soutien",
+   "etiquettes": [
+    "Bouclier",
+    "Allié"
+   ],
+   "accroche": "Qui touche à la meute…",
+   "texte": "L'allié visé et toi gagnez un bouclier dès qu'on le pousse, l'attire ou le ralentit. Interdit en Forme Bestiale."
+  },
+  "13800": {
+   "role": "base",
+   "etiquettes": [
+    "Distance"
+   ],
+   "accroche": "Le poison dans la moelle.",
+   "texte": "Empoisonne en Eau l'ennemi visé jusqu'à 6 cases ; sur la Proie, rien ne peut l'en guérir."
+  },
+  "13794": {
+   "role": "dep",
+   "etiquettes": [
+    "Mêlée",
+    "Déplacement"
+   ],
+   "accroche": "Passer par-dessus.",
+   "texte": "Saute de l'autre côté de la cible et frappe en Terre, puis monte la Rage."
+  },
+  "13791": {
+   "role": "soutien",
+   "etiquettes": [
+    "Soin",
+    "Allié",
+    "Déplacement"
+   ],
+   "accroche": "La bête apprivoisée.",
+   "texte": "Consomme la Rage : soigne toi et l'allié visé, échange vos places et met fin à la Forme Bestiale."
+  },
+  "13789": {
+   "role": "gros",
+   "etiquettes": [
+    "Mêlée"
+   ],
+   "accroche": "Tout le monde se sert.",
+   "texte": "Gros coup d'Air au contact. Sur la Proie, plus fort pour chaque allié collé à elle."
+  },
+  "13801": {
+   "role": "soutien",
+   "etiquettes": [
+    "Allié",
+    "Déplacement"
+   ],
+   "accroche": "Ne jamais la perdre de vue.",
+   "texte": "Pose au sol une marque qui fait courir tes alliés ; sur la Proie, la marque la suit."
+  },
+  "13803": {
+   "role": "soutien",
+   "etiquettes": [
+    "Renforce",
+    "Allié"
+   ],
+   "accroche": "La colère qui gagne la meute.",
+   "texte": "Donne Puissance et dommages de poussée à l'allié visé ; chaque coup qu'il reçoit te renforce aussi, et ta Rage monte."
+  },
+  "13753": {
+   "role": "gros",
+   "etiquettes": [
+    "Distance",
+    "Ralentit"
+   ],
+   "accroche": "Figé de terreur.",
+   "texte": "Gros coup de Feu jusqu'à 4 cases qui ralentit fortement la cible, puis monte la Rage."
+  },
+  "13805": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Ralentit"
+   ],
+   "accroche": "Il ne lâchera pas.",
+   "texte": "Alourdit l'ennemi visé et monte la Rage. Sur la Proie, elle prend plus de dommages et ton Roquet saute à son contact."
+  },
+  "14321": {
+   "role": "gros",
+   "etiquettes": [
+    "Renforce"
+   ],
+   "accroche": "La lune se lève.",
+   "texte": "Te débarrasse de tes malus et te transforme aussitôt en Bête. Interdit en Forme Bestiale."
+  },
+  "bond_bete": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement"
+   ],
+   "accroche": "Quatre pattes, un seul élan.",
+   "texte": "Bondis de 4 cases ; si ta Proie est sous la souris, tu sautes jusqu'à son contact (8 cases au plus)."
+  }
  }
 }

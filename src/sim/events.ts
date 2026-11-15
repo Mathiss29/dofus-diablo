@@ -45,6 +45,10 @@ export type SimEvent =
   | { k: 'feuillu'; id: number; x: number; y: number }
   | { k: 'infection'; x: number; y: number; cibles: [number, number][] }
   | { k: 'ralliement'; x: number; y: number }
+  /** Ouginak : Proie marquée, Forme Bestiale (on = début, sinon fin), bond au contact de la Proie (Traque, Chasse). */
+  | { k: 'proie'; id: number; x: number; y: number }
+  | { k: 'bete'; id: number; x: number; y: number; on: boolean }
+  | { k: 'bondOug'; x: number; y: number; tx: number; ty: number }
   /** Osamodas : soin (chiffre vert), bête invoquée, bête éveillée (8C), monstre dompté (15A). */
   | { k: 'heal'; x: number; y: number; z: number; amount: number }
   /** Eniripsa 12C : fil de soin vert du soigneur (ou de sa bête) vers l'allié soigné, vu de tous les joueurs. */
