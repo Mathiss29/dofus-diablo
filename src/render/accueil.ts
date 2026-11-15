@@ -1,6 +1,6 @@
 import { v } from './assetUrl';
 import { MANIFESTE, Son } from './son';
-import { GAME_DATA, ITEMS, QUETES } from '../sim/data';
+import { GAME_DATA, ITEMS } from '../sim/data';
 import { EQUIP_SLOTS, RARITY_COLORS, RARITY_NAMES } from '../sim/items';
 import { LOOKS } from './looks';
 import { DOSSIER, ZONES, apparenceValide, assemblagePour, fiches, objetsPortes, type Apparence, type Assemblage, type FichePerso } from './squelette';
@@ -354,7 +354,7 @@ const CSS = `
 #acc .check input{accent-color:#e0925a;width:calc(1.1*var(--u));height:calc(1.1*var(--u));margin:0}
 `;
 
-type Page = 'accueil' | 'creation' | 'persos' | 'succes' | 'bestiaire' | 'journal' | 'ladder';
+type Page = 'accueil' | 'creation' | 'persos' | 'bestiaire' | 'journal' | 'ladder';
 /** Journal (Accueil 3A+3B+3C+3E) : un carnet par journée de travail, écrit à chaque mise à jour (src/data/journal.json). */
 /** Carnets lisibles (Carnets : 1A…10A) : une entrée = titre court + une phrase, détails repliables, icône officielle, étiquettes.
  *  Corrections et En coulisses restent une ligne courte. `image` met l'entrée « À la une » (3 tuiles en haut du carnet). */
@@ -575,7 +575,7 @@ export class Accueil {
   }
 
   private render() {
-    const html = this.page === 'accueil' ? this.pageAccueil() : this.page === 'creation' ? this.pageCreation() : this.page === 'succes' ? this.pageSucces() : this.page === 'bestiaire' ? this.pageBestiaire() : this.page === 'journal' ? this.pageJournal() : this.page === 'ladder' ? '<div class="ladp"><div class="lad" data-ladder></div></div>' : this.pagePersos();
+    const html = this.page === 'accueil' ? this.pageAccueil() : this.page === 'creation' ? this.pageCreation() : this.page === 'bestiaire' ? this.pageBestiaire() : this.page === 'journal' ? this.pageJournal() : this.page === 'ladder' ? '<div class="ladp"><div class="lad" data-ladder></div></div>' : this.pagePersos();
     if (!this.modal) this.modalLarge = false;
     const m = this.modal ? `<div class="modal" data-fermer><div class="card${this.modalLarge ? ' large' : ''}">${this.modal}<button type="button" class="x" data-fermer aria-label="Fermer">✕</button></div></div>` : '';
     this.root.innerHTML = `<div class="page">${html}${this.side()}${m}<div class="toast" style="opacity:0"></div></div>`;
@@ -606,10 +606,10 @@ export class Accueil {
     clearTimeout(this.toastT); this.toastT = window.setTimeout(() => { t.style.opacity = '0'; }, 2200);
   }
 
-  /** Colonne fine (30E) : icônes en couleur du menu principal de Dofus 3 (uiassets_2x) + texte. Bestiaire, Succès et Journal arrivent plus tard. */
+  /** Colonne fine (30E) : icônes en couleur du menu principal de Dofus 3 (uiassets_2x) + texte. La page Succès a été retirée (« Succès », 2026-11-15) : la fenêtre U du jeu suffit. */
   private side(): string {
     const NAV: [string, string, string][] = [['accueil', 'assets/ui/menu/home.png', 'Accueil'], ['persos', 'assets/ui/menu/character.png', 'Personnages'],
-      ['creation', img('h_80.png'), 'Classes'], ['bestiaire', 'assets/ui/menu/bestiary.png', 'Bestiaire'], ['succes', 'assets/ui/menu/success.png', 'Succès'], ['journal', 'assets/ui/menu/calendar.png', 'Journal'], ['ladder', 'assets/ui/menu/ladder.png', 'Ladder'], ['options', 'assets/ui/menu/options.png', 'Options']];
+      ['creation', img('h_80.png'), 'Classes'], ['bestiaire', 'assets/ui/menu/bestiary.png', 'Bestiaire'], ['journal', 'assets/ui/menu/calendar.png', 'Journal'], ['ladder', 'assets/ui/menu/ladder.png', 'Ladder'], ['options', 'assets/ui/menu/options.png', 'Options']];
     return `<nav class="side"><img class="logo" src="${v('assets/logo/embleme.webp')}" alt="" aria-hidden="true">${NAV.map(([k, ic, l]) =>
       `<button type="button" class="nav${k === this.page ? ' on' : ''}" data-nav="${k}" style="position:relative"><img src="${ic}" alt="">${l}${k === 'journal' && carnetNonLu() ? '<span class="pastille">nouveau</span>' : ''}</button>`).join('')}
       <button type="button" class="play" data-jouer>Jouer</button><div class="ver">VERSION ${VERSION}</div></nav>`;
@@ -968,26 +968,6 @@ export class Accueil {
     </div></div>`;
   }
 
-  // --- Succès (Accueil 2A) : ceux du compte, comme la fenêtre Succès du jeu ------------------------------------
-  private pageSucces(): string {
-    const fait = compte(), all = Object.entries(QUETES.succes).filter(([, x]) => !(x as { test?: boolean }).test);
-    const total = all.reduce((n, [, x]) => n + x.points, 0), pts = all.filter(([id]) => fait.has(id)).reduce((n, [, x]) => n + x.points, 0);
-    const cats = [...new Set(all.map(([, x]) => `${x.categorie} · ${x.sousCategorie}`))];
-    return `<div class="cover" style="background-image:url(${img('login.jpg')});filter:brightness(.45) saturate(.8)"></div>
-    <div class="abs tiny" style="left:calc(8.4*var(--u));top:calc(1.4*var(--u));font-weight:800">Succès du compte</div>
-    <button type="button" class="abs dbtn" style="right:calc(2*var(--u));top:calc(1*var(--u));font-size:calc(.8*var(--u));padding:calc(.35*var(--u)) calc(.9*var(--u))" data-go="accueil">Retour</button>
-    <div class="abs" style="left:calc(8.4*var(--u));top:calc(3.6*var(--u));display:flex;align-items:baseline;gap:calc(1.2*var(--u))">
-      <div class="ttl" style="font-size:calc(4*var(--u))">Succès</div>
-      <div style="font-weight:800;font-size:calc(1.2*var(--u))">${pts} / ${total} points · ${fait.size} / ${all.length} succès</div></div>
-    <div class="abs" style="left:calc(8.4*var(--u));right:calc(2*var(--u));top:calc(9.5*var(--u));bottom:calc(1.5*var(--u));overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(calc(26*var(--u)),1fr));gap:calc(1*var(--u));align-content:start">
-      ${cats.map(c => {
-        const ss = all.filter(([, x]) => `${x.categorie} · ${x.sousCategorie}` === c);
-        return `<div class="card" style="padding:calc(.8*var(--u)) calc(1*var(--u))"><div style="display:flex;justify-content:space-between;font-weight:800;font-size:calc(.95*var(--u))"><span>${esc(c)}</span><span class="tiny">${ss.filter(([id]) => fait.has(id)).length} / ${ss.length}</span></div>
-          <div class="lst">${ss.map(([id, x]) => `<div><span class="${fait.has(id) ? 'ok' : ''}">${fait.has(id) ? '✓ ' : ''}${esc(x.nom)}</span><span class="tiny">${x.points} pt${x.points > 1 ? 's' : ''}</span><small>${esc(x.description)}</small></div>`).join('')}</div></div>`;
-      }).join('')}
-    </div>`;
-  }
-
   /** Fiches ouvertes par-dessus la page. */
   private ouvrir(k: string) {
     if (k === 'quoi-de-neuf') {
@@ -1021,7 +1001,7 @@ export class Accueil {
       const k = e.dataset.nav!;
       if (k === 'options') { this.onOptions?.(); return; }   // Réglages 11A : la fenêtre Options du jeu, par-dessus l'accueil
       if (k === 'ladder') { void chargerLadder(); }
-      if (k === 'accueil' || k === 'persos' || k === 'creation' || k === 'succes' || k === 'bestiaire' || k === 'journal' || k === 'ladder') { this.carnet = null; this.go(k); }
+      if (k === 'accueil' || k === 'persos' || k === 'creation' || k === 'bestiaire' || k === 'journal' || k === 'ladder') { this.carnet = null; this.go(k); }
       else this.toast(`${e.textContent!.trim()} : arrive dans une prochaine version`);
     });
     on('[data-go]', e => this.go(e.dataset.go as Page));
@@ -1174,9 +1154,4 @@ export class Accueil {
     s.nom = ''; s.hardcore = false; s.tuto = true; s.tete = 0; s.couleurs = null;
     this.jouer(libre);
   }
-}
-
-/** Succès du compte (gardés par la partie dans le navigateur). */
-function compte(): Set<string> {
-  try { const c = JSON.parse(localStorage.getItem('diablofus.compte') ?? 'null'); return new Set(Array.isArray(c?.succes) ? c.succes : []); } catch { return new Set(); }
 }
