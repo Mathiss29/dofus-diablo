@@ -63,6 +63,8 @@ export class Monster extends Entity {
   bouclier = 0; champion = false; revenu = false; idoleT = 0;
   /** Élite à affixes (0.6, 23A) : ses affixes et le temps passé réveillé. */
   affixes: string[] = []; affixeT = 0;
+  /** « Arène : » 14A : âme corrompue (2 affixes, butin doublé). */
+  corrompu = false;
   /** Coffre Malveillant qui détale (0.6, 22A) : temps de fuite restant (0 : pas encore repéré). */
   fuyard = false; fuiteT = 0;
   /** 0.6 (22B) : monstre doré de la Salle au trésor (butin en plus). */

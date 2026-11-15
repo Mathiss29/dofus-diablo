@@ -7,6 +7,7 @@ import type { EtatQuetes } from './quests';
 import type { RetourHavreSac } from './events';
 import type { World } from './world';
 import type { CleDonjon } from './arene';
+import { lireAreneAmes } from './areneAmes';
 import type { EtatGuerre } from './guerre';
 import type { EtatVivant } from './mondeVivant';
 import type { CommandeFM } from './forgemagie';
@@ -62,6 +63,7 @@ export interface EtatJoueur {
   codex?: EntreeCodex[];
   codexOuvert?: boolean;
   ames?: string[];
+  areneAmes?: unknown;
   menagerie?: string[];
   style?: StyleChoisi; tenues?: Tenue[]; placesTenue?: number;
   familierOffert?: boolean;
@@ -92,7 +94,7 @@ export function exporterJoueur(w: World): EtatJoueur {
     base: p.base, bag: p.bag, equipment: p.equipment, resources: p.resources, metiers: p.metiers, recetteSuivie: p.recetteSuivie,
     bar: p.bar, variants: p.variants, learned: [...p.learned],
     x: p.x, y: p.y, retour: w.pointDeRetour, quetes: w.quetes?.exporter(), zone: w.opts.zone,
-    apparats: p.apparats, apparat: p.apparat, codex: p.codex, codexOuvert: p.codexOuvert, ames: p.ames, menagerie: p.menagerie, familierOffert: p.familierOffert, aboJour: p.aboJour, style: p.style, tenues: p.tenues, placesTenue: p.placesTenue, prereglages: p.prereglages, almanaxJour: p.almanaxJour, magasin: p.magasin, sacEnPlus: p.sacEnPlus, benediction: p.benediction, repas: p.repas, elixir: p.elixir, parchemins: p.parchemins, ceinture: p.ceinture, dofus: p.dofus, trophees: p.trophees, recoltees: p.recoltees, dofusPortes: p.dofusPortes,
+    apparats: p.apparats, apparat: p.apparat, codex: p.codex, codexOuvert: p.codexOuvert, ames: p.ames, areneAmes: p.areneAmes, menagerie: p.menagerie, familierOffert: p.familierOffert, aboJour: p.aboJour, style: p.style, tenues: p.tenues, placesTenue: p.placesTenue, prereglages: p.prereglages, almanaxJour: p.almanaxJour, magasin: p.magasin, sacEnPlus: p.sacEnPlus, benediction: p.benediction, repas: p.repas, elixir: p.elixir, parchemins: p.parchemins, ceinture: p.ceinture, dofus: p.dofus, trophees: p.trophees, recoltees: p.recoltees, dofusPortes: p.dofusPortes,
     zaaps: p.zaaps, zonesVues: p.zonesVues, explore: p.explore, chasse: p.chasse, bossSansLeg: p.bossSansLeg, idoles: p.idoles, renommee: p.renommee, sanctuaires: p.sanctuaires, drapeaux: p.drapeaux, tombe: p.tombe, lieuxVus: p.lieuxVus, cleDonjon: p.cleDonjon, guerre: p.guerre, vivant: p.vivant, commandeFM: p.commandeFM, ...(w.retour ? { havreSac: w.retour } : {}),
     ...(p.cls.coffre ? { coffreEnu: exporterCoffre(p) } : {}),
   });
@@ -137,6 +139,7 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
   p.almanaxJour = typeof s.almanaxJour === 'string' ? s.almanaxJour : null;
   p.magasin = s.magasin && typeof s.magasin.jour === 'string' ? { jour: s.magasin.jour, etal: Array.isArray(s.magasin.etal) ? s.magasin.etal.filter(n => typeof n === 'number') : [], sac: !!s.magasin.sac } : null;
   p.ames = Array.isArray(s.ames) ? s.ames.filter(a => typeof a === 'string') : [];
+  p.areneAmes = lireAreneAmes(s.areneAmes);
   p.menagerie = Array.isArray(s.menagerie) ? [...new Set(s.menagerie.filter(a => typeof a === 'string'))] : [];
   p.familierOffert = !!s.familierOffert;
   if (s.aboJour && typeof s.aboJour.jour === 'string') p.aboJour = { jour: s.aboJour.jour, beni: Math.max(0, Number(s.aboJour.beni) || 0), cles: Math.max(0, Number(s.aboJour.cles) || 0) };

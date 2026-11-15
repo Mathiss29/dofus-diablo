@@ -1,0 +1,18 @@
+{
+ "_": "Arène des âmes (ligne « Arène : » du 2026-11-15) : PNJ Gardienne et Gardien au Marché couvert du Bastion, fenêtre d'invocation, arène commune. Lu par src/sim/areneAmes.ts.",
+ "max": 5,
+ "rayonGroupe": 500,
+ "retour": 10,
+ "pause": 2.5,
+ "corrompue": 0.05,
+ "chaine": { "min": 3, "tirages": 1, "rarete": "epique", "legendaire": 0.04 },
+ "defiTirages": 1,
+ "defis": {
+  "potion": { "nom": "Sans potion", "texte": "Ne bois aucune potion." },
+  "chrono": { "nom": "Contre la montre", "texte": "Finis en moins de {s} s.", "base": 45, "parAme": 45 },
+  "bouger": { "nom": "Toujours en mouvement", "texte": "Ne reste jamais immobile plus de 3 s.", "immobile": 3 },
+  "intact": { "nom": "Sans une égratignure", "texte": "Ne descends jamais sous la moitié de tes PV." }
+ },
+ "titres": [25, 100, 250],
+ "lundi": { "texte": "L'âme de la semaine, offerte à tous chaque lundi par la Gardienne." }
+}

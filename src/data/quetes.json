@@ -894,6 +894,68 @@
      "texte": "Ici aussi, trois contrats par jour et un gros chaque semaine. Rats, Crabes, Gélikans : la Bourgade a besoin de bras chauds."
     }
    ]
+  },
+  "gardienne_arene": {
+   "nom": "Gardienne de l'arène",
+   "dofusId": 1436,
+   "zone": "bastion",
+   "carte": "marche",
+   "case": 1829,
+   "titre": "Arène des âmes",
+   "phrase": "Une âme en poche ? Donne-la-moi, je la relâche, et tu la recombats. Personne ne s'en va avant que le sang ait coulé. Le sien, de préférence.",
+   "services": [
+    {
+     "texte": "Invoquer des âmes.",
+     "service": "arene"
+    }
+   ],
+   "discussion": [
+    {
+     "reponse": "Comment ça marche ?",
+     "texte": "Tu choisis jusqu'à cinq âmes, boss ou archimonstres. Je t'envoie dans l'arène avec ceux qui sont autour de toi, et elles reviennent une par une. Chacun repart avec son butin."
+    },
+    {
+     "reponse": "Et si je perds ?",
+     "texte": "Tu te réveilles ici, devant moi, la honte en plus. L'âme, elle, est partie. On ne relâche pas deux fois la même colère."
+    },
+    {
+     "reponse": "Et la quête de l'Ocre ?",
+     "texte": "Le registre de l'Assistante garde la trace de tout ce que tu as capturé. Relâche sans crainte, ton nom reste écrit."
+    },
+    {
+     "reponse": "C'est quoi, une âme corrompue ?",
+     "texte": "Une sur vingt revient avec un peu d'Enfer dedans. Plus méchante, plus riche. Tu verras bien."
+    }
+   ]
+  },
+  "gardien_arene": {
+   "nom": "Gardien de l'arène",
+   "dofusId": 1435,
+   "zone": "bastion",
+   "carte": "marche",
+   "case": 2042,
+   "titre": "Arène des âmes",
+   "phrase": "Chaque lundi, j'offre une âme à qui veut bien se faire corriger. La même pour tout le monde. Après, on compare les temps.",
+   "services": [
+    {
+     "texte": "Invoquer des âmes.",
+     "service": "arene"
+    }
+   ],
+   "discussion": [
+    {
+     "reponse": "Le défi, c'est obligatoire ?",
+     "texte": "Non. Mais le public adore. Réussis-le et je glisse un peu plus de butin à chaque âme. Rate-le et je rirai, gratuitement."
+    },
+    {
+     "reponse": "Cinq boss d'affilée, c'est raisonnable ?",
+     "texte": "Trois au moins, et tu as droit au grand coffre. Raisonnable, non. Mémorable, oui."
+    },
+    {
+     "reponse": "On peut échanger des âmes ?",
+     "texte": "Pas encore. Le jour où les marchands du Bastion feront affaire entre aventuriers, je tiendrai le comptoir des âmes."
+    }
+   ]
   }
  },
  "quetes": {
@@ -11762,6 +11824,63 @@
     "titre": "Esprit de la Forêt Hantée"
    },
    "test": true
+  },
+  "arene_25": {
+   "nom": "Vingt-cinq âmes relâchées",
+   "dofusId": 0,
+   "description": "Vaincre 25 âmes relâchées dans l'arène des âmes du Bastion.",
+   "categorie": "Monstres",
+   "sousCategorie": "Archimonstres",
+   "points": 10,
+   "icone": 161,
+   "objectifs": [
+    {
+     "nom": "25 âmes vaincues",
+     "arene": 25
+    }
+   ],
+   "recompense": {
+    "xp": 1000,
+    "titre": "Gladiateur"
+   }
+  },
+  "arene_100": {
+   "nom": "Cent âmes relâchées",
+   "dofusId": 0,
+   "description": "Vaincre 100 âmes relâchées dans l'arène des âmes du Bastion.",
+   "categorie": "Monstres",
+   "sousCategorie": "Archimonstres",
+   "points": 20,
+   "icone": 161,
+   "objectifs": [
+    {
+     "nom": "100 âmes vaincues",
+     "arene": 100
+    }
+   ],
+   "recompense": {
+    "xp": 2000,
+    "titre": "Champion de l'arène"
+   }
+  },
+  "arene_250": {
+   "nom": "Deux cent cinquante âmes",
+   "dofusId": 0,
+   "description": "Vaincre 250 âmes relâchées dans l'arène des âmes du Bastion.",
+   "categorie": "Monstres",
+   "sousCategorie": "Archimonstres",
+   "points": 40,
+   "icone": 161,
+   "objectifs": [
+    {
+     "nom": "250 âmes vaincues",
+     "arene": 250
+    }
+   ],
+   "recompense": {
+    "xp": 4000,
+    "titre": "Maître de l'arène"
+   }
   }
  },
  "contrats": {

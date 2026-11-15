@@ -640,6 +640,18 @@ export class ZoneScene extends Phaser.Scene {
   }
   private get sorteCoffre(): SorteCoffre { return this.test ? 'test' : this.perso?.hardcore ? 'hardcore' : 'normal'; }
   /** Sauvegarde automatique du perso (toutes les 5 s, en quittant la page, en revenant à l'accueil). */
+  /** « Arène : » 9B : bouton « Encore ! » pendant les 10 s avant le retour devant la Gardienne. */
+  private boutonEncore: HTMLButtonElement | null = null;
+  private encoreArene(montrer: boolean) {
+    this.boutonEncore?.remove(); this.boutonEncore = null;
+    if (!montrer) return;
+    const b = document.createElement('button');
+    b.textContent = 'Encore !';
+    b.style.cssText = 'position:fixed;left:50%;bottom:22%;transform:translateX(-50%);z-index:30;padding:10px 26px;border-radius:8px;border:1px solid #c08a3e;background:linear-gradient(#a8722e,#7a4f1c);color:#fff3dc;font:800 16px Lexend,sans-serif;cursor:pointer;box-shadow:0 4px 18px #000a';
+    b.addEventListener('click', () => { this.world.encoreAmes(); this.encoreArene(false); });
+    document.body.appendChild(b); this.boutonEncore = b;
+    window.setTimeout(() => { if (this.boutonEncore === b) this.encoreArene(false); }, 9500);
+  }
   private sauver = () => {
     if (this.miroir) return;   // coop, chez l'invité : le monde est celui de l'hôte, rien à garder
     if (this.test && this.world) {
@@ -1565,6 +1577,7 @@ export class ZoneScene extends Phaser.Scene {
           else if (this.windows && e.service === 'forgemagie') this.windows.ouvrirForge();
           else if (this.windows && e.service === 'garde-robe') this.windows.show('garde');
           else if (this.windows && e.service === 'almanax') this.windows.show('almanax');
+          else if (this.windows && e.service === 'arene') this.windows.show('arene');   // « Arène : » 1A-3D
           break;
         case 'incantation': this.hud.toast('Havre-Sac : incantation…'); break;
         case 'arche': this.windows?.show('zaap'); break;
@@ -1579,6 +1592,14 @@ export class ZoneScene extends Phaser.Scene {
         case 'codex': { const o = POUVOIR_PAR_ID[e.id], c = PC_PAR_ID[e.id]; this.hud.loot(`Codex : ${o ? o.sort : c ? c.nom : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id} enregistré`, '#f08a2c');
           this.windows?.noteForge({ t: `Pouvoir enregistré dans le Codex : ${o ? o.officiel : c ? c.nom : LEGENDARY[e.id as keyof typeof LEGENDARY]?.name ?? e.id}`, c: 'ok' }); break; }
         case 'ameRelachee': this.hud.banner(`${GAME_DATA.monsters[e.monster]?.name ?? 'Archimonstre'}\nrevient se venger !`, 1600, true); break;
+        // Arène des âmes (« Arène : ») : défi annoncé, vagues, défi raté, fin (record, enchaînement, « Encore ! »)
+        case 'areneAmesDebut': this.encoreArene(false); this.hud.toast(`Défi : ${e.defi}. ${e.texte}`, 3600); break;
+        case 'areneAmesVague': this.hud.banner(`${e.total > 1 ? `Âme ${e.n} / ${e.total}\n` : ''}${GAME_DATA.monsters[e.monster]?.name ?? 'Une âme'}${e.corrompue ? ' corrompue !' : ' revient se venger !'}`, 1600, true); break;
+        case 'areneAmesDefi': this.hud.toast(`Défi raté : ${e.nom}`, 2200); break;
+        case 'areneAmesFin':
+          if (!e.victoire) { this.hud.banner('L\'arène t\'a vaincu\nretour devant la Gardienne', 2200); break; }
+          this.hud.banner(`Arène gagnée · ${chrono(e.temps)}${e.record ? ' · record !' : ''}\n${e.reussi ? `Défi réussi (${e.defi}) : butin en plus` : `Défi raté (${e.defi})`}${e.chaine ? ' · grand coffre' : ''}`, 3000);
+          this.encoreArene(e.encore); this.sauver(); this.windows?.refresh(); break;
         case 'capture': this.hud.loot(`${e.ame ? ITEMS.resources[e.ame]?.name ?? 'Âme capturée' : `${GAME_DATA.monsters[e.monster]?.name ?? 'Archimonstre'} capturé`}${e.neuf && GAME_DATA.monsters[e.monster]?.archiDe ? ` (nouvelle · ${this.world.player.ames.filter(a => GAME_DATA.monsters[a]?.archiDe).length} / ${NB_ARCHIS})` : e.neuf ? ' (nouvelle)' : ''}`, '#ffd27a'); this.windows?.refresh(); break;
         case 'dofusGagne': this.hud.loot(`${PORTABLE(e.id)?.nom ?? 'Dofus'} obtenu ! ${TROPHEES[e.id] && !this.world.player.dofusPortes.includes(e.id) ? 'Il est dans ton sac (fenêtre des Dofus, onglet Trophées)' : 'Il est dans tes emplacements de Dofus (Inventaire)'}`, '#e8c76b'); this.sauver(); this.windows?.refresh(); break;
         case 'dofusPassif': if (e.dofus === 'argente') this.hud.loot(`Souvenir d'Argent : +${e.n ?? 0} PV`, '#e8c76b'); break;   // le bouclier du Cacao se voit déjà (bouclier violet)

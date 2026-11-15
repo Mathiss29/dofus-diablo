@@ -181,6 +181,11 @@ export type SimEvent =
   | { k: 'capture'; monster: string; neuf: boolean; /** objet reçu (« Âme capturée : … », Archis 6A) */ ame?: string }
   /** « Archis : » 7B : une âme relâchée dans l'arène des âmes du Bastion. */
   | { k: 'ameRelachee'; monster: string; x: number; y: number }
+  /** Arène des âmes (« Arène : ») : départ (âmes, défi), chaque vague, défi raté, fin (victoire ou échec, record, enchaînement, « Encore ! »). */
+  | { k: 'areneAmesDebut'; ames: string[]; defi: string; texte: string }
+  | { k: 'areneAmesVague'; n: number; total: number; monster: string; corrompue: boolean; x: number; y: number }
+  | { k: 'areneAmesDefi'; reussi: boolean; nom: string }
+  | { k: 'areneAmesFin'; victoire: boolean; temps: number; record: boolean; defi: string; reussi: boolean; chaine: boolean; encore: boolean; ames: number }
   | { k: 'impression'; uid: number; id: string }
   /** Collection d'apparences (1C) : premier exemplaire d'une coiffe, cape ou bouclier brisé ou recyclé. */
   | { k: 'apparence'; id: string; /** « Apparats : » 3A */ rarete?: Rarity }
