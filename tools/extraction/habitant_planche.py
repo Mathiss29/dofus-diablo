@@ -5,11 +5,13 @@ python habitant_planche.py <persos> '<look>' <sortie> [nb_images_max]
            et les squelettes bone_1-movement / bone_1-static (AnimMarche, AnimStatiqueExplo0).
 Écrit <sortie>/<nom>.json + <nom>.avif (atlas « trimmed », même cellule et même pied que perso_planche.py).
 Sert aux habitants qui se promènent au Bastion des Douze (maquette Ville 5F) : src/data/passants.json, src/sim/passants.ts.
-Variable BREEDS = breeds.json (data_dump.py) : couleurs de la classe quand le look n'en donne pas. Variable SCALE (défaut 0.5 : les habitants sont plus nombreux que le joueur, planches plus légères)."""
+Variable BREEDS = breeds.json (data_dump.py) : couleurs de la classe quand le look n'en donne pas. Variable SCALE (défaut 0.5 : les habitants sont plus nombreux que le joueur, planches plus légères).
+Variable HD=2 (15 nov. 2026, toutes les planches d'habitants) : dessinée 2 fois plus grand et `meta.hd` écrit, le jeu la réduit d'autant (EntityView.hd)."""
 import json, os, re, subprocess, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 persos, look, out = sys.argv[1], sys.argv[2], sys.argv[3]
+HD = float(os.environ.get('HD') or 1)
 MAXN = int(sys.argv[4]) if len(sys.argv) > 4 else 32
 os.makedirs(out, exist_ok=True)
 
@@ -50,7 +52,11 @@ frames = {k: min(MAXN, n) for k, n in counts.items()}
 nom = os.path.basename(os.path.normpath(out))
 raw = os.path.join(work, nom + '_raw')
 env = dict(os.environ, BOX='-260,-1000,260,120')
-subprocess.run(['node', os.path.join(HERE, 'render.cjs'), scene, '-', raw, ','.join(f'{k}:{n}' for k, n in frames.items()), '1', os.environ.get('SCALE', '0.5')],
+subprocess.run(['node', os.path.join(HERE, 'render.cjs'), scene, '-', raw, ','.join(f'{k}:{n}' for k, n in frames.items()), '1', str(float(os.environ.get('SCALE', '0.5')) * HD)],
                check=True, env=env, cwd=HERE)
 subprocess.run([sys.executable, os.path.join(HERE, 'trim_pack.py'), raw, os.path.join(out, nom), '4096', '4096'], check=True, env={**os.environ, 'FORMAT': 'AVIF'})
+if HD != 1:
+    j = json.load(open(os.path.join(out, nom) + '.json'))
+    for t in [j] + j.get('textures', []): t.setdefault('meta', {})['hd'] = int(HD) if HD == int(HD) else HD   # Phaser lit le `meta` du haut
+    json.dump(j, open(os.path.join(out, nom) + '.json', 'w'))
 print(nom, frames)
