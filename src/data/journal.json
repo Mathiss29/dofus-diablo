@@ -2232,7 +2232,8 @@
         "En coulisses": [
           "Un test bloque désormais toute mise à jour où un sort n'aurait pas son geste ou son effet.",
           "Un test vérifie que chaque repère de la carte mène quelque part et que chaque bateau a le sien.",
-          "Campagne ouverte : les anciennes quêtes principales restent jouables, en quêtes secondaires."
+          "Campagne ouverte : les anciennes quêtes principales restent jouables, en quêtes secondaires.",
+          "Essai de la MAJ en ligne : en groupe, Incarnam et tout le continent se jouent sur le serveur."
         ]
       }
     }

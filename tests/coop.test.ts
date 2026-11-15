@@ -80,12 +80,13 @@ describe('coop : instantanés de l’hôte et monde miroir de l’invité', () =
     expect(tout).toBeLessThan(60_000);
   });
 
-  it('les entrées d’un invité gardent le combat et, en monde partagé, parler aux PNJ ; jamais Zaap, Havre-Sac ni outils de test', () => {
+  // « En ligne : » 4B (2026-11-15) : Zaap et Havre-Sac passent aussi (le Havre-Sac fait sortir de la partie à plusieurs)
+  it('les entrées d’un invité gardent le combat, parler aux PNJ, le Zaap et le Havre-Sac ; jamais les outils de test', () => {
     const e = entreeInvite({ move: { x: 0, y: 0 }, aim: { x: 1, y: 2 }, pressed: 'attaque', talk: 'emp', zaap: 1, havreSac: true, test: [] } as never);
     expect(e.talk).toBe('emp');
     expect(e).not.toHaveProperty('test');
-    expect(e).not.toHaveProperty('zaap');
-    expect(e).not.toHaveProperty('havreSac');
+    expect(e.zaap).toBe(1);
+    expect(e.havreSac).toBe(true);
     expect(e.pressed).toBe('attaque');
     expect(entreeInvite(null).move).toEqual({ x: 0, y: 0 });
   });

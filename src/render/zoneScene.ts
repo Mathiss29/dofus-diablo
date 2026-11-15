@@ -82,7 +82,7 @@ import { heureParis } from './heure';
 import { VivantView } from './vivantView';
 import { CalquesTest } from './calquesTest';
 import { REGLAGES_TEST, type CommandeTest } from '../sim/outilsTest';
-import { Coop } from './coop';
+import { Coop, essaiEnLigne, MONDES_SERVEUR } from './coop';
 import { appliquerInstantane, lisserMiroir } from '../sim/miroir';
 import { EnLigne, type MessageChat } from './presence';
 import { Compte as CompteEnLigne } from './compte';
@@ -505,7 +505,7 @@ export class ZoneScene extends Phaser.Scene {
     this.miroir = Coop.miroir;
     const wc = this.world;
     Coop.attacher({ world: wc, annonce: t => this.hud.toast(t), nom: this.perso?.nom ?? '', sauver: () => this.sauver(),
-      allerA: (zone, position, arrivee, sacHote) => { if (this.world === wc) this.scene.restart(zone ? { slot: this.slot, zone, position, arrivee, sacHote } : { slot: this.slot }); } });
+      allerA: (zone, position, arrivee, sacHote, transit) => { if (this.world === wc) this.scene.restart(zone ? { slot: this.slot, zone, position, arrivee, sacHote, ...transit } : { slot: this.slot }); } });
     this.events.once('shutdown', () => Coop.detacher(wc));
     // Présence en ligne (Bastion partagé) : seulement avec un perso du compte, hors partie de test et hors vitrine
     if (this.perso && persosEnLigne() && !this.test && !this.vitrine && !this.essai && this.slot >= 0) {
@@ -515,10 +515,15 @@ export class ZoneScene extends Phaser.Scene {
       EnLigne.onInvitation = (de, g) => montrerInvitation(de, 't\'invite dans son groupe', () => EnLigne.repondreGroupe(g, true), () => EnLigne.repondreGroupe(g, false));
       EnLigne.onDonjon = (de, code, lieu) => montrerInvitation(de, lieu === 'Incarnam' ? 'te propose de jouer ensemble à Incarnam' : `part en donjon${lieu ? ` (${lieu})` : ''}`, () => {
         const j = CompteEnLigne.jeton; if (!j) return;
-        if (Coop.etat !== 'hors') { this.hud.toast('Quitte d\'abord ton donjon (Social › Groupe)'); return; }
+        if (Coop.etat !== 'hors' && !Coop.zoneMonde) { this.hud.toast('Quitte d\'abord ton donjon (Social › Groupe)'); return; }
         Coop.rejoindre(code, { jeton: j, emplacement: this.slot });
       });
       EnLigne.onInfo = t => this.hud.toast(t);
+      // « En ligne : » 1A : en groupe, le monde ouvert se joue sur le serveur (celui du groupe) ; quitter le groupe = retour seul sur son PC
+      const versGroupe = () => { if (this.world === wc) this.versMondeGroupe(); };
+      const off = EnLigne.ecouter(versGroupe);
+      this.events.once('shutdown', () => off());
+      versGroupe();
       this.hud.pastilleSocial = demandesEnAttente;
       // bulles au-dessus des têtes (Social 4B)
       const bu = this.bullesChat = new BullesChat(this);
@@ -682,6 +687,20 @@ export class ZoneScene extends Phaser.Scene {
     p.lieu = this.world.area?.name ?? (this.world.dansHavreSac ? 'Havre-Sac' : this.world.dansBastion ? this.world.zone.name : p.lieu);
     sauverPerso(this.slot, p); sauverBestiaire(this.bestiaire);
   };
+  /** Dernier essai d'entrer dans le monde du groupe (performance.now) : pas plus d'un toutes les 10 s après un refus. */
+  private essaiMonde = -1e9;
+  /** « En ligne : » 1A + 5A : membre d'un groupe dans une zone du monde ouvert tenue par le serveur : on passe dans le monde du groupe.
+   *  Plus de groupe alors qu'on y joue : retour seul, sur son PC, là où le serveur a sauvé le perso. */
+  private versMondeGroupe() {
+    if (!essaiEnLigne() || this.test || this.vitrine || this.essai || this.slot < 0 || !this.perso) return;
+    const g = EnLigne.groupe, enGroupe = !!g && g.membres.length >= 2;
+    if (Coop.miroir && Coop.zoneMonde) { if (!enGroupe && Coop.etat === 'salon') { this.hud.toast('Tu n’es plus en groupe : tu continues seul'); Coop.quitter(); } return; }
+    const j = CompteEnLigne.jeton, t = performance.now();
+    if (!j || !enGroupe || Coop.etat !== 'hors' || this.perso.hardcore || !MONDES_SERVEUR.has(this.zoneId) || this.world.arene || t - this.essaiMonde < 10_000) return;
+    this.essaiMonde = t;
+    this.hud.toast('Tu rejoins le monde de ton groupe');
+    Coop.mondeGroupe(this.zoneId, { jeton: j, emplacement: this.slot });
+  }
   /** Retour à l'écran d'accueil (main.ts relance la partie en vitrine). */
   private versAccueil(page?: 'persos') { this.sauver(); this.game.events.emit('accueil', page); }
 

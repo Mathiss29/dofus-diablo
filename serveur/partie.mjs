@@ -48,12 +48,15 @@ export class Partie {
   /** @param {any} S la simulation chargée ; envoyer(num, données) parle à un joueur du salon. */
   /** sauver(compte, perso) : écrit le perso d'un compte (comptes.mjs) ; absent = rien n'est gardé. */
   /** o.donjonFini(nom, temps, membres) : fin d'un donjon (Ladder 2D), avec les persos de comptes encore là. */
-  /** o.monde : Incarnam en monde ouvert, chacun avec ses quêtes, sa place et son point de retour (sinon une arène de donjon).
+  /** o.monde : un monde ouvert (true = Incarnam, ou le nom de la zone : 'incarnam', 'astrub' = tout le continent), chacun avec ses
+   *  quêtes, sa place et son point de retour (sinon une arène de donjon). « En ligne : » 1A : chaque groupe a le sien.
    *  o.arene : tag de l'arène (arenesDisponibles), la Crypte par défaut. */
   constructor(S, envoyer, seed = Math.floor(Math.random() * 2 ** 31), sauver = null, o = {}) {
     this.S = S; this.envoyer = envoyer; this.seed = seed; this.sauver = sauver; this.depuisSauvegarde = 0;
     this.donjonFini = o.donjonFini ?? null;
     this.monde = !!o.monde;
+    /** Zone du monde ouvert tenu ici (« En ligne : » 1A) ; null pour une arène de donjon. */
+    this.zoneMonde = this.monde ? (typeof o.monde === 'string' && S.mondes[o.monde] ? o.monde : 'incarnam') : null;
     const a = arenesDisponibles(S).find(x => x.tag === o.arene) ?? arenesDisponibles(S).find(x => x.tag === PARTIE.arene);
     this.arene = this.monde ? null : a;
     this.w = null;
@@ -95,13 +98,20 @@ export class Partie {
     const source = d.compte ? d.compte.perso : d;
     const classe = typeof source.classe === 'string' && S.GAME_DATA.classes[source.classe] ? source.classe : 'iop';
     const brut = source.etat && typeof source.etat === 'object' ? source.etat : null;
-    // monde ouvert : sa vraie place s'il était à Incarnam ; sinon (et dans l'arène) il arrive à côté des autres
-    const chezLui = this.monde && brut?.zone === 'incarnam';
-    const etat = brut ? { ...brut, zone: chezLui ? 'incarnam' : '__coop', havreSac: undefined } : null;
+    // monde ouvert : sa vraie place s'il était déjà dans ce monde ; arrivé par une porte (d.arrivee) : de l'autre côté de la porte ;
+    // sinon (et dans l'arène) il arrive à côté des autres
+    const chezLui = this.monde && brut?.zone === this.zoneMonde;
+    const arrivee = this.monde && Array.isArray(d.arrivee) && typeof d.arrivee[0] === 'string' ? [d.arrivee[0].slice(0, 60), Number(d.arrivee[1]) || 0] : null;
+    // arrivé par un Zaap ou à une position donnée (Zaap d'une autre zone, sortie du Havre-Sac)
+    const vec = v => v && typeof v === 'object' && Number.isFinite(v.x) && Number.isFinite(v.y) ? { x: v.x, y: v.y } : undefined;
+    const transit = this.monde && !arrivee ? { zaap: typeof d.zaap === 'string' ? d.zaap.slice(0, 80) : undefined, position: vec(d.position),
+      point: d.point && typeof d.point === 'object' && typeof d.point.name === 'string' && vec(d.point) ? { name: d.point.name.slice(0, 80), ...vec(d.point) } : undefined,
+      retour: d.retour && typeof d.retour === 'object' ? d.retour : undefined } : null;
+    const etat = brut ? { ...brut, zone: chezLui ? this.zoneMonde : '__coop', havreSac: undefined } : null;
     const quetes = this.monde ? { reprise: brut?.quetes && typeof brut.quetes === 'object' ? brut.quetes : { enCours: [], finies: [], etapesFinies: [], suivie: null, decouvertes: [], vaincus: [], objets: {} } } : undefined;
     let q;
     if (!this.w) {
-      const zone = this.arene?.zone ?? 'incarnam';
+      const zone = this.arene?.zone ?? this.zoneMonde ?? 'incarnam';
       // donjon : seule l'arène compte, pas de monstres dans le reste du monde (Astrub en a plus de 4 000)
       this.w = new S.World({ data: S.GAME_DATA, zone, map: new S.WorldGrid(S.mondes[zone]), seed: this.seed, classId: classe, items: S.ITEMS, partieServeur: true,
         ...(this.monde ? { quetes: S.QUETES, reprise: quetes.reprise, zonesVues: Array.isArray(brut?.zonesVues) ? brut.zonesVues : [] } : { sansGroupes: true }) });
@@ -117,7 +127,9 @@ export class Partie {
       q = this.w.ajouterJoueur(classe, quetes);
     }
     if (etat) { try { this.w.commeJoueur(q, () => S.restaurerJoueur(this.w, etat)); } catch (e) { console.warn('partie : perso illisible', e.message); } }
-    if (this.w.players[0] !== q && !chezLui) { const f = this.w.map.nearestFree(this.w.players[0].x + 40, this.w.players[0].y); q.x = f.x; q.y = f.y; }
+    if (arrivee) this.w.commeJoueur(q, () => this.w.arriver(arrivee));
+    else if (transit && (transit.zaap || transit.position || transit.retour)) this.w.commeJoueur(q, () => this.w.sortieHavreSac(transit));
+    else if (this.w.players[0] !== q && !chezLui) { const f = this.w.map.nearestFree(this.w.players[0].x + 40, this.w.players[0].y); q.x = f.x; q.y = f.y; }
     q.hp = q.maxHp;
     q.nom = typeof source.nom === 'string' ? source.nom.slice(0, 20) : '';
     m.joueur = q.id; m.em = new S.Emetteur(q.id); m.pret = false;
@@ -133,7 +145,7 @@ export class Partie {
       this.reste -= PARTIE.pas;
       const entrees = {};
       for (const m of this.membres.values()) if (m.joueur != null) {
-        entrees[m.joueur] = { ...m.entree, pressed: m.pressed, potion: m.potion, talk: null, reponse: null, versPortail: null, ...m.une };
+        entrees[m.joueur] = { ...m.entree, pressed: m.pressed, potion: m.potion, talk: null, reponse: null, versPortail: null, recolte: null, atelier: null, versZaap: null, zaap: null, havreSac: false, coffre: false, boisson: false, ...m.une };
         m.pressed = null; m.potion = false; m.une = {};
       }
       const premier = w.players[0];
@@ -152,7 +164,8 @@ export class Partie {
         const siens = q === w.players[0] ? evs.filter(e => S.EVENEMENTS_PERSONNELS.has(e.k)) : w.evenementsDe(q);
         for (const e of siens) {
           if (e.k !== 'changeZone') m.em.noterPerso(e);
-          else if (!m.sorti) { m.sorti = true; this.envoyer(num, { k: 'sortie', vers: { zone: e.zone, arrivee: e.arrivee } }); }
+          // « En ligne : » 5A : tout ce qu'il faut pour arriver de l'autre côté (porte, Zaap, position, point de retour, Havre-Sac)
+          else if (!m.sorti) { m.sorti = true; this.envoyer(num, { k: 'sortie', vers: { zone: e.zone, arrivee: e.arrivee, position: e.position, point: e.point, zaap: e.zaap, retour: e.retour } }); }
         }
       }
       // Ladder 2D + 4B : chrono du donjon, compté seulement ici (partie tenue par le serveur)
