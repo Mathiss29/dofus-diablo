@@ -42,13 +42,13 @@ export class Transparence {
   readonly calque: Phaser.GameObjects.RenderTexture;
   private readonly formes: Phaser.GameObjects.RenderTexture;
   private readonly sil = new Map<number, Phaser.GameObjects.Sprite>();
-  private readonly copie: Phaser.GameObjects.Image;
+  /** Une copie par décor qui cache : tout part en une seule passe (avant : une passe d'écran entier par décor, FPS ÷3 dans Incarnam). */
+  private readonly copies: Phaser.GameObjects.Image[] = [];
 
   constructor(private readonly scene: Phaser.Scene) {
     const cam = scene.cameras.main, W = Math.max(1, cam.width), H = Math.max(1, cam.height);
     this.calque = scene.add.renderTexture(0, 0, W, H).setOrigin(0).setScrollFactor(0).setDepth(5e5).setVisible(false);
     this.formes = scene.make.renderTexture({ x: 0, y: 0, width: W, height: H }, false).setOrigin(0);
-    this.copie = scene.make.image({}, false);
   }
 
   /** Une image de décor posée (pas le sol ni les lumières). */
@@ -240,21 +240,24 @@ export class Transparence {
         .setPosition((o.x - v.x) * z, (o.y - v.y) * z).setScale(o.scaleX * z, o.scaleY * z);
     // formes = tout l'écran SAUF le décor qui cache ; effacer ça du calque garde les silhouettes sur ce décor seulement
     this.formes.clear().fill(0xffffff, 1);
-    for (const im of this.masquants) { place(this.copie, im); this.formes.erase(this.copie); }
+    // (chaque draw/erase de Phaser = une copie de toute la texture : on leur passe une liste, une seule passe)
+    while (this.copies.length < this.masquants.length) this.copies.push(this.scene.make.image({}, false));
+    const decor = this.masquants.map((im, k) => place(this.copies[k], im));
+    this.formes.erase(decor);
     this.calque.clear();
-    let i = 0;
+    const rouges: Phaser.GameObjects.Sprite[] = [];
     for (const c of caches) {
       const s = this.sil.get(c.id);
       if (!s || !ids.has(c.id)) continue;
-      place(s, c.sprite); this.calque.draw(s); i++;
+      rouges.push(place(s, c.sprite) as Phaser.GameObjects.Sprite);
     }
-    if (i) this.calque.erase(this.formes, 0, 0);
+    if (rouges.length) { this.calque.draw(rouges); this.calque.erase(this.formes, 0, 0); }
   }
 
   destroy() {
     for (const [im] of this.fondus) if (im.active) im.setAlpha(1);
     for (const s of this.sil.values()) s.destroy();
-    this.calque.destroy(); this.formes.destroy(); this.copie.destroy();
+    this.calque.destroy(); this.formes.destroy(); for (const c of this.copies) c.destroy();
   }
 }
 

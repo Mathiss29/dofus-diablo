@@ -293,8 +293,20 @@ export class WorldGrid extends GridMap {
   }
   /** Carte Dofus sous un point du monde du jeu. */
   mapAt(wx: number, wy: number): WorldMapEntry | undefined { return this.mapOfCell(this.cellAtWorld(wx, wy)); }
-  mapByCoords(x: number, y: number): WorldMapEntry | undefined { return this.world.maps.find(m => m.x === x && m.y === y); }
-  mapByTag(tag: string): WorldMapEntry | undefined { return this.world.maps.find(m => m.tag === tag); }
+  mapByCoords(x: number, y: number): WorldMapEntry | undefined { return this.index().coords.get(x + ',' + y); }
+  /** (avant : un find sur toutes les cartes, appelé des milliers de fois par image par les portes : ~2 300 cartes depuis la 0.6) */
+  mapByTag(tag: string): WorldMapEntry | undefined { return this.index().tags.get(tag); }
+  private idx: { n: number; tags: Map<string, WorldMapEntry>; coords: Map<string, WorldMapEntry> } | null = null;
+  /** Index des cartes par tag et par coordonnées (la première carte gagne, comme l'ancien find) ; refait si la liste change de taille. */
+  private index() {
+    const ms = this.world.maps;
+    if (this.idx?.n !== ms.length) {
+      const tags = new Map<string, WorldMapEntry>(), coords = new Map<string, WorldMapEntry>();
+      for (const m of ms) { if (!tags.has(m.tag)) tags.set(m.tag, m); const k = m.x + ',' + m.y; if (!coords.has(k)) coords.set(k, m); }
+      this.idx = { n: ms.length, tags, coords };
+    }
+    return this.idx;
+  }
   /** Case de la grande grille pour la case `c` de la carte `tag` (0-559 ; une carte de n×m cartes compte nx × 14 colonnes). */
   cellOf(tag: string, c: number): number {
     const m = this.mapByTag(tag);
