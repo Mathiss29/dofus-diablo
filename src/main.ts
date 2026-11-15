@@ -10,7 +10,7 @@ import { chargerReglages } from './render/ambiance';
 import { prevenirCarteGraphique } from './render/fluidite';
 import { adresseLadder } from './render/ladder';
 import { ecranTelephone, surTelephone } from './render/telephone';
-import { demarrerManette } from './render/manette';
+import { demarrerManette, reglerControles } from './render/manette';
 
 // Compte Discord (maquette « Vrai multi : ») : lit le jeton renvoyé par le serveur (#connexion=…) avant de regarder l'adresse
 Compte.demarrer();
@@ -22,6 +22,7 @@ preparerInstallation();
 for (const f of ['400 13px Lexend', '600 13px Lexend', '700 13px Lexend', '13px Rowdies']) document.fonts?.load(f).catch(() => {});
 
 // Manette (maquette « Console : ») : lue dès l'écran d'accueil
+reglerControles(chargerReglages().controles);
 demarrerManette();
 
 // Téléphone et tablette (maquette « Accueil : » 7A) : écran léger, le jeu ne se charge que si on insiste

@@ -22,9 +22,15 @@ let jeu: BrancheJeu | null = null;
 let avant: boolean[] = new Array(NB).fill(false);
 let dernierUsage = 0, derniereSouris = 0;
 let lancee = false, enJeu = false;
+let controles: 'auto' | 'clavier' | 'manette' = 'auto';
+/** Réglage Options › Contrôles : 'clavier' coupe la manette, 'manette' la garde même quand la souris bouge. */
+export function reglerControles(c: 'auto' | 'clavier' | 'manette' | undefined) { controles = c ?? 'auto'; if (controles === 'clavier') { cacherCurseur(); cacherFocus(); } }
 
 /** Vrai si la manette a servi après la souris (le jeu vise alors avec la manette, pas avec le curseur de la souris). */
-export function manetteActive(): boolean { return dernierUsage > 0 && dernierUsage >= derniereSouris; }
+export function manetteActive(): boolean {
+  if (controles !== 'auto') return controles === 'manette';
+  return dernierUsage > 0 && dernierUsage >= derniereSouris;
+}
 export function brancherJeu(b: BrancheJeu | null) { jeu = b; }
 export function brancheActuelle() { return jeu; }
 
@@ -32,7 +38,7 @@ export function brancheActuelle() { return jeu; }
 export function demarrerManette() {
   if (lancee || typeof window === 'undefined' || !navigator.getGamepads) return;
   lancee = true;
-  addEventListener('mousemove', e => { if (e.isTrusted && (Math.abs(e.movementX) + Math.abs(e.movementY) > 2)) { derniereSouris = performance.now(); cacherCurseur(); } }, { passive: true });
+  addEventListener('mousemove', e => { if (controles !== 'manette' && e.isTrusted && (Math.abs(e.movementX) + Math.abs(e.movementY) > 2)) { derniereSouris = performance.now(); cacherCurseur(); } }, { passive: true });
   addEventListener('gamepadconnected', e => console.info('[manette]', (e as GamepadEvent).gamepad.id, (e as GamepadEvent).gamepad.mapping || 'disposition inconnue'));
   const boucle = () => { try { lire(); } catch (e) { console.error('[manette]', e); } requestAnimationFrame(boucle); };
   requestAnimationFrame(boucle);
@@ -51,7 +57,7 @@ function stick(x: number, y: number): Vec2 {
 }
 
 function lire() {
-  const g = pad();
+  const g = controles === 'clavier' ? null : pad();
   if (!g) { if (avant.some(Boolean)) avant = new Array(NB).fill(false); return; }
   const tenu = new Array(NB).fill(false);
   g.buttons.forEach((b, i) => { if (i < NB) tenu[i] = b.pressed || b.value > 0.5; });

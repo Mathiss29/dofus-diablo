@@ -1,3 +1,5 @@
+import { manetteActive } from './manette';
+import { nomCaseManette } from './manetteJeu';
 import { TEINTES } from '../sim/ecaflip';
 import { foretDuGroupe } from '../sim/sadida';
 import { STAT_NAMES, type Stat } from '../sim/items';
@@ -1242,8 +1244,14 @@ export class Hud {
     const sy0 = y0 + 30 + slot / 2, sy = sy0;
     // touches de la barre (Réglages 3A + 3C : celles choisies, écrites selon le clavier ; 5B : clic droit et gauche échangés)
     const droit = R?.deplacement === 'droit';
-    this.slots.forEach((s, i) => s.key.setText(i < 6 ? court(Touches.nomAction(`sort${i + 1}`)) : i === 6 ? (droit ? 'Clic G' : 'Clic D') : i === 7 ? court(Touches.nomAction('deplacement')) : court(Touches.nomAction(`invoc${i - 7}`))));
-    this.auto.key.setText(droit ? 'Clic D' : 'Clic'); this.potion.key.setText(court(Touches.nomAction('potion')));
+    if (manetteActive()) {   // manette (maquette « Console : ») : les boutons à la place des touches
+      const osa = p.bar[8] != null;   // Player.INVOC
+      this.slots.forEach((s, i) => s.key.setText(nomCaseManette(i, osa)));
+      this.auto.key.setText('A'); this.potion.key.setText('↓');
+    } else {
+      this.slots.forEach((s, i) => s.key.setText(i < 6 ? court(Touches.nomAction(`sort${i + 1}`)) : i === 6 ? (droit ? 'Clic G' : 'Clic D') : i === 7 ? court(Touches.nomAction('deplacement')) : court(Touches.nomAction(`invoc${i - 7}`))));
+      this.auto.key.setText(droit ? 'Clic D' : 'Clic'); this.potion.key.setText(court(Touches.nomAction('potion')));
+    }
     const drawSlot = (s: SlotView, x: number, id: string | null, sy = sy0) => {
       s.bg.setPosition(x, sy).setDisplaySize(slot, slot);
       s.zone?.setPosition(x, sy);

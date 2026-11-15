@@ -52,14 +52,22 @@ export function interactionProche(w: World, p: Player): Interaction | null {
   return best;
 }
 
-/** Boutons du jeu (schéma 3A), vers les actions de render/touches.ts. A, Start et R3 sont traités à part. */
+/** Boutons du jeu (schéma 3A), vers les actions de render/touches.ts. A, Start et RT (case « Clic D » de la barre) sont traités à part. */
 export const BOUTONS_JEU: Record<number, string> = {
-  [BTN.X]: 'sort1', [BTN.Y]: 'sort2', [BTN.B]: 'sort3', [BTN.RB]: 'sort4', [BTN.RT]: 'sort5', [BTN.LT]: 'sort6',
+  [BTN.X]: 'sort1', [BTN.Y]: 'sort2', [BTN.B]: 'sort3', [BTN.RB]: 'sort4', [BTN.LT]: 'sort5', [BTN.R3]: 'sort6',
   [BTN.LB]: 'deplacement', [BTN.BAS]: 'potion', [BTN.HAUT]: 'boisson', [BTN.GAUCHE]: 'coffre', [BTN.DROITE]: 'carteTab',
   [BTN.SELECT]: 'carte', [BTN.L3]: 'havresac',
 };
 /** Couche LT (3B) : LT maintenue, les boutons de face appellent les 4 invocations de l'Osamodas. */
-export const COUCHE_LT: Record<number, string> = { [BTN.X]: 'invoc1', [BTN.Y]: 'invoc2', [BTN.B]: 'invoc3', [BTN.A]: 'invoc4' };
+export const COUCHE_LT: Record<number, string> = { [BTN.X]: 'invoc1', [BTN.Y]: 'invoc2', [BTN.B]: 'invoc3', [BTN.A]: 'invoc4', [BTN.RB]: 'sort5' };
+
+/** Noms des boutons sur la barre de sorts quand on joue à la manette (cases 0-5 : sorts, 6 : « Clic D », 7 : déplacement, 8-11 : invocations). */
+export function nomCaseManette(i: number, osa: boolean): string {
+  if (i < 6) return ['X', 'Y', 'B', 'RB', osa ? 'LT RB' : 'LT', 'R3'][i];
+  if (i === 6) return 'RT';
+  if (i === 7) return 'LB';
+  return `LT ${['X', 'Y', 'B', 'A'][i - 8] ?? ''}`;
+}
 
 // ---------- Menu Start (4A) : 6 onglets, LB / RB pour passer de l'un à l'autre ----------
 export type OngletStart = 'inv' | 'sorts' | 'car' | 'carte' | 'quetes' | 'opt';
