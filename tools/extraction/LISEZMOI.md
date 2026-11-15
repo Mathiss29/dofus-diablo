@@ -109,6 +109,8 @@ rend chaque gfx `bones_assets_bone_<gfx>.bundle` (FX_0, ou FX_1/3/5/7 orientés)
 (render.html applique mul/add des bones ; `SKIP_MASKS=1` ignore les nœuds masques 0x40), puis écrit
 `public/assets/fx/fx_<gfx>.webp/json` et `src/data/spellfx.json`. Les gfx déjà rendus sont gardés (`FORCE=1` pour tout refaire).
 Les bundles d'effets ne sont pas dans le cache : les copier depuis le PC de Mathis.
+Garde : `tests/animations-sorts.test.ts` échoue si un sort d'une classe n'a pas son geste (looks.ts), son effet (spellfx.json),
+son `fx_<gfx>.json` dans git ou son `fx_<gfx>.webp` sur R2. Un sort sans effet officiel va dans `SANS_EFFET_OFFICIEL`, avec la raison.
 
 ## Métiers (choix 6A)
 
