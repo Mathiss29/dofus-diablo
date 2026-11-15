@@ -67,14 +67,21 @@ export class EntityView {
       for (const name of names) { const k = name.replace(/_\d+$/, ''); this.counts[k] = (this.counts[k] || 0) + 1; }
       // meta.origin = pied du personnage dans la cellule de la planche (écrit par trim_pack.py)
       const meta = (tex.customData as { meta?: { cell: number[]; origin: number[] } }).meta ?? { cell: [1, 1], origin: [0.5, 0.9] };
+      this.k = 1 / EntityView.hd(tex);   // planche dessinée en 2x (PNJ, habitants) : réduite d'autant, donc plus fine
       this.sprite = scene.add.sprite(0, 0, look.atlas, names[0])
-        .setOrigin(meta.origin[0] / meta.cell[0], meta.origin[1] / meta.cell[1]).setScale(look.scale);
+        .setOrigin(meta.origin[0] / meta.cell[0], meta.origin[1] / meta.cell[1]).setScale(look.scale * this.k);
     }
     this.bar = scene.add.graphics();
     // ombre dessinée par le jeu (celle de Dofus laissait une croix)
     this.shadow = scene.add.image(0, 0, EntityView.ombre(scene));
     this.fond = scene.add.image(0, 0, '__WHITE').setOrigin(0).setTint(0x000000).setAlpha(0.6).setVisible(false);
     this.vie = scene.add.image(0, 0, '__WHITE').setOrigin(0).setVisible(false);
+  }
+
+  /** Finesse d'une planche : `meta.hd` = nombre de fois qu'elle est dessinée plus grand que l'échelle d'origine
+   *  (monster_planche.py / habitant_planche.py HD=2). Le sprite est réduit d'autant : même taille, deux fois plus de détails. */
+  static hd(tex: Phaser.Textures.Texture): number {
+    return (tex.customData as { meta?: { hd?: number } } | undefined)?.meta?.hd ?? 1;
   }
 
   /** Texture de l'ombre au sol : une ellipse noire pleine, faite une fois. */

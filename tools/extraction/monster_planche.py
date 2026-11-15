@@ -5,6 +5,10 @@
 import sys, os, json, glob, subprocess, tempfile, shutil
 HERE = os.path.dirname(os.path.abspath(__file__))
 SCALE = os.environ.get('SCALE', '2.5')
+# HD=2 : planche dessinée 2 fois plus grand (SCALE x HD) et `meta.hd` écrit dans le JSON ; le jeu la réduit d'autant
+# (EntityView.hd) : même taille à l'écran, aussi nette que le perso du joueur (PNJ, 15 nov. 2026). SCALE reste l'échelle d'origine.
+HD = float(os.environ.get('HD') or 1)
+if HD != 1: SCALE = str(round(float(SCALE) * HD, 4))
 
 def main(bone, name, bones, out='public/assets/sprites', atks='0,1'):
     tmp = tempfile.mkdtemp(); b = os.path.join(tmp, 'b')
@@ -56,7 +60,14 @@ def main(bone, name, bones, out='public/assets/sprites', atks='0,1'):
     png = os.path.join(out, name + '.png')
     if os.path.exists(png): os.remove(png)   # trim_pack écrit aussi la planche (AVIF)
     meta = json.load(open(raw + '.json'))['meta']
+    if HD != 1: marquer_hd(os.path.join(out, name + '.json'), HD)
     shutil.rmtree(tmp)
     print(name, 'attaques', {k: f'{s} / {n}' for k, (s, n) in shots.items()}, 'cellule', meta['cell'])
+
+def marquer_hd(js, hd):
+    j = json.load(open(js))
+    v = int(hd) if hd == int(hd) else hd
+    for t in [j] + j.get('textures', []): t.setdefault('meta', {})['hd'] = v   # Phaser lit le `meta` du haut (texture.customData)
+    json.dump(j, open(js, 'w'))
 
 if __name__ == '__main__': main(*sys.argv[1:])

@@ -2219,7 +2219,8 @@
           "Le Chienchien donne bien +20 Sagesse, et 13 familiers retrouvent leur PA, PM, Portée ou Invocation officiels.",
           "Les bonus de panoplie ne débordent plus sous le perso et ne cachent plus la ligne Apparence.",
           "Tchat : survoler le tchat ne ramène plus au début, il reste sur les derniers messages.",
-          "Le Bestiaire s'ouvre sans geler : les portraits se chargent au fil de la lecture."
+          "Le Bestiaire s'ouvre sans geler : les portraits se chargent au fil de la lecture.",
+          "PNJ et habitants deux fois plus fins : aussi nets que ton perso, au Bastion comme ailleurs."
         ],
         "En coulisses": [
           "Un test bloque désormais toute mise à jour où un sort n'aurait pas son geste ou son effet.",

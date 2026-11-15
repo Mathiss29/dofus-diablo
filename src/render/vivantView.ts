@@ -56,7 +56,7 @@ export class VivantView {
     if (!h) {
       if (!this.planche(a)) return;
       const n = this.scene.textures.get(a).has('AnimStatiqueExplo0_1_0') ? 'AnimStatiqueExplo0_1_0' : this.scene.textures.get(a).getFrameNames()[0];
-      h = { sp: this.scene.add.sprite(0, 0, a, n).setOrigin(0.5, 0.85).setScale(0.82 * 0.7 / 0.5), barre: this.scene.add.graphics(), nom: this.scene.add.text(0, 0, nom, { ...STYLE, color: '#ffe3b0' }).setOrigin(0.5, 1) };
+      h = { sp: this.scene.add.sprite(0, 0, a, n).setOrigin(0.5, 0.85).setScale(0.82 * 0.7 / 0.5 / EntityView.hd(this.scene.textures.get(a))), barre: this.scene.add.graphics(), nom: this.scene.add.text(0, 0, nom, { ...STYLE, color: '#ffe3b0' }).setOrigin(0.5, 1) };
       this.habitants.set(id, h);
     }
     const s = ISO.toScreen(x, y), f = Math.max(0, Math.min(1, pv / 100)), w = 60, top = s.y - 130;
