@@ -59,6 +59,19 @@ export interface EffetsOuginak {
   pelage?: boolean;
   /** Espace : bond, jusqu'à la Proie sous la souris. */
   bond?: boolean;
+  /** Sorts 61-90 (« Ouginak : 6A ») — Dogue, Panique : la Proie touchée ralentit (part de vitesse) pendant t s. */
+  lentProie?: { k: number; t: number };
+  /** Panique : repousse de `cases` tout ce qui est à `rayon` cases du point visé. */
+  panique?: { cases: number; rayon: number };
+  /** Aboiement : toi ou l'allié visé courez plus vite, ni repoussés ni ralentis, pendant t s ; le prochain coup reçu au contact retire l'effet et donne un cran de Rage. */
+  aboiement?: { course: number; t: number };
+  /** Limier : sur la Proie, attire d'abord à son contact les ennemis à `rayon` cases d'elle. */
+  rassemble?: { rayon: number };
+  /** Flair : tu apparais au contact de la Proie, où qu'elle soit (demande une Proie et un cran de Rage). */
+  flair?: boolean;
+  /** Appel de la Meute : le Roquet revient `retour` s plus tôt ; sur la Proie, elle perd `erosion` de ses PV max, le Roquet bondit sur elle
+   *  et les autres joueurs sont attirés de `attire` cases vers elle ; sur soi, Roquet et alliés sont rappelés. */
+  appel?: { retour: number; erosion: number; attire: number };
 }
 /** État d'un Ouginak (Player.oug). */
 export interface EtatOuginak {
@@ -74,10 +87,12 @@ export interface EtatOuginak {
   proie: number | null; roquet: number | null; roquetT: number;
   /** Bouclier de Pelage Protecteur en cours. */
   pelage: boolean;
+  /** Aboiement : actif jusqu'à cet âge du joueur (vaut aussi pour un allié qui n'est pas Ouginak). */
+  aboieFin: number;
 }
 
 export const etatOug = (p: Player): EtatOuginak =>
-  (p.oug ??= { coupA: p.age, encaisse: [], subisN: 0, subisT: 0, croit: {}, proie: null, roquet: null, roquetT: 0, pelage: false });
+  (p.oug ??= { coupA: p.age, encaisse: [], subisN: 0, subisT: 0, croit: {}, proie: null, roquet: null, roquetT: 0, pelage: false, aboieFin: 0 });
 
 /** La Proie de ce joueur (vivante), ou null. */
 export function proieDe(p: Player, world: World): Monster | null {
@@ -117,17 +132,32 @@ export function subisOuginak(p: Player): number {
   const O = p.cls.ouginak!, o = p.oug;
   return Math.max(0.5, 1 - O.subisParEtat * Math.floor(p.rage) - (o && o.subisT > 0 ? o.subisN : 0));
 }
-/** Coup reçu (PV déjà retirés) : 3B, perdre `part` des PV max d'un coup ou en `fenetre` s donne un cran de Rage. */
-export function coupRecuOuginak(p: Player, dmg: number, world: World) {
-  const E = p.cls.ouginak!.encaisse, o = etatOug(p);
-  if (dmg <= 0) return;
+/** Aboiement actif sur ce joueur (pas repoussé). */
+export const aboie = (p: Player): boolean => !!p.oug && p.age < p.oug.aboieFin;
+/** Coup reçu (PV déjà retirés) : Aboiement retiré par un coup au contact (+1 Rage) ; 3B, perdre `part` des PV max d'un coup
+ *  ou en `fenetre` s donne un cran de Rage. Appelé pour tout joueur qui a un état Ouginak (un allié sous Aboiement aussi). */
+export function coupRecuOuginak(p: Player, dmg: number, world: World, contactCoup = false) {
+  const o = etatOug(p);
+  if (contactCoup && aboie(p)) {
+    o.aboieFin = 0; p.insensibleT = 0;
+    world.emit({ k: 'status', x: p.x, y: p.y - 70, text: 'Aboiement', color: '#e0a05a' });
+    gagnerRage(p, 1, world);
+  }
+  if (dmg <= 0 || !p.cls.ouginak) return;
+  const E = p.cls.ouginak.encaisse;
   o.encaisse = o.encaisse.filter(([t]) => p.age - t < E.fenetre);
   o.encaisse.push([p.age, dmg]);
   if (o.encaisse.reduce((a, [, d]) => a + d, 0) >= p.maxHp * E.part) { o.encaisse = []; gagnerRage(p, 1, world); }
 }
 
-/** Sort interdit en Forme Bestiale (sorts défensifs, officiel 24001). */
-export const interditBete = (p: Player, d: SpellDef | undefined): boolean => !!(p.ougBete && d?.ouginak?.defensif);
+/** Sort impossible : défensif en Forme Bestiale (officiel 24001), pas assez de Rage (« Nécessite la Rage »), Flair sans Proie. */
+export function interditBete(p: Player, d: SpellDef | undefined): boolean {
+  const O = d?.ouginak;
+  if (!O) return false;
+  if (p.ougBete && O.defensif) return true;
+  if (typeof O.consomme === 'number' && Math.floor(p.rage) < O.consomme) return true;
+  return !!O.flair && p.oug?.proie == null;
+}
 /** Portée maximale (px) en Forme Bestiale : les sorts offensifs sont ramenés à 2 cases, sauf ceux qui gardent leur portée. */
 export function porteeBete(p: Player, d: SpellDef): number | null {
   if (!p.ougBete || !d.ouginak || d.ouginak.garde || d.dmg <= 0 || d.move) return null;
@@ -141,7 +171,7 @@ export function arriveeBond(p: Player, aim: { x: number; y: number }, world: Wor
   if (Math.hypot(m.x - p.x, m.y - p.y) > p.cls.ouginak!.bond.proie * CASE) return null;
   return contact(p, m, world);
 }
-function contact(p: Player, m: Monster, world: World): { x: number; y: number } {
+function contact(p: { x: number; y: number; radius: number }, m: Monster, world: World): { x: number; y: number } {
   const d = Math.hypot(m.x - p.x, m.y - p.y) || 1, r = m.radius + p.radius + 4;
   const x = m.x - (m.x - p.x) / d * r, y = m.y - (m.y - p.y) / d * r;
   return world.walkable(x, y) ? { x, y } : world.map.nearestFree(x, y);
@@ -158,6 +188,15 @@ export function avantImpactOuginak(p: Player, id: string, d: SpellDef, s: { tx: 
     const c = contact(p, m, world);
     world.emit({ k: 'bondOug', x: p.x, y: p.y, tx: c.x, ty: c.y });
     p.x = c.x; p.y = c.y; s.tx = m.x; s.ty = m.y;
+  }
+  if (O.rassemble) {   // Limier : les ennemis autour de la Proie viennent à son contact avant le coup
+    for (const q of world.monsters) {
+      if (q === m || q.dead || q.state === 'spawn' || q.intouchable || q.def.boss) continue;
+      const dd = Math.hypot(q.x - m.x, q.y - m.y), r = m.radius + q.radius + 4;
+      if (dd > O.rassemble.rayon * CASE + q.radius || dd <= r) continue;
+      const x = m.x + (q.x - m.x) / dd * r, y = m.y + (q.y - m.y) / dd * r;
+      if (world.walkable(x, y)) { q.x = x; q.y = y; }
+    }
   }
   if (O.croit) {
     const o = etatOug(p), c = o.croit[id], n = c && c.t > 0 ? c.n : 0;
@@ -191,6 +230,30 @@ export function impactOuginak(p: Player, _id: string, d: SpellDef, tx: number, t
     }
   }
   if (O.pelage) o.pelage = true;
+  if (O.panique) {   // depuis le centre : la cible elle-même ne bouge pas
+    for (const q of world.monsters) {
+      const dd = Math.hypot(q.x - tx, q.y - ty);
+      if (q.dead || q.state === 'spawn' || q.intouchable || dd < 6 || dd > O.panique.rayon * CASE + q.radius) continue;
+      const kb = O.panique.cases * 342 / q.def.mass;
+      q.kx += (q.x - tx) / dd * kb; q.ky += (q.y - ty) / dd * kb;
+    }
+  }
+  if (O.lentProie && m && (O.panique ? proieVisee(m, tx, ty, O.panique.rayon * CASE) : surProie && hits > 0)) {
+    m.haste = Math.min(m.haste, 1 - O.lentProie.k); m.hasteT = Math.max(m.hasteT, O.lentProie.t);
+  }
+  if (O.aboiement) {   // toi, ou le joueur visé
+    const q = world.players.find(j => !j.dead && Math.hypot(j.x - tx, j.y - ty) <= j.radius + CASE * 0.6) ?? p;
+    q.courir(O.aboiement.course, O.aboiement.t); q.insensibleT = Math.max(q.insensibleT, O.aboiement.t);
+    etatOug(q).aboieFin = q.age + O.aboiement.t;
+    world.emit({ k: 'status', x: q.x, y: q.y - 70, text: 'Aboiement', color: '#e0a05a' });
+  }
+  if (O.flair && m) {   // au contact de la Proie (ou sur la case visée si elle est juste à côté)
+    const c = Math.hypot(tx - m.x, ty - m.y) <= m.radius + CASE * 1.5 && Math.hypot(tx - m.x, ty - m.y) > m.radius + p.radius && world.walkable(tx, ty)
+      ? { x: tx, y: ty } : contact(p, m, world);
+    world.emit({ k: 'bondOug', x: p.x, y: p.y, tx: c.x, ty: c.y });
+    p.x = c.x; p.y = c.y; p.facing = Math.atan2(m.y - p.y, m.x - p.x);
+  }
+  if (O.appel) appelMeute(p, O.appel, tx, ty, m, world);
   if (surProie && m && hits > 0) {
     if (O.courseProie) p.courir(O.courseProie.k, O.courseProie.t);
     if (O.volVitesse) {
@@ -202,6 +265,31 @@ export function impactOuginak(p: Player, _id: string, d: SpellDef, tx: number, t
   if (O.rejoint && hits === 0) {   // Convergence sur un allié : on le rejoint
     const q = world.players.find(j => j !== p && !j.dead && Math.hypot(j.x - tx, j.y - ty) <= j.radius + CASE * 0.6);
     if (q) { const c = { x: q.x - Math.cos(p.facing) * CASE, y: q.y - Math.sin(p.facing) * CASE }; if (world.walkable(c.x, c.y)) { p.x = c.x; p.y = c.y; } }
+  }
+}
+
+/** Appel de la Meute : Roquet rechargé plus vite ; sur la Proie, érosion + la meute bondit sur elle ; sur soi, la meute revient. */
+function appelMeute(p: Player, A: NonNullable<EffetsOuginak['appel']>, tx: number, ty: number, m: Monster | null, world: World) {
+  const o = etatOug(p);
+  if (o.roquetT > 0) o.roquetT = Math.max(0, o.roquetT - A.retour);
+  if (p.cd.lance_roquet > 0) p.cd.lance_roquet = Math.max(0, p.cd.lance_roquet - A.retour);
+  const surProie = proieVisee(m, tx, ty, CASE * 0.8), surSoi = Math.hypot(tx - p.x, ty - p.y) <= p.radius + CASE * 0.8;
+  const but: { x: number; y: number; radius: number } | null = surProie ? m! : surSoi ? p : null;
+  if (!but) return;
+  if (surProie && m) {
+    const e = Math.max(1, Math.round(m.maxHp * A.erosion * (m.def.boss ? 0.25 : 1)));
+    m.maxHp = Math.max(1, m.maxHp - e); m.hp = Math.min(m.hp, m.maxHp);
+    world.emit({ k: 'status', x: m.x, y: m.y - 50, text: `−${e} PV max`, color: '#c9a0ff' });
+  }
+  const r = roquetDe(p, world);
+  if (r) {
+    const c = surProie && m ? contact(r, m, world) : { x: p.x - Math.cos(p.facing) * CASE, y: p.y - Math.sin(p.facing) * CASE };
+    if (world.walkable(c.x, c.y)) { world.emit({ k: 'bondOug', x: r.x, y: r.y, tx: c.x, ty: c.y }); r.x = c.x; r.y = c.y; }
+  }
+  for (const q of world.players) {   // coop : les autres joueurs sont attirés vers la Proie (ou vers toi)
+    if (q === p || q.dead) continue;
+    const dx = but.x - q.x, dy = but.y - q.y, d0 = Math.hypot(dx, dy), L = Math.min(A.attire * CASE * (surProie ? 1 : 0.5), Math.max(0, d0 - but.radius - q.radius - 4));
+    if (L > 0 && d0 < CASE * 12) { q.kx += dx / d0 * L * 7.13; q.ky += dy / d0 * L * 7.13; }
   }
 }
 

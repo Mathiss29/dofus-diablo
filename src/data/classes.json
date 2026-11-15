@@ -7214,6 +7214,185 @@
      }
     }
    },
+   "dogue": {
+    "name": "Dogue",
+    "dofusId": 13757,
+    "icon": 12039,
+    "element": "terre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Vole de la vie dans l'élément Terre.\nRetire de la Fuite si la cible est la Proie.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "knock": 0,
+    "dmg": 16.5,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 120,
+     "radius": 30
+    },
+    "lifesteal": 0.5,
+    "ouginak": {
+     "lentProie": {
+      "k": 0.5,
+      "t": 3
+     }
+    },
+    "v06": true
+   },
+   "panique": {
+    "name": "Panique",
+    "dofusId": 13781,
+    "icon": 12050,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Repousse les cibles depuis le centre en zone autour de la cible.\nRetire également des PM et de la Fuite à la Proie si elle est touchée.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "knock": 0,
+    "dmg": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 264,
+     "radius": 72
+    },
+    "ouginak": {
+     "panique": {
+      "cases": 2,
+      "rayon": 1.5
+     },
+     "lentProie": {
+      "k": 0.4,
+      "t": 3
+     }
+    },
+    "v06": true
+   },
+   "aboiement": {
+    "name": "Aboiement",
+    "dofusId": 13773,
+    "icon": 12052,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Augmente les PM de la cible, la rend Inébranlable et lui applique l'état Aboiement :\n• Retire les états et augmente la Rage si la cible subit des dommages en mêlée.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "knock": 0,
+    "dmg": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 168,
+     "radius": 0
+    },
+    "ouginak": {
+     "defensif": true,
+     "aboiement": {
+      "course": 0.3,
+      "t": 6
+     }
+    },
+    "v06": true
+   },
+   "limier": {
+    "name": "Limier",
+    "dofusId": 13765,
+    "icon": 12053,
+    "element": "air",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Air.\nAttire les entités vers la cible en zone avant d'appliquer les effets si c'est la Proie.\n\nLe sort n'est pas soumis aux contraintes de lancer sous Forme Bestiale.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "knock": 0,
+    "dmg": 36.0,
+    "fx": "line",
+    "hit": {
+     "shape": "point",
+     "range": 168,
+     "radius": 30
+    },
+    "ouginak": {
+     "garde": true,
+     "rassemble": {
+      "rayon": 2.5
+     }
+    },
+    "v06": true
+   },
+   "flair": {
+    "name": "Flair",
+    "dofusId": 13749,
+    "icon": 12054,
+    "element": "neutre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Téléporte le lanceur sur la première case disponible au contact de la Proie.\n\nSi la Proie est dans la zone d'effet : téléporte le lanceur sur la case ciblée.\n\nNécessite et diminue la Rage.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "knock": 0,
+    "dmg": 0,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 1000,
+     "radius": 0
+    },
+    "ouginak": {
+     "consomme": 1,
+     "flair": true
+    },
+    "v06": true
+   },
+   "appel_meute": {
+    "name": "Appel de la Meute",
+    "dofusId": 14357,
+    "icon": 12056,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Réduit le temps de relance du sort Lance-roquet du lanceur.\n• Si la cible est le lanceur : attire tous les alliés vers la cible.\n• Si la cible est la Proie : érode la cible et attire tous les alliés vers elle.\nL'attirance est plus importante si la cible est la Proie.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "knock": 0,
+    "dmg": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 264,
+     "radius": 0
+    },
+    "ouginak": {
+     "appel": {
+      "retour": 5,
+      "erosion": 0.04,
+      "attire": 2
+     }
+    },
+    "v06": true
+   },
    "bond_bete": {
     "name": "Bond de la bête",
     "icon": 12034,

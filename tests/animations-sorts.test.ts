@@ -37,6 +37,7 @@ const SANS_EFFET_OFFICIEL: Record<string, string> = {
   passage: 'Sadida : sort maison (pas de sort officiel), atterrissage dessiné',
   lance_roquet: 'Ouginak : invocation, aucun gfx officiel (le Roquet apparaît)',
   bond_bete: 'Ouginak : sort maison (17A), la ruée officielle AnimDash est dans le geste',
+  flair: 'Ouginak : téléportation, aucun gfx officiel (spellscript vide)',
 };
 
 type Ref = { gfx: number };

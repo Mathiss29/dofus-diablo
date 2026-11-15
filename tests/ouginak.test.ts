@@ -4,7 +4,7 @@ import { GAME_DATA, ITEMS } from '../src/sim/data';
 import { GridMap, type MapData } from '../src/sim/gridmap';
 import { NO_INPUT, type PlayerInput } from '../src/sim/input';
 import { World } from '../src/sim/world';
-import { proieDe, roquetDe, subisOuginak } from '../src/sim/ouginak';
+import { aboie, proieDe, roquetDe, subisOuginak } from '../src/sim/ouginak';
 
 const carte = JSON.parse(readFileSync(new URL('../public/assets/cartes/5_-27/carte.json', import.meta.url), 'utf8')) as MapData;
 const STEP = 1 / 60;
@@ -117,5 +117,58 @@ describe('Ouginak (« Classes : 14A+14C 15A+15B 16A+16B 17A », « Ouginak : 1A+
     p.pm = p.pmMax;
     w.step(STEP, { ...NO_INPUT, aim: { x: m.x, y: m.y }, pressed: 'bond_bete' }); idle(w, 0.5);
     expect(Math.hypot(p.x - m.x, p.y - m.y)).toBeLessThan(80);
+  });
+
+  it('6A sorts 61-90 : Dogue, Panique, Aboiement, Limier, Flair, Appel de la Meute', () => {
+    const w = oug(); idle(w, 0.2);
+    const p = w.player; niveau(p, 90); idle(w, 0.2);
+    for (const k of ['dogue', 'panique', 'aboiement', 'limier', 'flair', 'appel_meute']) expect(p.knows(k)).toBe(true);
+    // Dogue : vol de vie au contact, la Proie ralentit
+    const m = cible(w, p.x + 60, p.y);
+    press(w, 'proie', { x: m.x, y: m.y }); idle(w, 0.5);
+    p.hp = Math.round(p.maxHp / 2); const hp = p.hp;
+    press(w, 'dogue', { x: m.x, y: m.y }); idle(w, 0.5);
+    expect(p.hp).toBeGreaterThan(hp);
+    expect(m.haste).toBeLessThan(1);
+    // Limier : les ennemis autour de la Proie viennent à son contact
+    const v = cible(w, m.x + 100, m.y + 10);
+    const d0 = Math.hypot(v.x - m.x, v.y - m.y);
+    press(w, 'limier', { x: m.x, y: m.y }); idle(w, 0.3);
+    expect(Math.hypot(v.x - m.x, v.y - m.y)).toBeLessThan(d0 - 20);
+    // Panique : repousse ce qui entoure la cible
+    const d1 = Math.hypot(v.x - m.x, v.y - m.y);
+    press(w, 'panique', { x: m.x, y: m.y }); idle(w, 0.6);
+    expect(Math.hypot(v.x - m.x, v.y - m.y)).toBeGreaterThan(d1 + 20);
+    // Appel de la Meute sur la Proie : érosion des PV max
+    const mx = m.maxHp;
+    press(w, 'appel_meute', { x: m.x, y: m.y }); idle(w, 0.3);
+    expect(m.maxHp).toBeLessThan(mx);
+  });
+
+  it('Aboiement : inébranlable ; un coup au contact l\'arrête et donne un cran de Rage', () => {
+    const w = oug(); idle(w, 0.2);
+    const p = w.player; niveau(p, 90); p.rage = 0;
+    press(w, 'aboiement', { x: p.x, y: p.y }); idle(w, 0.4);
+    expect(aboie(p)).toBe(true);
+    p.invuln = 0; p.kx = p.ky = 0;
+    p.hurt(5, p.x + 30, p.y, w);
+    expect(Math.hypot(p.kx, p.ky)).toBe(0);
+    expect(aboie(p)).toBe(false);
+    expect(p.rage).toBe(1);
+  });
+
+  it('Flair : demande une Proie et un cran de Rage, puis tu apparais à son contact', () => {
+    const w = oug(); idle(w, 0.2);
+    const p = w.player; niveau(p, 90); p.rage = 1;
+    p.pa = 99;
+    expect(p.canStart('flair')).toBe(false);   // pas de Proie
+    const m = cible(w, p.x + 300, p.y);
+    press(w, 'proie', { x: m.x, y: m.y }); idle(w, 0.4);
+    p.rage = 0; p.pa = 99;
+    expect(p.canStart('flair')).toBe(false);   // pas de Rage
+    p.rage = 1;
+    press(w, 'flair', { x: m.x, y: m.y }); idle(w, 0.4);
+    expect(Math.hypot(p.x - m.x, p.y - m.y)).toBeLessThan(80);
+    expect(p.rage).toBe(0);
   });
 });
