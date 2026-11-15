@@ -11982,6 +11982,28 @@
    },
    "test": true
   },
+  "nouvelle_lune": {
+   "nom": "Nouvelle Lune",
+   "dofusId": 0,
+   "description": "Avec un Ouginak, achever 10 Proies d'affilée sans quitter la Forme Bestiale.",
+   "categorie": "Général",
+   "sousCategorie": "Classes",
+   "points": 20,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "10 Proies achevées d'affilée en Forme Bestiale",
+     "compteur": "nouvelleLune",
+     "n": 10
+    }
+   ],
+   "recompense": {
+    "xp": 1000,
+    "apparat": "18637",
+    "titre": "Chef de meute"
+   },
+   "test": true
+  },
   "arene_25": {
    "nom": "Vingt-cinq âmes relâchées",
    "dofusId": 0,

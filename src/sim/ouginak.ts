@@ -92,11 +92,13 @@ export interface EtatOuginak {
   /** Légendaires : âge de la dernière transformation (Pleine lune), du dernier Instinct de survie ; 2e Roquet (Meute fidèle) ;
    *  un bond sur deux gratuit en Bête (Bond de la bête) ; Roquet en vie (Course de meute). */
   beteA: number; instinctA: number; roquet2: number | null; roquet2T: number; bondPair: boolean; roquetVivant: boolean;
+  /** Succès « Nouvelle Lune » (8A) : Proies achevées d'affilée sans quitter la Forme Bestiale. */
+  serie: number;
 }
 
 export const etatOug = (p: Player): EtatOuginak =>
   (p.oug ??= { coupA: p.age, encaisse: [], subisN: 0, subisT: 0, croit: {}, proie: null, roquet: null, roquetT: 0, pelage: false, aboieFin: 0,
-    beteA: -99, instinctA: -99, roquet2: null, roquet2T: 0, bondPair: false, roquetVivant: false });
+    beteA: -99, instinctA: -99, roquet2: null, roquet2T: 0, bondPair: false, roquetVivant: false, serie: 0 });
 
 /** La Proie de ce joueur (vivante), ou null. */
 export function proieDe(p: Player, world: World): Monster | null {
@@ -351,6 +353,7 @@ export function proieAchevee(m: Monster, world: World) {
   p.oug.proie = null;
   if (p.cd.proie > 0 || p.casts.proie?.length) { p.cd.proie = 0; p.casts.proie = []; }
   world.emit({ k: 'status', x: m.x, y: m.y - 50, text: 'Proie achevée', color: '#ff9a4a' });
+  nouvelleLune(p, world);
   const cu = p.pcv('pc-ouginak-M');   // Curée : un cran de Rage et des PV
   if (cu && !p.dead) {
     gagnerRage(p, 1, world);
@@ -367,6 +370,14 @@ export function proieAchevee(m: Monster, world: World) {
     }
     if (best) marquer(p, best, world);
   }
+}
+
+/** 8A : succès « Nouvelle Lune » : 10 Proies achevées d'affilée sans quitter la Forme Bestiale (meilleure série gardée). */
+function nouvelleLune(p: Player, world: World) {
+  const o = etatOug(p);
+  o.serie = p.ougBete ? o.serie + 1 : 0;
+  const q = world.quetes;
+  if (q && p === world.players[0] && o.serie > (q.compteurs.nouvelleLune ?? 0)) q.compteurs.nouvelleLune = o.serie;   // le perso de cet écran
 }
 
 /** Coup du Roquet sur un monstre (dommages faits) : Crocs sales (légendaire) le fait saigner 3 s. */
@@ -449,7 +460,7 @@ function devenirBete(p: Player, world: World) {
   world.emit({ k: 'bete', id: p.id, x: p.x, y: p.y, on: true });
 }
 function finBete(p: Player, world: World) {
-  p.ougBete = false; p.ougTransfoT = 0;
+  p.ougBete = false; p.ougTransfoT = 0; etatOug(p).serie = 0;
   world.emit({ k: 'bete', id: p.id, x: p.x, y: p.y, on: false });
 }
 
