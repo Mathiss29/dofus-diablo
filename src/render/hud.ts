@@ -92,6 +92,8 @@ export class Hud {
     for (const i of icons) if (!scene.textures.exists(`sort_${i}`)) scene.load.image(`sort_${i}`, v(`${UI}/sorts/sort_${i}.png`));
     // Bulles d'effets actifs : icônes officielles des caractéristiques pour les malus des monstres
     for (const k of Object.values(CARAC_BULLE)) if (!scene.textures.exists(`carac_${k}`)) scene.load.image(`carac_${k}`, v(`${UI}/d3/caracs/${k}.png`));
+    // Ouginak : icônes officielles des états de Rage (stateRage1, stateRage2) et de la Proie (stateProie)
+    for (const k of ['rage1', 'rage2', 'proie']) if (!scene.textures.exists(`oug_${k}`)) scene.load.image(`oug_${k}`, v(`${UI}/ouginak/${k}.png`));
     // Auto-attaque à l'arme : icônes officielles weapon_<typeId> (arme_0 = sans arme)
     for (const t of [0, 2, 3, 4, 5, 6, 7, 8, 19, 22, 271]) if (!scene.textures.exists(`arme_${t}`)) scene.load.image(`arme_${t}`, v(`${UI}/sorts/arme_${t}.png`));
   }
@@ -192,6 +194,25 @@ export class Hud {
     this.rageLabel.setPosition(cx, y0 + 2 * c + gap + 1)
       .setText(gm ? `${gm.nom.replace('Suite Royale', 'Suite')} ${Math.ceil(gm.t)} s` : `Main (${Touches.nomAction('coffre')})`)
       .setColor(gm ? '#ffd86a' : pleine && Math.floor(this.world.time * 4) % 2 ? '#ffe9a0' : '#c9b48a');
+  }
+
+  /** Ouginak (maquette Ouginak) : les 3 crans de Rage en icônes officielles (le 3e = Forme Bestiale, rouge vif), la Proie dessous. */
+  private ragesOuginak(g: Phaser.GameObjects.Graphics, cx: number, cy: number, slot: number) {
+    const w = this.world, p = w.player, n = Math.floor(p.rage), r = 9, gap = 3, y0 = cy - slot / 2 + 2;
+    this.medImg.setVisible(false); this.medRect = null;
+    for (let i = 0; i < 3; i++) {
+      const y = y0 + r + i * (2 * r + gap), on = 2 - i < n, im = this.cartesImg[i];
+      g.fillStyle(0x15120e, 1); g.fillCircle(cx, y, r + 1.5);
+      g.lineStyle(1.5, on ? (p.ougBete ? 0xff4a3a : 0xb8503a) : 0x4a3a30, 1); g.strokeCircle(cx, y, r + 1.5);
+      const key = i === 2 ? 'oug_rage1' : 'oug_rage2';
+      if (on && im && this.scene.textures.exists(key)) {
+        im.setTexture(key).setPosition(cx, y).setDisplaySize(2 * r + 2, 2 * r + 2).setVisible(true);
+        if (p.ougBete) im.setTint(Phaser.Display.Color.GetColor(255, Math.round(120 + 60 * Math.sin(w.time * 8)), 110)); else im.clearTint();
+      }
+    }
+    const pr = p.oug?.proie != null && w.monsters.some(m => m.id === p.oug!.proie && !m.dead);
+    this.rageLabel.setPosition(cx, y0 + 3 * (2 * r + gap) - 1).setText(p.ougBete ? 'Bête' : pr ? 'Proie' : `Rage ${n}`)
+      .setColor(p.ougBete ? (Math.floor(w.time * 4) % 2 ? '#ff6a5a' : '#ffb0a0') : pr ? '#ff9a4a' : '#c9a49c');
   }
 
   /** Sadida (12A) : la forêt du groupe en 6 pastilles (Arbre terne, Feuillu vert vif, Poupée dorée), le nombre d'Infectés dessous. */
@@ -1238,8 +1259,8 @@ export class Hud {
       const ch = p.charges(id), vide = ch.max > 0 && ch.n === 0;
       const cdT = p.cd[id] ?? 0, cdMax = p.cdMax[id] || p.recharge(id);
       const cd = cdT > 0 ? cdT : vide ? ch.prochaine : 0, frac = cdT > 0 ? (cdMax ? Math.min(1, cdT / cdMax) : 0) : vide ? ch.prochaine / p.retourCharge : 0;
-      const ok = p.hasResource(id), inner = slot - 8;
-      s.icon.setPosition(x, sy).setDisplaySize(inner, inner).setTint(cd > 0 ? 0x8a8a8a : ok ? 0xffffff : 0x6f86b8);
+      const ok = p.hasResource(id), inner = slot - 8, bete = p.ougBete && !!def.ouginak?.defensif;   // Ouginak : sort défensif interdit en Bête
+      s.icon.setPosition(x, sy).setDisplaySize(inner, inner).setTint(bete ? 0x4a3030 : cd > 0 ? 0x8a8a8a : ok ? 0xffffff : 0x6f86b8);
       const gs = this.gSlots;
       if (frac > 0) horloge(gs, x, sy, inner / 2, frac);
       // 9B : pastille de charges (en bas à gauche) ; un filet bleu montre le retour de la prochaine charge.
@@ -1253,7 +1274,7 @@ export class Hud {
       const ec = this.eclats[id];
       if (ec && juice) { gs.lineStyle(3, 0xe6b85c, Math.min(1, ec / 0.5)); gs.strokeRoundedRect(x - slot / 2 - 2, sy - slot / 2 - 2, slot + 4, slot + 4, 8); }
       if (p.skill?.id === id) { g.lineStyle(2, 0xf2d36b, 1); g.strokeRoundedRect(x - slot / 2 + 1, sy - slot / 2 + 1, slot - 2, slot - 2, 6); }
-      if (p.rageFull && !def.move) { g.lineStyle(2, C.rage, 0.5 + 0.5 * Math.sin(world.time * 8)); g.strokeRoundedRect(x - slot / 2 - 1, sy - slot / 2 - 1, slot + 2, slot + 2, 7); }
+      if (p.rageFull && !def.move && cls.rage.mode !== 'bete') { g.lineStyle(2, C.rage, 0.5 + 0.5 * Math.sin(world.time * 8)); g.strokeRoundedRect(x - slot / 2 - 1, sy - slot / 2 - 1, slot + 2, slot + 2, 7); }
       const st = p.stacks[id];
       s.cd.setPosition(x, sy).setText(cd > 0 ? (cd >= 1 ? `${Math.ceil(cd)}s` : cd.toFixed(1)) : st ? `x${st.n}` : '');
       s.key.setPosition(x - slot / 2 + 4, sy - slot / 2 + 1);
@@ -1306,6 +1327,7 @@ export class Hud {
     if (cof) this.medaillon(g, pox + slot / 2 + 38, sy - 2, dt, juice);
     else if (pk) this.mainEcaflip(g, pox + slot / 2 + 34, sy, slot);
     else if (cls.sadida) this.foretSadida(g, pox + slot / 2 + 30, sy, slot);
+    else if (cls.ouginak) this.ragesOuginak(g, pox + slot / 2 + 30, sy, slot);
     else {
       g.fillStyle(C.track, 1); g.fillRoundedRect(rx - 9, ry, 18, rh, 5);
       g.fillStyle(rageCol, 1); g.fillRoundedRect(rx - 9, ry + rh * (1 - rr), 18, Math.max(4, rh * rr), 5);

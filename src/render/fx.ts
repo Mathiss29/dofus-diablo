@@ -202,6 +202,18 @@ export class FX {
       case 'ralliement':
         this.ring(e.x, e.y, 70, 12, 0x9be36a, 0.45, 6);
         break;
+      // Ouginak : Proie marquée (cercle orange), Forme Bestiale (onde rouge sombre), bond au contact de la Proie (traînée)
+      case 'proie':
+        this.ring(e.x, e.y, 50, 14, 0xff7a3c, 0.4, 5);
+        break;
+      case 'bete':
+        if (e.on) { this.ring(e.x, e.y, 10, 90, 0xc0201a, 0.55, 9); this.particles(e.x, e.y, 50, 22, 0x8a1010, 220, 0.6, 4, 180); }
+        else this.ring(e.x, e.y, 60, 10, 0x8a6a5a, 0.4, 4);
+        break;
+      case 'bondOug':
+        this.particles(e.x, e.y, 20, 8, 0xc8a080, 160, 0.35, 3, 120);
+        this.ring(e.tx, e.ty, 8, 40, 0xff9a4a, 0.3, 4);
+        break;
     }
   }
 

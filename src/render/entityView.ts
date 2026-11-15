@@ -53,6 +53,8 @@ export class EntityView {
   private cartes: Phaser.GameObjects.Graphics | null = null;
   /** Sadida 13A : icône officielle « Infecté » au-dessus du monstre (créée seulement pour eux). */
   private infecte: Phaser.GameObjects.Image | null = null;
+  /** Ouginak : icône officielle « Proie » au-dessus du monstre marqué (créée seulement pour eux). */
+  private proie: Phaser.GameObjects.Image | null = null;
 
   /** `vivant` : perso du joueur dessiné en direct depuis son squelette (apparence choisie à la création). */
   constructor(scene: Phaser.Scene, readonly look: Look, private vivant?: PersoVivant) {
@@ -119,13 +121,15 @@ export class EntityView {
   changerVivant(v: PersoVivant) { this.vivant = v; Object.assign(this.counts, v.compte); }
 
   /** Hors de l'écran : rien à dessiner (on ne recalcule pas l'animation). */
-  hide() { this.sprite.setVisible(false); this.bar.setVisible(false); this.shadow.setVisible(false); this.fond.setVisible(false); this.vie.setVisible(false); this.pieces?.setVisible(false); this.halo?.setVisible(false); this.cartes?.setVisible(false); this.infecte?.setVisible(false); }
+  hide() { this.sprite.setVisible(false); this.bar.setVisible(false); this.shadow.setVisible(false); this.fond.setVisible(false); this.vie.setVisible(false); this.pieces?.setVisible(false); this.halo?.setVisible(false); this.cartes?.setVisible(false); this.infecte?.setVisible(false); this.proie?.setVisible(false); }
   sync(e: Entity) {
     if (!this.sprite.visible) { this.sprite.setVisible(true); this.bar.setVisible(true); }
     const L = this.look, p = ISO.toScreen(e.x, e.y);
     const fd = ISO.toScreen(Math.cos(e.facing), Math.sin(e.facing));
     const arme = (e as { arme?: boolean }).arme && L.map[`${e.anim}_arme`];   // Forgelance Armé : variante qui montre la Lance en main
-    const st = arme || (L.map[e.anim] ?? L.map[e.anim.replace(/\d+$/, '')] ?? L.map.idle);   // windup1 -> windup si l'animation du sort manque
+    // Ouginak (1A) : l'animation officielle 1815 joue la transformation en Bête par-dessus le reste
+    const ougT = (e as { ougTransfoT?: number }).ougTransfoT ?? 0, transfo = ougT > 0 && !!L.map.bete;
+    const st = transfo ? L.map.bete : arme || (L.map[e.anim] ?? L.map[e.anim.replace(/\d+$/, '')] ?? L.map.idle);   // windup1 -> windup si l'animation du sort manque
     // secteur de 45° mesuré après avoir « redressé » la vue isométrique (y x 2) : 0 = droite, 2 = bas, 6 = haut
     const sector = ((Math.round(Math.atan2(fd.y * 2, fd.x) / (Math.PI / 4)) % 8) + 8) % 8;
     let o = MIRROR[sector] ?? sector, flip = sector in MIRROR;
@@ -139,7 +143,7 @@ export class EntityView {
     const a = Math.floor((st.from ?? 0) * n), b = Math.max(a + 1, Math.round((st.to ?? 1) * n));
     const idx = st.loop
       ? a + (Math.floor(e.age * (st.fps ?? 25)) % (b - a))
-      : a + Math.min(b - a - 1, Math.floor(clamp(e.animT, 0, 0.999) * (b - a)));
+      : a + Math.min(b - a - 1, Math.floor(clamp(transfo ? 1 - ougT / 0.6 : e.animT, 0, 0.999) * (b - a)));
     if (this.vivant) { const [k, f] = this.vivant.image(name, idx); this.sprite.setTexture(k, f); }
     else this.sprite.setFrame(`${name}_${idx}`);
     // Enutrof 16C : le coffre au trésor grossit à chaque palier, et dore à partir de l'Or
@@ -152,6 +156,8 @@ export class EntityView {
     if (arbre && !sadi.sadi!.feuillu) kc *= 0.72;
     const vie = arbre && !!sadi.sadi!.vie;   // Arbre de Vie : plus grand, doré
     if (vie) kc *= 1.2;
+    const bete = !!(e as { ougBete?: boolean }).ougBete;   // Ouginak en Forme Bestiale (1A) : +15 %, rouge sombre
+    if (bete) kc *= 1.15 - (transfo ? 0.15 * ougT / 0.6 : 0);
     let sy = L.scale * this.k * kc, alpha = 1;
     if (e.anim === 'idle') sy *= 1 + Math.sin(e.age * 4) * 0.02;
     if (e.anim === 'spawn') alpha = e.animT;
@@ -164,6 +170,7 @@ export class EntityView {
     this.sprite.setPosition(pp.x, pp.y).setDepth(p.y);
     if (e.flash > 0) this.sprite.setTintFill(0xffffff);
     else if (sur) { const k = 0.5 + 0.5 * Math.sin(EntityView.temps * 7); this.sprite.setTint(mulTint(Phaser.Display.Color.GetColor(255, Math.round(150 + 60 * k), Math.round(90 + 60 * k)), EntityView.ambiance)); }   // 6B : surcharge, il rougeoie
+    else if (bete) { const k = 0.5 + 0.5 * Math.sin(EntityView.temps * 5); this.sprite.setTint(mulTint(Phaser.Display.Color.GetColor(255, Math.round(150 + 40 * k), Math.round(140 + 30 * k)), EntityView.ambiance)); }
     else if (vie) this.sprite.setTint(mulTint(Phaser.Display.Color.GetColor(255, Math.round(225 + 20 * Math.sin(EntityView.temps * 2.5 + e.id)), 150), EntityView.ambiance));
     else if (arbre) this.sprite.setTint(mulTint(sadi.sadi!.feuillu ? Phaser.Display.Color.GetColor(Math.round(215 + 25 * Math.sin(EntityView.temps * 3 + e.id)), 255, Math.round(200 + 25 * Math.sin(EntityView.temps * 3 + e.id))) : 0x9c9c84, EntityView.ambiance));
     else if ((e as Monster).dore) { const k = 0.5 + 0.5 * Math.sin(EntityView.temps * 4 + e.id); this.sprite.setTint(mulTint(Phaser.Display.Color.GetColor(255, Math.round(205 + 25 * k), Math.round(90 + 50 * k)), EntityView.ambiance)); }   // 0.6 (22B) : monstre doré
@@ -180,7 +187,11 @@ export class EntityView {
     // « Archis : » 2C : halo doré au sol, qui respire, visible de loin
     // 0.5 : halo doré des archimonstres, violet des envahisseurs (5B), éclatant pour la Gelée Royale qui brille (1B)
     const mo = e as Monster, brille = !!mo.brille && !mo.intouchable;
-    if (mo.def?.archiDe || mo.envahi || brille) {
+    if (bete) {   // aura rouge sombre au sol de la Bête
+      const h = this.halo ??= this.sprite.scene.add.image(0, 0, EntityView.haloDore(this.sprite.scene)).setBlendMode(Phaser.BlendModes.ADD);
+      const w = 90 * (1 + 0.1 * Math.sin(EntityView.temps * 6));
+      h.setVisible(sh.visible).setPosition(p.x, p.y).setDisplaySize(w, w * 0.5).setDepth(p.y - 2).setAlpha(0.9 * alpha).setTint(0xc0201a);
+    } else if (mo.def?.archiDe || mo.envahi || brille) {
       const h = this.halo ??= this.sprite.scene.add.image(0, 0, EntityView.haloDore(this.sprite.scene)).setBlendMode(Phaser.BlendModes.ADD);
       const w = Math.max(70, e.radius * 5.5) * (brille ? 1.6 : mo.envahi && !mo.def?.archiDe ? 0.85 : 1) * (1 + 0.08 * Math.sin(EntityView.temps * (brille ? 6 : 3)));
       h.setVisible(sh.visible).setPosition(p.x, p.y).setDisplaySize(w, w * 0.5).setDepth(p.y - 2).setAlpha((brille ? 1 : 0.75) * alpha);
@@ -241,6 +252,11 @@ export class EntityView {
       const im = this.infecte ??= this.sprite.scene.add.image(0, 0, 'sadi_infecte').setDisplaySize(20, 20);
       im.setVisible(true).setPosition(p.x + Math.max(18, e.radius * 1.2), p.y - L.height * L.scale - 14).setDepth(p.y + 2).setAlpha(Math.min(1, it * 2));
     } else this.infecte?.setVisible(false);
+    // Ouginak (15A) : icône officielle de l'état Proie au-dessus du monstre marqué
+    if ((e as Monster).proieDe != null && !e.dead && this.sprite.scene.textures.exists('oug_proie')) {
+      const im = this.proie ??= this.sprite.scene.add.image(0, 0, 'oug_proie').setDisplaySize(24, 24);
+      im.setVisible(true).setPosition(p.x - Math.max(18, e.radius * 1.2), p.y - L.height * L.scale - 14 - 2 * Math.sin(EntityView.temps * 4)).setDepth(p.y + 2);
+    } else this.proie?.setVisible(false);
   }
 
   /** Le point (x, y) du monde tombe-t-il sur le corps dessiné ? On teste le rectangle rogné de la frame
@@ -257,5 +273,5 @@ export class EntityView {
     return Math.hypot(px - (r.x + r.w / 2), py - (r.y + r.h / 2)) * k;
   }
 
-  destroy() { this.sprite.destroy(); this.bar.destroy(); this.shadow.destroy(); this.fond.destroy(); this.vie.destroy(); this.pieces?.destroy(); this.halo?.destroy(); this.cartes?.destroy(); this.infecte?.destroy(); }
+  destroy() { this.sprite.destroy(); this.bar.destroy(); this.shadow.destroy(); this.fond.destroy(); this.vie.destroy(); this.pieces?.destroy(); this.halo?.destroy(); this.cartes?.destroy(); this.infecte?.destroy(); this.proie?.destroy(); }
 }

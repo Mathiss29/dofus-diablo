@@ -744,3 +744,10 @@ Toutes sont refaites avec `HD=2` : planche dessinée 2 fois plus grand, `meta.hd
   que `AnimStatique_1` (ses transitions vers la course faisaient une planche trop large en 2x).
 - Habitants : `HD=2 BREEDS=breeds.json habitant_planche.py <persos> '<look>' <sortie absolue>` (SCALE 0,5 ; Bailli 0,7).
 - Tout nouveau PNJ ou habitant se fait avec `HD=2`.
+
+## Ouginak (classe 18, 15 nov. 2026)
+
+- Squelette et skins : `squelette_export.py` avec les variables `EXTRA` (anims 1800-1815 + `AnimDash`), puis renommage des clés du dash pour coller au moteur (`bond_bete` = `AnimDash` 0-0,55).
+- Forme Bestiale : pas de look officiel trouvé, on joue l'anim 1815 avec +15 % de taille et un halo rouge (rendu).
+- Roquet : planche monstre (`monster_planche`, os 9183), affiché à l'échelle 0,42.
+- Effets des sorts : 63 paquets bones (sorts jusqu'au 90) gardés dans `/mnt/project-files/cache-dofus/ouginak-bones/` ; `spell_fx.py` puis fusion à la main des seules entrées Ouginak dans `spellfx.json` (le script réécrit aussi d'autres classes).

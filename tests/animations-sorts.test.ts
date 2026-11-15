@@ -35,6 +35,8 @@ const SANS_EFFET_OFFICIEL: Record<string, string> = {
   coffre_anime: 'Enutrof : invocation, aucun gfx officiel',
   malle_animee: 'Enutrof : invocation, aucun gfx officiel',
   passage: 'Sadida : sort maison (pas de sort officiel), atterrissage dessiné',
+  lance_roquet: 'Ouginak : invocation, aucun gfx officiel (le Roquet apparaît)',
+  bond_bete: 'Ouginak : sort maison (17A), la ruée officielle AnimDash est dans le geste',
 };
 
 type Ref = { gfx: number };

@@ -308,6 +308,28 @@ const ECA_MAP: Record<string, AnimSlice> = {
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };
 
+// Ouginak : squelette de la classe 18 (anims_18.json), animations officielles (spellscripts casterAnimation, maquette Ouginak) :
+// Molosse et Amarok 1809, Os à Moelle 1808, Charogne 1801, Traque 1813, Proie 1804, Convergence 1805, Lance-roquet, Arcanin et Pelage 1800,
+// Cubitus 1807, Rabattage, Carcasse et Chasse 1811, Tibia 1806, Apaisement 1814 ; 1815 (aucun sort) = transformation en Bête (1A) ;
+// Espace = la ruée officielle AnimDash (départ + arrivée, 4A).
+const OUGI_MAP: Record<string, AnimSlice> = {
+  ...WEAPON_MAP,
+  idle: { anim: 'AnimStatiqueExplo0', loop: true, fps: 20 },
+  run: { anim: 'AnimCourse', loop: true, fps: 32 },
+  attack1: { anim: 'AnimArme0', from: 3 / 28, to: 17 / 28 },
+  attack2: { anim: 'AnimArme0', from: 3 / 28, to: 17 / 28 },
+  attack3: { anim: 'AnimArme0', from: 3 / 28, to: 24 / 28 },
+  ...Object.fromEntries(Object.entries({
+    molosse: 1809, amarok: 1809, os_a_moelle: 1808, charogne: 1801, traque: 1813, proie: 1804, convergence: 1805,
+    lance_roquet: 1800, arcanin: 1800, pelage_protecteur: 1800, cubitus: 1807, rabattage: 1811, carcasse: 1811, chasse: 1811,
+    tibia: 1806, apaisement: 1814,
+  }).map(([k, n]) => [k, { anim: `AnimAttaque${n}`, from: 0, to: 0.65 }])),
+  bete: { anim: 'AnimAttaque1815', from: 0, to: 1 },
+  bond_bete: { anim: 'AnimDash', from: 0, to: 0.55 },
+  hit: { anim: 'AnimHit', from: 0, to: 1 },
+  die: { anim: 'AnimMort', from: 0, to: 0.75 },
+};
+
 // Sadida : squelette joueur n° 1 + skin 100/101 (corps), animations officielles (spellscripts casterAnimation, maquette Sadida) :
 // Arbre, Larme… 1000 / 1007 ; sorts d'attaque (Ronce, Buisson Ardent, Cigüe…) 1001 ; Poupées 1003 ; Tremblement et Passage racinaire 1008.
 const SADI_MAP: Record<string, AnimSlice> = {
@@ -349,6 +371,10 @@ export const LOOKS: Record<string, Look> = {
   ecaflip: { atlas: 'ecaflip', scale: 0.82, map: ECA_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
   // Sadida : dessiné en direct depuis son squelette, comme les autres classes
   sadida: { atlas: 'sadida', scale: 0.82, map: SADI_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
+  // Ouginak : dessiné en direct depuis son squelette, comme les autres classes
+  ouginak: { atlas: 'ouginak', scale: 0.82, map: OUGI_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
+  // Roquet de l'Ouginak (monster_planche.py, os 9183, SCALE 2,5) : Lance-roquet, bête permanente (16B)
+  oug_roquet: { atlas: 'oug_roquet', scale: 0.42, map: MONSTER_MAP(8 / 28, 'AnimAttaque0', { 0: 8 / 28 }), height: 60, multi: true },
   // Arbre et Poupées du Sadida (monster_planche.py, os 3163, 292, 417, 415, 3165 ; SCALE 1,6 pour l'Arbre et le Groute, 2,5 sinon)
   sadi_arbre: { atlas: 'sadi_arbre', scale: 0.78, map: MONSTER_MAP(11 / 23, 'AnimAttaque0', { 0: 11 / 23 }), height: 110, multi: true },
   sadi_folle: { atlas: 'sadi_folle', scale: 0.5, map: MONSTER_MAP(22 / 29, 'AnimAttaque0', { 0: 22 / 29 }), height: 70, multi: true },

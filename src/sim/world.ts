@@ -62,6 +62,7 @@ import { RENFORT, cleRenforceeDe, texteRenfort } from './clesRenforcees';
 import { CHASSE, OEUVRE, PIERRES, coutOeuvre, coutPerce, metiersOeuvre, type Cout } from './oeuvre';
 import { BOISSONS, CONSO, ELIXIRS, PARCHEMINS, RARES_RECOLTE, REPAS, RES_BOISSON, sorteConso, texteBonus } from './consommables';
 import { majMonstreSadida, rallier, soignerPoupee } from './sadida';
+import { coupSurMonstre, proieAchevee } from './ouginak';
 import { RECOLTE, porteeRecolte, quantite, xpRecolte, type Recolte, type RecoltesData } from './recolte';
 
 export interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: number;
@@ -2004,6 +2005,7 @@ export class World {
       }
       if (dmg) this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 10, amount: dmg, crit, element: el, eclat: def.eclat, sort: def.sort });
       if (n <= 3) p.rageOnHit(Math.hypot(m.x - p.x, m.y - p.y), this);
+      if (cls.ouginak || m.proieDe != null) coupSurMonstre(p, m, dmg, this);   // Ouginak : Proie automatique (15B), frapper la Proie soigne (15A)
       if (def.lifesteal) {
         const soin = Math.round(dmg * def.lifesteal), trop = p.hp + soin - p.maxHp;
         p.hp = Math.min(p.maxHp, p.hp + soin);
@@ -2109,6 +2111,7 @@ export class World {
     if (fxm && idolesMort(this, m, this.groups[m.group], fxm)) return;   // Sakai : revient à la vie ; Chokwa, Serpi, Nahuatl
     m.dead = true; m.t = 0.6; this.kills++;
     if (m.e06) mortSorts06(this, m);   // Cryothérapie : l'état éclate
+    if (m.proieDe != null) proieAchevee(m, this);   // Ouginak : Proie achevée, sort Proie rechargé
     piecesMonstre(this, m);   // Enutrof (1A 1B) : le coffre au trésor des Enutrofs proches se remplit
     const tq = this.player.dead ? 0 : this.player.pcv('pc-cra-O');
     if (tq) for (const md of this.player.mods) if (md.src === 'tirs_eloignes') {   // Traque sans fin : prolongé, jusqu'à doubler sa durée

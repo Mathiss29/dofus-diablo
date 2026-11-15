@@ -6,6 +6,7 @@ import type { World } from './world';
 import BETES_JSON from '../data/betes.json';
 import { allieLePlusBlesse, lucioleMaj, soignerAllie } from './eniripsa';
 import { coffreAssomme, EJECTION } from './enutrof';
+import { cibleRoquet } from './ouginak';
 import { beteSadidaMorte, chocHivernal, cibleRalliement, dureeInfection, ecorce, empoisonner, infecter, majBeteSadida, type EtatSadi, type ReglesFourbe, type ReglesGonflable, type ReglesSurpuissante } from './sadida';
 
 /** Un effet officiel d'un sort de bête que le jeu sait jouer (tools/extraction/osa_betes.py). */
@@ -275,6 +276,7 @@ export class Bete extends Entity {
   private choisirCible(world: World): Monster | null {
     const R = REGLES_BETES, p = this.owner, prise = world.cibleMeute;
     if (this.def.sadida) { const r = cibleRalliement(p, world); if (r) return r; }   // Sadida 6B : ralliement (touche X)
+    if (this.base === 'oug_roquet') { const r = cibleRoquet(this, world); if (r) return r; }   // Roquet de l'Ouginak : la Proie d'abord
     if (prise != null) {
       const m = world.monsters.find(q => q.id === prise && !q.dead);
       if (m && Math.hypot(m.x - p.x, m.y - p.y) <= R.laisse * CASE) return m;
