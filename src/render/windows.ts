@@ -144,14 +144,18 @@ function meubleProduit(id: string) {
 }
 const icProduit = (o: { icon: number; img?: string } | undefined) => o?.img ? `<i class="ic" style="background-image:url(${o.img})"></i>` : iconHtml(o?.icon ?? 0);
 import { chrono, pepitesSucces, type SuccesDef } from '../sim/quests';
+import { EN_GRILLE, categorieAffichee, ordreSous, etatEntree, passeFiltre, rangOrdre, rangerSucces, type Entree, type EtatEntree, type Filtre } from './succesRangement';
 /** Catégories officielles de la fenêtre Succès de Dofus 3 (achievementcategories : nom, bannière cat_N, couleur), dans l'ordre du jeu ;
- *  celles sans succès chez nous restent cachées (Élevage avant les montures, Événements, 2D). */
+ *  celles sans succès chez nous restent cachées (Élevage avant les montures, Événements, 2D). Collection est à nous (« Succès : 4A », 2026-11-15). */
 export const SUCCES_CATS = [
-  { nom: 'Général', banniere: 1, couleur: '#fee034' }, { nom: 'Exploration', banniere: 4, couleur: '#a6ca36' },
+  { nom: 'Général', banniere: 1, couleur: '#fee034' }, { nom: 'Collection', banniere: 3, couleur: '#ff7e26' }, { nom: 'Exploration', banniere: 4, couleur: '#a6ca36' },
   { nom: 'Donjons', banniere: 2, couleur: '#3376d2' }, { nom: 'Monstres', banniere: 8, couleur: '#bc130e' },
   { nom: 'Quêtes', banniere: 6, couleur: '#4dd5ae' }, { nom: 'Métiers', banniere: 5, couleur: '#ee437d' },
   { nom: 'Élevage', banniere: 3, couleur: '#ff7e26' }, { nom: 'Événements', banniere: 7, couleur: '#cb35fd' },
 ];
+/** Entrée « Titres et ornements » de la colonne des succès (9C). */
+const TITRES = '__titres';
+const CADENAS_SVG = '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none"><path fill="none" stroke="#a9a48b" stroke-width="2" d="M7 11V8a5 5 0 0 1 10 0v3"/><rect x="5" y="11" width="14" height="10" rx="2" fill="#a9a48b"/></svg>';
 import { LADDER_CSS, VueLadder, chargerLadder, idDuPerso, ladderCharge } from './ladder';
 import type { MarqueCarte } from './carteMonde';
 import { bossAnnonce } from '../sim/mondeVivant';
@@ -729,18 +733,63 @@ const CSS = `
 .dw .sxl{overflow:auto;padding:10px 14px;display:grid;gap:8px;align-content:start;background:linear-gradient(#2b2a25,#24231f)}
 .dw .sxl .qh{color:#c9a55a;font-size:12px;text-transform:uppercase;letter-spacing:.06em;margin:6px 2px 0}
 .dw .sxl .vide{color:#a9a48b;padding:20px 4px}
-.dw .su2{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;align-items:start;border:1px solid #45433b;border-radius:4px;padding:8px 10px;background:#1f1e1a}
-.dw .su2.ok{opacity:.7}.dw .su2.rec{opacity:1;border-color:#8f7a3a;background:linear-gradient(#2e2a1c,#24211a)}
-.dw .su2.vu{box-shadow:0 0 0 2px #b9e54b}
-.dw .su2 .ic{width:52px;height:52px;object-fit:contain}
-.dw .su2 .co{display:grid;gap:4px;min-width:0}.dw .su2 .hd b{color:#f4efe0}.dw .su2 .sub{color:#a9a48b;font-size:12px}
-.dw .su2 .obs{display:grid;gap:1px}.dw .su2 .ob{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:#c9c4ab}
-.dw .su2 .ob.ok{color:#7be07b}.dw .su2 .ob a{color:inherit;text-decoration:underline dotted;cursor:pointer}
-.dw .su2 .rw{display:flex;flex-wrap:wrap;gap:6px;font-size:12px}.dw .su2 .rw span{display:flex;align-items:center;gap:4px;background:#0006;border:1px solid #45433b;border-radius:3px;padding:1px 7px;color:#e5dcb5}
-.dw .su2 .rw .ic{width:20px;height:20px}.dw .su2 .rw .oi{width:18px;height:18px}
-.dw .su2 .side{display:grid;gap:6px;justify-items:end;text-align:right}
-.dw .su2 .pt{color:#f2d36b;font-weight:bold;white-space:nowrap}.dw .su2 .eta{color:#7be07b;font-size:12px;white-space:nowrap}
-.dw .su2 .lien{font-size:12px;color:#c9c4ab;cursor:pointer;white-space:nowrap}.dw .su2 .lien:hover{color:#f4efe0}.dw .su2 .lien.on{color:#f2d36b}
+.dw .sx .cach{display:flex;align-items:center;gap:5px;font-size:12px;color:#a9a48b;cursor:pointer;white-space:nowrap;width:auto;margin:0}
+.dw .sx .cach input{appearance:auto;-webkit-appearance:checkbox;width:14px;height:14px;margin:0;padding:0;flex:none}
+.dw .sx .sxh select{width:auto;flex:none;font-size:12px;padding:4px 30px 4px 8px}
+.dw .sxb .sscs{display:grid;gap:1px;padding:0 0 4px 10px}
+.dw .sxb .ssc{display:flex;justify-content:space-between;gap:6px;font-size:12.5px;color:#a9a48b;padding:4px 8px;border-left:2px solid #45433b;cursor:pointer}
+.dw .sxb .ssc:hover{color:#f4efe0}.dw .sxb .ssc.on{color:#f4efe0;border-left-color:#f2d36b;background:#ffffff08}.dw .sxb .ssc small{color:#7e7a68}
+.dw .sxl .qh{display:flex;justify-content:space-between;gap:10px}.dw .sxl .qh span{color:#7e7a68;text-transform:none;letter-spacing:0}
+.dw .sl{border:1px solid #45433b;border-radius:4px;background:#1f1e1a}
+.dw .sl.ok{opacity:.62}.dw .sl.arec{opacity:1;border-color:#8f7a3a;background:linear-gradient(#2e2a1c,#24211a)}.dw .sl.vu,.dw .sg2.vu{box-shadow:0 0 0 2px #b9e54b}
+.dw .slh{display:grid;grid-template-columns:30px minmax(0,1fr) auto 50px 12px;gap:10px;align-items:center;padding:4px 10px;cursor:pointer}
+.dw .slh img{width:30px;height:30px;object-fit:contain}
+.dw .slh .t{min-width:0}.dw .slh .t b{display:block;font-weight:normal;color:#f4efe0;font-size:13px}.dw .slh .t small{display:block;color:#a9a48b;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dw .slh .p{color:#f2d36b;font-size:12px;text-align:right;white-space:nowrap}.dw .slh .eta{color:#7be07b;font-size:13px;justify-self:end}
+.dw .mb{display:block;width:90px;height:5px;border-radius:3px;background:#14130f;border:1px solid #45433b;overflow:hidden}.dw .mb i{display:block;height:100%;background:linear-gradient(90deg,#8fae3a,#b9e54b)}
+.dw .chev{color:#a9a48b;transition:transform .15s;font-size:15px;line-height:1}.dw .chev.on{transform:rotate(90deg)}
+.dw .sld{display:grid;gap:6px;padding:2px 12px 10px 50px;font-size:12px}.dw .sld .sub{color:#a9a48b}
+.dw .sld .obs{display:grid;gap:1px}.dw .sld .ob{display:flex;justify-content:space-between;gap:10px;color:#c9c4ab}
+.dw .sld .ob.ok{color:#7be07b}.dw .sld .ob a{color:inherit;text-decoration:underline dotted;cursor:pointer}
+.dw .sld .rw{display:flex;flex-wrap:wrap;gap:6px}.dw .sld .rw span{display:flex;align-items:center;gap:4px;background:#0006;border:1px solid #45433b;border-radius:3px;padding:1px 7px;color:#e5dcb5}
+.dw .sld .rw .ic{width:20px;height:20px}.dw .sld .rw .oi{width:18px;height:18px}
+.dw .sga{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.dw .sga .lien,.dw .sl .lien{font-size:12px;color:#c9c4ab;cursor:pointer;white-space:nowrap}.dw .sga .lien:hover{color:#f4efe0}.dw .sga .lien.on{color:#f2d36b}
+.dw .sg2{border:1px solid #45433b;border-radius:4px;background:#1f1e1a;padding:8px 10px;display:grid;gap:7px}
+.dw .sg2.ok{opacity:.62}.dw .sg2.arec{border-color:#8f7a3a;background:linear-gradient(#2e2a1c,#24211a)}
+.dw .sgh{display:grid;grid-template-columns:40px minmax(0,1fr) auto 12px;gap:10px;align-items:center}
+.dw .sgh[data-tog]{cursor:pointer}.dw .sgh .ic{width:40px;height:40px;object-fit:contain}
+.dw .sgh .t b{color:#f4efe0;font-weight:normal;font-size:14px}.dw .sgh .t small{display:block;color:#a9a48b;font-size:12px}
+.dw .sgh .r{text-align:right;color:#f2d36b;font-size:13px;white-space:nowrap}.dw .sgh .r small{display:block;color:#a9a48b;font-size:11px}
+.dw .sgd{display:grid;gap:4px;margin-top:2px}
+.dw .meds{display:flex;flex-wrap:wrap;gap:6px}
+.dw .md{display:flex;align-items:center;gap:5px;font-size:11.5px;border:1px solid #57554c;border-radius:12px;padding:2px 9px 2px 3px;color:#a9a48b}
+.dw .md i{width:16px;height:16px;border-radius:50%;border:1.5px solid #6b675a;display:grid;place-items:center;font-style:normal;font-size:10px;color:#1b2108}
+.dw .md.ok{border-color:#7b9a2f;color:#f4efe0}.dw .md.ok i{background:#b9e54b;border-color:#b9e54b}
+.dw .frise{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));position:relative;margin:2px 0 0}
+.dw .frise::before{content:"";position:absolute;left:calc(50%/var(--n));right:calc(50%/var(--n));top:7px;height:3px;background:#4a473e}
+.dw .frise .fill{position:absolute;left:calc(50%/var(--n));top:7px;height:3px;background:#b9e54b}
+.dw .pal{position:relative;display:grid;justify-items:center;gap:2px;font-size:11px;color:#a9a48b;white-space:nowrap}
+.dw .pal i{width:17px;height:17px;border-radius:50%;background:#2a2924;border:2px solid #6b675a;display:grid;place-items:center;font-style:normal;font-size:9px;color:#1b2108}
+.dw .pal.ok i{background:#b9e54b;border-color:#b9e54b}.dw .pal.next{color:#f2d36b}.dw .pal.next i{border-color:#f2d36b;box-shadow:0 0 0 3px #f2d36b33}
+.dw .zns{display:flex;flex-wrap:wrap;gap:4px}.dw .zns span{font-size:11.5px;border-radius:3px;padding:1px 7px;background:#2a2924;color:#7e7a68;border:1px dashed #4a473e}
+.dw .zns span.ok{background:#2c3a16;color:#e3f3b8;border:1px solid #5f7d22}
+.dw .slock{display:flex;align-items:center;gap:10px;border:1px dashed #57554c;border-radius:4px;padding:9px 12px;color:#a9a48b;font-size:12px;cursor:pointer}
+.dw .slock b{display:block;color:#f4efe0;font-weight:normal;font-size:13px}.dw .slock:hover{border-color:#8a8572}
+.dw .scg{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px}
+.dw .sca{border:1px solid #45433b;border-radius:4px;background:#1f1e1a;padding:6px 8px;font-size:12px;display:grid;gap:4px;cursor:pointer}
+.dw .sca b{font-weight:normal;color:#f4efe0}.dw .sca.ok{border-color:#5f7d22}.dw .sca.arec{border-color:#8f7a3a}.dw .sca.on{box-shadow:0 0 0 1px #f2d36b}
+.dw .sca .dots{display:flex;gap:4px;align-items:center;color:#a9a48b;font-size:11px;flex-wrap:wrap}.dw .sca .dots span{margin-left:auto}
+.dw .sca .dots i{width:9px;height:9px;border-radius:50%;background:#4a473e}.dw .sca .dots i.ok{background:#b9e54b}
+.dw .srec{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid #8f7a3a;border-radius:4px;background:linear-gradient(#2e2a1c,#24211a);padding:8px 12px;font-size:13px;color:#e8e2cc}.dw .srec b{color:#f2d36b}
+.dw .sug{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:6px}
+.dw .sgc{border:1px solid #57554c;border-radius:4px;background:linear-gradient(#2a2822,#201f1b);padding:8px 10px;display:grid;gap:4px;cursor:pointer;font-size:12px}
+.dw .sgc:hover{border-color:#8a8572}.dw .sgc .k{color:#c9a55a;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em}
+.dw .sgc .sgt{display:flex;align-items:center;gap:6px}.dw .sgc .sgt img{width:26px;height:26px;object-fit:contain}.dw .sgc b{font-weight:normal;color:#f4efe0;font-size:13px}.dw .sgc small{color:#a9a48b}
+.dw .sto{display:flex;gap:4px}.dw .sto span{border:1px solid #45433b;border-radius:3px;padding:4px 10px;font-size:12.5px;color:#a9a48b;cursor:pointer}.dw .sto span.on{color:#f4efe0;border-color:#f2d36b}
+.dw .sap{display:flex;align-items:center;justify-content:center;gap:12px;padding:14px;border:1px solid #45433b;border-radius:4px;background:radial-gradient(#3a3a30,#1f1e1a)}
+.dw .sap img{width:46px;height:46px}.dw .sap div{display:grid;justify-items:center}.dw .sap .tt{color:#f2d36b;font-size:12px}.dw .sap b{font:16px Rowdies,Lexend,sans-serif;color:#f4efe0;font-weight:normal}
+.dw .tchips{display:flex;flex-wrap:wrap;gap:4px}.dw .tchips span{border:1px solid #57554c;border-radius:3px;padding:3px 9px;font-size:12px;color:#c9c4ab;cursor:pointer}.dw .tchips span.on{border-color:#b9e54b;background:#2c3a16;color:#f4efe0}
 .dw .sxr{display:grid;gap:8px}
 .dw .sxr .rg{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px}
 .dw .sxr .rc{border:1px solid #45433b;border-radius:4px;background:#1f1e1a;padding:7px 9px;display:grid;gap:5px;cursor:pointer}
@@ -1812,114 +1861,302 @@ export class Windows {
       <span class="btn" data-carnet>Revenir à la quête</span>`;
   }
 
-  /** Succès (menu des succès, ligne « Succès : 1A 2A+2B+2D 3A+3B+3C 4A-4E 5B+5C 6A+6B 7A+7B+7C … », 2026-11-10) : la fenêtre Succès
-   *  de Dofus 3, bannières et couleurs officielles des catégories à gauche (catégories vides cachées), page Résumé, recherche, filtres,
-   *  fiche avec icône officielle, compteurs, récompenses à récupérer, « Où ? », épingles ; titre et ornement portés dans le Résumé. */
+  /** Succès (menu des succès façon Dofus 3, PR #272) rangé le 2026-11-15 (« Succès : 1A … 9A ») : arbre des catégories qui se déplie (1A),
+   *  séries à paliers en frise (2A), donjon + défis en médailles (3A), catégorie Collection (4A), zones d'une région en pastilles (5A),
+   *  lignes compactes qui se déplient (6A), ordre utile (7A) + filtres (7B) + « Cacher les terminés » (7C) + région (7D),
+   *  succès des endroits pas encore atteints repliés (8A), Résumé avec conseils (9A) et épinglés (9B), Titres et ornements à part (9C). */
   private renderSucces() {
     const w = this.win!, Q = this.world.quetes!;
     const rech = w.querySelector<HTMLInputElement>('#sxRech'), focus = !!rech && document.activeElement === rech, pos = rech?.selectionStart ?? 0;
-    const all = Object.entries(Q.data.succes).filter(([id]) => Q.visible(id));
-    const cats = SUCCES_CATS.filter(c => all.some(([, s]) => s.categorie === c.nom));
-    if (this.succesCat && !cats.some(c => c.nom === this.succesCat)) this.succesCat = '';
+    const sc = this.scSucces(), all = sc.all;
+    const cats = SUCCES_CATS.filter(c => all.some(([, s]) => categorieAffichee(s) === c.nom));
+    if (this.succesCat && this.succesCat !== TITRES && !cats.some(c => c.nom === this.succesCat)) this.succesCat = '';
     const total = all.reduce((n, [, s]) => n + s.points, 0), pts = all.filter(([id]) => Q.succes.has(id)).reduce((n, [, s]) => n + s.points, 0);
     const nRec = Q.nbARecuperer;
     const catList = `<div class="cat res ${this.succesCat ? '' : 'on'}" data-c=""><span class="n">Résumé</span>${nRec ? `<span class="badge">${nRec}</span>` : ''}</div>` + cats.map(c => {
-      const ss = all.filter(([, s]) => s.categorie === c.nom), ok = ss.filter(([id]) => Q.succes.has(id)).length, r = ss.filter(([id]) => Q.aRecuperer(id)).length;
-      return `<div class="cat ${this.succesCat === c.nom ? 'on' : ''}" data-c="${c.nom}" style="background-image:url(assets/ui/succes/cat_${c.banniere}.webp)">
+      const ss = all.filter(([, s]) => categorieAffichee(s) === c.nom), ok = ss.filter(([id]) => Q.succes.has(id)).length, r = ss.filter(([id]) => Q.aRecuperer(id)).length;
+      const on = this.succesCat === c.nom;
+      const subs = on ? ordreSous([...new Set(sc.entrees.filter(e => e.categorie === c.nom).map(e => e.sous))]).map(sn => {
+        const ids = sc.entrees.filter(e => e.categorie === c.nom && e.sous === sn).flatMap(e => e.ids);
+        return `<div class="ssc ${this.succesSous === sn ? 'on' : ''}" data-ss="${escB(sn)}"><span>${sn}</span><small>${ids.filter(id => Q.succes.has(id)).length} / ${ids.length}</small></div>`;
+      }).join('') : '';
+      return `<div class="cat ${on ? 'on' : ''}" data-c="${c.nom}" style="background-image:url(assets/ui/succes/cat_${c.banniere}.webp)">
         <span class="n">${c.nom}</span><span class="c">${ok} / ${ss.length}</span>${r ? `<span class="badge">${r}</span>` : ''}
-        <span class="pb"><i style="width:${ss.length ? ok / ss.length * 100 : 0}%;background:${c.couleur}"></i></span></div>`;
-    }).join('');
+        <span class="pb"><i style="width:${ss.length ? ok / ss.length * 100 : 0}%;background:${c.couleur}"></i></span></div>${subs ? `<div class="sscs">${subs}</div>` : ''}`;
+    }).join('') + `<div class="cat res ${this.succesCat === TITRES ? 'on' : ''}" data-c="${TITRES}"><span class="n">Titres et ornements</span></div>`;
+    const regions = [...new Set(sc.entrees.map(e => e.region).filter((r): r is string => !!r))];
+    if (this.succesRegion && !regions.includes(this.succesRegion)) this.succesRegion = '';
+    const FILTRES: [Filtre, string][] = [['tous', 'Tous'], ['rec', 'À récupérer'], ['cours', 'En cours'], ['ok', 'Terminés'], ['neuf', 'Pas commencés']];
     w.innerHTML = `${this.title('Succès', 'success')}<div class="sx">
       <div class="sxh"><div class="pts"><span>Points de succès : <b>${pts} / ${total}</b> · ${total ? Math.floor(pts / total * 100) : 0} %</span>
         <div class="sp2"><i style="width:${total ? pts / total * 100 : 0}%"></i></div></div>
         <input id="sxRech" type="search" placeholder="Rechercher un succès" value="${escB(this.succesRech)}" aria-label="Rechercher un succès">
-        <div class="chips">${(['tous', 'cours', 'ok'] as const).map(f => `<span class="${this.succesFiltre === f ? 'on' : ''}" data-f="${f}">${f === 'tous' ? 'Tous' : f === 'cours' ? 'En cours' : 'Terminés'}</span>`).join('')}</div>
+        <div class="chips">${FILTRES.map(([f, n]) => `<span class="${this.succesFiltre === f ? 'on' : ''}" data-f="${f}">${n}</span>`).join('')}</div>
+        <label class="cach"><input type="checkbox" data-cacher ${this.succesCacher ? 'checked' : ''}> Cacher les terminés</label>
+        <select data-region aria-label="Région"><option value="">Région : partout</option>${regions.map(r => `<option ${r === this.succesRegion ? 'selected' : ''} value="${escB(r)}">${escB(r)}</option>`).join('')}</select>
         <span class="btn ${nRec ? '' : 'off'}" data-toutrec>${nRec ? `Tout récupérer (${nRec})` : 'Rien à récupérer'}</span></div>
-      <div class="sxb"><div class="cats">${catList}</div><div class="sxl">${this.listeSucces(all)}</div></div></div>`;
+      <div class="sxb"><div class="cats">${catList}</div><div class="sxl">${this.listeSucces()}</div></div></div>`;
     const r2 = w.querySelector<HTMLInputElement>('#sxRech')!;
     if (focus) { r2.focus(); r2.setSelectionRange(pos, pos); }
     r2.addEventListener('keydown', e => e.stopPropagation());
-    r2.addEventListener('input', () => { this.succesRech = r2.value; const l = w.querySelector<HTMLElement>('.sxl')!; l.innerHTML = this.listeSucces(all); this.lierSucces(l); });
-    w.querySelectorAll<HTMLElement>('.cats [data-c]').forEach(e => e.addEventListener('click', () => { this.succesCat = e.dataset.c!; this.succesVu = null; this.render(); }));
+    r2.addEventListener('input', () => { this.succesRech = r2.value; const l = w.querySelector<HTMLElement>('.sxl')!; l.innerHTML = this.listeSucces(); this.lierSucces(l); });
+    w.querySelectorAll<HTMLElement>('.cats [data-c]').forEach(e => e.addEventListener('click', () => {
+      this.succesCat = e.dataset.c!; this.succesSous = ''; this.succesVu = null; this.succesRegion = ''; this.render(); }));
+    w.querySelectorAll<HTMLElement>('.cats [data-ss]').forEach(e => e.addEventListener('click', () => {
+      this.succesSous = this.succesSous === e.dataset.ss ? '' : e.dataset.ss!; this.succesVu = null; this.render(); }));
     w.querySelectorAll<HTMLElement>('[data-f]').forEach(e => e.addEventListener('click', () => {
-      this.succesFiltre = e.dataset.f as 'tous' | 'cours' | 'ok'; if (!this.succesCat && !this.succesRech) this.succesCat = cats[0]?.nom ?? ''; this.render();
+      this.succesFiltre = e.dataset.f as Filtre;
+      if (!this.succesCat && !this.succesRech && !this.succesRegion) this.succesCat = cats[0]?.nom ?? '';
+      this.render();
     }));
+    w.querySelector<HTMLInputElement>('[data-cacher]')?.addEventListener('change', e => {
+      this.succesCacher = (e.target as HTMLInputElement).checked;
+      try { localStorage.setItem('diablofus.succesCacher', this.succesCacher ? '1' : ''); } catch { /* navigateur sans stockage */ }
+      this.render();
+    });
+    w.querySelector<HTMLSelectElement>('[data-region]')?.addEventListener('change', e => { this.succesRegion = (e.target as HTMLSelectElement).value; this.render(); });
     w.querySelector('[data-toutrec]')?.addEventListener('click', () => { if (Q.recupererTout()) this.changed(); });
     this.lierSucces(w.querySelector<HTMLElement>('.sxl')!);
-    if (this.succesVu) w.querySelector(`[data-sid="${this.succesVu}"]`)?.scrollIntoView({ block: 'center' });
+    const vu = this.succesVu ? w.querySelector(`[data-sid="${this.succesVu}"]`) ?? w.querySelector(`[data-e="${window.CSS.escape(this.cleDe(this.succesVu) ?? '')}"]`) : null;
+    if (vu) vu.scrollIntoView({ block: 'center' });
+    else if (this.succesSous) w.querySelector('.sxl .qh')?.scrollIntoView({ block: 'start' });
   }
   private succesRech = '';
-  private succesFiltre: 'tous' | 'cours' | 'ok' = 'tous';
+  private succesFiltre: Filtre = 'tous';
+  /** Sous-catégorie choisie dans l'arbre (1A) ; '' = toute la catégorie. */
+  private succesSous = '';
+  /** Filtre par région (7D), valable dans toutes les catégories. */
+  private succesRegion = '';
+  /** Entrées dépliées (6A) et groupes « à découvrir » montrés quand même (8A). */
+  private succesOuverts = new Set<string>();
+  private succesMontres = new Set<string>();
+  /** 7C : retenu d'une ouverture à l'autre (navigateur). */
+  private succesCacher = (() => { try { return !!localStorage.getItem('diablofus.succesCacher'); } catch { return false; } })();
+  /** Titres et ornements (9C) : onglet. */
+  private succesTO: 'titres' | 'orn' = 'titres';
   /** Succès mis en avant (clic sur un succès demandé par un autre, 4E ; clic sur la ligne du suivi, 8B). */
   private succesVu: string | null = null;
-  /** Ouvre la fenêtre Succès sur la fiche de ce succès (8B : clic sur « Succès : … » du suivi). */
+  /** Rangement des succès visibles (calculé une fois par partie : la liste des succès visibles ne change pas en jeu). */
+  private scCache: { w: unknown; all: [string, SuccesDef][]; entrees: Entree[]; parId: Map<string, Entree> } | null = null;
+  private scSucces() {
+    const Q = this.world.quetes!;
+    if (this.scCache?.w !== Q) {
+      const all = Object.entries(Q.data.succes).filter(([id]) => Q.visible(id));
+      const reg = new Map(Q.carnet().map(p => [p.donjon, p.region] as const));
+      const entrees = rangerSucces(all, d => { const r = reg.get(d); return r && r !== '?' ? r : null; });
+      const parId = new Map<string, Entree>(); for (const e of entrees) for (const id of e.ids) parId.set(id, e);
+      this.scCache = { w: Q, all, entrees, parId };
+    }
+    return this.scCache;
+  }
+  private cleDe(id: string) { return this.scSucces().parId.get(id)?.cle ?? null; }
+  /** Ouvre la fenêtre Succès sur ce succès (8B : clic sur « Succès : … » du suivi) : sa catégorie, son entrée dépliée. */
   ouvrirSucces(id?: string) {
-    const s = id ? this.world.quetes?.data.succes[id] : null;
-    if (s) { this.succesCat = s.categorie; this.succesVu = id!; this.succesRech = ''; this.succesFiltre = 'tous'; }
+    const e = id ? this.scSucces().parId.get(id) : null;
+    if (e && id) {
+      this.succesCat = e.categorie; this.succesSous = ''; this.succesVu = id; this.succesRech = ''; this.succesFiltre = 'tous'; this.succesRegion = '';
+      this.succesOuverts.add(e.cle); this.succesMontres.add(`${e.categorie}|${e.sous}|${e.region}`);
+    }
     this.show('succes');
   }
-  /** Liste de droite : Résumé (3A+3B+3C, titres et ornements 6A+6B), une catégorie, ou les résultats d'une recherche (7A) filtrés (7B). */
-  private listeSucces(all: [string, SuccesDef][]): string {
-    const Q = this.world.quetes!, q = this.succesRech.trim().toLowerCase();
-    const ok = ([id, s]: [string, SuccesDef]) => (this.succesFiltre === 'tous' || (this.succesFiltre === 'ok') === Q.succes.has(id))
-      && (!q || `${s.nom} ${s.description} ${s.objectifs.map(o => o.nom).join(' ')}`.toLowerCase().includes(q));
-    if (!this.succesCat && !q) {
-      const cats = SUCCES_CATS.filter(c => all.some(([, s]) => s.categorie === c.nom));
-      const presque = all.filter(([id]) => !Q.succes.has(id) && Q.avancement(id) > 0).sort((a, b) => Q.avancement(b[0]) - Q.avancement(a[0])).slice(0, 3);
-      const derniers = [...Q.succes].filter(id => Q.visible(id)).reverse().slice(0, 5);
-      const mini = (id: string, droite: string, sous: string) => { const s = Q.data.succes[id];
-        return `<div class="mini" data-va="${id}"><img src="assets/ui/succes/a_${s.icone}.webp" alt=""><div>${s.nom}<small>${sous}</small></div><span class="p">${droite}</span></div>`; };
-      const titres = Q.titres, orns = Q.ornements, tPorte = Q.titre, oPorte = Q.ornement;
-      return `<div class="sxr">
-        <div class="qh">Progression</div><div class="rg">${cats.map(c => { const ss = all.filter(([, s]) => s.categorie === c.nom), n = ss.filter(([id]) => Q.succes.has(id)).length;
-          return `<div class="rc" data-c2="${c.nom}"><div class="l"><b>${c.nom}</b><span>${n} / ${ss.length}</span></div><div class="sp2"><i style="width:${ss.length ? n / ss.length * 100 : 0}%;background:${c.couleur}"></i></div></div>`; }).join('')}</div>
-        ${presque.length ? `<div class="qh">Presque finis</div>${presque.map(([id, s]) => mini(id, `${Math.floor(Q.avancement(id) * 100)} %`,
-          s.objectifs.filter(o => !Q.objectifSuccesFait(o)).slice(0, 2).map(o => o.nom).join(', ') || s.description)).join('')}` : ''}
-        ${derniers.length ? `<div class="qh">Derniers obtenus</div>${derniers.map(id => { const s = Q.data.succes[id];
-          return mini(id, `+${s.points} pt${s.points > 1 ? 's' : ''}`, Q.aRecuperer(id) ? 'Récompense à récupérer' : s.description); }).join('')}` : ''}
-        <div class="qh">Titre et ornement</div>
-        <div class="to"><label>Titre porté <select data-titre>${['<option value="">Aucun</option>', ...titres.map(t => `<option ${t === tPorte ? 'selected' : ''}>${escB(t)}</option>`)].join('')}</select></label>
-          ${titres.length ? '' : '<small>Les gros succès donnent un titre (Le tour du monde, les Dofus…).</small>'}</div>
-        <div class="to orns"><span>Ornement</span>${orns.length ? `<span class="orn ${oPorte ? '' : 'on'}" data-orn="0" title="Aucun">∅</span>${orns.map(o => `<img class="orn ${oPorte?.id === o.id ? 'on' : ''}" data-orn="${o.id}" src="assets/ui/succes/o_${o.icone}.webp" alt="${escB(o.nom)}" title="${escB(o.nom)}">`).join('')}`
-          : '<small>Les ornements officiels viennent des succès de niveau (100, 160, 200).</small>'}</div></div>`;
-    }
-    const ss = all.filter(([, s]) => q || s.categorie === this.succesCat).filter(ok);
-    const subs = [...new Set(ss.map(([, s]) => q ? `${s.categorie} · ${s.sousCategorie}` : s.sousCategorie))];
-    return subs.map(sc => `<div class="qh">${sc}</div>` + ss.filter(([, s]) => (q ? `${s.categorie} · ${s.sousCategorie}` : s.sousCategorie) === sc)
-      .map(([id, s]) => this.ficheSucces(id, s)).join('')).join('') || '<div class="vide">Aucun succès ne correspond.</div>';
+  /** 8A : la région de l'entrée est-elle atteinte ? (une zone de ses succès d'exploration découverte ; sans zones connues, oui). */
+  private regionAtteinte(r: string | null): boolean {
+    if (!r) return true;
+    const z = this.scSucces().entrees.find(e => e.cle === `zones:${r}`), Q = this.world.quetes!;
+    return !z || z.ids.some(id => Q.avancement(id) > 0);
   }
-  /** Fiche d'un succès (4A icône officielle, 4B compteurs, 4C récompenses, 4D « Où ? », 4E succès demandés cliquables, 5B, 7C). */
-  private ficheSucces(id: string, s: SuccesDef): string {
-    const Q = this.world.quetes!, fait = Q.succes.has(id), rec = Q.aRecuperer(id), r = s.recompense;
+  /** Liste de droite : Résumé, Titres et ornements, une catégorie (ou une sous-catégorie), ou une recherche / une région. */
+  private listeSucces(): string {
+    const Q = this.world.quetes!, sc = this.scSucces(), q = this.succesRech.trim().toLowerCase();
+    if (this.succesCat === TITRES && !q && !this.succesRegion) return this.vueTitres();
+    if (!this.succesCat && !q && !this.succesRegion) return this.vueResume();
+    const cherche = (e: Entree) => !q || e.ids.some(id => { const s = Q.data.succes[id]; return `${s.nom} ${s.description} ${s.objectifs.map(o => o.nom).join(' ')}`.toLowerCase().includes(q); })
+      || e.nom.toLowerCase().includes(q);
+    const transversal = !!q || !!this.succesRegion;
+    const es = sc.entrees.filter(e => transversal ? cherche(e) && (!this.succesRegion || e.region === this.succesRegion)
+      : e.categorie === this.succesCat && (!this.succesSous || e.sous === this.succesSous));
+    const etats = new Map(es.map(e => [e, etatEntree(e, Q)] as const));
+    const gardees = es.filter(e => passeFiltre(etats.get(e)!, this.succesFiltre, this.succesCacher))
+      .map((e, i) => [e, i] as const).sort((a, b) => rangOrdre(etats.get(a[0])!) - rangOrdre(etats.get(b[0])!) || a[1] - b[1]).map(([e]) => e);
+    const titreDe = (e: Entree) => transversal ? `${e.categorie} · ${e.sous}` : e.sous;
+    const groupes = (transversal ? [...new Set(es.map(titreDe))] : ordreSous([...new Set(es.map(titreDe))])).filter(t => gardees.some(e => titreDe(e) === t));
+    return groupes.map(t => {
+      const dans = gardees.filter(e => titreDe(e) === t), cat = dans[0].categorie, sous = dans[0].sous;
+      // 8A : endroits pas encore atteints, repliés en une ligne par région
+      const replies = new Map<string, Entree[]>();
+      const montres = dans.filter(e => {
+        const et = etats.get(e)!, cle = `${cat}|${sous}|${e.region}`;
+        if (q || this.succesMontres.has(cle) || this.regionAtteinte(e.region) || et.avancement > 0 || et.fait) return true;
+        replies.set(e.region!, [...(replies.get(e.region!) ?? []), e]); return false;
+      });
+      const nb = dans.reduce((n, e) => n + e.ids.length, 0), ok = dans.reduce((n, e) => n + etats.get(e)!.fait, 0);
+      const corps = EN_GRILLE.has(Q.data.succes[dans[0].ids[0]].sousCategorie)
+        ? this.grilleSucces(montres, etats) : montres.map(e => this.entreeSucces(e, etats.get(e)!)).join('');
+      const plis = [...replies].map(([r, l]) => {
+        const n = l.reduce((k, e) => k + e.ids.length, 0), d = l.filter(e => e.genre === 'donjon').length;
+        const quoi = d === l.length ? `${d} donjon${d > 1 ? 's' : ''} à découvrir · ${escB(r)}` : `${n} succès à découvrir · ${escB(r)}`;
+        return `<div class="slock" data-montrer="${escB(`${cat}|${sous}|${r}`)}">${CADENAS_SVG}<div><b>${quoi}</b><small>${n} succès · ils se montrent quand tu y arrives. Cliquer pour les voir quand même.</small></div></div>`;
+      }).join('');
+      return `<div class="qh">${t}<span>${ok} / ${nb}</span></div>${corps}${plis}`;
+    }).join('') || '<div class="vide">Aucun succès ne correspond.</div>';
+  }
+  /** Une entrée (6A) : ligne compacte pour un succès seul, carte à médailles (3A), à frise (2A) ou à pastilles (5A). */
+  private entreeSucces(e: Entree, t: EtatEntree): string {
+    const Q = this.world.quetes!, ouvert = this.succesOuverts.has(e.cle);
+    if (e.genre === 'seul') return this.ligneSucces(e.ids[0], e.cle);
+    const fini = t.fait === t.total, ptsF = e.ids.filter(id => Q.succes.has(id)).reduce((n, id) => n + Q.data.succes[id].points, 0);
+    const ptsT = e.ids.reduce((n, id) => n + Q.data.succes[id].points, 0);
+    const prochain = e.ids.findIndex(id => !Q.succes.has(id));
+    let sous = '', bas = '';
+    if (e.genre === 'donjon') {
+      const base = Q.data.succes[e.ids[0]], niv = base.objectifs.find(o => 'niveau' in o) as { niveau: number } | undefined;
+      sous = [e.region, niv ? `niveau ${niv.niveau}` : ''].filter(Boolean).join(' · ');
+      bas = `<div class="meds">${e.ids.map((id, i) => `<span class="md ${Q.succes.has(id) ? 'ok' : ''}" title="${escB(Q.data.succes[id].description)}"><i>${Q.succes.has(id) ? '✓' : ''}</i>${e.etiquettes[i]}</span>`).join('')}</div>`;
+    } else if (e.genre === 'serie') {
+      const id = e.ids[prochain], s = id ? Q.data.succes[id] : null, [n, m] = s ? Q.progres(s.objectifs[0]) : [0, 0];
+      sous = s ? `${n.toLocaleString('fr-FR')} / ${m.toLocaleString('fr-FR')} · prochain palier : ${s.nom}` : 'Tous les paliers obtenus';
+      const k = e.ids.filter(x => Q.succes.has(x)).length, N = e.ids.length;
+      bas = `<div class="frise" style="--n:${N}"><span class="fill" style="width:${Math.max(0, k - 1) / N * 100}%"></span>${e.ids.map((x, i) =>
+        `<div class="pal ${Q.succes.has(x) ? 'ok' : ''} ${i === prochain ? 'next' : ''}" title="${escB(Q.data.succes[x].nom)} : ${escB(Q.data.succes[x].description)}"><i>${Q.succes.has(x) ? '✓' : ''}</i>${e.etiquettes[i]}</div>`).join('')}</div>`;
+    } else {
+      sous = fini ? 'Toutes les zones découvertes' : `${t.fait} zone${t.fait > 1 ? 's' : ''} sur ${t.total}`;
+      bas = `<div class="zns">${e.ids.map((x, i) => Q.succes.has(x) ? `<span class="ok">${escB(e.etiquettes[i])}</span>` : '<span>???</span>').join('')}</div>`;
+    }
+    const s0 = Q.data.succes[e.ids[0]], m = this.marquesSucces({ ...s0, objectifs: e.ids.filter(id => !Q.succes.has(id)).flatMap(id => Q.data.succes[id].objectifs) });
+    const ou = !fini && m.tags.length + m.points.length > 0;
+    const actions = `${t.aRecuperer ? `<span class="btn" data-recg="${escB(e.cle)}">Récupérer${t.aRecuperer > 1 ? ` (${t.aRecuperer})` : ''}</span>` : ''}${ou ? `<span class="lien" data-oue="${escB(e.cle)}">📍 Où ?</span>` : ''}`;
+    const details = ouvert && e.genre !== 'zones' ? `<div class="sgd">${e.ids.map(id => this.ligneSucces(id, `${e.cle}#${id}`)).join('')}</div>` : '';
+    return `<div class="sg2 ${fini && !t.aRecuperer ? 'ok' : ''} ${t.aRecuperer ? 'arec' : ''} ${this.succesVu && e.ids.includes(this.succesVu) ? 'vu' : ''}" data-e="${escB(e.cle)}">
+      <div class="sgh" ${e.genre !== 'zones' ? `data-tog="${escB(e.cle)}"` : ''}><img class="ic" src="${this.iconeEntree(e)}" alt="">
+        <div class="t"><b>${escB(e.nom)}</b><small>${sous}</small></div>
+        <div class="r"><b>${t.fait} / ${t.total}</b><small>${ptsF} / ${ptsT} pts</small></div>${e.genre !== 'zones' ? `<span class="chev ${ouvert ? 'on' : ''}">›</span>` : '<span></span>'}</div>
+      ${bas}${actions ? `<div class="sga">${actions}</div>` : ''}${details}</div>`;
+  }
+  private iconeEntree(e: Entree): string {
+    const m = /^serie:Métiers\|[^|]+\|metier:([a-z]+)$/.exec(e.cle);
+    return m ? `assets/ui/metier_${m[1]}.png` : `assets/ui/succes/a_${e.icone}.webp`;
+  }
+  /** Garde-robe et Apparats (4A) : une case par panoplie ou par classe ; la case cliquée se déplie sous la grille. */
+  private grilleSucces(es: Entree[], etats: Map<Entree, EtatEntree>): string {
+    const Q = this.world.quetes!;
+    const cases = es.map(e => {
+      const t = etats.get(e)!, s = Q.data.succes[e.ids[0]];
+      const points = e.genre === 'serie' ? e.ids.map((id, i) => `<i class="${Q.succes.has(id) ? 'ok' : ''}"></i>${e.etiquettes[i]}`).join(' ')
+        : s.objectifs.map(o => `<i class="${t.fait || Q.objectifSuccesFait(o) ? 'ok' : ''}" title="${escB(o.nom)}"></i>`).join('')
+          + `<span>${t.fait ? s.objectifs.length : s.objectifs.filter(o => Q.objectifSuccesFait(o)).length} / ${s.objectifs.length}</span>`;
+      return `<div class="sca ${t.fait === t.total ? 'ok' : ''} ${t.aRecuperer ? 'arec' : ''} ${this.succesOuverts.has(e.cle) ? 'on' : ''}" data-tog="${escB(e.cle)}" data-e="${escB(e.cle)}">
+        <b>${escB(e.nom)}</b><div class="dots">${points}</div></div>`;
+    }).join('');
+    const ouverts = es.filter(e => this.succesOuverts.has(e.cle)).flatMap(e => e.ids.map(id => this.ligneSucces(id, `${e.cle}#${id}`))).join('');
+    return `<div class="scg">${cases}</div>${ouverts}`;
+  }
+  /** Ligne compacte d'un succès (6A) : icône, nom, prochain objectif, barre, points ; clic = objectifs, récompenses, Où ?, Épingler. */
+  private ligneSucces(id: string, cle: string): string {
+    const Q = this.world.quetes!, s = Q.data.succes[id], fait = Q.succes.has(id), rec = Q.aRecuperer(id), ouvert = this.succesOuverts.has(cle) || this.succesVu === id;
+    const reste = s.objectifs.filter(o => !Q.objectifSuccesFait(o));
+    const sous = fait ? (rec ? 'Récompense à récupérer' : 'Obtenu') : reste.length && s.objectifs.length > 1 ? reste.slice(0, 2).map(o => o.nom).join(', ') : s.description;
+    const av = Math.round(Q.avancement(id) * 100);
+    const droite = rec ? `<span class="btn" data-rec="${id}">Récupérer</span>` : fait ? '<span class="eta">✓</span>' : `<span class="mb"><i style="width:${av}%"></i></span>`;
+    return `<div class="sl ${fait && !rec ? 'ok' : ''} ${rec ? 'arec' : ''} ${this.succesVu === id ? 'vu' : ''}" data-sid="${id}">
+      <div class="slh" data-tog="${escB(cle)}"><img src="assets/ui/succes/a_${s.icone}.webp" alt=""><div class="t"><b>${s.nom}</b><small>${sous}</small></div>
+        ${droite}<span class="p">${s.points} pt${s.points > 1 ? 's' : ''}</span><span class="chev ${ouvert ? 'on' : ''}">›</span></div>
+      ${ouvert ? this.detailSucces(id, s) : ''}</div>`;
+  }
+  /** Détail déplié (4B compteurs, 4C récompenses, 4D « Où ? », 4E succès demandés cliquables, 7C épingler). */
+  private detailSucces(id: string, s: SuccesDef): string {
+    const Q = this.world.quetes!, fait = Q.succes.has(id), r = s.recompense;
     const it = r?.objet ? ITEMS.resources[r.objet] ?? ITEMS.equipment[r.objet] : null;
-    const obs = s.objectifs.length > 1 || s.objectifs.some(o => Q.progres(o)[1] > 1) ? `<div class="obs">${s.objectifs.map(o => {
+    const obs = `<div class="obs">${s.objectifs.map(o => {
       const [n, m] = fait ? [1, 1] : Q.progres(o), f = fait || n >= m;
       const nom = 'succes' in o ? `<a data-va="${o.succes}">${o.nom}</a>` : o.nom;
-      return `<div class="ob ${f ? 'ok' : ''}"><span>${f ? '✓' : '•'} ${nom}</span>${m > 1 && !fait ? `<span>${n} / ${m}</span>` : ''}</div>`; }).join('')}</div>` : '';
+      return `<div class="ob ${f ? 'ok' : ''}"><span>${f ? '✓' : '•'} ${nom}</span>${m > 1 && !fait ? `<span>${n.toLocaleString('fr-FR')} / ${m.toLocaleString('fr-FR')}</span>` : ''}</div>`; }).join('')}</div>`;
     const rw = [r?.xp ? `<span><b>${r.xp}</b> XP</span>` : '', it ? `<span data-rtip="${r!.objet}">${iconHtml(it.icon)}${it.name}</span>` : '',
       `<span>${iconHtml(ITEMS.resources[PEPITE]?.icon ?? 0)}${pepitesSucces(s)} Pépites</span>`,
       r?.titre ? `<span>Titre « ${escB(r.titre)} »</span>` : '', r?.ornement ? `<span><img class="oi" src="assets/ui/succes/o_${r.ornement.icone}.webp" alt="">Ornement ${escB(r.ornement.nom)}</span>` : ''].filter(Boolean).join('');
-    const ou = !fait && this.marquesSucces(s).tags.length + this.marquesSucces(s).points.length > 0;
-    const epingle = Q.epingles.includes(id);
-    return `<div class="su2 ${fait ? 'ok' : ''} ${rec ? 'rec' : ''} ${this.succesVu === id ? 'vu' : ''}" data-sid="${id}">
-      <img class="ic" src="assets/ui/succes/a_${s.icone}.webp" alt="">
-      <div class="co"><div class="hd"><b>${s.nom}</b></div><div class="sub">${s.description}</div>${obs}
-        ${!fait ? `<div class="sp2"><i style="width:${Math.round(Q.avancement(id) * 100)}%"></i></div>` : ''}${rw ? `<div class="rw">${rw}</div>` : ''}</div>
-      <div class="side"><span class="pt">${s.points} pt${s.points > 1 ? 's' : ''}</span>
-        ${rec ? `<span class="btn" data-rec="${id}">Récupérer</span>` : fait ? '<span class="eta">✓ Obtenu</span>'
-          : `${ou ? `<span class="lien" data-ou="${id}">📍 Où ?</span>` : ''}<span class="lien ${epingle ? 'on' : ''}" data-epi="${id}">${epingle ? '★ Épinglé' : '☆ Épingler'}</span>`}</div></div>`;
+    const m = this.marquesSucces(s), ou = !fait && m.tags.length + m.points.length > 0, epingle = Q.epingles.includes(id);
+    return `<div class="sld"><div class="sub">${s.description}</div>${obs}<div class="rw">${rw}</div>
+      ${fait ? '' : `<div class="sga">${ou ? `<span class="lien" data-ou="${id}">📍 Où ?</span>` : ''}<span class="lien ${epingle ? 'on' : ''}" data-epi="${id}">${epingle ? '★ Épinglé' : '☆ Épingler'}</span></div>`}</div>`;
+  }
+  /** Résumé (9A conseils, 9B épinglés, progression, derniers obtenus). */
+  private vueResume(): string {
+    const Q = this.world.quetes!, sc = this.scSucces(), all = sc.all;
+    const cats = SUCCES_CATS.filter(c => all.some(([, s]) => categorieAffichee(s) === c.nom));
+    const nRec = Q.nbARecuperer;
+    const ouvert = (id: string) => { const e = sc.parId.get(id); return !!e && this.regionAtteinte(e.region); };
+    const libres = all.filter(([id]) => !Q.succes.has(id) && ouvert(id));
+    const pris = new Set<string>(), conseils: { k: string; id: string; txt: string }[] = [];
+    const meilleur = (l: [string, SuccesDef][]) => l.filter(([id]) => !pris.has(id)).sort((a, b) => Q.avancement(b[0]) - Q.avancement(a[0]))[0];
+    const reste = (s: SuccesDef) => s.objectifs.filter(o => !Q.objectifSuccesFait(o)).slice(0, 2).map(o => o.nom).join(', ') || s.description;
+    // tout près : le plus avancé (hors séries)
+    const pres = meilleur(libres.filter(([id]) => sc.parId.get(id)!.genre !== 'serie' && Q.avancement(id) > 0));
+    if (pres) { pris.add(pres[0]); conseils.push({ k: 'Tout près', id: pres[0], txt: `${Math.floor(Q.avancement(pres[0]) * 100)} % · reste : ${reste(pres[1])}` }); }
+    // dans ta zone : monstres de la sous-zone où tu es, ou la sous-zone elle-même
+    const wg = this.world.worldGrid, p = this.world.player, ici = wg?.mapAt(p.x, p.y)?.sub, sa = ici != null ? this.world.zone.open?.subareas[String(ici)] : undefined;
+    if (sa) {
+      const z = meilleur(libres.filter(([, s]) => s.objectifs.some(o => !Q.objectifSuccesFait(o) && (('monstre' in o && (sa.monsters.includes(o.monstre) || sa.elite === o.monstre)) || ('sousZone' in o && o.sousZone === ici)))));
+      if (z) { pris.add(z[0]); conseils.push({ k: `Dans ta zone · ${sa.name}`, id: z[0], txt: reste(z[1]) }); }
+    }
+    // série : le prochain palier le plus proche
+    const serie = sc.entrees.filter(e => e.genre === 'serie').map(e => e.ids.find(id => !Q.succes.has(id))).filter((id): id is string => !!id && !pris.has(id))
+      .sort((a, b) => Q.avancement(b) - Q.avancement(a))[0];
+    if (serie) { const e = sc.parId.get(serie)!; const [n, m] = Q.progres(Q.data.succes[serie].objectifs[0]); conseils.push({ k: 'Série', id: serie, txt: `${e.nom} : ${n.toLocaleString('fr-FR')} / ${m.toLocaleString('fr-FR')}` }); }
+    const derniers = [...Q.succes].filter(id => Q.visible(id)).reverse().slice(0, 5);
+    const epingles = Q.epingles.filter(id => Q.visible(id));
+    return `<div class="sxr">
+      ${nRec ? `<div class="srec"><span><b>${nRec} récompense${nRec > 1 ? 's' : ''}</b> à récupérer</span><span class="btn" data-toutrec2>Tout récupérer</span></div>` : ''}
+      ${conseils.length ? `<div class="qh">Prochains succès pour toi<span>niveau ${p.level}</span></div><div class="sug">${conseils.map(c => { const s = Q.data.succes[c.id];
+        return `<div class="sgc" data-va="${c.id}"><span class="k">${escB(c.k)}</span><div class="sgt"><img src="assets/ui/succes/a_${s.icone}.webp" alt=""><b>${s.nom}</b></div><small>${escB(c.txt)}</small></div>`; }).join('')}</div>` : ''}
+      ${epingles.length ? `<div class="qh">Épinglés<span>3 au plus, aussi dans le suivi à l'écran</span></div>${epingles.map(id => this.ligneSucces(id, `epi#${id}`)).join('')}` : ''}
+      <div class="qh">Progression</div><div class="rg">${cats.map(c => { const ss = all.filter(([, s]) => categorieAffichee(s) === c.nom), n = ss.filter(([id]) => Q.succes.has(id)).length;
+        return `<div class="rc" data-c2="${c.nom}"><div class="l"><b>${c.nom}</b><span>${n} / ${ss.length}</span></div><div class="sp2"><i style="width:${ss.length ? n / ss.length * 100 : 0}%;background:${c.couleur}"></i></div></div>`; }).join('')}</div>
+      ${derniers.length ? `<div class="qh">Derniers obtenus</div>${derniers.map(id => this.ligneSucces(id, `der#${id}`)).join('')}` : ''}</div>`;
+  }
+  /** 9C : Titres et ornements à part, avec aperçu et ceux qu'il reste à gagner. */
+  private vueTitres(): string {
+    const Q = this.world.quetes!, all = this.scSucces().all, tPorte = Q.titre, oPorte = Q.ornement;
+    const aGagner = (k: 'titre' | 'ornement') => all.filter(([id, s]) => s.recompense?.[k] && !Q.succes.has(id)).sort((a, b) => Q.avancement(b[0]) - Q.avancement(a[0]));
+    const nom = escB(this.nomPerso() || 'Ton personnage');
+    const apercu = `<div class="sap">${oPorte ? `<img src="assets/ui/succes/o_${oPorte.icone}.webp" alt="">` : ''}<div><span class="tt">${tPorte ? `« ${escB(tPorte)} »` : 'Aucun titre'}</span><b>${nom}</b></div></div>`;
+    const ligneAG = ([id, s]: [string, SuccesDef], quoi: string) => `<div class="sl" data-sid="${id}"><div class="slh" data-va="${id}"><img src="assets/ui/succes/a_${s.icone}.webp" alt="">
+      <div class="t"><b>${quoi}</b><small>${s.nom} · ${Math.floor(Q.avancement(id) * 100)} %</small></div><span class="mb"><i style="width:${Math.round(Q.avancement(id) * 100)}%"></i></span><span class="p">${s.points} pts</span><span class="chev">›</span></div></div>`;
+    const onglets = `<div class="sto"><span class="${this.succesTO === 'titres' ? 'on' : ''}" data-to="titres">Titres (${Q.titres.length})</span><span class="${this.succesTO === 'orn' ? 'on' : ''}" data-to="orn">Ornements (${Q.ornements.length})</span></div>`;
+    if (this.succesTO === 'titres') {
+      const titres = Q.titres, ag = aGagner('titre');
+      return `<div class="sxr">${onglets}${apercu}<div class="qh">Gagnés</div><div class="tchips"><span class="${tPorte ? '' : 'on'}" data-titre="">Aucun</span>${titres.map(t => `<span class="${t === tPorte ? 'on' : ''}" data-titre="${escB(t)}">${escB(t)}</span>`).join('')}</div>
+        ${titres.length ? '' : '<div class="vide">Les gros succès donnent un titre (Le tour du monde, les Dofus…).</div>'}
+        ${ag.length ? `<div class="qh">À gagner<span>${ag.length}</span></div>${ag.map(x => ligneAG(x, `« ${escB(x[1].recompense!.titre!)} »`)).join('')}` : ''}</div>`;
+    }
+    const orns = Q.ornements, ag = aGagner('ornement');
+    return `<div class="sxr">${onglets}${apercu}<div class="qh">Gagnés</div>
+      <div class="to orns"><span class="orn ${oPorte ? '' : 'on'}" data-orn="0" title="Aucun">∅</span>${orns.map(o => `<img class="orn ${oPorte?.id === o.id ? 'on' : ''}" data-orn="${o.id}" src="assets/ui/succes/o_${o.icone}.webp" alt="${escB(o.nom)}" title="${escB(o.nom)}">`).join('')}</div>
+      ${orns.length ? '' : '<div class="vide">Les ornements officiels viennent des succès de niveau (100, 160, 200).</div>'}
+      ${ag.length ? `<div class="qh">À gagner<span>${ag.length}</span></div>${ag.map(x => ligneAG(x, `Ornement ${escB(x[1].recompense!.ornement!.nom)}`)).join('')}` : ''}</div>`;
   }
   private lierSucces(l: HTMLElement) {
-    const Q = this.world.quetes!;
-    l.querySelectorAll<HTMLElement>('[data-rec]').forEach(e => e.addEventListener('click', () => { if (Q.recuperer(e.dataset.rec!)) this.changed(); }));
+    const Q = this.world.quetes!, sc = this.scSucces();
+    l.querySelectorAll<HTMLElement>('[data-rec]').forEach(e => e.addEventListener('click', ev => { ev.stopPropagation(); if (Q.recuperer(e.dataset.rec!)) this.changed(); }));
+    l.querySelectorAll<HTMLElement>('[data-recg]').forEach(e => e.addEventListener('click', ev => {
+      ev.stopPropagation(); let n = 0; for (const id of sc.entrees.find(x => x.cle === e.dataset.recg)?.ids ?? []) if (Q.recuperer(id)) n++; if (n) this.changed(); }));
+    l.querySelectorAll<HTMLElement>('[data-toutrec2]').forEach(e => e.addEventListener('click', () => { if (Q.recupererTout()) this.changed(); }));
     l.querySelectorAll<HTMLElement>('[data-epi]').forEach(e => e.addEventListener('click', () => { Q.epingler(e.dataset.epi!); this.changed(); }));
-    l.querySelectorAll<HTMLElement>('[data-ou]').forEach(e => e.addEventListener('click', () => {
-      const s = Q.data.succes[e.dataset.ou!], m = this.marquesSucces(s);
-      this.close(false); this.onCarte({ titre: s.nom, icone: 0, img: `assets/ui/succes/a_${s.icone}.webp`, ...m });
+    l.querySelectorAll<HTMLElement>('[data-tog]').forEach(e => e.addEventListener('click', ev => {
+      if ((ev.target as HTMLElement).closest('[data-rec],[data-va] a')) return;
+      const k = e.dataset.tog!; this.succesVu = null;
+      if (!this.succesOuverts.delete(k)) this.succesOuverts.add(k);
+      this.render();
+    }));
+    const versCarte = (s: SuccesDef) => { const m = this.marquesSucces(s); this.close(false); this.onCarte({ titre: s.nom, icone: 0, img: `assets/ui/succes/a_${s.icone}.webp`, ...m }); };
+    l.querySelectorAll<HTMLElement>('[data-ou]').forEach(e => e.addEventListener('click', () => versCarte(Q.data.succes[e.dataset.ou!])));
+    l.querySelectorAll<HTMLElement>('[data-oue]').forEach(e => e.addEventListener('click', () => {
+      const en = sc.entrees.find(x => x.cle === e.dataset.oue); if (!en) return;
+      const s0 = Q.data.succes[en.ids[0]];
+      versCarte({ ...s0, nom: en.nom, objectifs: en.ids.filter(id => !Q.succes.has(id)).flatMap(id => Q.data.succes[id].objectifs) });
     }));
     l.querySelectorAll<HTMLElement>('[data-va]').forEach(e => e.addEventListener('click', ev => { ev.stopPropagation(); this.ouvrirSucces(e.dataset.va!); }));
-    l.querySelectorAll<HTMLElement>('[data-c2]').forEach(e => e.addEventListener('click', () => { this.succesCat = e.dataset.c2!; this.render(); }));
-    l.querySelector<HTMLSelectElement>('[data-titre]')?.addEventListener('change', e => { Q.titreChoisi = (e.target as HTMLSelectElement).value; this.changed(); });
+    l.querySelectorAll<HTMLElement>('[data-c2]').forEach(e => e.addEventListener('click', () => { this.succesCat = e.dataset.c2!; this.succesSous = ''; this.render(); }));
+    l.querySelectorAll<HTMLElement>('[data-montrer]').forEach(e => e.addEventListener('click', () => { this.succesMontres.add(e.dataset.montrer!); this.render(); }));
+    l.querySelectorAll<HTMLElement>('[data-to]').forEach(e => e.addEventListener('click', () => { this.succesTO = e.dataset.to as 'titres' | 'orn'; this.render(); }));
+    l.querySelectorAll<HTMLElement>('[data-titre]').forEach(e => e.addEventListener('click', () => { Q.titreChoisi = e.dataset.titre!; this.changed(); }));
     l.querySelectorAll<HTMLElement>('[data-orn]').forEach(e => e.addEventListener('click', () => { Q.ornementChoisi = +e.dataset.orn!; this.changed(); }));
     l.querySelectorAll<HTMLElement>('[data-rtip]').forEach(e => {
       const r = ITEMS.resources[e.dataset.rtip!], eq = ITEMS.equipment[e.dataset.rtip!];
