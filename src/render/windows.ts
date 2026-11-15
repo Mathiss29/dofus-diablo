@@ -68,6 +68,7 @@ import { SOCIAL_CSS, rendreSocial, tickSocial } from './social';
 import { EnLigne } from './presence';
 import { Coop } from './coop';
 import { IDOLES_CSS, brancherIdoles, idolesHtml } from './idolesVue';
+import { PANOPLIE_CSS, ficheHtml, fichesPortees, nbActives, paliersGagnes, panosPortees } from './panoplieVue';
 import { CARNET_CSS, brancherCarnet, carnetHtml, type EtatCarnet } from './carnetFelures';
 import { TRESOR_CSS, objetTresor, signatureTresor, tresorHtml } from './tresorVue';
 import { ECLAT, FORGE_CSS, defaireHtml, etatForge, forgeHtml, lotConcasseur, mmss, pastillesFM, texteForge, type LigneLog } from './forgeVue';
@@ -286,7 +287,6 @@ const CSS = `
 .dw .stage .lv{position:absolute;top:2px;left:0;right:0;text-align:center;font-weight:bold;color:#f4efe0;text-shadow:0 1px 3px #000}
 .dw .dofus{display:flex;justify-content:center;gap:10px;padding:12px 14px 16px;z-index:1}
 .dw .dofus .slot{width:54px;height:54px;opacity:.85}
-.dw .sets{position:absolute;left:90px;right:90px;bottom:92px;text-align:center;font-size:12px;color:#d6f57a;text-shadow:0 1px 2px #000}
 .dw .right{display:grid;grid-template-columns:44px minmax(0,1fr);min-height:0;background:#292824}
 .dw .tabs{display:flex;flex-direction:column;gap:6px;padding:14px 4px 0 6px;border-right:1px solid #0d0c0a;background:#1d1c19}
 .dw .tab{width:32px;height:32px;border-radius:4px;display:grid;place-items:center;cursor:pointer;background:#2e2d28;border:1px solid #45433b}
@@ -764,7 +764,7 @@ const CSS = `
 /* inventaire */
 .dw .left{background:transparent}
 .dw .left::after{content:'';position:absolute;left:50%;top:44%;width:440px;height:440px;transform:translate(-50%,-50%);background:#a6e35a;-webkit-mask:url(assets/ui/d3/light_bg_inventory.png) center/contain no-repeat;mask:url(assets/ui/d3/light_bg_inventory.png) center/contain no-repeat;opacity:.55;pointer-events:none}
-.dw .perso,.dw .dofus,.dw .sets{position:relative;z-index:1}
+.dw .perso,.dw .dofus{position:relative;z-index:1}
 .dw .slot{width:64px;height:64px;border:0;border-radius:0;background:url(assets/ui/d3/slot_dark_background_empty.png) center/100% no-repeat;box-shadow:none}
 .dw .slot.plein{background-image:url(assets/ui/d3/slot_dark_background_full.png)}
 .dw .slot:hover{outline:1px solid #b9e54b;outline-offset:-3px}
@@ -940,7 +940,7 @@ export class Windows {
   private forge = etatForge();
 
   constructor(private world: World) {
-    const style = document.createElement('style'); style.textContent = DOF_CSS + MENU_CSS + ALM_CSS + SOCIAL_CSS + CSS + ICON_CSS + BUTIN_CSS + FORGE_CSS + CODEX_CSS + LADDER_CSS + TRESOR_CSS + IDOLES_CSS + CARNET_CSS; document.head.appendChild(style);
+    const style = document.createElement('style'); style.textContent = DOF_CSS + MENU_CSS + ALM_CSS + SOCIAL_CSS + CSS + ICON_CSS + BUTIN_CSS + FORGE_CSS + CODEX_CSS + LADDER_CSS + TRESOR_CSS + IDOLES_CSS + PANOPLIE_CSS + CARNET_CSS; document.head.appendChild(style);
     this.root = document.createElement('div'); this.root.className = 'dw'; document.body.appendChild(this.root);
     // « Tchat : » 6A : le mousedown garde le champ du tchat actif ; le clic qui suit ne fait rien d'autre (pas de cadenas)
     this.root.addEventListener('mousedown', e => {
@@ -1216,13 +1216,13 @@ export class Windows {
           <div class="perso">
             <div class="slots">${LEFT.map(slot).join('')}</div>
             <div class="stage"><div class="lv">${p.cls.name} · niveau ${p.level}</div>${p.v03 ? `<div class="prer"><span title="Préréglages : équipement, barre de sorts et variantes. Clic : mettre ; Maj + clic : enregistrer ce que tu portes">Préréglages</span>${p.prereglages.map((r, i) =>
-            `<span class="btn ${r ? '' : 'vide'}" data-prer="${i}" title="${r ? `${r.nom} : clic pour le mettre, Maj + clic pour le remplacer` : 'Vide : Maj + clic (ou clic) pour enregistrer ce que tu portes'}">${i + 1}</span>`).join('')}<small data-prerm>${this.prerMsg}</small></div>` : ''}<img class="socle" src="assets/ui/socle.png" alt="">${this.perso ? this.canevas('who', objetsPortes(p.equipment, p.apparat)) : `<img class="who" src="${this.portrait}" alt="">`}</div>
+            `<span class="btn ${r ? '' : 'vide'}" data-prer="${i}" title="${r ? `${r.nom} : clic pour le mettre, Maj + clic pour le remplacer` : 'Vide : Maj + clic (ou clic) pour enregistrer ce que tu portes'}">${i + 1}</span>`).join('')}<small data-prerm>${this.prerMsg}</small></div>` : ''}<img class="socle" src="assets/ui/socle.png" alt="">${this.perso ? this.canevas('who', objetsPortes(p.equipment, p.apparat)) : `<img class="who" src="${this.portrait}" alt="">`}${this.panoBtnHtml()}</div>
             <div class="slots">${RIGHT.map(slot).join('')}</div>
           </div>
           <div class="appa"><span title="Apparat : change seulement l'apparence. Clic : choisir ; clic droit : retirer, ou cacher l'objet porté">Apparence</span>${VISIBLES.map(([k, n]) => {
             const a = p.apparat[k], ic = a && a !== '0' ? apparatHtml(a) : '';
             return `<div class="slot ${a === '0' ? 'cache' : ''}" data-appa="${k}" title="${n} : ${a === '0' ? 'cachée' : a ? APPARATS.objets[a]?.name ?? '' : 'objet porté'}" style="${ic ? '' : `background-image:url(${D3}/tx_slot_${SLOT_D3[k]}.png)`}">${ic}</div>`; }).join('')}</div>
-          <div class="sets">${this.setsHtml()}</div>
+          ${this.panoFenHtml()}
           <div class="dofus">${p.dofusPortes.map((id, i) => { const d = id && p.v03 ? PORTABLE(id) : null;
             return `<div class="slot ${d ? 'plein' : ''}" data-dofus="${i}" ${d ? '' : `title="${p.v03 ? (p.dofus.some(x => !p.dofusPortes.includes(x)) ? 'Clic : porter un de tes Dofus' : 'Dofus : gagnés par les quêtes du Gawdien du Dofus (Bastion)') : 'Dofus (plus tard)'}"`} style="${d ? '' : `background-image:url(${D3}/tx_slot_dofus.png)`}">${d ? iconHtml(d.icon) : ''}</div>`; }).join('')}</div>
         </div>
@@ -1294,6 +1294,7 @@ export class Windows {
       else e.addEventListener('contextmenu', () => { this.hideTip(); this.recettesAvec(id); });
       e.addEventListener('click', ev => { if (ev.altKey && this.world.nourrirFamilier({ res: id, tout: ev.shiftKey })) { ev.preventDefault(); this.changed(); } });
     });
+    this.brancherPano(w);
     w.querySelectorAll<HTMLElement>('[data-uid]').forEach(e => {
       const uid = +e.dataset.uid!, it = p.bag.find(b => b.uid === uid)!;
       const equip = () => { if (!p.equip(uid)) this.flash(e); this.changed(); };
@@ -3266,14 +3267,54 @@ export class Windows {
     for (let i = n; i < Math.max(35, Math.ceil(n / 5) * 5); i++) cells.push('<div class="cell empty"></div>');
     return { html: cells.join(''), n };
   }
-  private setsHtml(): string {
-    const p = this.world.player, out: string[] = [];
-    for (const [id, n] of Object.entries(p.setCount)) {
-      const s = ITEMS.sets[id]; if (!s || n < 2) continue;
-      const b = s.bonus[String(n - 1)] ?? {};
-      out.push(`<div><b>${s.name}</b> (${n} / ${s.items.length}) · <span>${Object.entries(b).map(([k, v]) => `+${v} ${STAT_NAMES[k as Stat]}`).join(' · ')}</span></div>`);
+  // --- Panoplies (« Panoplies : 1A…7A ») : bouton au coin du socle, fiche au survol, fenêtre au clic, éclat au nouveau palier ---
+  private panoOuvert = false;
+  private panoAvant: Record<string, number> | null = null;
+  private panoMsg: { txt: string; t: number } | null = null;
+  private panoEclat = 0;
+  private portesIds(): Set<string> {
+    return new Set(Object.values(this.world.player.equipment).filter(Boolean).map(it => String(it!.id)));
+  }
+  /** 7A : compare les panoplies portées à celles du dernier affichage (pas d'éclat à l'ouverture de la fenêtre). */
+  private suivrePaliers() {
+    const p = this.world.player, maintenant = { ...p.setCount };
+    if (this.panoAvant) {
+      const g = paliersGagnes(this.panoAvant, maintenant, ITEMS);
+      if (g.length) {
+        const [id, n] = g[0], nom = ITEMS.sets[id].name.replace(/^Panoplie (du |de la |de l'|des |de )?/i, '');
+        this.panoMsg = { txt: `${nom.charAt(0).toUpperCase() + nom.slice(1)} : ${n} pièces, nouveaux bonus`, t: performance.now() };
+        this.panoEclat = performance.now();
+      }
     }
-    return out.join('');
+    this.panoAvant = maintenant;
+  }
+  private panoBtnHtml(): string {
+    this.suivrePaliers();
+    const p = this.world.player;
+    if (!panosPortees(p.setCount, ITEMS).length) { this.panoOuvert = false; return ''; }
+    const n = nbActives(p.setCount), now = performance.now();
+    const msg = this.panoMsg && now - this.panoMsg.t < 4000 ? `<div class="pano-msg">${this.panoMsg.txt}</div>` : '';
+    return `<div class="pano-btn ${this.panoOuvert ? 'on' : ''} ${now - this.panoEclat < 2500 ? 'eclat' : ''}" data-pano><span class="pico"></span>${n ? `<em>${n}</em>` : ''}</div>${msg}`;
+  }
+  private panoFenHtml(): string {
+    if (!this.panoOuvert) return '';
+    const p = this.world.player;
+    return `<div class="pano-fen"><div class="pano-hd"><span class="pico"></span><span>Panoplies</span><b data-panox title="Fermer">×</b></div><div class="pfc">${fichesPortees(p.setCount, this.portesIds(), ITEMS)}</div></div>`;
+  }
+  private brancherPano(w: HTMLElement) {
+    const b = w.querySelector<HTMLElement>('[data-pano]');
+    if (b) {
+      b.addEventListener('mouseenter', ev => {
+        if (this.panoOuvert) return;
+        const p = this.world.player;
+        this.tip.innerHTML = `<div class="pfs">${fichesPortees(p.setCount, this.portesIds(), ITEMS)}</div><div class="hint">Clic : garder la fenêtre Panoplies ouverte</div>`;
+        this.tip.style.display = 'block'; this.moveTip(ev);
+      });
+      b.addEventListener('mousemove', ev => this.moveTip(ev));
+      b.addEventListener('mouseleave', () => this.hideTip());
+      b.addEventListener('click', () => { this.hideTip(); this.panoOuvert = !this.panoOuvert; this.changed(); });
+    }
+    w.querySelector<HTMLElement>('[data-panox]')?.addEventListener('click', () => { this.panoOuvert = false; this.changed(); });
   }
 
   // --- Fiche d'objet au survol : jets, rareté, panoplie, comparaison avec l'objet porté ---
@@ -3312,7 +3353,7 @@ export class Windows {
     }).join('');
     // 14D : sceau « Nouveau pour le Codex » (0.3) sur un pouvoir pas encore enregistré
     const neuf = p.v03 && [it.legendary, it.legendary2].some(l => l && nouveauPourCodex(p.codex, p.cls.sorts, l)) ? '<div class="leg">✦ Nouveau pour le Codex : brise-le chez Malek pour le garder</div>' : '';
-    const set = d.set && ITEMS.sets[d.set] ? `<div class="set">${ITEMS.sets[d.set].name}</div>` : '';
+    const set = d.set && ITEMS.sets[d.set] ? ficheHtml(String(d.set), p.setCount[d.set] ?? 0, this.portesIds(), ITEMS) : '';   // « Panoplies : » 5A
     let cmp = '';
     if (cur) {
       const ks = STATS.filter(k => (it.stats[k] ?? 0) !== (cur.stats[k] ?? 0));
