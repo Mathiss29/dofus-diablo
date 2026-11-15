@@ -11,9 +11,13 @@ import { prevenirCarteGraphique } from './render/fluidite';
 import { adresseLadder } from './render/ladder';
 import { ecranTelephone, surTelephone } from './render/telephone';
 import { demarrerManette, reglerControles } from './render/manette';
+import { brancherMiseAJour } from './render/miseAJour';
 
 // Compte Discord (maquette « Vrai multi : ») : lit le jeton renvoyé par le serveur (#connexion=…) avant de regarder l'adresse
 Compte.demarrer();
+
+// Toujours la dernière version, même si le navigateur a gardé l'ancienne page (Mathis, AYN Thor)
+brancherMiseAJour();
 
 // Site installable comme application (bouton « Installer le jeu » de l'accueil)
 preparerInstallation();
