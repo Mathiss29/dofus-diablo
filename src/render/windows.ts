@@ -1,4 +1,5 @@
 import { QUALITES, REGLAGES_DEFAUT, sauverReglages, type Reglages } from './ambiance';
+import { reglerControles } from './manette';
 import * as Touches from './touches';
 import { ICON_CSS, iconHtml, prechargerIcones } from './icons';
 import { MANIFESTE, Son } from './son';
@@ -2355,6 +2356,12 @@ export class Windows {
           <div class="keys">${[[droit ? 'Clic droit' : 'Clic gauche', 'aller / attaquer (maintenu : continuer)'], [`Maj + ${droit ? 'clic droit' : 'clic'}`, 'attaquer sur place'], [droit ? 'Clic gauche' : 'Clic droit', 'sort de la case « clic » de la barre'],
             [Touches.ACTIONS.slice(0, 6).map(a => Touches.nomAction(a.id)).join(' '), 'barre de sorts'], [T('deplacement'), 'déplacement'], [T('potion'), 'potion'], ['Alt', 'aperçu des sorts, noms'], ['Molette', 'zoom'], ['Échap', 'fermer, menu']]
             .map(([k, d]) => `<b>${k}</b><span>${d}</span>`).join('')}</div>` },
+        { id: 'manette', titre: 'Manette', opts: [
+          { k: 'controles', nom: 'Jouer avec', aide: 'Automatique : le jeu suit ce que tu touches en dernier. Clavier et souris : la manette ne fait plus rien. Manette : la visée reste à la manette même si la souris ou l\'écran tactile bouge.', t: 'select', choix: [['auto', 'Automatique'], ['clavier', 'Clavier et souris'], ['manette', 'Manette']] },
+        ], reset: () => { r.controles = 'auto'; },
+          html: `<div class="keys">${[['Stick gauche', 'marcher'], ['Stick droit', 'viser (sinon auto-visée) ; dans un menu : curseur'], ['A', 'attaquer (maintenu), parler, ramasser'], ['RT', 'sort de la case « Clic D »'], ['X Y B RB', 'sorts 1 à 4'], ['LT / R3', 'sorts 5 / 6'], ['LB', 'déplacement (Bond, Saut…)'],
+            ['Croix', '↓ potion · ↑ boisson · ← coffre · → carte en surimpression'], ['LT maintenue + X Y B A', 'invocations de l\'Osamodas (LT + RB : sort 5)'], ['Start', 'menu (LB / RB : onglet)'], ['Select', 'carte du monde'], ['L3', 'Havre-Sac'], ['Dans un menu', 'croix : bouton suivant · A : cliquer · X : clic droit · Y : double clic · B : fermer']]
+            .map(([k, d]) => `<b>${k}</b><span>${d}</span>`).join('')}</div>` },
         { id: 'modules', titre: 'Modules d\'interface', opts: [
           { k: 'verrou', nom: 'Verrouiller la position des modules', aide: 'Décoche pour glisser le cadre du perso, la mini-carte, le suivi de quête, le compteur de dégâts et le tchat où tu veux.', t: 'check' },
           { k: 'coords', nom: 'Afficher les coordonnées de la carte', aide: 'Sous la mini-carte, comme [6,-19].', t: 'check' },
@@ -2485,6 +2492,7 @@ export class Windows {
       else if (k === 'qualite') { if (e.value !== 'perso') Object.assign(r, QUALITES[e.value as keyof typeof QUALITES]); r.qualite = e.value as Reglages['qualite']; }
       else { R[k] = e.value; if (k === 'resolution') preset(); }
       if (k === 'clavier') Touches.regler(r.clavier);
+      if (k === 'controles') reglerControles(r.controles);
       apply(); this.render();
     }));
     w.querySelectorAll<HTMLInputElement>('[data-ck]').forEach(e => e.addEventListener('change', () => {

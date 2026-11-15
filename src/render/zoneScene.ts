@@ -91,7 +91,7 @@ import { ChatVue } from './chat';
 import { lienObjet, type SorteInfo } from './chatOutils';
 import { BullesChat } from './bullesChat';
 import { demandesEnAttente, menuJoueur, montrerInvitation } from './social';
-import { BTN, brancherJeu, brancheActuelle, manetteActive, type BrancheJeu, type ImageManette } from './manette';
+import { BTN, brancherJeu, brancheActuelle, manetteActive, reglerControles, type BrancheJeu, type ImageManette } from './manette';
 import { BOUTONS_JEU, COUCHE_LT, MenuStart, cibleAuto, dirMonde, interactionProche } from './manetteJeu';
 /** Archimonstres du jeu (carnet des âmes, « Archis : » 8A). */
 const NB_ARCHIS = Object.values(GAME_DATA.monsters).filter(d => d.archiDe).length;
@@ -1103,7 +1103,7 @@ export class ZoneScene extends Phaser.Scene {
   /** Réglages (maquette « Réglages ») qui ne passent pas par l'ambiance ni le son : touches, interface, chiffres, images par seconde. */
   private appliquerReglages() {
     const r = this.reglages;
-    Touches.appliquer(r.touches); Touches.regler(r.clavier);
+    Touches.appliquer(r.touches); Touches.regler(r.clavier); reglerControles(r.controles);
     this.hud.reglages = r; this.hud.flecheQuete = r.flecheQuete;
     this.fx.chiffres = r.chiffres; this.fx.tailleChiffres = r.tailleChiffres === 'petite' ? 0.8 : r.tailleChiffres === 'grande' ? 1.3 : 1;
     EntityView.barresVie = r.barresVie;
@@ -1164,7 +1164,7 @@ export class ZoneScene extends Phaser.Scene {
     const p = this.world.player, osa = p.bar[Player.INVOC] != null;
     for (const bt of m.appuyes) {
       if (bt === BTN.START) { this.menuStart?.montrer(); continue; }
-      if (bt === BTN.R3) { const c = this.manGardee == null ? cibleAuto(this.world, p, null, null) : null; this.manGardee = c?.id ?? null; this.hud.toast(c ? 'Cible gardée' : 'Cible libérée', 1200); continue; }
+      if (bt === BTN.RT) { this.manTenues.set(bt, 'CLICD'); this.down('CLICD', p.bar[6]); continue; }   // case « Clic D » de la barre (sort favori)
       if (osa && m.tenu(BTN.LT) && COUCHE_LT[bt]) { this.manTenues.set(bt, COUCHE_LT[bt]); this.action(COUCHE_LT[bt], true); continue; }
       if (bt === BTN.LT && osa) continue;   // Osamodas : LT ne sert que de couche
       if (bt === BTN.A) { this.boutonA(); continue; }
@@ -1174,7 +1174,7 @@ export class ZoneScene extends Phaser.Scene {
     for (const bt of m.relaches) {
       if (bt === BTN.A) { this.manAttaque = false; if (this.manRecolte) { this.manRecolte = false; this.recolteMaintenu = false; } }
       const a = this.manTenues.get(bt);
-      if (a) { this.manTenues.delete(bt); this.action(a, false); }
+      if (a) { this.manTenues.delete(bt); if (a === 'CLICD') this.up('CLICD'); else this.action(a, false); }
     }
   }
   /** A : parler, ramasser, prendre un Zaap ou un portail, utiliser un atelier, récolter ; sinon attaquer (maintenu : en boucle). */
