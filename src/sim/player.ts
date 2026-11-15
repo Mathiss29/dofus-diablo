@@ -30,7 +30,7 @@ import { avantImpact61, dommages61, echangeBalise61, hit61, viseBalise61, impact
 import { SORTS, dmgMoyen, gradeAuNiveau, niveauRequis, type PaireSorts, type SortGrade, type SortOfficiel } from './sorts';
 import { porteeSort } from './apercu';
 import { aimanter, alchiRhetorique, apresCoupEniripsa, envol, impactEniripsa, majEniripsa } from './eniripsa';
-import { aboie, arriveeBond, avantImpactOuginak, coupRecuOuginak, impactOuginak, interditBete, majOuginak, porteeBete, subisOuginak, type EtatOuginak } from './ouginak';
+import { aboie, arriveeBond, avantImpactOuginak, bondGratuit, porteeBondOuginak, vitesseOuginak, zoneOuginak, coupRecuOuginak, impactOuginak, interditBete, majOuginak, porteeBete, subisOuginak, type EtatOuginak } from './ouginak';
 import { arbrePassage, avantImpactSadida, impactSadida, majSadida, partagerDon, sentierDeRonces } from './sadida';
 import { avantImpactEcaflip, chateauBrise, impactEcaflip, majEcaflip, neuviemeVie, type Carte, type MainGagnante } from './ecaflip';
 import { impactSorts06, pasJoueur06 } from './sorts06';
@@ -465,7 +465,7 @@ export class Player extends Entity {
   ecaPattesA = -99; ecaVieA = -999;
   courir(k: number, t: number) { this.courseK = this.courseT > 0 ? Math.max(this.courseK, k) : k; this.courseT = Math.max(this.courseT, t); }
   slow(t: number, k: number) { if (this.insensibleT > 0) return; k *= fuiteFactor(this.fuite); this.slowK = this.slowT > 0 ? Math.max(this.slowK, k) : k; if (t >= this.slowT) this.slowT0 = t; this.slowT = Math.max(this.slowT, t); }
-  get speed(): number { return this.cls.speed * (1 + vitesseAgilite(this.stat('agilite'))) * this.vitesseTest * (this.slowT > 0 ? 1 - this.slowK : 1) * (this.courseT > 0 ? 1 + this.courseK : 1) * (1 + this.bonusMetier('pecheur')) * (this.ougBete ? 1 + this.cls.ouginak!.bete.vitesse : 1); }
+  get speed(): number { return this.cls.speed * (1 + vitesseAgilite(this.stat('agilite'))) * this.vitesseTest * (this.slowT > 0 ? 1 - this.slowK : 1) * (this.courseT > 0 ? 1 + this.courseK : 1) * (1 + this.bonusMetier('pecheur')) * (this.ougBete ? 1 + this.cls.ouginak!.bete.vitesse : 1) * vitesseOuginak(this); }
   /** Partie de test (5D) : course ×3. */
   vitesseTest = 1;
   /** Tacle et Fuite (base Agilité / 10), Retrait et Esquive PA / PM (base Sagesse / 10), comme dans Dofus. */
@@ -935,7 +935,7 @@ export class Player extends Entity {
     if (!def?.move) return { x: tx, y: ty };
     const dx = aim.x - this.x, dy = aim.y - this.y, d = Math.hypot(dx, dy) || 1;
     const sig = this.rageFull && def.rage === 'dash' ? this.cls.rage.signature : 1;   // Déferlement renforcé : avance plus loin
-    let L = Math.min(def.move.maxRange * sig + this.porteePlus(id), d);
+    let L = Math.min(def.move.maxRange * sig + this.porteePlus(id) + porteeBondOuginak(this, def), d);   // Bond de la bête
     if (def.move.kind === 'dash') {
       // la ruée s'arrête devant le premier ennemi sur sa route
       for (const m of world.monsters) {
@@ -984,6 +984,7 @@ export class Player extends Entity {
     // Recharge (maquette Recharges) : relance officielle aussi pour un déplacement qui la demande (Pas Chassé : 3 tours = 9 s)
     this.cd[id] = this.cdMax[id] = this.recharge(id);
     this.pa -= this.paCost(id); this.pm -= def.pm ?? 0;
+    if (bondGratuit(this, def)) this.pm += def.pm ?? 0;   // Bond de la bête : un bond sur deux gratuit
     (this.casts[id] ??= []).push(this.age);
     this.casts[id] = this.casts[id].filter(t => this.age - t < Math.max(TOUR, this.retourDe(id)));
     if (def.move?.kind === 'leap') this.invuln = Math.max(this.invuln, def.duration + 0.05);
@@ -1315,7 +1316,7 @@ export class Player extends Entity {
         ...this.effetsPouvoirsClasse(s.id), ...hit61(d) };
       let hits = 0, size = 0;
       // Pouvoirs officiels (0.3) : zone plus grande, ligne ou cône plus long
-      const zb = this.zoneBonus(s.id) + (s.boosted && R.mode === 'eloquence' ? this.cls.eniripsa?.zoneEloquence ?? 0 : 0), pp = this.porteePlus(s.id);   // Éloquence : +2 cases de zone
+      const zb = this.zoneBonus(s.id) + zoneOuginak(this, s.id) + (s.boosted && R.mode === 'eloquence' ? this.cls.eniripsa?.zoneEloquence ?? 0 : 0), pp = this.porteePlus(s.id);   // Éloquence : +2 cases de zone
       // Eniripsa : effets des Mots sur les alliés d'abord ; vrai = aucun coup aux monstres (soutien, ou Mot posé sur un allié)
       const rEni = hz.shape === 'point' || hz.shape === 'circle' ? hz.radius * area + zb : 0;
       const eni = !!this.cls.eniripsa && !mv, pasDeCoup = eni && impactEniripsa(this, s.id, d, s.tx, s.ty, rEni, mult, world);

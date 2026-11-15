@@ -89,10 +89,14 @@ export interface EtatOuginak {
   pelage: boolean;
   /** Aboiement : actif jusqu'à cet âge du joueur (vaut aussi pour un allié qui n'est pas Ouginak). */
   aboieFin: number;
+  /** Légendaires : âge de la dernière transformation (Pleine lune), du dernier Instinct de survie ; 2e Roquet (Meute fidèle) ;
+   *  un bond sur deux gratuit en Bête (Bond de la bête) ; Roquet en vie (Course de meute). */
+  beteA: number; instinctA: number; roquet2: number | null; roquet2T: number; bondPair: boolean; roquetVivant: boolean;
 }
 
 export const etatOug = (p: Player): EtatOuginak =>
-  (p.oug ??= { coupA: p.age, encaisse: [], subisN: 0, subisT: 0, croit: {}, proie: null, roquet: null, roquetT: 0, pelage: false, aboieFin: 0 });
+  (p.oug ??= { coupA: p.age, encaisse: [], subisN: 0, subisT: 0, croit: {}, proie: null, roquet: null, roquetT: 0, pelage: false, aboieFin: 0,
+    beteA: -99, instinctA: -99, roquet2: null, roquet2T: 0, bondPair: false, roquetVivant: false });
 
 /** La Proie de ce joueur (vivante), ou null. */
 export function proieDe(p: Player, world: World): Monster | null {
@@ -130,7 +134,8 @@ export function consommerRage(p: Player, n: number | 'tout'): number {
 /** Dommages subis : chaque cran de Rage les réduit (officiel), Molosse et Amarok aussi. */
 export function subisOuginak(p: Player): number {
   const O = p.cls.ouginak!, o = p.oug;
-  return Math.max(0.5, 1 - O.subisParEtat * Math.floor(p.rage) - (o && o.subisT > 0 ? o.subisN : 0));
+  const parEtat = O.subisParEtat + p.pcv('pc-ouginak-J') / 100;   // Peau dure
+  return Math.max(0.4, 1 - parEtat * Math.floor(p.rage) - (o && o.subisT > 0 ? o.subisN : 0));
 }
 /** Aboiement actif sur ce joueur (pas repoussé). */
 export const aboie = (p: Player): boolean => !!p.oug && p.age < p.oug.aboieFin;
@@ -144,6 +149,12 @@ export function coupRecuOuginak(p: Player, dmg: number, world: World, contactCou
     gagnerRage(p, 1, world);
   }
   if (dmg <= 0 || !p.cls.ouginak) return;
+  const is = p.pcv('pc-ouginak-P');   // Instinct de survie : sous 30 % de PV, un cran de Rage et un bouclier (toutes les 20 s)
+  if (is && p.hp > 0 && p.hp < p.maxHp * 0.3 && p.age - o.instinctA >= 20) {
+    o.instinctA = p.age; gagnerRage(p, 1, world);
+    p.shield = Math.max(p.shield, Math.round(p.maxHp * is / 100)); p.shieldT = p.shieldT0 = 5; p.shieldSrc = 'pc-ouginak-P';
+    world.emit({ k: 'status', x: p.x, y: p.y - 80, text: 'Instinct de survie', color: '#ffb36a' });
+  }
   const E = p.cls.ouginak.encaisse;
   o.encaisse = o.encaisse.filter(([t]) => p.age - t < E.fenetre);
   o.encaisse.push([p.age, dmg]);
@@ -154,7 +165,7 @@ export function coupRecuOuginak(p: Player, dmg: number, world: World, contactCou
 export function interditBete(p: Player, d: SpellDef | undefined): boolean {
   const O = d?.ouginak;
   if (!O) return false;
-  if (p.ougBete && O.defensif) return true;
+  if (p.ougBete && O.defensif && !(O.pelage && p.pcv('pc-ouginak-O'))) return true;   // Pelage épais : permis en Bête
   if (typeof O.consomme === 'number' && Math.floor(p.rage) < O.consomme) return true;
   return !!O.flair && p.oug?.proie == null;
 }
@@ -163,6 +174,19 @@ export function porteeBete(p: Player, d: SpellDef): number | null {
   if (!p.ougBete || !d.ouginak || d.ouginak.garde || d.dmg <= 0 || d.move) return null;
   return p.cls.ouginak!.bete.portee * CASE + CASE / 2;
 }
+
+/** Bond de la bête (légendaire) : en Forme Bestiale, le bond va plus loin (px) ... */
+export const porteeBondOuginak = (p: Player, d: SpellDef): number => d.ouginak?.bond && p.ougBete ? p.pcv('pc-ouginak-K') * CASE : 0;
+/** ... et un bond sur deux ne coûte pas de charge. */
+export function bondGratuit(p: Player, d: SpellDef): boolean {
+  if (!d.ouginak?.bond || !p.ougBete || !p.pcv('pc-ouginak-K')) return false;
+  const o = etatOug(p); o.bondPair = !o.bondPair;
+  return !o.bondPair;
+}
+/** Rage aveugle (légendaire) : en Forme Bestiale, Tibia et Amarok frappent une case plus large (px). */
+export const zoneOuginak = (p: Player, id: string): number => p.ougBete && (id === 'tibia' || id === 'amarok') && p.pcv('pc-ouginak-N') ? CASE : 0;
+/** Course de meute (légendaire) : vitesse tant que le Roquet est en vie. */
+export const vitesseOuginak = (p: Player): number => p.oug?.roquetVivant ? 1 + p.pcv('pc-ouginak-L') / 100 : 1;
 
 /** Espace : bond de 4 cases ; si la Proie est sous la souris (et à `bond.proie` cases au plus), jusqu'à son contact. */
 export function arriveeBond(p: Player, aim: { x: number; y: number }, world: World): { x: number; y: number } | null {
@@ -183,7 +207,9 @@ const proieVisee = (m: Monster | null, x: number, y: number, r: number) => !!m &
  *  Renvoie le multiplicateur de dommages. */
 export function avantImpactOuginak(p: Player, id: string, d: SpellDef, s: { tx: number; ty: number }, world: World): number {
   const O = d.ouginak!, m = proieDe(p, world), r = d.hit.shape === 'point' ? d.hit.radius + CASE * 0.4 : CASE;
-  if (!proieVisee(m, s.tx, s.ty, r) || !m) return 1;
+  const ra = zoneOuginak(p, id) ? 1 + p.pcv('pc-ouginak-N') / 100 : 1;   // Rage aveugle
+  if (!proieVisee(m, s.tx, s.ty, r) || !m) return ra;
+  const oeil = d.dmg > 0 ? 1 + p.pcv('pc-ouginak-G') / 100 : 1;   // Œil du traqueur : la Proie prend plus de tes sorts
   if (O.bondProie && Math.hypot(m.x - p.x, m.y - p.y) > m.radius + p.radius + 12) {
     const c = contact(p, m, world);
     world.emit({ k: 'bondOug', x: p.x, y: p.y, tx: c.x, ty: c.y });
@@ -199,19 +225,20 @@ export function avantImpactOuginak(p: Player, id: string, d: SpellDef, s: { tx: 
     }
   }
   if (O.croit) {
-    const o = etatOug(p), c = o.croit[id], n = c && c.t > 0 ? c.n : 0;
-    o.croit[id] = { n: Math.min(O.croit.max, n + 1), t: O.croit.t };
+    const o = etatOug(p), c = o.croit[id], n = c && c.t > 0 ? c.n : 0, oar = p.pcv('pc-ouginak-I');   // Os à ronger : plus long, deux fois plus vite
+    o.croit[id] = { n: Math.min(O.croit.max, n + (oar ? 2 : 1)), t: O.croit.t + oar };
     if (n) world.emit({ k: 'status', x: m.x, y: m.y - 40, text: `+${Math.round(n * O.croit.per * 100)} %`, color: '#ffb36a' });
-    return 1 + n * O.croit.per;
+    return (1 + n * O.croit.per) * ra * oeil;
   }
-  return 1;
+  return ra * oeil;
 }
 
 /** Après le coup d'un sort de l'Ouginak : Rage, Proie, Roquet, soins et bonus. */
-export function impactOuginak(p: Player, _id: string, d: SpellDef, tx: number, ty: number, size: number, hits: number, world: World) {
+export function impactOuginak(p: Player, id: string, d: SpellDef, tx: number, ty: number, size: number, hits: number, world: World) {
   const O = d.ouginak!, o = etatOug(p), m = proieDe(p, world), surProie = proieVisee(m, tx, ty, size);
-  if (O.rage && hits > 0) gagnerRage(p, O.rage, world);
-  if (O.subis) { o.subisN = O.subis.n; o.subisT = O.subis.t; }
+  const ma = id === 'molosse' && surProie && hits > 0 ? p.pcv('pc-ouginak-A') : 0;   // Mâchoires d'acier
+  if (O.rage && hits > 0) gagnerRage(p, O.rage + (ma ? 1 : 0), world);
+  if (O.subis) { o.subisN = ma ? ma / 100 : O.subis.n; o.subisT = O.subis.t; }
   if (O.proie) {
     let best: Monster | null = null, bd = Infinity;
     for (const q of world.monsters) {
@@ -229,7 +256,11 @@ export function impactOuginak(p: Player, _id: string, d: SpellDef, tx: number, t
       if (n > 0) world.emit({ k: 'heal', x: p.x, y: p.y, z: 50, amount: n });
     }
   }
-  if (O.pelage) o.pelage = true;
+  if (O.pelage) {
+    o.pelage = true;
+    const pe = p.pcv('pc-ouginak-O');   // Pelage épais : boucliers plus gros
+    if (pe && p.shieldSrc === 'pelage_protecteur') p.shield = Math.round(p.shield * (1 + pe / 100));
+  }
   if (O.panique) {   // depuis le centre : la cible elle-même ne bouge pas
     for (const q of world.monsters) {
       const dd = Math.hypot(q.x - tx, q.y - ty);
@@ -320,6 +351,29 @@ export function proieAchevee(m: Monster, world: World) {
   p.oug.proie = null;
   if (p.cd.proie > 0 || p.casts.proie?.length) { p.cd.proie = 0; p.casts.proie = []; }
   world.emit({ k: 'status', x: m.x, y: m.y - 50, text: 'Proie achevée', color: '#ff9a4a' });
+  const cu = p.pcv('pc-ouginak-M');   // Curée : un cran de Rage et des PV
+  if (cu && !p.dead) {
+    gagnerRage(p, 1, world);
+    const n = p.soigner(p.maxHp * cu / 100);
+    if (n > 0) world.emit({ k: 'heal', x: p.x, y: p.y, z: 50, amount: n });
+  }
+  const ps = p.pcv('pc-ouginak-H');   // Proie suivante : la marque saute au monstre le plus proche
+  if (ps) {
+    let best: Monster | null = null, bd = ps * CASE;
+    for (const q of world.monsters) {
+      if (q === m || q.dead || q.state === 'spawn' || q.mannequin || q.proieDe != null) continue;
+      const dd = Math.hypot(q.x - m.x, q.y - m.y) - q.radius;
+      if (dd <= bd) { bd = dd; best = q; }
+    }
+    if (best) marquer(p, best, world);
+  }
+}
+
+/** Coup du Roquet sur un monstre (dommages faits) : Crocs sales (légendaire) le fait saigner 3 s. */
+export function morsureRoquet(b: Bete, m: Monster, dmg: number) {
+  const cs = b.base === 'oug_roquet' ? b.owner.pcv('pc-ouginak-D') : 0;
+  if (!cs || dmg <= 0 || m.dead) return;
+  m.saigne = Math.max(m.saigneT > 0 ? m.saigne : 0, dmg * cs / 100); m.saigneT = 3;
 }
 
 /** Coup d'un joueur sur un monstre (dommages faits) : Proie automatique (15B), soin de la Proie (15 % pour tous les joueurs). */
@@ -331,7 +385,8 @@ export function coupSurMonstre(p: Player, m: Monster, dmg: number, world: World)
   }
   if (m.proieDe != null && dmg > 0 && !p.dead) {
     const own = world.players.find(q => q.id === m.proieDe);
-    const n = p.soigner(dmg * (own?.cls.ouginak?.proie.soin ?? 0.15));
+    const sl = p === own && p.ougBete ? 1 + p.pcv('pc-ouginak-B') / 100 : 1;   // Sang du loup
+    const n = p.soigner(dmg * (own?.cls.ouginak?.proie.soin ?? 0.15) * sl);
     if (n > 0 && p.hp < p.maxHp) world.emit({ k: 'heal', x: p.x, y: p.y, z: 50, amount: n });
   }
 }
@@ -341,7 +396,8 @@ export function majOuginak(p: Player, dt: number, world: World) {
   const O = p.cls.ouginak!, o = etatOug(p);
   if (p.dead) { if (p.ougBete) finBete(p, world); return; }
   // 14C : un cran de moins toutes les `baisse` s sans frapper
-  if (p.rage > 0 && p.age - o.coupA >= O.baisse) { p.rage = Math.max(0, Math.floor(p.rage) - 1); o.coupA = p.age; }
+  const pleineLune = p.ougBete && p.age - o.beteA < p.pcv('pc-ouginak-E');   // Pleine lune : la Rage tient après la transformation
+  if (p.rage > 0 && !pleineLune && p.age - o.coupA >= O.baisse) { p.rage = Math.max(0, Math.floor(p.rage) - 1); o.coupA = p.age; }
   // 2A : la Bête tient tant que la Rage est à 3
   if (!p.ougBete && p.rage >= p.cls.rage.max) devenirBete(p, world);
   else if (p.ougBete && p.rage < p.cls.rage.max) finBete(p, world);
@@ -363,11 +419,32 @@ export function majOuginak(p: Player, dt: number, world: World) {
     if (o.roquet == null && (o.roquetT -= dt) <= 0 && !world.dansHavreSac) {
       appelerRoquet(p, p.x - Math.cos(p.facing) * CASE, p.y - Math.sin(p.facing) * CASE, world, false);
     }
+    // Meute fidèle (légendaire) : un deuxième Roquet, plus faible, qui revient comme le premier
+    const mf = p.pcv('pc-ouginak-C');
+    const r2 = o.roquet2 == null ? null : world.betes.find(b => b.id === o.roquet2 && !b.dead) ?? null;
+    if (o.roquet2 != null && !r2) { const b = world.betes.find(x => x.id === o.roquet2); o.roquet2 = null; o.roquet2T = b ? O.roquet.retour : 0; }
+    if (r2 && !mf) { r2.mourir(world); o.roquet2 = null; }
+    if (mf && o.roquet2 == null && (o.roquet2T -= dt) <= 0 && !world.dansHavreSac) {
+      const b = world.invoquer(p, 'oug_roquet', 'lance_roquet', p.x + Math.cos(p.facing + 2) * CASE, p.y + Math.sin(p.facing + 2) * CASE, true);
+      if (b) { b.horsCompte = true; b.force = mf / 100; b.maxHp = b.hp = Math.max(1, Math.round(b.maxHp * mf / 100)); o.roquet2 = b.id; }
+    }
   }
+  o.roquetVivant = o.roquet != null;
 }
 
 function devenirBete(p: Player, world: World) {
-  p.ougBete = true; p.ougTransfoT = 0.6;
+  p.ougBete = true; p.ougTransfoT = 0.6; etatOug(p).beteA = p.age;
+  const hu = p.pcv('pc-ouginak-F');   // Hurlement : repousse et ralentit les ennemis à 3 cases
+  if (hu) {
+    for (const q of world.monsters) {
+      const dd = Math.hypot(q.x - p.x, q.y - p.y);
+      if (q.dead || q.state === 'spawn' || q.intouchable || dd > 3 * CASE + q.radius) continue;
+      const kb = 2 * 342 / q.def.mass, k = dd || 1;
+      q.kx += (q.x - p.x) / k * kb; q.ky += (q.y - p.y) / k * kb;
+      q.haste = Math.min(q.haste, 1 - hu / 100); q.hasteT = Math.max(q.hasteT, 2);
+    }
+    world.emit({ k: 'status', x: p.x, y: p.y - 96, text: 'Hurlement', color: '#ff4a3a' });
+  }
   world.emit({ k: 'status', x: p.x, y: p.y - 80, text: 'Forme Bestiale', color: '#ff4a3a' });
   world.emit({ k: 'bete', id: p.id, x: p.x, y: p.y, on: true });
 }
