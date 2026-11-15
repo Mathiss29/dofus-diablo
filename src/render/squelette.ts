@@ -241,15 +241,7 @@ export class Assemblage {
   }
 }
 
-/** Palettes toutes faites (maquette Apparence 2C) : cheveux et 4 zones de tenue ; la peau reste celle du joueur. */
-export const PALETTES: { nom: string; c: number[] }[] = [
-  { nom: 'Or', c: [0xf2d36b, 0xffffff, 0xc9a227, 0x8a5a12, 0xf5e6b0] },
-  { nom: 'Sombre', c: [0x2b2b3a, 0x5a1a2a, 0x3a3a46, 0x1c1c24, 0x7a2030] },
-  { nom: 'Forêt', c: [0x6b3b1e, 0x3f7a3a, 0x2a4d2a, 0x8a6a2a, 0x9ac46a] },
-  { nom: 'Glace', c: [0xdfe9ff, 0x5fa8e0, 0x2a5a9a, 0xe0f0ff, 0x9ad0ff] },
-  { nom: 'Braise', c: [0xd8401c, 0x2a1a14, 0xe07a1c, 0x5a1a0c, 0xf2b23a] },
-  { nom: 'Royal', c: [0x3a2a6a, 0x7a4ad0, 0xe8c24a, 0x2a1a4a, 0xd0b0ff] },
-];
+/** Les palettes toutes faites sont dans src/data/palettes.json (src/sim/palettes.ts, panneau src/render/palettesUi.ts). */
 export const ZONES = ['Peau', 'Cheveux', 'Tenue 1', 'Tenue 2', 'Tenue 3', 'Tenue 4'];
 
 const assemblages = new Map<string, Promise<Assemblage>>();

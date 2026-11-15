@@ -3,12 +3,13 @@ import { MANIFESTE, Son } from './son';
 import { GAME_DATA, ITEMS, QUETES } from '../sim/data';
 import { EQUIP_SLOTS, RARITY_COLORS, RARITY_NAMES } from '../sim/items';
 import { LOOKS } from './looks';
-import { DOSSIER, PALETTES, ZONES, apparenceValide, assemblagePour, fiches, objetsPortes, type Apparence, type Assemblage, type FichePerso } from './squelette';
+import { DOSSIER, ZONES, apparenceValide, assemblagePour, fiches, objetsPortes, type Apparence, type Assemblage, type FichePerso } from './squelette';
 import { ICON_CSS, iconHtml } from './icons';
 import { PALIERS, lireBestiaire } from './carnet';
 import { dessinerPortraits, groupesBestiaire } from './butinVue';
 import { LADDER_CSS, VueLadder, chargerLadder, ladderCharge } from './ladder';
 import { niveauHorsPartie } from '../sim/butin';
+import { MES_PALETTES_MAX } from '../sim/palettes';
 import { SORTS, niveauRequis, type SortOfficiel } from '../sim/sorts';
 import { texteSort } from './sortsTextes';
 import CLASSES_DOFUS from '../data/classes_dofus.json';
@@ -20,7 +21,8 @@ import { DISCORD_INVITATION, IDLUS, STUDIO } from './liens';
 import { Parcours } from './parcours';
 import { heureParis } from './heure';
 import { BOSS_MONDE, VIVANT, candidatsInvasion, heureTexte, invasionDe, rendezVous } from '../sim/mondeVivant';
-import { nbEmplacements, NB_SECOURS, dernier, dureeTexte, exporter, importer, lireCimetiere, lirePersos, lireSecours, nomValide, persosEnLigne, prendreSecours, restaurerSecours, sauverPerso, supprimerPerso, type Perso } from './persos';
+import { htmlPalettes, brancherPalettes, type CtxPalettes } from './palettesUi';
+import { nbEmplacements, NB_SECOURS, dernier, dureeTexte, exporter, importer, lireCimetiere, lireCoffre, lirePersos, sauverCoffre, lireSecours, nomValide, persosEnLigne, prendreSecours, restaurerSecours, sauverPerso, supprimerPerso, type Perso } from './persos';
 
 /** Écrans hors du jeu (maquette unique, choix 17A à 23A, 19B, 22D, 30E) : accueil avec Incarnam en direct derrière,
  *  création du perso devant le dieu de sa classe, et « Mes personnages ». Du HTML posé sur le jeu : la partie (ZoneScene)
@@ -169,7 +171,7 @@ const CSS = `
 #acc .sp small{display:block;color:#a8a58e;font-size:calc(.62*var(--u))}
 #acc .hero{background-repeat:no-repeat}
 #acc canvas.vivant{pointer-events:none}
-#acc .tetes{display:grid;grid-template-columns:repeat(6,1fr);gap:calc(.25*var(--u))}
+#acc .tetes{display:grid;grid-template-columns:repeat(9,1fr);gap:calc(.25*var(--u))}
 #acc .tetes button{all:unset;cursor:pointer;aspect-ratio:1;border-radius:calc(.35*var(--u));background-color:#2a2b1f;background-repeat:no-repeat;border:1px solid #45452f}
 #acc .tetes button.on{border-color:var(--lime);box-shadow:0 0 0 calc(.1*var(--u)) var(--lime);background-color:#3a4a1c}
 #acc .tetes button:focus-visible,#acc .coul label:focus-within{outline:2px solid var(--lime)}
@@ -177,6 +179,10 @@ const CSS = `
 #acc .coul label{display:grid;justify-items:center;gap:calc(.1*var(--u));font-size:calc(.5*var(--u));font-weight:800;color:#c9c4ab;cursor:pointer;border-radius:calc(.3*var(--u))}
 #acc .coul input{all:unset;width:100%;aspect-ratio:1.4;border-radius:calc(.35*var(--u));border:1px solid #f1ecd8aa;box-sizing:border-box;cursor:pointer}
 #acc .pals{display:flex;flex-wrap:wrap;gap:calc(.25*var(--u));margin-top:calc(.35*var(--u))}
+#acc .pal-ui{font-size:calc(.56*var(--u));gap:calc(.25*var(--u))}
+#acc .pal-ui .pals{gap:calc(.2*var(--u));margin-top:0}
+#acc .pal-ui .pals button{font-size:inherit;padding:calc(.12*var(--u)) calc(.35*var(--u))}
+#acc .pal-ui .pals i{width:calc(.5*var(--u));height:calc(.5*var(--u))}
 #acc .pals button{all:unset;cursor:pointer;display:flex;align-items:center;gap:calc(.2*var(--u));font-size:calc(.6*var(--u));font-weight:800;padding:calc(.15*var(--u)) calc(.4*var(--u));border-radius:calc(1*var(--u));background:#2a2b1f;border:1px solid #45452f}
 #acc .pals i{display:inline-block;width:calc(.55*var(--u));height:calc(.55*var(--u));border-radius:50%}
 #acc .slot{all:unset;cursor:pointer;display:grid;grid-template-columns:calc(4.6*var(--u)) 1fr;align-items:center;gap:calc(.8*var(--u));width:100%;box-sizing:border-box;padding:calc(.7*var(--u)) calc(.9*var(--u));border-radius:calc(.6*var(--u));background:#1b1c13e6;border:1px solid #45452f}
@@ -497,6 +503,18 @@ export class Accueil {
     const f = this.fiches?.[`${this.crea.cle}_${this.crea.sexe}`];
     return f ? apparenceValide(f, { tete: this.crea.tete, couleurs: this.crea.couleurs ?? undefined }) : null;
   }
+  /** Palettes (maquette « Palettes : ») : celles du coffre du compte (normal ou Hardcore, selon le perso), Dofus trouvés par ses persos. */
+  private ctxPalettes(): CtxPalettes {
+    const rt = this.retouche, hc = rt ? !!lirePersos()[rt.slot]?.hardcore : this.crea.hardcore, sorte = hc ? 'hardcore' : 'normal';
+    return {
+      couleurs: () => this.appCrea()?.couleurs ?? [],
+      poser: c => { this.crea.couleurs = [...c]; this.render(); },
+      coffre: () => lireCoffre(sorte),
+      dofus: () => lirePersos().filter((p): p is Perso => !!p && !!p.hardcore === hc).flatMap(p => p.etat?.dofus ?? []),
+      garder: c => { const k = lireCoffre(sorte), l = (k.mesPalettes ??= []); if (l.length >= MES_PALETTES_MAX) return false; l.push(c); sauverCoffre(sorte, k); return true; },
+      retirer: i => { const k = lireCoffre(sorte); k.mesPalettes?.splice(i, 1); if (!k.mesPalettes?.length) delete k.mesPalettes; sauverCoffre(sorte, k); },
+    };
+  }
   /** Canevas du perso vivant, à la place de la planche de l'ancien socle. */
   private canevas(cle: string, app: Apparence, anim: string, style: string, label: string, objets: string[] = []) {
     return `<canvas class="abs hero vivant" data-cle="${cle}" data-app="${esc(JSON.stringify(app))}" data-objets="${esc(objets.join(','))}" data-anim="${anim}" role="img" aria-label="${esc(label)}" style="${style}"></canvas>`;
@@ -808,7 +826,7 @@ export class Accueil {
           style="background-image:url(${v(`${DOSSIER}/tetes_${c.cle}_${s.sexe}.webp`)});background-size:${fiche.tetes.length * 100}% 100%;background-position:${fiche.tetes.length > 1 ? (i / (fiche.tetes.length - 1)) * 100 : 0}% 0"></button>`).join('')}</div>
         <div class="lab" style="display:flex;justify-content:space-between;align-items:center">Couleurs<button type="button" class="mini" data-officielles style="font-size:calc(.6*var(--u))">Couleurs officielles</button></div>
         <div class="coul">${app.couleurs.map((col, i) => `<label><input type="color" data-coul="${i}" value="${hexa(col)}" style="background:${hexa(col)}" aria-label="${ZONES[i]}">${ZONES[i]}</label>`).join('')}</div>
-        <div class="pals">${PALETTES.map((pl, i) => `<button type="button" data-palette="${i}">${pl.c.slice(0, 3).map(x => `<i style="background:${hexa(x)}"></i>`).join('')}${pl.nom}</button>`).join('')}</div>` : ''}
+        ${htmlPalettes(this.ctxPalettes())}` : ''}
         <div class="lab">Nom du personnage</div>
         <input class="field" data-nom maxlength="16" spellcheck="false" autocomplete="off" value="${esc(s.nom)}" placeholder="3 à 16 lettres" ${jouable && rt?.sorte !== 'apparence' ? '' : 'disabled'}>
         <div class="err">${esc(s.err)}</div>
@@ -1046,10 +1064,7 @@ export class Accueil {
     // Apparence : tête (1A), couleurs libres (2A), palettes (2C) ; le perso du socle change tout de suite
     on('[data-tete]', e => { this.crea.tete = +e.dataset.tete!; this.render(); });
     on('[data-officielles]', () => { this.crea.couleurs = null; this.render(); });
-    on('[data-palette]', e => {
-      const a = this.appCrea(); if (!a) return;
-      this.crea.couleurs = [a.couleurs[0], ...PALETTES[+e.dataset.palette!].c]; this.render();
-    });
+    brancherPalettes(r, this.ctxPalettes());
     r.querySelectorAll<HTMLInputElement>('input[data-coul]').forEach(inp => inp.addEventListener('input', () => {
       const a = this.appCrea(); if (!a) return;
       const c = [...a.couleurs]; c[+inp.dataset.coul!] = parseInt(inp.value.slice(1), 16);
@@ -1064,7 +1079,7 @@ export class Accueil {
     nom?.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') this.creer(); });
     nom?.addEventListener('keyup', e => e.stopPropagation());
     r.querySelector<HTMLInputElement>('[data-tuto]')?.addEventListener('change', e => { this.crea.tuto = (e.target as HTMLInputElement).checked; });
-    r.querySelector<HTMLInputElement>('[data-hc]')?.addEventListener('change', e => { this.crea.hardcore = (e.target as HTMLInputElement).checked; });
+    r.querySelector<HTMLInputElement>('[data-hc]')?.addEventListener('change', e => { this.crea.hardcore = (e.target as HTMLInputElement).checked; this.render(); });   // les palettes suivent le coffre (normal ou Hardcore)
     on('[data-creer]', () => this.creer());
     on('[data-essayer]', () => this.onEssayer?.(this.crea.cle, this.crea.sexe, this.appCrea() ?? undefined));
     // Accueil 8A : survol d'un premier sort = le perso du socle attaque, et le texte officiel du sort s'affiche

@@ -1,0 +1,352 @@
+{
+ "_": "Palettes de couleurs des persos (maquette « Palettes : 1A 2A+2B+2C 3B+3C 4A+4B+4C+4D 5A 6A », 2026-11-15). c = cheveux puis 4 zones de tenue (la peau reste celle du perso). Classiques et Nations : à tous. Dofus : débloquée quand un perso du compte trouve ce Dofus (dofus = id officiel). Enfers : débloquée en finissant un palier d'Enfer (quand les Enfers seront là). Les palettes fermées s'achètent aussi chez Tissebelle (prix en Pépites), pour tout le compte. teints = couleurs de peau toutes faites.",
+ "prix": 150,
+ "familles": [
+  {
+   "id": "classiques",
+   "nom": "Classiques",
+   "palettes": [
+    {
+     "id": "or",
+     "nom": "Or",
+     "c": [
+      15913835,
+      16777215,
+      13214247,
+      9067026,
+      16115376
+     ]
+    },
+    {
+     "id": "sombre",
+     "nom": "Sombre",
+     "c": [
+      2829114,
+      5904938,
+      3816006,
+      1842212,
+      8003632
+     ]
+    },
+    {
+     "id": "foret",
+     "nom": "Forêt",
+     "c": [
+      7027486,
+      4160058,
+      2772266,
+      9071146,
+      10142826
+     ]
+    },
+    {
+     "id": "glace",
+     "nom": "Glace",
+     "c": [
+      14674431,
+      6269152,
+      2775706,
+      14741759,
+      10146047
+     ]
+    },
+    {
+     "id": "braise",
+     "nom": "Braise",
+     "c": [
+      14172188,
+      2759188,
+      14711324,
+      5904908,
+      15905338
+     ]
+    },
+    {
+     "id": "royal",
+     "nom": "Royal",
+     "c": [
+      3811946,
+      8014544,
+      15254090,
+      2759242,
+      13676799
+     ]
+    }
+   ]
+  },
+  {
+   "id": "dofus",
+   "nom": "Dofus",
+   "palettes": [
+    {
+     "id": "emeraude",
+     "nom": "Émeraude",
+     "dofus": "737",
+     "c": [
+      2059066,
+      3122010,
+      998690,
+      13218922,
+      9429152
+     ]
+    },
+    {
+     "id": "pourpre",
+     "nom": "Pourpre",
+     "dofus": "694",
+     "c": [
+      5902122,
+      10494026,
+      2755096,
+      13936714,
+      16743072
+     ]
+    },
+    {
+     "id": "turquoise",
+     "nom": "Turquoise",
+     "dofus": "739",
+     "c": [
+      1739402,
+      4182216,
+      1002066,
+      15266016,
+      9433320
+     ]
+    },
+    {
+     "id": "ocre",
+     "nom": "Ocre",
+     "dofus": "7754",
+     "c": [
+      13138458,
+      15247418,
+      6961680,
+      16113328,
+      16762976
+     ]
+    },
+    {
+     "id": "ivoire",
+     "nom": "Ivoire",
+     "dofus": "7115",
+     "c": [
+      15788248,
+      16775404,
+      13154458,
+      9075296,
+      15260864
+     ]
+    },
+    {
+     "id": "ebene",
+     "nom": "Ébène",
+     "dofus": "7114",
+     "c": [
+      1710618,
+      3026483,
+      789518,
+      6974066,
+      11575408
+     ]
+    },
+    {
+     "id": "cawotte",
+     "nom": "Cawotte",
+     "dofus": "972",
+     "c": [
+      3832362,
+      15759898,
+      5939258,
+      9058826,
+      16756816
+     ]
+    },
+    {
+     "id": "abyssal",
+     "nom": "Abyssal",
+     "dofus": "18043",
+     "c": [
+      991050,
+      2046602,
+      528426,
+      4243711,
+      6982352
+     ]
+    }
+   ]
+  },
+  {
+   "id": "nations",
+   "nom": "Nations",
+   "palettes": [
+    {
+     "id": "bonta",
+     "nom": "Bonta",
+     "c": [
+      15918784,
+      16777215,
+      2775728,
+      14200896,
+      9089279
+     ]
+    },
+    {
+     "id": "brakmar",
+     "nom": "Brâkmar",
+     "c": [
+      1706506,
+      11541018,
+      1840152,
+      6949386,
+      14721088
+     ]
+    },
+    {
+     "id": "sufokia",
+     "nom": "Sufokia",
+     "c": [
+      2788016,
+      14741744,
+      1727114,
+      15777888,
+      7393504
+     ]
+    },
+    {
+     "id": "pandala",
+     "nom": "Pandala",
+     "c": [
+      1710618,
+      15789280,
+      2763306,
+      3836474,
+      13122090
+     ]
+    },
+    {
+     "id": "frigost",
+     "nom": "Frigost",
+     "c": [
+      15267071,
+      10143984,
+      3828378,
+      16777215,
+      12640511
+     ]
+    },
+    {
+     "id": "otomai",
+     "nom": "Otomaï",
+     "c": [
+      3824154,
+      9087034,
+      2767386,
+      6965802,
+      13162608
+     ]
+    }
+   ]
+  },
+  {
+   "id": "enfers",
+   "nom": "Enfers",
+   "palettes": [
+    {
+     "id": "cendre",
+     "nom": "Cendre",
+     "enfers": true,
+     "c": [
+      9079434,
+      3815994,
+      5921370,
+      1710618,
+      14707242
+     ]
+    },
+    {
+     "id": "sang",
+     "nom": "Sang",
+     "enfers": true,
+     "c": [
+      6949386,
+      10096656,
+      2754054,
+      4856346,
+      13639712
+     ]
+    },
+    {
+     "id": "soufre",
+     "nom": "Soufre",
+     "enfers": true,
+     "c": [
+      14729248,
+      3811850,
+      10521104,
+      1709064,
+      15786080
+     ]
+    },
+    {
+     "id": "neant",
+     "nom": "Néant",
+     "enfers": true,
+     "c": [
+      5909130,
+      1706538,
+      3807834,
+      656916,
+      10510591
+     ]
+    }
+   ]
+  }
+ ],
+ "teints": [
+  {
+   "nom": "Pâle",
+   "c": 16178372
+  },
+  {
+   "nom": "Clair",
+   "c": 15713696
+  },
+  {
+   "nom": "Pêche",
+   "c": 15246460
+  },
+  {
+   "nom": "Doré",
+   "c": 14262374
+  },
+  {
+   "nom": "Hâlé",
+   "c": 12878930
+  },
+  {
+   "nom": "Cuivré",
+   "c": 11036474
+  },
+  {
+   "nom": "Brun",
+   "c": 8014378
+  },
+  {
+   "nom": "Cacao",
+   "c": 4860954
+  },
+  {
+   "nom": "Cendré",
+   "c": 11052192
+  },
+  {
+   "nom": "Glacé",
+   "c": 13031658
+  },
+  {
+   "nom": "Sylvestre",
+   "c": 8300634
+  }
+ ]
+}

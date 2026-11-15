@@ -1,7 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { LOOKS } from '../src/render/looks';
-import { apparenceValide, PALETTES, ZONES, type AnimsData, type FichePerso } from '../src/render/squelette';
+import { apparenceValide, ZONES, type AnimsData, type FichePerso } from '../src/render/squelette';
+import { PALETTES_PERSO } from '../src/sim/palettes';
 import EMPREINTES from '../src/data/fichiers-lourds.json';
 
 const D = 'public/assets/sprites/squelette';
@@ -23,7 +24,7 @@ describe('apparence des persos (têtes, couleurs, dessin en direct)', () => {
     expect(apparenceValide(f, null)).toEqual({ tete: 0, couleurs: f.couleurs });
     expect(apparenceValide(f, { tete: 99, couleurs: [1, -5, 0x1000000] })).toEqual({ tete: 0, couleurs: [1, ...f.couleurs.slice(1)] });
     expect(apparenceValide(f, { tete: 3, couleurs: [0, 0, 0, 0, 0, 0] }).tete).toBe(3);
-    for (const p of PALETTES) expect(p.c.length).toBe(ZONES.length - 1);
+    for (const f of PALETTES_PERSO.familles) for (const p of f.palettes) expect(p.c.length).toBe(ZONES.length - 1);
   });
 
   it('chaque fichier existe et a son empreinte (dessins de corps, têtes, vignettes, effets)', () => {

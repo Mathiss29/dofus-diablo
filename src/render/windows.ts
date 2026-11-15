@@ -3,6 +3,8 @@ import * as Touches from './touches';
 import { ICON_CSS, iconHtml, prechargerIcones } from './icons';
 import { MANIFESTE, Son } from './son';
 import { BENEDICTION, BENEDICTIONS, CONFORT, MAGASIN, MARCHE, type Article, type Benediction } from '../sim/magasin';
+import { htmlPalettes, brancherPalettes, type CtxPalettes } from './palettesUi';
+import { PALETTES_PERSO, paletteFermee, paletteOuverte } from '../sim/palettes';
 import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES, TEINTURES, THEMES_HAVRESAC } from '../sim/data';
 import { ouTrouver, rareteApparat } from '../sim/apparats';
 import { FAMILIERS_SOURCES, ouTrouverFamilier, sourceFamilier } from '../sim/menagerie';
@@ -80,7 +82,7 @@ import { CHASSE, OEUVRE, PIERRES, bonusPierre, metiersOeuvre, pieceArtisan } fro
 import { CONSO, NOM_SORTE, PARCHEMINS, sorteConso, texteConso } from '../sim/consommables';
 import { LOOKS } from './looks';
 import { niveauHorsPartie, rangDe } from '../sim/butin';
-import { DOSSIER, PALETTES, ZONES, apparenceValide, assemblagePour, fiches, objetsPortes, type Apparence, type Assemblage, type FichePerso } from './squelette';
+import { DOSSIER, ZONES, apparenceValide, assemblagePour, fiches, objetsPortes, type Apparence, type Assemblage, type FichePerso } from './squelette';
 import {
   BASE_STATS, REDUCTION_RECHARGES_MAX, FAMILIER_MAX, FAMILIER_XP, familierValeur, familierProchain, METIER_XP, lignePouvoir, PEPITE, RARITY_COLORS, RARITY_NAMES, STATS, STAT_NAMES, metierXpNeeded, kamasDefaire, noteObjet,
   type EquipSlot, type Item, type Rarity, type ResourceDef, type Stat, type FamilierDef,
@@ -195,7 +197,15 @@ function teinturesHtml(W: World, prix: (n: number, m: string, attr: string) => s
   return `<div class="ent">Teintures <span class="hint">· couleurs officielles d'une classe, pour tout le compte, à poser à la garde-robe</span></div>
     <div class="teints">${TEINTURES.teintures.map(t => `<div class="teint"><span class="sw">${t.c.map(c => `<i style="background:#${c.toString(16).padStart(6, '0')}"></i>`).join('')}</span><b>${t.nom}</b>
       ${a.includes(t.id) ? '<span class="hint">À toi</span>' : prix(TEINTURES.prix, PEPITE, `data-teint="${t.id}"`)}</div>`).join('')}</div>
+    ${palettesFermeesHtml(W, prix)}
     <div class="ent">Apparences</div>`;
+}
+/** « Palettes : » 3C : les palettes Dofus et des Enfers pas encore ouvertes s'achètent ici, pour tout le compte. */
+function palettesFermeesHtml(W: World, prix: (n: number, m: string, attr: string) => string) {
+  const dofus = W.players.flatMap(p => p.dofus), l = PALETTES_PERSO.familles.flatMap(f => f.palettes.filter(p => paletteFermee(p)));
+  return `<div class="ent">Palettes <span class="hint">· Dofus et Enfers, sinon ouvertes en trouvant le Dofus ou en finissant un palier d'Enfer ; pour tout le compte</span></div>
+    <div class="teints">${l.map(p => `<div class="teint"><span class="sw">${p.c.map(c => `<i style="background:#${c.toString(16).padStart(6, '0')}"></i>`).join('')}</span><b>${p.nom}</b>
+      ${paletteOuverte(p, W.coffre, dofus) ? '<span class="hint">À toi</span>' : prix(PALETTES_PERSO.prix, PEPITE, `data-palachat="${p.id}"`)}</div>`).join('')}</div>`;
 }
 const porteur = (id: string) => FAMILIERS.familiers[id]?.porteur ? '<div class="hint" style="color:#e8c46a">Prend les couleurs de son porteur</div>' : '';
 type Visible = 'chapeau' | 'cape' | 'bouclier' | 'familier';
@@ -226,6 +236,7 @@ const CSS = `
 .dw .garde .coul label{display:flex;gap:6px;align-items:center;font-size:12px;color:#c9c4ab}
 .dw .garde .coul input{width:34px;height:26px;border:1px solid #57554c;padding:0;border-radius:3px;cursor:pointer}
 .dw .garde .pals{display:flex;flex-wrap:wrap;gap:6px}
+.dw .garde .pal-ui{font-size:12px}
 .dw .garde .pals button{all:unset;cursor:pointer;display:flex;gap:2px;align-items:center;padding:4px 8px;border:1px solid #45433b;border-radius:3px;background:#2e2d28;font-size:12px}
 .dw .garde .pals i{width:10px;height:14px;border-radius:2px;display:inline-block}
 .dw .garde h5{margin:6px 0 2px;font-size:13px;color:#f4efe0}
@@ -2878,6 +2889,7 @@ export class Windows {
     w.querySelectorAll<HTMLElement>('[data-tachat]').forEach(e => e.addEventListener('click', () => { W.acheterTheme(+e.dataset.tachat!); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-tpose]').forEach(e => e.addEventListener('click', () => { W.poserTheme(+e.dataset.tpose!); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-teint]').forEach(e => e.addEventListener('click', () => { W.acheterTeinture(e.dataset.teint!); this.changed(); }));
+    w.querySelectorAll<HTMLElement>('[data-palachat]').forEach(e => e.addEventListener('click', () => { W.acheterPalette(e.dataset.palachat!); this.changed(); }));
     w.querySelectorAll<HTMLElement>('[data-essai]').forEach(e => e.addEventListener('mouseenter', () => {
       this.essaiApparat = e.dataset.essai!;
       const d = APPARATS.objets[this.essaiApparat], p2 = this.world.player, cv = w.querySelector<HTMLCanvasElement>('.apercu canvas');
@@ -3116,6 +3128,22 @@ export class Windows {
     w.querySelectorAll<HTMLElement>('[data-zaap]').forEach(e => e.addEventListener('click', () => { this.onZaap(+e.dataset.zaap!); this.close(); }));
   }
 
+  /** Dofus trouvés par les persos du compte (posé par la scène : persos du même coffre), pour ouvrir les palettes Dofus. */
+  dofusDuCompte: () => string[] = () => [];
+  /** Panneau des palettes de la garde-robe (« Palettes : »), sur le coffre du compte ; les teintures achetées vont avec les Classiques. */
+  private ctxPalettes(g: Apparence): CtxPalettes {
+    const W = this.world, f = this.fiche;
+    return {
+      couleurs: () => g.couleurs,
+      poser: c => { g.couleurs = [...c]; this.render(); },
+      coffre: () => W.coffre,
+      dofus: () => [...this.dofusDuCompte(), ...W.players.flatMap(p => p.dofus)],
+      garder: c => W.garderMaPalette(c),
+      retirer: i => { W.retirerMaPalette(i); },
+      enPlus: TEINTURES.teintures.filter(t => W.coffre.teintures?.includes(t.id)).map(t => `<button type="button" data-gteint="${t.id}" title="Teinture">${t.c.slice(0, 3).map(x => `<i style="background:${hexa(x)}"></i>`).join('')}${t.nom}</button>`).join('')
+        + (f ? '<button type="button" data-gofficiel>Couleurs officielles</button>' : ''),
+    };
+  }
   /** Garde-robe (Apparence 6B, gratuite, en ville) : tête de création, 6 couleurs, palettes, avec l'aperçu en direct. */
   private renderGarde() {
     const w = this.win!, p = this.world.player, f = this.fiche, g = this.garde;
@@ -3127,10 +3155,8 @@ export class Windows {
       <h5>Couleurs</h5>
       <div class="coul">${g.couleurs.map((c, i) => `<label><input type="color" data-gcoul="${i}" value="${hexa(c)}">${ZONES[i]}</label>`).join('')}</div>
       <h5>Palettes</h5>
-      <div class="pals">${PALETTES.map((pl, i) => `<button type="button" data-gpal="${i}">${pl.c.slice(0, 3).map(x => `<i style="background:${hexa(x)}"></i>`).join('')}${pl.nom}</button>`).join('')}
-        ${TEINTURES.teintures.filter(t => this.world.coffre.teintures?.includes(t.id)).map(t => `<button type="button" data-gteint="${t.id}" title="Teinture">${t.c.slice(0, 3).map(x => `<i style="background:${hexa(x)}"></i>`).join('')}${t.nom}</button>`).join('')}
-        <button type="button" data-gofficiel>Couleurs officielles</button></div>
-      ${(this.world.coffre.teintures?.length ?? 0) < TEINTURES.teintures.length ? '<div class="hint">D\'autres teintures (couleurs officielles des classes) chez Tissebelle, au Marché.</div>' : ''}
+      ${htmlPalettes(this.ctxPalettes(g))}
+      ${(this.world.coffre.teintures?.length ?? 0) < TEINTURES.teintures.length ? '<div class="hint">D\'autres teintures (couleurs officielles des classes) et les palettes fermées chez Tissebelle, au Marché.</div>' : ''}
       <div style="display:flex;gap:10px;margin-top:14px;align-items:center"><span class="btn" data-genr>Enregistrer</span><span class="hint">Gratuit, à chaque garde-robe des villes.</span></div>
       <h5>Tenues enregistrées</h5>
       ${Array.from({ length: placesTenues(p.placesTenue) }, (_, i) => { const t = p.tenues[i];
@@ -3143,7 +3169,7 @@ export class Windows {
     const apercu = () => { const cv = w.querySelector<HTMLCanvasElement>('.apercu canvas'); if (cv) cv.dataset.app = JSON.stringify(g); };
     w.querySelectorAll<HTMLElement>('[data-gtete]').forEach(e => e.addEventListener('click', () => { g.tete = +e.dataset.gtete!; this.render(); }));
     w.querySelectorAll<HTMLInputElement>('[data-gcoul]').forEach(e => e.addEventListener('input', () => { g.couleurs[+e.dataset.gcoul!] = parseInt(e.value.slice(1), 16); apercu(); }));
-    w.querySelectorAll<HTMLElement>('[data-gpal]').forEach(e => e.addEventListener('click', () => { g.couleurs = [g.couleurs[0], ...PALETTES[+e.dataset.gpal!].c]; this.render(); }));
+    brancherPalettes(w, this.ctxPalettes(g));
     w.querySelectorAll<HTMLElement>('[data-gteint]').forEach(e => e.addEventListener('click', () => { const t = TEINTURES.teintures.find(x => x.id === e.dataset.gteint); if (t) { g.couleurs = [g.couleurs[0], ...t.c]; this.render(); } }));
     w.querySelector('[data-gofficiel]')?.addEventListener('click', () => { g.couleurs = [...f.couleurs]; this.render(); });
     w.querySelectorAll<HTMLElement>('[data-tenr]').forEach(e => e.addEventListener('click', () => { const i = +e.dataset.tenr!;

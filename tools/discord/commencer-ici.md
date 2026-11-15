@@ -14,7 +14,7 @@ Le Monde des Douze en action-RPG **temps réel**, dans le navigateur, sur PC (cl
 📣 Les grandes nouvelles : {#annonces}
 📜 Ce qui change chaque jour : {#journal}
 💬 Parler du jeu : {#discussion} · 🤝 Une question : {#entraide}
-🖼 Tes plus beaux moments : {#captures}
+🖼 Tes plus beaux moments : {#captures} · 🎨 Ton look et son code couleur : {#looks}
 
 ## 🐛 Un bug ? 💡 Une idée ?
 Ouvre un post dans le forum {#bugs} ou {#idées}, avec une étiquette.
