@@ -47,7 +47,7 @@ const HEADS: Record<string, string> = { iop: 'tete_iop', cra: 'tete_cra', iop_f:
 /** Nom court d'une touche pour le coin d'un emplacement (« Espace » ne tient pas). */
 const court = (t: string) => t === 'Espace' ? 'Esp.' : t;
 /** Action (render/touches.ts) de chaque menu de la colonne, pour son raccourci dans l'infobulle. */
-const ACTION_MENU: Record<string, string> = { Inventaire: 'inventaire', 'Caractéristiques': 'caracs', 'Métiers': 'metiers', Sorts: 'sorts', 'Carte du monde': 'carte', Bestiaire: 'bestiaire', 'Succès': 'succes', 'Havre-Sac': 'havresac', Social: 'social', Classement: 'ladder', Guide: 'guide', Boutique: 'boutique', 'Réglages': 'options', 'Carnet des Fêlures': 'campagne' };
+const ACTION_MENU: Record<string, string> = { Inventaire: 'inventaire', 'Caractéristiques': 'caracs', 'Métiers': 'metiers', Sorts: 'sorts', 'Carte du monde': 'carte', Bestiaire: 'bestiaire', 'Succès': 'succes', 'Havre-Sac': 'havresac', Social: 'social', Classement: 'ladder', Guide: 'guide', Boutique: 'boutique', 'Hôtel de Vente': 'hdv', 'Réglages': 'options', 'Carnet des Fêlures': 'campagne' };
 /** Modules de l'interface qu'on peut déplacer (Réglages 6A), avec leur nom affiché pendant le déplacement. */
 const MODULES: Record<string, string> = { perso: 'Cadre du perso', mini: 'Mini-carte', suivi: 'Suivi de quête', dps: 'Dégâts par seconde' };
 /** Colonne de menus avec les icônes officielles en couleur de Dofus 3 (uiassets_2x) : icône, nom, raccourci (vide si aucun).
@@ -55,7 +55,7 @@ const MODULES: Record<string, string> = { perso: 'Cadre du perso', mini: 'Mini-c
 const MENUS: [string, string, string][] = [
   ['inventory', 'Inventaire', 'I'], ['characteristic', 'Caractéristiques', 'C'], ['job', 'Métiers', 'J'], ['spells', 'Sorts', 'S'], ['quest', 'Quêtes', ''],
   ['map', 'Carte du monde', ''], ['bestiary', 'Bestiaire', 'B'], ['success', 'Succès', 'U'], ['breach', 'Failles', ''],
-  ['home', 'Havre-Sac', 'H'], ['social', 'Social', 'P'], ['ladder', 'Classement', 'L'], ['guide', 'Guide', 'G'], ['shop', 'Boutique', ''], ['options', 'Réglages', 'O'],
+  ['home', 'Havre-Sac', 'H'], ['social', 'Social', 'P'], ['ladder', 'Classement', 'L'], ['guide', 'Guide', 'G'], ['shop', 'Boutique', ''], ['hdv', 'Hôtel de Vente', ''], ['options', 'Réglages', 'O'],
   // Campagne 1A : le Carnet des Fêlures, une case de plus au bout de la colonne (sous Réglages, sans recouvrir un autre bouton)
   ['campagne', 'Carnet des Fêlures', 'W'],
 ];
@@ -642,7 +642,8 @@ export class Hud {
     this.pastille = txt(10, { ...bold, color: '#ffffff', backgroundColor: '#d8402f', padding: { x: 4, y: 1 }, strokeThickness: 0 }, 6).setOrigin(0.5).setVisible(false);
     this.pastilleSucces = txt(10, { ...bold, color: '#ffffff', backgroundColor: '#d8402f', padding: { x: 4, y: 1 }, strokeThickness: 0 }, 6).setOrigin(0.5).setVisible(false);
     for (const [icon, label, key] of MENUS) {
-      if (icon === 'campagne' && !world.quetes?.campagneOuverte) continue;   // campagne cachée hors partie de test (11B)
+      if (icon === 'campagne' && !world.quetes?.campagneOuverte) continue;
+      if (icon === 'hdv' && !world.opts.hdv) continue;   // « HDV : » 9A : avec la MAJ en ligne   // campagne cachée hors partie de test (11B)
       const ic = img(`menu_${icon}`, 4);
       const zone = fixed(scene.add.zone(0, 0, 30, 30).setInteractive({ useHandCursor: true }), 4);
       zone.on('pointerover', () => { const t = ACTION_MENU[label] ? Touches.nomAction(ACTION_MENU[label]) : key; this.menuTip.setText(t ? `${label} (${t})` : label).setVisible(true).setPosition(zone.x - 22, zone.y); });

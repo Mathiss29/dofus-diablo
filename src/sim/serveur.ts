@@ -9,6 +9,7 @@ export { exporterJoueur, restaurerJoueur } from './sauvegarde';
 export { ordreValide, jouerOrdre } from './ordres';
 export { V04_PUBLIC, V06_PUBLIC } from './pouvoirs';
 export { BOUTIQUE_OGRINES, apparatDuMois, prixOgrines, rangAbo } from './boutiqueOgrines';
+export { HDV, QUOTA_AME, alertePrix, annoncesMax, categorieHdv, cleHdv, donnerHdv, niveauHdv, nomHdv, quantiteHdv, rareteHdv, refusHdv, relireObjetHdv, retirerHdv, taxeHdv, typeVente } from './hdv';
 import QUETES_JSON from '../data/quetes.json';
 import CAMPAGNE_JSON from '../data/campagne.json';
 import type { QuetesData } from './quests';

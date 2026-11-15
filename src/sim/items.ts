@@ -193,6 +193,8 @@ export interface Item {
   fm?: number; relances?: number; potion?: string;
   /** « Métiers : » 2A : palier de chef-d'œuvre (1 à 4, +5 % sur tous les jets chacun) ; 2C : châsse percée et pierre sertie. */
   oeuvre?: number; perce?: boolean; pierre?: string;
+  /** Hôtel de Vente (« HDV : » 4A) : signature du serveur, posée quand l'objet apparaît dans une partie du serveur (« nonce.mac »). */
+  srv?: string;
 }
 
 /** Jet maximum d'une ligne ajoutée par la rareté (aussi le max de forgemagie de ces lignes). */

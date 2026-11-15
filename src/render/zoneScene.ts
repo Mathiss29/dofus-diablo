@@ -387,7 +387,7 @@ export class ZoneScene extends Phaser.Scene {
     if (zone.open) {
       const open = zone.open;
       const wg = new WorldGrid(this.cache.json.get(WorldView.key(open.world, 'monde')) as WorldData);
-      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, apparats: APPARATS, themesHavreSac: THEMES_HAVRESAC, sacHote: this.zoneId === 'havresac' ? this.transit.sacHote : undefined, teintures: TEINTURES, familierXp: FAMILIERS.xp, recoltes: RECOLTES, compte: chargerCompte(), coffre: lireCoffre(this.sorteCoffre), aujourdhui: this.test?.jour ?? jourDuPC(), nuit: () => this.nuitDehors(), horloge: heureParis, tuto: this.test ? false : this.perso?.tuto, test: this.test?.reglages,
+      this.world = new World({ data: GAME_DATA, zone: this.zoneId, map: wg, seed, classId: this.classId, items: ITEMS, quetes: QUETES, boutiques: BOUTIQUES, apparats: APPARATS, themesHavreSac: THEMES_HAVRESAC, sacHote: this.zoneId === 'havresac' ? this.transit.sacHote : undefined, teintures: TEINTURES, familierXp: FAMILIERS.xp, recoltes: RECOLTES, compte: chargerCompte(), coffre: lireCoffre(this.sorteCoffre), hdv: essaiEnLigne() || !!this.test, aujourdhui: this.test?.jour ?? jourDuPC(), nuit: () => this.nuitDehors(), horloge: heureParis, tuto: this.test ? false : this.perso?.tuto, test: this.test?.reglages,
         placements: this.test ? retouchesPlacement(open.world) : undefined,   // éditeur F1 › Placement : retouches pas encore envoyées
         // vitrine : les PNJ sont là, mais aucune quête ne démarre
         arrivee: this.arrivee, position: this.transit.position, point: this.transit.point, zaap: this.transit.zaap, retour: this.transit.retour,
@@ -475,6 +475,12 @@ export class ZoneScene extends Phaser.Scene {
     this.windows = new Windows(this.world);
     this.windows.dofusDuCompte = () => { const hc = this.sorteCoffre === 'hardcore'; return this.test ? [] : lirePersos().flatMap(p => p && !!p.hardcore === hc ? p.etat?.dofus ?? [] : []); };
     this.windows.socialSlot = this.perso && persosEnLigne() ? this.slot : -1; this.windows.socialTest = !!this.test;
+    // « HDV : » 6B : sauver avant et après un geste de l'Hôtel de Vente ; kamas des ventes reçus peu après l'arrivée puis toutes les 2 minutes
+    this.windows.hdvSauver = async () => { this.sauver(); await CompteEnLigne.toutEnvoyer(); };
+    if (this.windows.socialSlot >= 0 && !this.test && this.world.opts.hdv) {
+      const w = this.windows;
+      this.time.addEvent({ delay: 120_000, loop: true, startAt: 110_000, callback: () => { if (this.windows === w) void w.hdv.encaisser().then(n => { if (n) w.refresh(); }); } });
+    }
     // Bestiaire (maquette « Drops » 1A) : les monstres vaincus du compte ; la partie de test voit tout
     this.windows.vaincus = () => this.bestiaire; this.windows.toutVoir = !!this.test;
     this.windows.onZaap = i => { this.zaapChoix = i; };
@@ -562,6 +568,7 @@ export class ZoneScene extends Phaser.Scene {
       else if (name === 'Métiers') this.windows!.toggle('job');
       else if (name === 'Réglages') this.windows!.toggle('opt');
       else if (name === 'Boutique') this.windows!.toggle('boutique');
+      else if (name === 'Hôtel de Vente' && this.world.opts.hdv) this.windows!.toggle('hdv');
       else if (name === 'Guide') this.windows!.toggle('guide');
       else if (name === 'Social') this.windows!.toggle('social');
       else if (name === 'Classement') this.windows!.toggle('ladder');
@@ -1282,6 +1289,7 @@ export class ZoneScene extends Phaser.Scene {
       case 'chat': this.chat?.ouvrir(); break;
       case 'options': w?.toggle('opt'); break;
       case 'boutique': w?.toggle('boutique'); break;   // « Boutique : » 9A
+      case 'hdv': if (this.world.opts.hdv) w?.toggle('hdv'); break;   // « HDV : » 1D
       case 'carte': this.basculerCarte(); break;   // M, comme dans Dofus (maquette 0.2, 18A)
       case 'carteTab': if (this.carte?.dispo && !this.carte.ouverte) this.carte.basculerSurimpression(); break;   // 11B : carte en surimpression
       case 'havresac': this.havreSacDemande = true; break;

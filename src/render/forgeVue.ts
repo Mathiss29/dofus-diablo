@@ -300,7 +300,7 @@ export function defaireHtml(world: World, e: EtatForge): string {
   for (const it of choisis) {
     const d = I.equipment[it.id]; if (!d) continue;
     for (const [id, n] of Object.entries(apercuBrisage(d, it))) tot[id] = (tot[id] ?? 0) + n;
-    kamas += kamasDefaire(d, it);
+    if (!world.opts.hdv) kamas += kamasDefaire(d, it);
     if (p.v03) for (const l of [it.legendary, it.legendary2]) if (l && nouveauPourCodex(p.codex, p.cls.sorts, l)) pouvoirs++;
   }
   const ap = Object.keys(tot).sort((a, b) => RUNES[a].stat.localeCompare(RUNES[b].stat) || RUNES[a].val - RUNES[b].val)
@@ -311,7 +311,7 @@ export function defaireHtml(world: World, e: EtatForge): string {
     return `<div class="cell ${it.cadenas ? 'verrou' : ''} ${e.brise.includes(it.uid) ? 'on' : ''} ${world.meilleurQuePorte(it) ? 'up' : ''}" data-${tag}="${it.uid}">${iconHtml(d.icon)}<i class="r" style="background:${RARITY_COLORS[it.rarity]}"></i></div>`; };
   const sac = p.bag.filter(it => I.equipment[it.id] && !I.equipment[it.id].familier);
   return `<div class="cz"><div class="czg">
-      <div class="czt"><img src="${D3}/forge/concasseur.webp" alt=""><div class="hint">Pose des objets ici : chacun rend ses runes officielles et des kamas, selon son niveau et sa rareté. Un pouvoir légendaire nouveau va dans ton Codex, une coiffe, une cape ou un bouclier inconnu dans ta collection.</div></div>
+      <div class="czt"><img src="${D3}/forge/concasseur.webp" alt=""><div class="hint">Pose des objets ici : chacun rend ses runes officielles${world.opts.hdv ? ' (les kamas, c\'est à l\'Hôtel de Vente)' : ' et des kamas, selon son niveau et sa rareté'}. Un pouvoir légendaire nouveau va dans ton Codex, une coiffe, une cape ou un bouclier inconnu dans ta collection.</div></div>
       <span class="ent">À défaire (${choisis.length})</span>
       <div class="czs">${choisis.map(it => cell(it, 'bout')).join('') || '<div class="hint" style="grid-column:1/-1">Clique des objets de ton sac pour les poser ici.</div>'}</div>
       <span class="ent">Ce que tu récupères</span><div class="czr">${ap || '<span class="hint" style="border:0;background:none">—</span>'}${kamas ? `<span>${kamas.toLocaleString('fr-FR')} kamas</span>` : ''}${pouvoirs ? `<span>${pouvoirs} pouvoir${pouvoirs > 1 ? 's' : ''} pour le Codex</span>` : ''}</div>

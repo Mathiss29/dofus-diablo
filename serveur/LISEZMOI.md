@@ -154,6 +154,15 @@ par `construire-sim.mjs` depuis `src/sim/boutiqueOgrines.ts` et `src/data/boutiq
 (promotion de la semaine, articles de fête), débite les Ogrines et garde les achats, les potions, l'abonnement (30 jours,
 essai Héros de 7 jours une fois par compte) et les apparats du mois. Rien à régler sur le VPS.
 
+## Hôtel de Vente (« HDV : », `hdv.mjs`)
+
+Annonces, ventes, colis (kamas d'une vente, objet revenu après 7 jours) et favoris, dans la même base SQLite. Les règles
+viennent de la simulation (`src/sim/hdv.ts`). Un perso qui joue dans une partie du serveur : le serveur fait le geste dans la
+partie ; en solo, il accepte ou refuse et le jeu fait le geste. Un équipement ne se vend que s'il porte la signature du serveur,
+posée quand il apparaît dans une partie du serveur (`Partie.signerNeufs`). Le secret des signatures est créé tout seul dans
+`DONNEES/hdv.secret` au premier lancement (ou `HDV_SECRET` dans l'environnement) : le garder avec la base, jamais dans le dépôt.
+Rien à régler sur le VPS.
+
 ## Classement (Ladder, maquette « Ladder : »)
 
 Le serveur calcule le classement une fois par minute (`classement.mjs`) depuis les persos en ligne : `GET /classement`
