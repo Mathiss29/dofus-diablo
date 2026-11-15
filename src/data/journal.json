@@ -2189,6 +2189,21 @@
           "Carte du monde (M) : tout le continent est dessiné, les régions de la 0.6 restent grisées."
         ]
       }
+    },
+    {
+      "date": "2026-11-15",
+      "titre": "Le Sadida et l'Écaflip prennent leurs couleurs",
+      "resume": "36 sorts du Sadida et de l'Écaflip retrouvent leurs effets officiels de Dofus 3.",
+      "capture": "assets/journal/2026-11-15.webp",
+      "legende": "Effets officiels du Sadida et de l'Écaflip, 15 novembre 2026.",
+      "lignes": {
+        "Corrections": [
+          "Les 22 sorts du Sadida et 14 sorts de l'Écaflip ont enfin leurs effets visuels officiels."
+        ],
+        "En coulisses": [
+          "Un test bloque désormais toute mise à jour où un sort n'aurait pas son geste ou son effet."
+        ]
+      }
     }
   ]
 }
