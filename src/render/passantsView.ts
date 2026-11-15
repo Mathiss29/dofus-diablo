@@ -7,7 +7,7 @@ import { HABITANTS, type HabitantDef, type Passants } from '../sim/passants';
 
 const SP = 'assets/sprites';
 /** Planches des habitants (habitant_planche.py) : rendues à l'échelle 0,5 au lieu de 0,7, affichées d'autant plus grand. */
-const LOOK = (id: string): Look => ({
+export const LOOK = (id: string): Look => ({
   atlas: `hab_${id}`, scale: 0.82 * 0.7 / 0.5, height: 120, ignoreZ: true, multi: true,
   map: { idle: { anim: 'AnimStatiqueExplo0', loop: true, fps: 20 }, walk: { anim: 'AnimMarche', loop: true, fps: 24 } },
 });
