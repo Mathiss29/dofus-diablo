@@ -14,6 +14,7 @@
         { "id": "1567607046654787666", "nom": "💬・discussion", "type": "texte", "sujet": "Vos réactions, questions et idées sur Diablofus : Les Douze Enfers" },
         { "nom": "🤝・entraide", "type": "texte", "sujet": "Une question sur le jeu ? Où trouver un monstre, comment ouvrir un donjon, quel sort monter : demande ici." },
         { "id": "1568323533111828601", "nom": "🖼・captures", "type": "texte", "sujet": "Vos plus belles captures de Diablofus." },
+        { "nom": "🎨・looks", "type": "texte", "sujet": "Montre ton perso : une capture et ton code couleur (bouton « Copier le code » à la création ou à la garde-robe). Pour en reprendre un, colle le code et clique « Appliquer »." },
         { "nom": "🐛・bugs", "type": "forum", "sujet": "Un post par bug. Dis ce que tu faisais, ta classe, ta zone, et joins une capture si tu peux. Choisis une étiquette ; « Corrigé » est posée quand c'est réglé.",
           "etiquettes": [
             { "nom": "Combat", "emoji": "⚔️" }, { "nom": "Carte", "emoji": "🗺️" }, { "nom": "Interface", "emoji": "🖥️" },

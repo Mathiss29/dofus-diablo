@@ -457,6 +457,7 @@ export class ZoneScene extends Phaser.Scene {
     if (mini && this.transparence) mini.ignore(this.transparence.calque);
     this.windows?.destroy();
     this.windows = new Windows(this.world);
+    this.windows.dofusDuCompte = () => { const hc = this.sorteCoffre === 'hardcore'; return this.test ? [] : lirePersos().flatMap(p => p && !!p.hardcore === hc ? p.etat?.dofus ?? [] : []); };
     this.windows.socialSlot = this.perso && persosEnLigne() ? this.slot : -1; this.windows.socialTest = !!this.test;
     // Bestiaire (maquette « Drops » 1A) : les monstres vaincus du compte ; la partie de test voit tout
     this.windows.vaincus = () => this.bestiaire; this.windows.toutVoir = !!this.test;

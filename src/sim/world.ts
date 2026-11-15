@@ -43,6 +43,7 @@ import { appliquerTest, type ReglagesTest } from './outilsTest';
 import { Passants, lieuxDeZone } from './passants';
 import { ALMANAX, jourAlmanax, type JourAlmanax } from './almanax';
 import { COFFRE, coffreVide, type Coffre } from './coffre';
+import { MES_PALETTES_MAX, PALETTES_PERSO, PALETTE_PAR_ID, paletteOuverte } from './palettes';
 import { FAMILIERS_SOURCES } from './menagerie';
 import { placesTenues, prixPlaceTenue, styleDef, type SorteStyle } from './style';
 import { avantage, BOUTIQUE_OGRINES, rangAbo, type Palier } from './boutiqueOgrines';
@@ -3075,6 +3076,31 @@ export class World {
     const ok = this.payer(T.prix, PEPITE, () => { (c.teintures ??= []).push(id); return true; }, `teinture:${id}`);
     if (ok) this.emit({ k: 'coffre' });
     return ok;
+  }
+  /** « Palettes : » 3C : une palette fermée (Dofus, Enfers) achetée chez Tissebelle, pour tout le compte. */
+  acheterPalette(id: string): boolean {
+    const pl = PALETTE_PAR_ID[id], c = this.coffre;
+    if (!pl || paletteOuverte(pl, c, this.player.dofus)) return false;
+    const ok = this.payer(PALETTES_PERSO.prix, PEPITE, () => { (c.palettes ??= []).push(id); return true; }, `palette:${id}`);
+    if (ok) this.emit({ k: 'coffre' });
+    return ok;
+  }
+  /** « Palettes : » 4B : garde un mélange de 6 couleurs dans « Mes palettes » du compte (i absent : à la suite). */
+  garderMaPalette(couleurs: number[], i?: number): boolean {
+    const l = (this.coffre.mesPalettes ??= []);
+    if (couleurs.length !== 6 || couleurs.some(x => !Number.isInteger(x) || x < 0 || x > 0xffffff)) return false;
+    if (i != null && i >= 0 && i < l.length) l[i] = [...couleurs];
+    else if (l.length < MES_PALETTES_MAX) l.push([...couleurs]);
+    else return false;
+    this.emit({ k: 'coffre' });
+    return true;
+  }
+  retirerMaPalette(i: number): boolean {
+    const l = this.coffre.mesPalettes;
+    if (!l || i < 0 || i >= l.length) return false;
+    l.splice(i, 1); if (!l.length) delete this.coffre.mesPalettes;
+    this.emit({ k: 'coffre' });
+    return true;
   }
   // --- Style (« Apparats : » 5B) : auréoles, effets de Zaap, ornements de nom (compte) ; tenues enregistrées (perso) ----------
   aLeStyle(sorte: SorteStyle, id: string): boolean {
