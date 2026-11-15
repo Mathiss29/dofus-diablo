@@ -229,7 +229,8 @@ export type SuccesObjectif = { nom: string } & (
   | { metier: string; palier: number }
   /** 9E : objets fabriqués ou runes obtenues en brisant, au total. */
   /** Sadida 17B : « Forêt Hantée » (6 Feuillus et 10 Infectés en même temps). */
-  | { compteur: 'fabriques' | 'runes' | 'foretHantee'; n: number }
+  /** Ouginak 8A : « Nouvelle Lune » (meilleure série de Proies achevées d'affilée en Forme Bestiale). */
+  | { compteur: 'fabriques' | 'runes' | 'foretHantee' | 'nouvelleLune'; n: number }
   /** Carte du monde 6D (succès Cartographe) : part des cartes du dehors de ce monde vues sous le brouillard. */
   | { exploration: string; part: number; cartes: string[] }
   /** Guerre des Cawottes (12A-12D) : attaques gagnées, coffres en or, Kiafin rattrapés, ou un champ défendu sans perte. */

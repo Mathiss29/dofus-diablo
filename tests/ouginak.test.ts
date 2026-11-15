@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { GAME_DATA, ITEMS } from '../src/sim/data';
 import type { EquipSlot, Item } from '../src/sim/items';
 import { PC_PAR_ID } from '../src/sim/pouvoirsClasse';
+import { QUETES } from '../src/sim/data';
 import { GridMap, type MapData } from '../src/sim/gridmap';
 import { NO_INPUT, type PlayerInput } from '../src/sim/input';
 import { World } from '../src/sim/world';
@@ -214,5 +215,29 @@ describe('Ouginak (« Classes : 14A+14C 15A+15B 16A+16B 17A », « Ouginak : 1A+
     expect(proieDe(p, w)).toBe(n);   // la marque saute
     expect(p.rage).toBe(1);   // Curée
     expect(p.hp).toBeGreaterThan(hp);
+  });
+
+  it('8A : succès « Nouvelle Lune » (10 Proies d\'affilée en Forme Bestiale), titre « Chef de meute »', () => {
+    expect(QUETES.succes.nouvelle_lune.objectifs[0]).toMatchObject({ compteur: 'nouvelleLune', n: 10 });
+    expect(QUETES.succes.nouvelle_lune.recompense?.titre).toBe('Chef de meute');
+    const w = oug(); idle(w, 0.2);
+    const p = w.player; niveau(p, 20);
+    const q = { compteurs: {} as Record<string, number> };
+    (w as { quetes: unknown }).quetes = new Proxy(q, { get: (t, k) => k in t ? t[k as 'compteurs'] : () => undefined });   // compteurs seuls (pas de monde ouvert ici)
+    for (let i = 0; i < 10; i++) {
+      p.rage = 3; idle(w, 0.05);
+      const m = cible(w, p.x + 60, p.y);
+      press(w, 'proie', { x: m.x, y: m.y }); idle(w, 0.3);
+      expect(proieDe(p, w)).toBe(m);
+      w.killMonster(m);
+      if (i === 4) { p.rage = 0; idle(w, 0.05); p.rage = 3; idle(w, 0.05); }   // la Bête retombe : la série repart
+    }
+    expect(q.compteurs.nouvelleLune).toBe(5);
+    for (let i = 0; i < 5; i++) {
+      p.rage = 3; idle(w, 0.05);
+      const m = cible(w, p.x + 60, p.y);
+      press(w, 'proie', { x: m.x, y: m.y }); idle(w, 0.3); w.killMonster(m);
+    }
+    expect(q.compteurs.nouvelleLune).toBe(10);
   });
 });
