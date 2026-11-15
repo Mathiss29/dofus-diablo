@@ -22,6 +22,26 @@ const GARDES = ['zone', 'x', 'y', 'retour', 'havreSac', 'quetes', 'zaaps', 'zone
 /** Monde ouvert d'Incarnam (étape 4) : la partie est son vrai monde, on garde tout sauf le Havre-Sac (la partie n'y va pas). */
 const GARDES_MONDE = ['havreSac'];
 
+/** « En ligne : » 4D : l'heure de Paris en secondes « murales » (comme src/render/heure.ts), la date du jour et la nuit, pour le
+ *  monde vivant (boss du monde, invasions), les contrats et l'Almanax : les mêmes que chez les joueurs. */
+let decalage = 0, calcule = -Infinity;
+function decalageParis(ms) {
+  try {
+    const f = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const v = {};
+    for (const p of f.formatToParts(new Date(ms))) if (p.type !== 'literal') v[p.type] = +p.value;
+    return Math.round((Date.UTC(v.year, v.month - 1, v.day, v.hour, v.minute, v.second) - Math.floor(ms / 1000) * 1000) / 60000) * 60;
+  } catch { return 3600; }
+}
+export function heureParis() {
+  const ms = Date.now();
+  if (ms - calcule > 600_000) { decalage = decalageParis(ms); calcule = ms; }
+  return ms / 1000 + decalage;
+}
+export const jourParis = () => new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Paris' });
+/** Nuit à Paris (comme l'ambiance du jeu, à peu près : de 21 h à 6 h). */
+const nuitParis = () => { const h = Math.floor(heureParis() / 3600) % 24; return h >= 21 || h < 6; };
+
 let sim = null;
 /** Mondes que le serveur sait tenir (construire-sim.mjs les copie) ; Astrub peut manquer (VPS pas encore à jour) : ses donjons sont alors absents. */
 const MONDES = ['incarnam', 'astrub'];
@@ -40,7 +60,13 @@ export async function chargerSim(dossier = new URL('./partie/', import.meta.url)
 /** Donjons en vagues que le serveur peut tenir : [{ tag, nom, zone }], dans l'ordre des zones. */
 export function arenesDisponibles(S) {
   const L = [];
-  for (const z of MONDES) if (S.mondes[z]) for (const d of S.GAME_DATA.zones[z]?.open?.donjons ?? []) if (d.arene?.tag) L.push({ tag: d.arene.tag, nom: d.nom, zone: z });
+  for (const z of MONDES) if (S.mondes[z]) {
+    const o = S.GAME_DATA.zones[z]?.open;
+    // les donjons de la 0.4 et de la 0.6, publics (« En ligne : » 4C), comme dans World
+    const tous = [...(o?.donjons ?? []), ...(S.V04_PUBLIC ? o?.donjonsTest ?? [] : []), ...(S.V06_PUBLIC ? o?.donjonsV06 ?? [] : [])];
+    const carte = new Set((S.mondes[z].maps ?? []).map(m => m.tag));
+    for (const d of tous) if (d.arene?.tag && !d.tresor && carte.has(d.arene.tag) && !L.some(x => x.tag === d.arene.tag)) L.push({ tag: d.arene.tag, nom: d.nom, zone: z });
+  }
   return L;
 }
 
@@ -87,6 +113,10 @@ export class Partie {
       if (e.potion) m.potion = true;
       this.S.garderUneFois(m.une, e);
     } else if (d.k === 'pret') { m.pret = true; m.em?.toutRenvoyer(); }
+    else if (d.k === 'ordre') {   // « En ligne : » 4B : un geste de fenêtre (équiper, forgemager, fabriquer…), rejoué pour ce joueur
+      const o = this.S.ordreValide(d), q = o && this.w?.players.find(p => p.id === m.joueur);
+      if (q) this.S.jouerOrdre(this.w, q, o);
+    }
   }
 
   /** Pose le perso d'un joueur dans l'arène (la partie démarre avec le premier) et l'y appelle. */
@@ -114,6 +144,9 @@ export class Partie {
       const zone = this.arene?.zone ?? this.zoneMonde ?? 'incarnam';
       // donjon : seule l'arène compte, pas de monstres dans le reste du monde (Astrub en a plus de 4 000)
       this.w = new S.World({ data: S.GAME_DATA, zone, map: new S.WorldGrid(S.mondes[zone]), seed: this.seed, classId: classe, items: S.ITEMS, partieServeur: true,
+        // ce que le jeu donne aussi à sa partie : marchands, récoltes, apparats, teintures, familiers, heure et date de Paris
+        boutiques: S.BOUTIQUES, apparats: S.APPARATS, themesHavreSac: S.THEMES_HAVRESAC, teintures: S.TEINTURES, familierXp: S.FAMILIERS?.xp, recoltes: S.RECOLTES,
+        aujourdhui: jourParis(), horloge: heureParis, nuit: nuitParis,
         ...(this.monde ? { quetes: S.QUETES, reprise: quetes.reprise, zonesVues: Array.isArray(brut?.zonesVues) ? brut.zonesVues : [] } : { sansGroupes: true }) });
       if (!this.monde) {
         this.w.allerArene(this.arene.tag);
@@ -155,6 +188,8 @@ export class Partie {
       const evs = w.drainEvents();
       // portail de sortie : ce joueur quitte la partie (son jeu ferme la connexion, il est alors sauvé et retiré)
       for (const e of evs) if (e.k === 'sortieArene') for (const [num, m] of this.membres) if (m.joueur === e.joueur && !m.sorti) { m.sorti = true; this.envoyer(num, { k: 'sortie' }); }
+      // « En ligne : » 4C : la porte d'un donjon dans le monde du groupe : il part dans l'arène du groupe (son jeu bascule)
+      for (const e of evs) if (e.k === 'versArene') for (const [num, m] of this.membres) if (m.joueur === e.joueur && !m.sorti) { m.sorti = true; this.envoyer(num, { k: 'sortie', donjon: { tag: e.tag, nom: e.nom } }); }
       for (const [num, m] of this.membres) {
         if (!m.em) continue;
         for (const e of evs) m.em.noter(e);

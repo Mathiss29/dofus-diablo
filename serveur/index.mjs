@@ -121,6 +121,18 @@ async function mondeGroupe(s, m) {
   const g = presence?.groupeDe(c.compte);
   if (g == null) return envoyer(s, { k: 'refus', raison: 'groupe' });
   const S = await chargerSim();
+  // « En ligne : » 4C : la porte d'un donjon dans le monde du groupe : l'arène du groupe pour ce donjon (les autres reçoivent « Rejoindre »)
+  if (typeof m.arene === 'string') {
+    const a = S && arenesDisponibles(S).find(x => x.tag === m.arene);
+    if (!a) return envoyer(s, { k: 'refus', raison: 'donjon' });
+    const cle = `${g}:arene:${a.tag}`;
+    if (entrerMonde(s, cle)) return;
+    quitter(s);
+    await creerPartie(s, false, a.tag, cle);
+    const sa = s.salon;
+    if (sa?.cleMonde === cle) presence?.annoncerDonjon(c.compte, sa.code, a.nom);
+    return;
+  }
   const zone = typeof m.zone === 'string' ? m.zone : '';
   if (!S || !S.mondes[zone]) return envoyer(s, { k: 'refus', raison: 'indisponible' });
   s.arrivee = Array.isArray(m.arrivee) ? m.arrivee.slice(0, 2) : null;

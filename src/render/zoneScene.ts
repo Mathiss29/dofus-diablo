@@ -83,6 +83,7 @@ import { VivantView } from './vivantView';
 import { CalquesTest } from './calquesTest';
 import { REGLAGES_TEST, type CommandeTest } from '../sim/outilsTest';
 import { Coop, essaiEnLigne, MONDES_SERVEUR } from './coop';
+import { brancherOrdres } from './ordres';
 import { appliquerInstantane, lisserMiroir } from '../sim/miroir';
 import { EnLigne, type MessageChat } from './presence';
 import { Compte as CompteEnLigne } from './compte';
@@ -507,6 +508,8 @@ export class ZoneScene extends Phaser.Scene {
     Coop.attacher({ world: wc, annonce: t => this.hud.toast(t), nom: this.perso?.nom ?? '', sauver: () => this.sauver(),
       allerA: (zone, position, arrivee, sacHote, transit) => { if (this.world === wc) this.scene.restart(zone ? { slot: this.slot, zone, position, arrivee, sacHote, ...transit } : { slot: this.slot }); } });
     this.events.once('shutdown', () => Coop.detacher(wc));
+    // « En ligne : » 4B : chez l'invité, les gestes de fenêtre partent aussi vers celui qui fait la partie
+    if (this.miroir) { const off = brancherOrdres(wc, o => Coop.ordre(o)); this.events.once('shutdown', off); }
     // Présence en ligne (Bastion partagé) : seulement avec un perso du compte, hors partie de test et hors vitrine
     if (this.perso && persosEnLigne() && !this.test && !this.vitrine && !this.essai && this.slot >= 0) {
       const p = this.world.player;
@@ -687,6 +690,18 @@ export class ZoneScene extends Phaser.Scene {
     p.lieu = this.world.area?.name ?? (this.world.dansHavreSac ? 'Havre-Sac' : this.world.dansBastion ? this.world.zone.name : p.lieu);
     sauverPerso(this.slot, p); sauverBestiaire(this.bestiaire);
   };
+  /** « En ligne : » 1C : lieu partagé où l'on voit passer les autres joueurs hors du Bastion : la Cité d'Astrub, ou les abords
+   *  d'un Zaap du monde ouvert. null ailleurs (on y est seul, ou avec son groupe). */
+  private lieuPartage(): string | null {
+    const w = this.world, p = w?.player;
+    if (!p || !essaiEnLigne() || !w.zone.open || w.dansBastion || w.dansHavreSac || w.arene) return null;
+    if (this.zoneId === 'astrub' && w.worldGrid?.mapAt(p.x, p.y)?.sub === ZoneScene.CITE_ASTRUB) return 'cite';
+    const z = w.zaapsIci().find(q => Math.abs(q.x - p.x) + Math.abs(q.y - p.y) < ZoneScene.ABORDS_ZAAP);
+    return z ? `zaap:${z.name}` : null;
+  }
+  /** Sous-zone de la Cité d'Astrub (données de Dofus 3) et rayon (px, en losange) des abords d'un Zaap. */
+  static readonly CITE_ASTRUB = 95;
+  static readonly ABORDS_ZAAP = 700;
   /** Dernier essai d'entrer dans le monde du groupe (performance.now) : pas plus d'un toutes les 10 s après un refus. */
   private essaiMonde = -1e9;
   /** « En ligne : » 1A + 5A : membre d'un groupe dans une zone du monde ouvert tenue par le serveur : on passe dans le monde du groupe.
@@ -2342,9 +2357,11 @@ export class ZoneScene extends Phaser.Scene {
     // Bastion partagé : les autres joueurs en ligne s'y promènent ; on donne aussi sa position
     if (EnLigne.connecte && !this.vitrine) {
       const p = w.player;
-      EnLigne.position(this.miroir ? '__groupe' : this.zoneId, p.x, p.y, p.facing, p.anim === 'run' ? 'run' : 'idle', this.time.now);
+      EnLigne.position(this.miroir ? Coop.zoneMonde ?? '__groupe' : this.zoneId, p.x, p.y, p.facing, p.anim === 'run' ? 'run' : 'idle', this.time.now, this.lieuPartage());
     }
-    this.passantsEnLigne?.maj(w.dansBastion && !this.miroir && !this.vitrine, this.game.loop.delta / 1000, w.player.x, w.player.y);
+    // « En ligne : » 1C : aussi dans la Cité d'Astrub et aux abords des Zaaps ; les membres de son groupe y sont déjà en vrai (miroir)
+    const lieu = !this.vitrine && (w.dansBastion && !this.miroir || !!this.lieuPartage());
+    this.passantsEnLigne?.maj(lieu, this.game.loop.delta / 1000, w.player.x, w.player.y, this.miroir ? new Set(EnLigne.groupe?.membres.map(m => m.id) ?? []) : null);
     this.bullesChat?.maj(w, !!this.miroir);
     this.chat?.placer(this.hud.hautSuivi());
     this.dessinerLaisse();

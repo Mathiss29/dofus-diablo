@@ -110,3 +110,76 @@ test('continent sur le serveur : on garde sa place dans Astrub, on arrive par un
   assert.ok(!recus.get(1).some(d => d.k === 'sortie'));
   p.depart(1); p.depart(2);
 });
+
+test('fenêtres de l’invité : ses gestes (ordres) sont rejoués pour lui sur le serveur, les autres refusés', async () => {
+  const S = await chargerSim();
+  const p = new Partie(S, () => {}, 9, null, { monde: 'astrub' });
+  p.arrivee(1); p.arrivee(2);
+  p.recu(1, { k: 'bonjour', classe: 'iop', etat: { level: 20 } });
+  p.recu(2, { k: 'bonjour', classe: 'cra', etat: { level: 20 } });
+  const [a, b] = p.w.players;
+  const k = 'vitalite';
+  const pts = b.points, va = a.base[k] ?? 0, vb = b.base[k] ?? 0;
+  assert.ok(pts > 0, 'des points à placer');
+  p.recu(2, { k: 'ordre', c: 'p', f: 'spendPoint', a: [k, 1] });
+  assert.equal(b.base[k], vb + 1, 'le point est placé chez le joueur 2');
+  assert.ok(b.points < pts);
+  assert.equal(a.base[k] ?? 0, va, 'pas chez le joueur 1');
+  // geste hors liste (achats d'Ogrines, outils) : ignoré
+  const kamas = b.kamas;
+  p.recu(2, { k: 'ordre', c: 'w', f: 'recevoirAchats', a: [['x']] });
+  p.recu(2, { k: 'ordre', c: 'w', f: 'donnerObjet', a: ['8243', 99] });
+  assert.equal(b.kamas, kamas);
+  assert.ok(!b.bag.some(it => it.id === '8243'));
+  p.depart(1); p.depart(2);
+});
+
+test('donjon depuis le monde du groupe : la porte envoie le joueur vers l’arène du groupe, le monde continue sans lui', async () => {
+  const S = await chargerSim();
+  const recus = new Map([[1, []], [2, []]]);
+  const p = new Partie(S, (num, d) => recus.get(num).push(d), 4, null, { monde: 'astrub' });
+  p.arrivee(1); p.arrivee(2);
+  p.recu(1, { k: 'bonjour', classe: 'iop', etat: { level: 30 } });
+  p.recu(2, { k: 'bonjour', classe: 'cra', etat: { level: 30 } });
+  const w = p.w, [, b] = w.players;
+  const d = w.zone.open.donjons.find(x => x.arene?.tag === 'arene_grange');
+  w.commeJoueur(b, () => w['traverser']({ tag: d.arene.tag, ...w.worldGrid.cellToWorld(d.arene.arrivee) }, d.nom));
+  p.recu(2, { k: 'pret' });
+  p.avancer(1 / 60);
+  const s = recus.get(2).find(x => x.k === 'sortie');
+  assert.deepEqual(s?.donjon, { tag: 'arene_grange', nom: d.nom });
+  assert.equal(w.arene, null, 'pas d’arène dans le monde du groupe');
+  assert.ok(!recus.get(1).some(x => x.k === 'sortie'));
+  p.depart(1); p.depart(2);
+});
+
+test('lieux partagés : dans la Cité d’Astrub (ou au même Zaap), on voit passer les autres ; ailleurs, non', async () => {
+  const { dossier, J } = base();
+  const s = creerServeur({ comptes: creerComptes({ dossier, env: {}, origines: new Set() }) });
+  await new Promise(r => s.listen(0, '127.0.0.1', r));
+  const url = `ws://127.0.0.1:${s.address().port}/ws`;
+  const client = async () => {
+    const ws = new WebSocket(url, { origin: 'https://diablofus.com' }), file = [], attente = [];
+    ws.on('message', d => { const m = JSON.parse(String(d)); const a = attente.shift(); if (a) a(m); else file.push(m); });
+    await new Promise(ok => ws.on('open', ok));
+    const lire = () => file.length ? Promise.resolve(file.shift()) : new Promise(ok => attente.push(ok));
+    return { ws, envoi: m => ws.send(JSON.stringify(m)), attendre: async f => { for (;;) { const m = await lire(); if (f(m)) return m; } } };
+  };
+  const a = await client(), b = await client();
+  a.envoi({ k: 'presence', jeton: J[0], emplacement: 0, zone: 'astrub' });
+  b.envoi({ k: 'presence', jeton: J[1], emplacement: 0, zone: 'astrub' });
+  await a.attendre(m => m.k === 'presence'); await b.attendre(m => m.k === 'presence');
+  a.envoi({ k: 'pos', zone: 'astrub', x: 10, y: 10, l: 'cite' });
+  b.envoi({ k: 'pos', zone: 'astrub', x: 50, y: 20, l: 'cite' });
+  const vu = await a.attendre(m => m.k === 'autres' && m.l.length === 1);
+  assert.equal(vu.profils[0].nom, 'Brak');
+  // il sort de la Cité : Lyra ne le voit plus
+  b.envoi({ k: 'pos', zone: 'astrub', x: 900, y: 20 });
+  await a.attendre(m => m.k === 'autres' && m.l.length === 0);
+  // même Zaap : ils se revoient
+  a.envoi({ k: 'pos', zone: 'astrub', x: 10, y: 10, l: 'zaap:Zaap d’Astrub' });
+  b.envoi({ k: 'pos', zone: 'astrub', x: 30, y: 10, l: 'zaap:Zaap d’Astrub' });
+  await a.attendre(m => m.k === 'autres' && m.l.length === 1);
+  a.ws.close(); b.ws.close();
+  await new Promise(r => { s.close(r); s.closeAllConnections(); });
+});

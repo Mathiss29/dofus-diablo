@@ -8,6 +8,7 @@ import { exporterJoueur, restaurerJoueur, type EtatJoueur } from '../sim/sauvega
 import { Compte } from './compte';
 import { sacVuValide, type SacVu } from '../sim/meubles';
 import type { PointDeRetour, RetourHavreSac } from '../sim/events';
+import { jouerOrdre, ordreValide, type Ordre } from '../sim/ordres';
 
 /** Où l'on va en quittant une partie à plusieurs par une porte, un Zaap ou le Havre-Sac (« En ligne : » 5A). */
 export interface Vers { zone: string; arrivee?: [string, number]; position?: { x: number; y: number }; point?: PointDeRetour; zaap?: string; retour?: RetourHavreSac }
@@ -37,7 +38,11 @@ function versValide(v: unknown): Vers | undefined {
 export const MONDES_SERVEUR = new Set(['incarnam', 'astrub']);
 /** Essai de la MAJ « En ligne » (« En ligne : » 11A, avant l'ouverture) : ?enligne=1 dans l'adresse l'allume pour ce navigateur,
  *  ?enligne=0 l'éteint. Éteint : le monde du groupe ne se rejoint pas tout seul (les boutons du Social restent). */
+let essai: boolean | null = null;
 export function essaiEnLigne(): boolean {
+  return essai ??= lireEssai();
+}
+function lireEssai(): boolean {
   try {
     const u = new URLSearchParams(location.search);
     if (u.has('enligne')) localStorage.setItem('diablofus.enLigne', u.get('enligne') === '0' ? '0' : '1');
@@ -109,6 +114,7 @@ class Salon {
     // depuis le monde du groupe (le chef lance un donjon) : le miroir tient jusqu'à l'arène
     const garder = this.miroir && serveur;
     if (garder) this.bascule ??= { zone: this.zoneMonde ?? this.scene?.world.opts.zone ?? 'incarnam' };
+    if (garder && this.zoneMonde && !monde) this.retourMonde = this.zoneMonde;
     this.compte = compte; this.arene = serveur && !monde ? arene : null; this.zoneMonde = null;
     this.connecter(serveur ? { k: 'creer', serveur: true, ...(monde ? { monde: true } : {}), ...(this.arene ? { arene: this.arene } : {}) } : { k: 'creer' }, garder);
   }
@@ -122,6 +128,8 @@ class Salon {
   }
   /** Zone du monde du groupe où l'on joue (null hors du monde du groupe). */
   zoneMonde: string | null = null;
+  /** « En ligne : » 4C : parti en donjon depuis le monde du groupe de cette zone : le portail de sortie y ramène. */
+  private retourMonde: string | null = null;
   /** Passage d'un monde du groupe à un autre (porte entre deux zones tenues par le serveur) : le miroir tient bon pendant ce temps. */
   private bascule: Vers | null = null;
   rejoindre(code: string, compte: PersoCompte | null = null) {
@@ -129,6 +137,7 @@ class Salon {
     // depuis le monde du groupe (donjon lancé par le chef) : le miroir tient jusqu'à l'arène ; en cas d'échec, retour seul dans cette zone
     const garder = this.miroir;
     if (garder) this.bascule ??= { zone: this.zoneMonde ?? this.scene?.world.opts.zone ?? 'incarnam' };
+    if (this.zoneMonde) this.retourMonde = this.zoneMonde;
     this.compte = compte; this.zoneMonde = null;
     this.connecter({ k: 'rejoindre', code: code.trim().toUpperCase() }, garder);
   }
@@ -148,7 +157,7 @@ class Salon {
   private fermer() {
     if (this.hote && this.scene) for (const i of this.invites.values()) this.retirer(i);
     this.etat = 'hors'; this.hote = false; this.serveur = false; this.compte = null; this.code = null; this.invites.clear(); this.recus = []; this.dansZoneHote = false;
-    this.zoneMonde = null; this.bascule = null;
+    this.zoneMonde = null; this.bascule = null; this.retourMonde = null;
     this.changer();
   }
   /** garder : bascule d'un monde du groupe à l'autre, le miroir reste affiché (dansZoneHote) jusqu'à la nouvelle zone. */
@@ -260,9 +269,18 @@ class Salon {
         if (e.potion) i.potion = true;
         garderUneFois(i.une, e);
       } else if (d.k === 'pret') { i.pret = true; i.em?.toutRenvoyer(); }
+      else if (d.k === 'ordre') {   // « En ligne : » 4B : un geste de fenêtre de l'invité, rejoué pour lui
+        const o = ordreValide(d), w = this.scene?.world, q = w?.players.find(p => p.id === i.joueur);
+        if (o && w && q) jouerOrdre(w, q, o);
+      }
       return;
     }
     if (d.k === 'sortie') {
+      // « En ligne : » 4C : la porte d'un donjon dans le monde du groupe : on part dans l'arène du groupe
+      const dj = d.donjon as { tag?: unknown; nom?: unknown } | undefined;
+      if (dj && typeof dj.tag === 'string' && this.zoneMonde && this.compte) { this.versArene(dj.tag, typeof dj.nom === 'string' ? dj.nom : ''); return; }
+      // portail de sortie du donjon : retour dans le monde du groupe, devant le gardien
+      if (!d.vers && this.retourMonde && this.compte) { const z = this.retourMonde; this.retourMonde = null; this.basculer({ zone: z }); return; }
       const vers = versValide(d.vers);
       // « En ligne : » 5A : une porte vers une autre zone tenue par le serveur : on passe dans le monde du groupe de cette zone
       if (vers && this.zoneMonde && this.compte && MONDES_SERVEUR.has(vers.zone) && vers.zone !== this.zoneMonde) { this.basculer(vers); return; }
@@ -290,6 +308,15 @@ class Salon {
     this.compte = compte; this.zoneMonde = vers.zone; this.arene = null;
     const { zone, ...transit } = vers;
     this.connecter({ k: 'mondeGroupe', zone, jeton: compte.jeton, emplacement: compte.emplacement, ...transit }, true);
+  }
+
+  private versArene(tag: string, nom: string) {
+    const compte = this.compte!;
+    this.retourMonde = this.zoneMonde;
+    this.bascule = { zone: this.zoneMonde! }; this.recus = []; this.attendPlein = true;
+    this.scene?.annonce(nom ? `Donjon : ${nom}` : 'En route vers le donjon');
+    this.zoneMonde = null; this.arene = tag;
+    this.connecter({ k: 'mondeGroupe', arene: tag, jeton: compte.jeton, emplacement: compte.emplacement }, true);
   }
 
   // ——— la scène ———
@@ -378,6 +405,8 @@ class Salon {
       castOn: i.castOn ?? null, approach: !!i.approach, meute: i.meute ?? null, recolteTenue: !!i.recolteTenue, pressed: a.pressed, potion: a.potion, ...a.une } });
     a.pressed = null; a.potion = false; a.une = {};
   }
+  /** « En ligne : » 4B : geste de fenêtre de l'invité, envoyé à celui qui fait la partie. */
+  ordre(o: Ordre) { if (this.miroir) this.envoyer({ k: 'ordre', ...o }); }
   /** Instantanés arrivés depuis la dernière image, dans l'ordre. */
   prendre(): Instantane[] { const r = this.recus; this.recus = []; return r; }
 }

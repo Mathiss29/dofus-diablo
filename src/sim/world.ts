@@ -460,7 +460,7 @@ export class World {
     if (open && this.v06Ouvert) this.worldGrid?.ouvrirV06();   // 0.6 cachée : ses régions seulement en partie de test
     if (open) { this.buildPortes(); this.buildRecoltes(); this.buildPostes(); }
     if (open?.guerre && this.essaiOuvert && this.map instanceof WorldGrid && open.guerre.champs.every(c => this.map instanceof WorldGrid && this.map.mapByTag(c.tag))) this.guerre = new Guerre(this, open.guerre.champs);
-    if (open && this.map instanceof WorldGrid && opts.zone === 'astrub' && !opts.partieServeur) this.vivant = new MondeVivant(this);
+    if (open && this.map instanceof WorldGrid && opts.zone === 'astrub' && !opts.sansGroupes) this.vivant = new MondeVivant(this);   // aussi dans le monde du groupe sur le serveur (« En ligne : » 4D)
     if (open && opts.arrivee) this.arriver(opts.arrivee);
     if (open) this.sortieHavreSac(opts);
     // les PNJ d'abord : les groupes de monstres ne se posent pas sur eux
@@ -1031,6 +1031,8 @@ export class World {
   private traverser(to: PorteEnd, nom: string) {
     const p = this.player, wg = this.worldGrid!;
     const dj = this.zone.open?.donjons?.find(d => d.arene?.tag === to.tag);
+    // « En ligne : » 4C : monde du groupe sur le serveur : le donjon se joue dans une partie à part (une arène par groupe)
+    if (dj && this.opts.partieServeur && !this.opts.sansGroupes) { p.stopMove(); this.emit({ k: 'versArene', joueur: p.id, tag: dj.arene!.tag, nom: dj.nom }); return; }
     if (dj) {   // arène : pile au point d'arrivée, protégé 1,5 s (15A)
       p.x = to.x; p.y = to.y; p.kx = p.ky = 0; p.z = 0; p.stopMove(); p.invuln = Math.max(p.invuln, ARENE.protection);
       this.portalLock = to;
@@ -1141,7 +1143,7 @@ export class World {
   /** 13A : le portail de sortie ramène devant le gardien. */
   quitterArene(d: DonjonDef) {
     // partie tenue par le serveur : l'arène est toute la partie ; celui qui sort quitte le groupe et retrouve son monde
-    if (this.opts.partieServeur) { this.player.stopMove(); this.emit({ k: 'sortieArene', joueur: this.player.id }); return; }
+    if (this.opts.partieServeur && this.opts.sansGroupes) { this.player.stopMove(); this.emit({ k: 'sortieArene', joueur: this.player.id }); return; }
     if (d.tresor) {   // 0.6 (22B) : la Salle au trésor ramène là où était le portail (sinon au Zaap)
       if (this.passage) return;
       const r = this.visiteTresor?.retour ?? { tag: this.worldGrid!.mapAt(this.checkpoint.x, this.checkpoint.y)?.tag ?? '', x: this.checkpoint.x, y: this.checkpoint.y };

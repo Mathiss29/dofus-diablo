@@ -19,3 +19,16 @@ describe('entrées de l’invité dans le monde du groupe', () => {
     expect(u.atelier).toBeUndefined();
   });
 });
+
+import { ordreValide } from '../src/sim/ordres';
+describe('ordres de fenêtre de l’invité', () => {
+  it('ne laisse passer que les gestes listés, avec des arguments simples', () => {
+    expect(ordreValide({ c: 'p', f: 'equip', a: [12] })).toEqual({ c: 'p', f: 'equip', a: [12] });
+    expect(ordreValide({ c: 'w', f: 'forgemager', a: [3, 'rune_fo', false] })?.f).toBe('forgemager');
+    expect(ordreValide({ c: 'w', f: 'recevoirAchats', a: [] })).toBeNull();
+    expect(ordreValide({ c: 'w', f: 'donnerObjet', a: ['1', 1] })).toBeNull();
+    expect(ordreValide({ c: 'p', f: 'gainXp', a: [1e9] })).toBeNull();
+    expect(ordreValide({ c: 'w', f: 'acheter', a: [{ a: { b: { c: { d: 1 } } } }] })).toBeNull();
+    expect(ordreValide({ c: 'w', f: 'acheter', a: Array(9).fill(1) })).toBeNull();
+  });
+});

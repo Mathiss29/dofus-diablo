@@ -223,6 +223,8 @@ export type SimEvent =
   | { k: 'portalStart'; nom: string }
   /** Partie tenue par le serveur : un joueur prend le portail de sortie de l'arène, il quitte le groupe. */
   | { k: 'sortieArene'; joueur: number }
+  /** « En ligne : » 4C : dans le monde du groupe tenu par le serveur, un joueur passe la porte d'un donjon : il part dans l'arène du groupe. */
+  | { k: 'versArene'; joueur: number; tag: string; nom: string }
   /** Le joueur arrive ailleurs d'un coup (porte, fin de quête) : le rendu garde le noir jusqu'à ce que les cartes soient posées. */
   | { k: 'portal'; nom: string }
   /** Partie de test : un ordre du panneau F1 a été fait (message court pour l'interface). */

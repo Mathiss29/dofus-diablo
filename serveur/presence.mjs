@@ -136,6 +136,8 @@ export function creerPresence({ comptes, envoyer }) {
     if (!j) return ['pos', 'enligne', 'inviter', 'groupe', 'dire', 'annonce', 'amis', 'ami+', 'ami-', 'ignorer', 'reglagesSociaux', 'grpCreer', 'grpOui', 'grpNon', 'grpQuitter', 'grpExclure', 'grpChef', 'grpDonjon'].includes(m.k);
     if (m.k === 'pos') {
       if (typeof m.zone === 'string') j.zone = m.zone.slice(0, 40);
+      // « En ligne : » 1C : lieu partagé hors du Bastion (Cité d'Astrub, abords d'un Zaap), null ailleurs
+      j.lieu = typeof m.l === 'string' && m.l ? m.l.slice(0, 60) : null;
       j.x = fini(m.x); j.y = fini(m.y); j.f = fini(m.f);
       j.a = m.a === 'walk' || m.a === 'run' ? m.a : 'idle';
       return true;
@@ -285,8 +287,14 @@ export function creerPresence({ comptes, envoyer }) {
         envoyerGroupe(g);
       }
     }
-    const ici = [...joueurs].filter(([, j]) => j.zone === PRESENCE.partagee);
-    for (const [s, j] of ici) {
+    // qui voit qui : le Bastion, et (« En ligne : » 1C) ceux qui sont dans le même lieu partagé de la même zone
+    const lieuDe = j => (j.zone === PRESENCE.partagee ? PRESENCE.partagee : j.lieu ? `${j.zone}|${j.lieu}` : null);
+    const parLieu = new Map();
+    for (const e of joueurs) { const l = lieuDe(e[1]); if (l) { if (!parLieu.has(l)) parLieu.set(l, []); parLieu.get(l).push(e); } }
+    for (const [s, j] of joueurs) {
+      const ici = parLieu.get(lieuDe(j));
+      if (!ici) { if (j.vuQuelquun) { j.vuQuelquun = false; envoyer(s, { k: 'autres', l: [] }); } continue; }
+      j.vuQuelquun = true;
       const autres = ici.filter(([t]) => t !== s).map(([, o]) => o)
         .sort((a, b) => Math.hypot(a.x - j.x, a.y - j.y) - Math.hypot(b.x - j.x, b.y - j.y)).slice(0, PRESENCE.voisins);
       const neufs = autres.filter(o => !j.vus.has(o.compte));
@@ -299,7 +307,15 @@ export function creerPresence({ comptes, envoyer }) {
   minuterie.unref();
   return { recu, quitter, tour, annoncer, groupes: () => groupes.size,
     /** « En ligne : » 1A : groupe d'un compte (son numéro), null s'il est seul ; membres : les comptes du groupe. */
-    groupeDe: compte => groupeDe.get(compte) ?? null, membresGroupe: id => groupes.get(id)?.membres ?? [], fermer: () => clearInterval(minuterie), nombre: () => joueurs.size,
+    groupeDe: compte => groupeDe.get(compte) ?? null, membresGroupe: id => groupes.get(id)?.membres ?? [],
+    /** « En ligne : » 4C : un membre a passé la porte d'un donjon dans le monde du groupe : les autres reçoivent « Rejoindre ». */
+    annoncerDonjon(compte, code, lieu) {
+      const g = groupes.get(groupeDe.get(compte)), j = [...joueurs.values()].find(x => x.compte === compte);
+      if (!g) return;
+      g.donjon = code;
+      for (const x of g.membres) { const u = socketDe(x); if (u && x !== compte) envoyer(u, { k: 'donjon', de: j?.profil.nom ?? '', code, lieu: String(lieu ?? '').slice(0, 40) }); }
+      envoyerGroupe(g);
+    }, fermer: () => clearInterval(minuterie), nombre: () => joueurs.size,
     /** Ladder 7B : persos en ligne (« compte-emplacement »), sauf ceux qui apparaissent hors ligne. */
     enLigne: () => [...joueurs.values()].filter(j => !j.horsLigne).map(j => `${j.compte}-${j.emplacement}`) };
 }
