@@ -93,7 +93,7 @@ async function creerPartie(s, monde = false, arene = null, cleMonde = null) {
   const sa = { code: nouveauCode(), membres: new Map([[1, s]]), suivant: 2, cleMonde };
   if (cleMonde) mondes.set(cleMonde, sa.code);
   sa.partie = new Partie(S, (num, d) => { const c = sa.membres.get(num); if (c) envoyer(c, `{"k":"recu","de":0,"d":${JSON.stringify(d)}}`); },
-    undefined, (c, perso) => lesComptes?.sauverPartie(c.compte, c.emplacement, perso), { monde, arene, donjonFini: (nom, temps, L, idoles) => leClassement?.noterDonjon(nom, temps, L, idoles) });
+    undefined, (c, perso) => lesComptes?.sauverPartie(c.compte, c.emplacement, perso), { monde, arene, donjonFini: (nom, temps, L, idoles) => leClassement?.noterDonjon(nom, temps, L, idoles), signer: it => lesComptes?.hdv?.signer(it) });
   sa.partie.arrivee(1);
   salons.set(sa.code, sa); s.salon = sa; s.num = 1;
   tourner();
@@ -201,6 +201,8 @@ export function creerServeur({ comptes = creerComptes({ dossier: process.env.DON
   leClassement?.fermer();
   leClassement = creerClassement({ comptes, enLigne: () => presence?.enLigne() ?? [], annoncer });
   comptes.surTombe = (c, perso, stele) => leClassement?.tomber(c, perso, stele);
+  // « HDV : » : un perso qui joue dans une partie du serveur : les gestes de l'HDV s'y font
+  if (comptes.hdv) comptes.hdv.partieDe = (c, i) => { for (const sa of parties()) { const j = sa.partie.joueurDuCompte(c, i); if (j) return j; } return null; };
   const http = createServer(async (req, res) => {
     const o = req.headers.origin;
     if (o && ORIGINES.has(o)) {

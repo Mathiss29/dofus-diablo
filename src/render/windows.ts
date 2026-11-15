@@ -159,6 +159,7 @@ export const SUCCES_CATS = [
 const TITRES = '__titres';
 const CADENAS_SVG = '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex:none"><path fill="none" stroke="#a9a48b" stroke-width="2" d="M7 11V8a5 5 0 0 1 10 0v3"/><rect x="5" y="11" width="14" height="10" rx="2" fill="#a9a48b"/></svg>';
 import { LADDER_CSS, VueLadder, chargerLadder, idDuPerso, ladderCharge } from './ladder';
+import { HDV_CSS, VueHdv } from './hdvVue';
 import type { MarqueCarte } from './carteMonde';
 import { bossAnnonce } from '../sim/mondeVivant';
 
@@ -916,7 +917,7 @@ const CSS = `
 .dw .ttl b{font-weight:700}
 `;
 
-type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap' | 'bestiaire' | 'forge' | 'coffre' | 'almanax' | 'dofus' | 'menu' | 'social' | 'ladder' | 'tresor' | 'boutique' | 'idoles' | 'campagne' | 'arene';
+type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes' | 'guide' | 'emp' | 'garde' | 'zaap' | 'bestiaire' | 'forge' | 'coffre' | 'almanax' | 'dofus' | 'menu' | 'social' | 'ladder' | 'tresor' | 'boutique' | 'idoles' | 'campagne' | 'arene' | 'hdv';
 
 /** Fenêtres façon Dofus 3 : « Inventaire » (le perso sur son socle, ses emplacements autour, le sac à onglets)
  *  et « Caractéristiques » (les points à placer). Le jeu continue derrière (pas de pause : multijoueur prévu).
@@ -1002,7 +1003,7 @@ export class Windows {
   private forge = etatForge();
 
   constructor(private world: World) {
-    const style = document.createElement('style'); style.textContent = DOF_CSS + MENU_CSS + ALM_CSS + SOCIAL_CSS + CSS + ICON_CSS + BUTIN_CSS + FORGE_CSS + CODEX_CSS + LADDER_CSS + TRESOR_CSS + IDOLES_CSS + ARENE_CSS + PANOPLIE_CSS + CARNET_CSS; document.head.appendChild(style);
+    const style = document.createElement('style'); style.textContent = DOF_CSS + MENU_CSS + ALM_CSS + SOCIAL_CSS + CSS + ICON_CSS + BUTIN_CSS + FORGE_CSS + CODEX_CSS + LADDER_CSS + TRESOR_CSS + IDOLES_CSS + ARENE_CSS + PANOPLIE_CSS + CARNET_CSS + HDV_CSS; document.head.appendChild(style);
     this.root = document.createElement('div'); this.root.className = 'dw'; document.body.appendChild(this.root);
     // « Tchat : » 6A : le mousedown garde le champ du tchat actif ; le clic qui suit ne fait rien d'autre (pas de cadenas)
     this.root.addEventListener('mousedown', e => {
@@ -1220,6 +1221,15 @@ export class Windows {
     this.ladder.brancher(el, () => { if (this.ouverte === 'ladder') this.refresh(); });
     if (!ladderCharge() || this.ladderVieux()) void chargerLadder(true).then(() => { if (this.ouverte === 'ladder') this.refresh(); });
   }
+  /** Hôtel de Vente (« HDV : » 1D) : ouvert de partout ; la scène sauve le perso avant et après chaque geste (hdvSauver). */
+  hdvSauver: () => Promise<void> = async () => {};
+  readonly hdv = new VueHdv(() => ({ world: this.world, slot: this.socialSlot, miroir: () => Coop.miroir, sauver: () => this.hdvSauver(),
+    refaire: () => { if (this.ouverte === 'hdv') this.refresh(); else this.onChange(); } }));
+  private renderHdv() {
+    const w = this.win!;
+    w.innerHTML = `${this.title('Hôtel de Vente', 'hdv')}<div class="hdvc" data-hdv style="flex:1;min-height:0;display:flex;flex-direction:column">${this.hdv.html()}</div>`;
+    this.hdv.brancher(w.querySelector<HTMLElement>('[data-hdv]')!);
+  }
   private ladderLu = 0;
   /** Relu au plus une fois par minute pendant que la fenêtre est ouverte. */
   private ladderVieux() { const t = Date.now(); if (t - this.ladderLu < 60_000) return false; this.ladderLu = t; return true; }
@@ -1257,6 +1267,7 @@ export class Windows {
     });
     this.win = w; this.root.appendChild(w);
     this.render();
+    if (mode === 'hdv') this.hdv.ouvrir();
   }
   /** Redessine si la fenêtre est ouverte (après un ramassage, un niveau...). */
   refresh() { if (this.win) this.render(); }
@@ -1266,7 +1277,7 @@ export class Windows {
     else if (this.mode === 'car') this.renderCarac(); else if (this.mode === 'job') this.renderJob(); else if (this.mode === 'art') this.renderArt(); else if (this.mode === 'opt') this.renderOpt();
     else if (this.mode === 'sorts') this.renderSorts(); else if (this.mode === 'quetes') this.renderQuetes();
     else if (this.mode === 'succes') this.renderSucces(); else if (this.mode === 'emp') this.renderEmp(); else if (this.mode === 'zaap') this.renderZaap();
-    else if (this.mode === 'garde') this.renderGarde(); else if (this.mode === 'bestiaire') this.renderBestiaire(); else if (this.mode === 'forge') this.renderForge(); else if (this.mode === 'coffre') this.renderCoffre(); else if (this.mode === 'almanax') this.renderAlmanax(); else if (this.mode === 'dofus') this.renderDofus(); else if (this.mode === 'menu') this.renderMenu(); else if (this.mode === 'social') this.renderSocial(); else if (this.mode === 'ladder') this.renderLadder(); else if (this.mode === 'tresor') this.renderTresor(); else if (this.mode === 'boutique') this.renderBoutique(); else if (this.mode === 'idoles') this.renderIdoles(); else if (this.mode === 'campagne') this.renderCampagne(); else if (this.mode === 'arene') this.renderArene(); else this.renderInv();
+    else if (this.mode === 'garde') this.renderGarde(); else if (this.mode === 'bestiaire') this.renderBestiaire(); else if (this.mode === 'forge') this.renderForge(); else if (this.mode === 'coffre') this.renderCoffre(); else if (this.mode === 'almanax') this.renderAlmanax(); else if (this.mode === 'dofus') this.renderDofus(); else if (this.mode === 'menu') this.renderMenu(); else if (this.mode === 'social') this.renderSocial(); else if (this.mode === 'ladder') this.renderLadder(); else if (this.mode === 'tresor') this.renderTresor(); else if (this.mode === 'boutique') this.renderBoutique(); else if (this.mode === 'idoles') this.renderIdoles(); else if (this.mode === 'campagne') this.renderCampagne(); else if (this.mode === 'arene') this.renderArene(); else if (this.mode === 'hdv') this.renderHdv(); else this.renderInv();
     this.win!.querySelector('[data-close]')!.addEventListener('click', () => this.close());
     this.imageVivant = -1; this.majPerso(this.tVivant);   // perso dessiné dès cette image (pas un canevas vide jusqu'à la suivante)
   }
@@ -1311,7 +1322,7 @@ export class Windows {
               <span class="k">${p.kamas.toLocaleString('fr-FR')} <img src="${INV}/kamas.png" alt="" title="Kamas"></span></div>
             <div class="foot"><span>Butin affiché au sol</span>
               <select data-filter style="width:auto">${['Tout', 'Rare et plus', 'Épique et plus'].map((n, i) => `<option value="${i}" ${p.lootFilter === i ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
-            <div class="foot" title="Les objets ramassés sont défaits tout de suite : runes et kamas dans le sac, une coiffe, cape ou bouclier inconnu rejoint ta collection. Jamais un objet meilleur que celui que tu portes, ni un objet sous cadenas (panoplies et Légendaires en ont un tout seuls)."><span>Défaire au ramassage</span>
+            <div class="foot" title="Les objets ramassés sont défaits tout de suite : runes (et kamas sans l'Hôtel de Vente) dans le sac, une coiffe, cape ou bouclier inconnu rejoint ta collection. Jamais un objet meilleur que celui que tu portes, ni un objet sous cadenas (panoplies et Légendaires en ont un tout seuls)."><span>Défaire au ramassage</span>
               <select data-autodef style="width:auto">${([['', 'Jamais'], ['commun', 'Les Communs'], ['rare', 'Communs et Rares']] as const).map(([k, n]) => `<option value="${k}" ${(p.autoDefaire ?? '') === k ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
           </div>
         </div>
@@ -3659,7 +3670,7 @@ export class Windows {
     this.tip.innerHTML = `<h4 style="color:${RARITY_COLORS[it.rarity]}">${d.name}</h4>
       <div class="sub">${d.familier ? 'Familier' : `${RARITY_NAMES[it.rarity]} · ${d.weapon?.type ?? SLOT_NAMES[(slot ?? 'amulette') as EquipSlot]}`} · niveau ${d.level}</div>
       ${weapon}${stats}${travail}${fmPied}${fam}${leg}${neuf}${set}${it.signe ? `<div class="sig">Signé par ${it.signe.replace(/[&<>"]/g, '')}</div>` : ''}${lvl}${cmp}${sourcesHtml(it.id, 3)}
-      <div class="hint">${worn ? 'Clic droit : retirer' : it.cadenas ? 'Sous cadenas : jamais défait · Ctrl + clic : l\'ôter' : `Clic droit : équiper · Ctrl + clic : cadenas (défait chez Kerubim : runes + ${kamasDefaire(d, it).toLocaleString('fr-FR')} kamas)`}</div>`;
+      <div class="hint">${worn ? 'Clic droit : retirer' : it.cadenas ? 'Sous cadenas : jamais défait · Ctrl + clic : l\'ôter' : `Clic droit : équiper · Ctrl + clic : cadenas (défait chez Kerubim : runes${this.world.opts.hdv ? '' : ` + ${kamasDefaire(d, it).toLocaleString('fr-FR')} kamas`})`}</div>`;
     this.tip.style.display = 'block'; this.moveTip(ev);
   }
   private moveTip(ev: MouseEvent) {

@@ -203,6 +203,8 @@ export interface WorldOptions {
   partieServeur?: boolean;
   /** Pas de groupes de monstres dans le monde ouvert (donjon tenu par le serveur : seule l'arène compte, bien moins de calcul). */
   sansGroupes?: boolean;
+  /** Hôtel de Vente ouvert (« HDV : » 8, avec la MAJ en ligne) : « Défaire » chez Kerubim ne rend plus de kamas. */
+  hdv?: boolean;
   /** Nuit à l'heure du PC (donnée par l'affichage, « Wabbits : 12A ») : l'îlot des Tombeaux se réveille. */
   nuit?: () => boolean;
   /** 0.5 « monde vivant » (2E) : heure de Paris en secondes « murales » (comme si Paris était à l'heure UTC), donnée par
@@ -2984,13 +2986,13 @@ export class World {
     this.emit({ k: 'signature', uid, nom });
     return true;
   }
-  /** « Défaire » (maquette Magasin 7A, 9A-9C) : l'objet rend ses runes et des kamas ; une apparence inconnue rejoint la collection,
-   *  un pouvoir légendaire nouveau va au Codex. Renvoie les kamas gagnés ; les runes sont ajoutées à `tout`. */
+  /** « Défaire » (maquette Magasin 7A, 9A-9C) : l'objet rend ses runes ; une apparence inconnue rejoint la collection,
+   *  un pouvoir légendaire nouveau va au Codex. « HDV : » 8 : avec l'Hôtel de Vente (opts.hdv), plus de kamas. Les runes sont ajoutées à `tout`. */
   private defaireUn(it: Item, def: NonNullable<ItemsData['equipment'][string]>, tout: Record<string, number>): number {
     const plus = this.player.bonusMetier('mineur');   // « Métiers : » 7A : Mineur, plus de runes
     for (const [id, k] of Object.entries(briser(this.rng, def, it))) tout[id] = (tout[id] ?? 0) + k + (plus > 0 ? Math.floor(k * plus + this.rng.next()) : 0);
     this.collectionner(it.id); this.enregistrerCodex(it);
-    return kamasDefaire(def, it);
+    return this.opts.hdv ? 0 : kamasDefaire(def, it);
   }
   private finDefaire(n: number, tout: Record<string, number>, kamas: number, auto?: string) {
     const p = this.player;

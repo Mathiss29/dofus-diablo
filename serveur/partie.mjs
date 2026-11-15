@@ -80,6 +80,8 @@ export class Partie {
   constructor(S, envoyer, seed = Math.floor(Math.random() * 2 ** 31), sauver = null, o = {}) {
     this.S = S; this.envoyer = envoyer; this.seed = seed; this.sauver = sauver; this.depuisSauvegarde = 0;
     this.donjonFini = o.donjonFini ?? null;
+    /** « HDV : » 4A : signe un objet apparu ici (serveur/hdv.mjs) ; les objets apportés par le perso ne le sont pas. */
+    this.signer = o.signer ?? null;
     this.monde = !!o.monde;
     /** Zone du monde ouvert tenu ici (« En ligne : » 1A) ; null pour une arène de donjon. */
     this.zoneMonde = this.monde ? (typeof o.monde === 'string' && S.mondes[o.monde] ? o.monde : 'incarnam') : null;
@@ -146,7 +148,7 @@ export class Partie {
       this.w = new S.World({ data: S.GAME_DATA, zone, map: new S.WorldGrid(S.mondes[zone]), seed: this.seed, classId: classe, items: S.ITEMS, partieServeur: true,
         // ce que le jeu donne aussi à sa partie : marchands, récoltes, apparats, teintures, familiers, heure et date de Paris
         boutiques: S.BOUTIQUES, apparats: S.APPARATS, themesHavreSac: S.THEMES_HAVRESAC, teintures: S.TEINTURES, familierXp: S.FAMILIERS?.xp, recoltes: S.RECOLTES,
-        aujourdhui: jourParis(), horloge: heureParis, nuit: nuitParis,
+        aujourdhui: jourParis(), horloge: heureParis, nuit: nuitParis, hdv: true,
         ...(this.monde ? { quetes: S.QUETES, reprise: quetes.reprise, zonesVues: Array.isArray(brut?.zonesVues) ? brut.zonesVues : [] } : { sansGroupes: true }) });
       if (!this.monde) {
         this.w.allerArene(this.arene.tag);
@@ -164,6 +166,7 @@ export class Partie {
     else if (transit && (transit.zaap || transit.position || transit.retour)) this.w.commeJoueur(q, () => this.w.sortieHavreSac(transit));
     else if (this.w.players[0] !== q && !chezLui) { const f = this.w.map.nearestFree(this.w.players[0].x + 40, this.w.players[0].y); q.x = f.x; q.y = f.y; }
     q.hp = q.maxHp;
+    m.apportes = new WeakSet([...q.bag, ...Object.values(q.equipment)]);
     q.nom = typeof source.nom === 'string' ? source.nom.slice(0, 20) : '';
     m.joueur = q.id; m.em = new S.Emetteur(q.id); m.pret = false;
     this.envoyer(num, { k: 'zone', zone: this.w.opts.zone, x: q.x, y: q.y, id: q.id });
@@ -210,6 +213,7 @@ export class Partie {
         try { this.donjonFini(e.nom, e.temps, L, e.idoles ?? 0); } catch (err) { console.warn('partie : record raté', err.message); }
       }
       this.relever(PARTIE.pas);
+      if (this.n % 60 === 0) this.signerNeufs();
       if ((this.depuisSauvegarde += PARTIE.pas) >= PARTIE.sauvegarde) { this.depuisSauvegarde = 0; for (const m of this.membres.values()) this.sauverMembre(m); }
       if (++this.n % S.COOP.tous) continue;
       for (const [num, m] of this.membres) if (m.pret && m.em) this.envoyer(num, { k: 'instantane', ...m.em.instantane(w) });
@@ -235,6 +239,7 @@ export class Partie {
     if (!m.compte || !this.sauver || !this.w) return;
     const q = this.w.players.find(p => p.id === m.joueur);
     if (!q) return;
+    this.signerNeufs();
     try {
       const avant = m.compte.perso, etat = this.w.commeJoueur(q, () => this.S.exporterJoueur(this.w));
       for (const k of this.monde ? GARDES_MONDE : GARDES) { if (avant.etat && k in avant.etat) etat[k] = avant.etat[k]; else delete etat[k]; }
@@ -243,6 +248,24 @@ export class Partie {
       m.compte.perso = { ...avant, etat, temps };
       this.sauver(m.compte, m.compte.perso);
     } catch (e) { console.warn('partie : sauvegarde ratée', e.message); }
+  }
+  /** « HDV : » 4A : signe les objets apparus dans la partie (butin, fabrication, achats) ; jamais ceux que le perso a apportés. */
+  signerNeufs() {
+    if (!this.signer || !this.w) return;
+    for (const m of this.membres.values()) {
+      const q = m.joueur != null && this.w.players.find(p => p.id === m.joueur);
+      if (!q || !m.apportes) continue;
+      for (const it of [...q.bag, ...Object.values(q.equipment)]) if (it && !it.srv && !m.apportes.has(it)) this.signer(it);
+    }
+  }
+  /** Le perso de ce compte joue-t-il ici ? Rend { appliquer(f) } (f(monde, joueur) rejoué pour lui), ou null (« HDV : » : gestes de l'HDV). */
+  joueurDuCompte(compte, emplacement) {
+    for (const m of this.membres.values()) {
+      if (m.compte?.compte !== compte || m.compte.emplacement !== emplacement || m.joueur == null) continue;
+      const q = this.w?.players.find(p => p.id === m.joueur);
+      if (q) return { appliquer: f => this.w.commeJoueur(q, () => f(this.w, q)) };
+    }
+    return null;
   }
   /** Sauve tout le monde (serveur qui s'arrête). */
   sauverTout() { for (const m of this.membres.values()) this.sauverMembre(m); }

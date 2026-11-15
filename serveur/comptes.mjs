@@ -10,6 +10,7 @@ import { join } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import { creerOgrines } from './ogrines.mjs';
 import { creerBoutique } from './boutique.mjs';
+import { creerHdv } from './hdv.mjs';
 
 /** Codes cadeaux d'événement (serveur/codes-evenements.json), créés au démarrage s'ils n'existent pas. */
 function codesEvenements() {
@@ -206,10 +207,15 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
   const ogrines = creerOgrines({ db, connecte, admin: c => vue(c).admin, lireCorps, env, maintenant, adminDiscord: roles => roles.some(r => admins.has(r)), evenements: codesEvenements() });
   // Boutique Ogrines et abonnements (« Apparats : » 9, 13-17) : serveur/boutique.mjs
   const boutique = creerBoutique({ db, connecte, lireCorps, ogrines, maintenant, ...(catalogue ? { catalogue } : {}) });
+  // Hôtel de Vente (« HDV : ») : serveur/hdv.mjs ; 5D : annonces en plus selon le palier d'abonnement
+  const RANGS = { aventurier: 1, heros: 2, legende: 3 };
+  const hdv = creerHdv({ db, connecte, lireCorps, dossier, env, maintenant, ...(catalogue ? { catalogue } : {}), rangAbo: c => RANGS[boutique.abonnement(c)?.palier] ?? 0,
+    persoStocke: (c, i) => { const r = q.persos.all(c).find(x => x.emplacement === i); try { return r ? { perso: JSON.parse(r.donnees), maj: r.maj } : null; } catch { return null; } } });
   /** Répond aux adresses des comptes ; renvoie false si l'adresse n'est pas la sienne. */
   async function route(req, res, url) {
     const p = url.pathname, m = req.method;
     if (await ogrines.route(req, res, url)) return true;
+    if (await hdv.route(req, res, url)) return true;
     if (await boutique.route(req, res, url)) return true;
     if (p === '/parcours') {
       if (m === 'POST') {
@@ -402,7 +408,7 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
     regler(moi, horsLigne, inconnus) { q.regler.run(moi, horsLigne ? 1 : 0, inconnus ? 1 : 0); },
   };
 
-  const api = { route, copieNocturne, pret, ogrines, boutique, persoPartie, sauverPartie, compteDuJeton, social, stats: () => q.nb.get(), fermer: () => { clearInterval(minuterie); db.close(); },
+  const api = { route, copieNocturne, pret, ogrines, boutique, hdv, persoPartie, sauverPartie, compteDuJeton, social, stats: () => q.nb.get(), fermer: () => { clearInterval(minuterie); db.close(); },
     /** Pour le classement (classement.mjs) : la base, le compte d'une requête, le corps JSON d'une requête. */
     db, connecte, lireCorps,
     /** Ladder 3B : appelé avec (compte, perso, stèle) quand un perso Hardcore meurt, avant qu'il soit effacé. */
