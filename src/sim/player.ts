@@ -15,7 +15,7 @@ import { dmgArme, type CommandeFM } from './forgemagie';
 import { Entity } from './entity';
 import type { ClassDef, ComboHit, Element, SkillId, SpellDef } from './defs';
 import { WEAPONS } from './data';
-import { BASE_STATS, EQUIP_SLOTS, REDUCTION_RECHARGES_MAX, METIER_MAX, metierXpNeeded, type EquipSlot, type Item, type ItemsData, type Stat, type Stats } from './items';
+import { BASE_STATS, EQUIP_SLOTS, REDUCTION_RECHARGES_MAX, METIER_MAX, metierXpNeeded, familierStats, type EquipSlot, type Item, type ItemsData, type Stat, type Stats } from './items';
 import type { PlayerInput } from './input';
 import type { HitDef, World } from './world';
 import type { Quetes } from './quests';
@@ -535,6 +535,8 @@ export class Player extends Entity {
     const sets: Record<string, number> = {};
     for (const [slot, it] of Object.entries(this.equipment)) {
       if (!it) continue;
+      const fam = this.items?.equipment[it.id]?.familier;   // bonus du familier toujours recalculés (données officielles corrigées depuis)
+      if (fam) it.stats = familierStats(fam, it.niv ?? 1);
       const f = 1 + this.bonusFab(slot) + coefOeuvre(it.oeuvre);   // « Métiers : » 7B + 2A (chef-d'œuvre)
       for (const [k, v] of Object.entries(it.stats) as [Stat, number][]) add(k, f > 1 && v > 0 ? Math.round(v * f) : v);
       const pierre = bonusPierre(it.pierre, this.items?.equipment[it.id]?.level ?? 1);   // 2C : pierre sertie
