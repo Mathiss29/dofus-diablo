@@ -52,6 +52,14 @@ let pleine = true;
 /** Réglage « Résolution » (Fluidité 3A) : false = un pixel du jeu par pixel CSS, plus rapide. */
 export function reglerDensite(ecran: boolean) { pleine = ecran; }
 export function densitePleine() { return pleine; }
+/**
+ * Petit écran (AYN Thor : Chrome donne au jeu ~850×480 px CSS, maquette « Console : ») : la caméra du jeu est réglée en pixels CSS,
+ * donc on y voyait 5 fois moins de terrain qu'en 1080p. Sous 720 px de haut, on recule la caméra d'autant (jamais sous 0,55).
+ */
+export function reculPetitEcran(): number {
+  if (typeof window === 'undefined') return 1;
+  return Math.min(1, Math.max(0.55, window.innerHeight / 720));
+}
 export function densite(): number {
   if (!pleine) return 1;
   const d = typeof window === 'undefined' ? 1 : window.devicePixelRatio || 1;
