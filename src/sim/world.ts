@@ -19,7 +19,7 @@ import { fxImpression, imprimable, nouveauPourCodex, prixImpression } from './co
 import { legendaryPower, FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, kamasDefaire, noteObjet, rollItem, STAT_NAMES, type EquipSlot, type Item, type ItemDef, type ItemsData, type Rarity, type RecipeDef, type Stat } from './items';
 import { Player } from './player';
 import { apparatsDuMonde, rareteApparat, tirerApparat } from './apparats';
-import { Bete, BETES, REGLES_BETES, type EffetBete, type SortBete } from './bete';
+import { Bete, BETES, REGLES_BETES, invocationsMaxDe, type EffetBete, type SortBete } from './bete';
 import { initiativeBonus, removalChance } from './caracs';
 import { planWave } from './waves';
 import { Arene, ARENE } from './arene';
@@ -3537,7 +3537,7 @@ export class World {
     }
   }
   invocationsMax(p: Player): number { if (this.test?.invocations) return 99;   // partie de test (Outil test 7B)
-    return REGLES_BETES.invocationsBase + Math.max(0, p.stat('invocations')); }
+    return invocationsMaxDe(p); }
   /** Fait apparaître la bête d'un sort au point visé (case libre la plus proche). */
   invoquer(p: Player, key: string, sort: string, x: number, y: number, discret = false): Bete | null {
     if (!BETES[key]) return null;

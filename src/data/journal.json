@@ -2193,12 +2193,19 @@
     {
       "date": "2026-11-15",
       "titre": "Le Sadida et l'Écaflip prennent leurs couleurs",
-      "resume": "36 sorts du Sadida et de l'Écaflip retrouvent leurs effets officiels de Dofus 3.",
+      "resume": "36 sorts du Sadida et de l'Écaflip retrouvent leurs effets officiels de Dofus 3, et Kerubim t'attend au Bastion dès Incarnam.",
       "capture": "assets/journal/2026-11-15.webp",
       "legende": "Effets officiels du Sadida et de l'Écaflip, 15 novembre 2026.",
       "lignes": {
+        "Nouveautés": [
+          {"titre": "Invocations max affichées", "phrase": "Ton nombre d'Invocations se lit dans les Caractéristiques et dans le détail des sorts qui invoquent.", "details": "Chaque sort d'invocation dit combien de places prend sa bête. S'il n'y a plus de place, la plus ancienne repart.", "icone": "caracs", "etiquettes": ["Touche C", "Osamodas"]}
+        ],
+        "Le monde": [
+          {"titre": "Kerubim dès Incarnam", "phrase": "Kerubim Crépin tient boutique au Bastion des Douze dès le début, sans passer par Astrub.", "details": "Prends un Zaap d'Incarnam ou ton Havre-Sac (touche H) pour le rejoindre et défaire tes objets en trop.", "icone": "zaap", "etiquettes": ["Bastion des Douze", "Incarnam"]}
+        ],
         "Corrections": [
-          "Les 22 sorts du Sadida et 14 sorts de l'Écaflip ont enfin leurs effets visuels officiels."
+          "Les 22 sorts du Sadida et 14 sorts de l'Écaflip ont enfin leurs effets visuels officiels.",
+          "Kerubim Crépin ne se cache plus derrière la façade de son échoppe : il attend devant, bien visible."
         ],
         "En coulisses": [
           "Un test bloque désormais toute mise à jour où un sort n'aurait pas son geste ou son effet."

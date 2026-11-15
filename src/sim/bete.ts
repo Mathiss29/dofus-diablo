@@ -45,6 +45,8 @@ export interface ReglesBetes {
 const { _regles, ...defs } = BETES_JSON as unknown as { _regles: ReglesBetes } & Record<string, BeteDef>;
 export const BETES: Record<string, BeteDef> = defs;
 export const REGLES_BETES: ReglesBetes = _regles;
+/** Invocations max d'un joueur (stat officielle « Invocations ») : 1 de base + objets + bonus (Cortège Sauvage…). */
+export const invocationsMaxDe = (p: Player): number => REGLES_BETES.invocationsBase + Math.max(0, p.stat('invocations'));
 
 const CASE = 48, TOUR = 3;
 /** Rayon d'une zone officielle (P = la case, C/X n = n cases autour). */
