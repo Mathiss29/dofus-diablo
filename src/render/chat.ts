@@ -111,6 +111,8 @@ export class ChatVue {
   private premier = true;
   private lignes: MessageChat[] = [];
   private recapEl: HTMLDivElement | null = null;
+  /** Le tchat déployé suit les nouveaux messages tant que le joueur n'a pas remonté (bug du 2026-11-15 : le survol ramenait au début). */
+  private colle = true;
   private neufs = new Set<number>();
   /** 3A : canal où l'on parle ; 3B : le canal par défaut d'où il vient (s'il change, le canal suit). */
   private canal: Parle = 'tout';
@@ -143,7 +145,7 @@ export class ChatVue {
     this.champ.addEventListener('keydown', e => this.touche(e));
     this.champ.addEventListener('keyup', e => e.stopPropagation());
     this.champ.addEventListener('blur', () => { this.root.classList.remove('ouvert'); this.rendreRond(); });
-    this.champ.addEventListener('focus', () => this.root.classList.add('ouvert'));
+    this.champ.addEventListener('focus', () => { const avant = this.deploye(); this.root.classList.add('ouvert'); if (!avant) this.enBas(); });
     this.rond.addEventListener('click', () => this.ouvrir());
     this.canalBt.addEventListener('click', e => { e.stopPropagation(); this.menuCanal(); });
     this.msgs.addEventListener('click', e => {
@@ -168,6 +170,9 @@ export class ChatVue {
       this.fiche.style.left = `${Math.min(window.innerWidth - r.width - 8, e.clientX + 14)}px`; this.fiche.style.top = `${Math.max(8, e.clientY - r.height - 10)}px`;
     });
     this.msgs.addEventListener('mouseleave', () => { this.fiche.style.display = 'none'; });
+    // Défilement : en déployant le tchat (survol, Entrée), on arrive en bas ; il ne s'arrête que si le joueur remonte lui-même.
+    this.root.addEventListener('mouseenter', () => this.enBas());
+    this.msgs.addEventListener('scroll', () => { if (this.deploye()) this.colle = this.msgs.scrollHeight - this.msgs.scrollTop - this.msgs.clientHeight < 24; });
     // 5A : déplacer (modules déverrouillés) ; 5B : taille par le coin
     this.root.addEventListener('pointerdown', e => {
       const coin = (e.target as HTMLElement).classList.contains('ch-coin');
@@ -296,7 +301,7 @@ export class ChatVue {
     this.tabs.innerHTML = vis.map(i => `<span data-o="${i}" class="${i === this.onglet ? 'on' : ''}${this.neufs.has(i) ? ' neuf' : ''}" style="${i === this.onglet || !coul(i) ? '' : `color:${coul(i)}`}" title="Clic droit : régler l'onglet">${esc(O[i].nom)}</span>`).join('')
       + (O.length < MAX_ONGLETS ? '<span class="plus" data-plus title="Ajouter un onglet">+</span>' : '');
     this.tabs.querySelectorAll<HTMLElement>('[data-o]').forEach(e => {
-      e.addEventListener('click', () => { this.onglet = +e.dataset.o!; this.neufs.delete(this.onglet); this.rendreOnglets(); this.rendre(); if (this.root.classList.contains('ouvert')) this.champ.focus(); });
+      e.addEventListener('click', () => { this.onglet = +e.dataset.o!; this.neufs.delete(this.onglet); this.colle = true; this.rendreOnglets(); this.rendre(); if (this.root.classList.contains('ouvert')) this.champ.focus(); });
       e.addEventListener('contextmenu', ev => { ev.preventDefault(); this.menuOnglet(+e.dataset.o!, ev.clientX, ev.clientY); });
     });
     this.tabs.querySelector<HTMLElement>('[data-plus]')?.addEventListener('click', ev => {
@@ -373,7 +378,7 @@ export class ChatVue {
   }
 
   private rendre() {
-    const R = this.ctx.reglages, ouvert = this.root.classList.contains('ouvert');
+    const R = this.ctx.reglages, ouvert = this.root.classList.contains('ouvert'), haut = this.msgs.scrollTop;
     // 6B : au repos, les événements flottent aussi quand l'onglet ne les montre pas (cachés dès qu'on ouvre le tchat)
     const ev = (m: MessageChat) => m.canal === 'infos' && m.sorte === 'evenement';
     const L = regrouper(EnLigne.messages.filter(m => this.montre(m) || (ev(m) && this.recoit(m)))).slice(-80), t = performance.now(), eff = this.effacement();
@@ -384,8 +389,11 @@ export class ChatVue {
       const go = m.aller && this.ctx.allerVers ? `<span class="ch-go" data-go="${i}">Y aller</span>` : m.recap ? `<span class="ch-go" data-go="${i}">voir le récapitulatif</span>` : '';
       return `<div class="${cl}" data-t="${m.t}" data-i="${i}" style="color:${couleurDe(m)}">${R.chatHeure !== false ? `<span class="ch-h">${heure(m.heure)}</span>` : ''}${ligne(m)}${go}${n > 1 ? `<span class="ch-x">×${n}</span>` : ''}</div>`;
     }).join('');
-    if (ouvert || this.root.matches(':hover')) this.msgs.scrollTop = this.msgs.scrollHeight;
+    if (ouvert || this.root.matches(':hover')) { if (this.colle) this.msgs.scrollTop = this.msgs.scrollHeight; else this.msgs.scrollTop = haut; }
   }
+  private deploye() { return this.root.classList.contains('ouvert') || this.root.matches(':hover'); }
+  /** Déploiement (survol, Entrée) : les anciennes lignes apparaissent, on se place sur la dernière. */
+  private enBas() { this.colle = true; requestAnimationFrame(() => { this.msgs.scrollTop = this.msgs.scrollHeight; }); }
   private effacement() { const s = Number(this.ctx.reglages.chatEffacement ?? 20); return Number.isFinite(s) && s > 0 ? s * 1000 : 0; }
   private vieillir() {
     const t = performance.now(), eff = this.effacement(); if (!eff) return;
