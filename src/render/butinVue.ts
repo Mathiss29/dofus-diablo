@@ -185,11 +185,19 @@ export const BUTIN_CSS = `
 .bu-plus{font-size:11.5px;color:#a9a48b}
 `;
 
-interface Cadre { im: HTMLImageElement; x: number; y: number; w: number; h: number }
-const cadres = new Map<string, Promise<Cadre | null>>();
-/** Image de repos d'une planche de monstre (atlas simple ou multi-atlas de TexturePacker). */
-export function cadre(atlas: string): Promise<Cadre | null> {
+/** Portrait déjà découpé : une petite toile à la taille de l'image de repos (la planche entière n'est pas gardée). */
+type Portrait = HTMLCanvasElement;
+const cadres = new Map<string, Promise<Portrait | null>>();
+const prets = new Map<string, Portrait | null>();
+/** Les planches sont grandes (AVIF jusqu'à 2048²) : au plus 3 téléchargées et décodées à la fois. */
+let enCours = 0;
+const file: (() => void)[] = [];
+const tour = () => new Promise<void>(r => { if (enCours < 3) { enCours++; r(); } else file.push(() => { enCours++; r(); }); });
+const fin = () => { enCours--; file.pop()?.(); }; // la dernière demandée d'abord : ce qu'on regarde maintenant
+/** Image de repos d'une planche de monstre (atlas simple ou multi-atlas de TexturePacker), découpée une fois pour toutes. */
+export function cadre(atlas: string): Promise<Portrait | null> {
   if (!cadres.has(atlas)) cadres.set(atlas, (async () => {
+    await tour();
     try {
       type F = { filename?: string; frame: { x: number; y: number; w: number; h: number } };
       const j = await (await fetch(v(`assets/sprites/${atlas}.json`))).json();
@@ -200,18 +208,44 @@ export function cadre(atlas: string): Promise<Cadre | null> {
       }
       if (!pick) return null;
       const im = new Image(); im.crossOrigin = 'anonymous'; im.src = v(`assets/sprites/${pick.page}`); await im.decode();
-      return { im, ...pick.f.frame };
-    } catch { return null; }
-  })());
+      const { x, y, w, h } = pick.f.frame, c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      c.getContext('2d')!.drawImage(im, x, y, w, h, 0, 0, w, h);
+      return c;
+    } catch { return null; } finally { fin(); }
+  })().then(p => { prets.set(atlas, p); return p; }));
   return cadres.get(atlas)!;
+}
+function peindre(cv: HTMLCanvasElement, f: Portrait) {
+  const ctx = cv.getContext('2d')!, k = Math.min(cv.width / f.width, cv.height / f.height);
+  ctx.clearRect(0, 0, cv.width, cv.height);
+  ctx.drawImage(f, (cv.width - f.width * k) / 2, cv.height - f.height * k, f.width * k, f.height * k);
+}
+async function charger(cv: HTMLCanvasElement) {
+  const f = await cadre(cv.dataset.atlas!); if (f && cv.isConnected) peindre(cv, f);
+}
+/** Seules les toiles proches de l'écran chargent leur planche (le Bestiaire en a plusieurs centaines). */
+const suivies = new Set<HTMLCanvasElement>();
+let vue: IntersectionObserver | null = null;
+function observateur(): IntersectionObserver | null {
+  if (vue || typeof IntersectionObserver === 'undefined') return vue;
+  return vue = new IntersectionObserver(es => {
+    for (const e of es) {
+      const cv = e.target as HTMLCanvasElement;
+      if (!cv.isConnected) { vue!.unobserve(cv); suivies.delete(cv); continue; }
+      if (!e.isIntersecting) continue;
+      vue!.unobserve(cv); suivies.delete(cv); void charger(cv);
+    }
+  }, { rootMargin: '300px' });
 }
 /** Dessine les portraits (canvas[data-atlas]) : la première image de l'animation de repos du monstre. */
 export function dessinerPortraits(root: ParentNode) {
-  root.querySelectorAll<HTMLCanvasElement>('canvas[data-atlas]').forEach(async cv => {
+  const io = observateur();
+  for (const cv of suivies) if (!cv.isConnected) { io?.unobserve(cv); suivies.delete(cv); }
+  root.querySelectorAll<HTMLCanvasElement>('canvas[data-atlas]').forEach(cv => {
     const a = cv.dataset.atlas; if (!a) return;
-    const f = await cadre(a); if (!f || !cv.isConnected) return;
-    const ctx = cv.getContext('2d')!, k = Math.min(cv.width / f.w, cv.height / f.h);
-    ctx.clearRect(0, 0, cv.width, cv.height);
-    ctx.drawImage(f.im, f.x, f.y, f.w, f.h, (cv.width - f.w * k) / 2, cv.height - f.h * k, f.w * k, f.h * k);
+    const p = prets.get(a);
+    if (p !== undefined) { if (p) peindre(cv, p); return; } // déjà prêt : tout de suite, sans clignoter au rafraîchissement
+    if (io) { suivies.add(cv); io.observe(cv); } else void charger(cv);
   });
 }
