@@ -589,6 +589,7 @@
       397
      ],
      "nom": "Astrub",
+     "lieux": ["Incarnam", "Astrub"],
      "zone": "astrub",
      "dessin": [
       430,
@@ -2514,6 +2515,7 @@
       300
      ],
      "nom": "Incarnam",
+     "lieux": ["Astrub", "Incarnam"],
      "zone": "incarnam",
      "dessin": [
       189,
@@ -3560,6 +3562,7 @@
       318
      ],
      "nom": "Bateau du Capitaine Lily",
+     "lieux": ["le Port de Madrestam", "l'île des Wabbits"],
      "prix": 500
     },
     {
@@ -3596,6 +3599,7 @@
       147
      ],
      "nom": "Bateau pour l'Île de Moon",
+     "lieux": ["le Port de Madrestam", "l'île de Moon"],
      "marque": true
     },
     {
@@ -3608,6 +3612,7 @@
       348
      ],
      "nom": "Route de Cania (Baie de Cania)",
+     "lieux": ["la Plaine des Porkass", "la Baie de Cania"],
      "marque": true
     },
     {
@@ -3633,6 +3638,7 @@
       215
      ],
      "nom": "Bateau pour Frigost",
+     "lieux": ["le Port de Madrestam", "Frigost"],
      "quete": "frigost_passage",
      "marque": true,
      "voyage": [

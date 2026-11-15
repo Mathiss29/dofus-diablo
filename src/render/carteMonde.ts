@@ -2,12 +2,12 @@ import type { World } from '../sim/world';
 import { regions, renommee } from '../sim/renommee';
 import { v } from './assetUrl';
 import { ISO } from '../sim/iso';
-import { GAME_DATA, ITEMS, RECOLTES } from '../sim/data';
+import { GAME_DATA, ITEMS, QUETES, RECOLTES } from '../sim/data';
 import { ICON_CSS, iconHtml } from './icons';
 import { QUEST_ICON } from './questView';
 import { MANIFESTE, Son } from './son';
 import { ambiance, chargerReglages } from './ambiance';
-import { aDecouvrir, cleLieu, famille, MAX_DRAPEAUX, NOTE_MAX, nomLieu, secret, type Drapeau, type Famille, type Repere } from '../sim/carte';
+import { aDecouvrir, cleLieu, famille, reperesJeu, MAX_DRAPEAUX, NOTE_MAX, nomLieu, secret, type Drapeau, type Famille, type Repere } from '../sim/carte';
 import carteData from '../data/carte.json';
 import { bossAnnonce } from '../sim/mondeVivant';
 import { apparatsDeZone } from '../sim/apparats';
@@ -214,7 +214,14 @@ export class CarteMonde {
   private charger(monde: string): Promise<PlanMonde | null> {
     if (this.plans.has(monde)) return Promise.resolve(this.plans.get(monde)!);
     return fetch(v(`${this.dir(monde)}/plan.json`)).then(r => (r.ok ? r.json() as Promise<PlanMonde> : null)).catch(() => null)
-      .then(p => { this.plans.set(monde, p); return p; });
+      .then(p => {
+        // repères du jeu : sans ceux qui ne mènent à rien, avec nos bateaux et routes (sim/carte.ts, reperesJeu)
+        if (p) {
+          const ess = new Map(p.maps.map(m => [`${m[0]}_${m[1]}`, m[3]]));
+          p.reperes = reperesJeu(p.reperes, GAME_DATA.zones[this.zoneDe(monde)]?.open, t => !fermee(ess.get(t) ?? 0, this.world), id => QUETES.quetes[id]?.nom ?? 'une quête');
+        }
+        this.plans.set(monde, p); return p;
+      });
   }
 
   // --- repères -------------------------------------------------------------------------------------------------

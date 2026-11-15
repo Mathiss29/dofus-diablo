@@ -301,6 +301,9 @@ export interface PorteDef { a: [string, number]; b: [string, number]; nom: strin
   voyage?: [string, string];
   /** Quête à finir avant de passer de a vers b (0.6, 12C : « Cap sur Frigost » ouvre le bateau de Madrestam). */
   quete?: string;
+  /** Transport entre deux cartes du dehors (bateau, route, portail) : nom des deux bouts, avec l'article (« le Port de Madrestam »,
+   *  « l'île de Moon »). Sert aux repères de la carte M et de la minicarte (sim/carte.ts, reperesJeu) ; obligatoire (tests/carte.test.ts). */
+  lieux?: [string, string];
   /** Porte en plein air sans bâtiment (bateau sans navire dessiné, route vers une région pas encore exportée) : paillasson aux deux bouts. */
   marque?: boolean;
   /** Portail vers une autre zone (Incarnam <-> Astrub) : b est une case de cette zone-là. */
