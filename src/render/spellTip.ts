@@ -4,6 +4,7 @@ import type { SkillId, SpellDef } from '../sim/defs';
 import type { SortGrade } from '../sim/sorts';
 import { ELEMENT_COLORS } from './fx';
 import { STAT_NAMES } from '../sim/items';
+import { BETES, invocationsMaxDe } from '../sim/bete';
 import { avecMotsCles, texteSort } from './sortsTextes';
 
 const ELEMENT_NAMES: Record<string, string> = { neutre: 'Neutre', terre: 'Terre', feu: 'Feu', eau: 'Eau', air: 'Air', meilleur: 'meilleur élément' };
@@ -26,6 +27,13 @@ function zone(d: SpellDef): string {
   if (h.shape === 'circle') return d.move ? `Zone : cercle à l'arrivée, rayon ${c(h.radius)}` : `Zone : cercle autour de soi, rayon ${c(h.radius)}`;
   if (h.shape === 'point') return h.radius <= 36 ? `Une cible, portée ${c(h.range)}` : `Zone autour de la cible (rayon ${c(h.radius)}), portée ${c(h.range)}`;
   return `Projectile, portée ${c(h.range)}${h.explode ? `, explose (rayon ${c(h.explode)})` : ''}${h.pierce ? ', traverse les ennemis' : ''}`;
+}
+
+/** Sort d'invocation (Osamodas, Sacrieur, Enutrof…) : places prises et Invocations max (stat officielle « Invocations »). */
+function invocation(p: Player, d: SpellDef): string {
+  if (!d.invoque || d.lapino || !BETES[d.invoque]) return '';
+  const cout = d.e61 ? 1 : BETES[d.invoque].rang, max = invocationsMaxDe(p);
+  return `Invocation : prend ${cout} place${cout > 1 ? 's' : ''} · Invocations max : ${max} (la plus ancienne repart s'il n'y a plus de place)`;
 }
 
 /** Ce que fait le sort en jeu, au grade donné (par défaut celui atteint), avec les caractéristiques du perso. */
@@ -73,6 +81,7 @@ export function spellDetail(p: Player, id: SkillId, gOver?: SortGrade) {
     d.enutrof?.clef ? `Sans ennemi touché : +${d.enutrof.clef.portee} cases de portée à l'allié visé (ou à toi) pendant ${d.enutrof.clef.t} s` : '',
     d.enutrof?.coffreBouclier ? `Bouclier de ${Math.round(d.enutrof.coffreBouclier.part * 100)} % de ses PV sur ton coffre au trésor, ${d.enutrof.coffreBouclier.t} s` : '',
     d.enutrof?.coffreSoin ? `Soigne ton coffre au trésor de ${Math.round(d.enutrof.coffreSoin * 100)} % de ses PV` : '',
+    invocation(p, d),
     d.invocDuree ? `Repart au bout de ${d.invocDuree} s` : '',
     // Écaflip (Poker d'Ecaflip)
     d.ecaflip?.carte ? `Pioche : ${VALEURS[d.ecaflip.carte[1]]} de ${COULEURS[d.ecaflip.carte[0]]}` : '',

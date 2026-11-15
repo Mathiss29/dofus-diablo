@@ -1,4 +1,4 @@
-import { appliquerCarte, majCarteJoueur } from './carte';
+import { appliquerCarte, majCarteJoueur, reperesJeu, type Repere } from './carte';
 import { achatsDuJour, BENEDICTION, BENEDICTIONS, CONFORT, etalDuJour, MAGASIN, type Benediction, type CtxMagasin, type Offre } from './magasin';
 import { angleDiff, Rng } from './math';
 import type { AtelierDef, DonjonDef, Element, GameData, HitZone, MonsterSpell, SubAreaDef, ZoneDef } from './defs';
@@ -19,7 +19,7 @@ import { fxImpression, imprimable, nouveauPourCodex, prixImpression } from './co
 import { legendaryPower, FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, kamasDefaire, noteObjet, rollItem, STAT_NAMES, type EquipSlot, type Item, type ItemDef, type ItemsData, type Rarity, type RecipeDef, type Stat } from './items';
 import { Player } from './player';
 import { apparatsDuMonde, rareteApparat, tirerApparat } from './apparats';
-import { Bete, BETES, REGLES_BETES, type EffetBete, type SortBete } from './bete';
+import { Bete, BETES, REGLES_BETES, invocationsMaxDe, type EffetBete, type SortBete } from './bete';
 import { initiativeBonus, removalChance } from './caracs';
 import { planWave } from './waves';
 import { Arene, ARENE } from './arene';
@@ -383,6 +383,18 @@ export class World {
   get essaiOuvert(): boolean { return V04_PUBLIC || !!this.opts.test; }
   /** Régions de la 0.6 (Abraknydes, Koalaks, Cania, Porcos, Bourgade) : publiques dès que V06_PUBLIC est vrai, sinon partie de test. */
   get v06Ouvert(): boolean { return V06_PUBLIC || !!this.opts.test; }
+
+  private reperesCache: { wg: WorldGrid; l: Repere[] } | null = null;
+  /** Repères montrés en jeu (carte, minicarte, lieux à découvrir) : officiels sans ceux qui ne mènent à rien, plus nos bateaux et routes. */
+  get reperes(): Repere[] {
+    const wg = this.worldGrid;
+    if (!wg) return [];
+    if (this.reperesCache?.wg !== wg) {
+      const ouverte = (t: string) => { const m = wg.mapByTag(t); return !(m?.essai && !this.essaiOuvert) && !(m?.v06 && !this.v06Ouvert); };
+      this.reperesCache = { wg, l: reperesJeu(wg.world.reperes ?? [], this.zone.open, ouverte, id => this.opts.quetes?.quetes[id]?.nom ?? 'une quête') };
+    }
+    return this.reperesCache.l;
+  }
 
   constructor(readonly opts: WorldOptions) {
     this.coffre = opts.coffre ?? coffreVide();
@@ -3537,7 +3549,7 @@ export class World {
     }
   }
   invocationsMax(p: Player): number { if (this.test?.invocations) return 99;   // partie de test (Outil test 7B)
-    return REGLES_BETES.invocationsBase + Math.max(0, p.stat('invocations')); }
+    return invocationsMaxDe(p); }
   /** Fait apparaître la bête d'un sort au point visé (case libre la plus proche). */
   invoquer(p: Player, key: string, sort: string, x: number, y: number, discret = false): Bete | null {
     if (!BETES[key]) return null;

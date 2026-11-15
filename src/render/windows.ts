@@ -7,6 +7,7 @@ import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES, RECOLTES, TEI
 import { ouTrouver, rareteApparat } from '../sim/apparats';
 import { FAMILIERS_SOURCES, ouTrouverFamilier, sourceFamilier } from '../sim/menagerie';
 import { REGLAGES_BUTIN } from '../sim/butin';
+import { REGLES_BETES, invocationsMaxDe } from '../sim/bete';
 import { nomOrne, placesTenues, prixPlaceTenue, STYLE, type SorteStyle, type StyleDef } from '../sim/style';
 import { themeChoisi, themesEnJeu, themesPossedes } from '../sim/havresac';
 import { v } from './assetUrl';
@@ -1316,6 +1317,7 @@ export class Windows {
       der('initiative', 'Vitesse d\'attaque', `${(1 / p.attackInterval()).toFixed(2).replace('.', ',')} / s`, `Auto-attaques par seconde. % Vitesse d'attaque : ${st('vitesse')}`),
       der('actionPoints', 'PA', p.paMax, `Réserve qui paie les sorts, +${String(p.cls.pa.regen).replace('.', ',')} PA par seconde. +1 PA au niveau 100`),
       der('movementPoints', 'PM', p.pmMax, `Charges de déplacement rapide, une revient toutes les ${String(p.cls.pm.recharge).replace('.', ',')} s`),
+      der('summonableCreaturesBoost', 'Invocations', invocationsMaxDe(p), `Nombre d'invocations en même temps : ${REGLES_BETES.invocationsBase} de base + ${Math.max(0, st('invocations'))} (objets et bonus). Une bête prend 1 à 3 places selon son rang ; s'il n'y a plus de place, la plus ancienne repart`),
     ].join('');
     const row = (label: string, v: number | string, tip: string) => `<div ${tipOf(`r_${label}`, `<h4>${label}</h4><div>${tip}</div>`)}><span>${label}</span><b>${v}</b></div>`;
     const detail = !this.caracDetail ? '' : `<div class="cdet">
@@ -1330,7 +1332,7 @@ export class Windows {
           ${row('Réduction des recharges', `${Math.round(p.reductionRecharges * 100)} %`, `Raccourcit les recharges et le retour des charges des sorts (plafond ${REDUCTION_RECHARGES_MAX} %)`)}
           ${row('Dommages Poussée', st('dommagesPoussee'), 'S\'ajoutent aux coups qui repoussent')}
           ${row('Résistance Poussée · Critiques', `${st('resPoussee')} · ${st('resCritiques')}`, 'Sans effet pour l\'instant : les monstres ne font ni dommages de poussée ni coups critiques')}
-          ${row('Invocations · Pods', `${st('invocations')} · ${st('pods')}`, 'Invocations : pour l\'Osamodas, plus tard. Pods : pas encore de limite de poids')}
+          ${row('Pods', st('pods'), 'Pas encore de limite de poids')}
         </div>
         <div class="sub">Résistances (fixe · %)</div>
         <div class="stats">
