@@ -135,6 +135,12 @@ export function spellDetail(p: Player, id: SkillId, gOver?: SortGrade) {
     d.ouginak?.volVitesse ? `Sur la Proie : elle ralentit de ${Math.round(d.ouginak.volVitesse.k * 100)} % et tu cours plus vite ${d.ouginak.volVitesse.t} s` : '',
     d.ouginak?.pelage ? 'Bouclier brisé par les coups : +1 cran de Rage' : '',
     d.ouginak?.bond ? 'Jusqu\'à la Proie si elle est sous la souris (8 cases au plus)' : '',
+    d.ouginak?.lentProie ? `Proie touchée : ralentie de ${Math.round(d.ouginak.lentProie.k * 100)} % pendant ${d.ouginak.lentProie.t} s` : '',
+    d.ouginak?.panique ? `Repousse de ${d.ouginak.panique.cases} cases tout ce qui entoure la cible` : '',
+    d.ouginak?.aboiement ? `Toi ou l'allié visé : course +${Math.round(d.ouginak.aboiement.course * 100)} %, ni repoussé ni ralenti ${d.ouginak.aboiement.t} s ; un coup au contact l'arrête et donne +1 cran de Rage` : '',
+    d.ouginak?.rassemble ? `Sur la Proie : attire d'abord à son contact les ennemis à ${d.ouginak.rassemble.rayon} cases` : '',
+    d.ouginak?.flair ? 'Demande une Proie : tu apparais à son contact, où qu\'elle soit' : '',
+    d.ouginak?.appel ? `Roquet de retour ${d.ouginak.appel.retour} s plus tôt ; sur la Proie : −${Math.round(d.ouginak.appel.erosion * 100)} % de PV max et la meute bondit sur elle` : '',
     // Eniripsa
     d.soin ? `Soigne les alliés touchés de ${Math.round(d.soin)} PV (+ Intelligence et Soins)${d.soinLanceur === false ? ', pas toi' : ''}` : '',
     d.soinVol ? `Soigne les alliés de la zone de ${Math.round(d.soinVol * 100)} % des dommages faits${d.soinLanceur === false ? ' (pas toi)' : ''}` : '',

@@ -322,7 +322,7 @@ const OUGI_MAP: Record<string, AnimSlice> = {
   ...Object.fromEntries(Object.entries({
     molosse: 1809, amarok: 1809, os_a_moelle: 1808, charogne: 1801, traque: 1813, proie: 1804, convergence: 1805,
     lance_roquet: 1800, arcanin: 1800, pelage_protecteur: 1800, cubitus: 1807, rabattage: 1811, carcasse: 1811, chasse: 1811,
-    tibia: 1806, apaisement: 1814,
+    tibia: 1806, apaisement: 1814, dogue: 1801, panique: 1800, aboiement: 1817, limier: 1812, flair: 1802, appel_meute: 1822,
   }).map(([k, n]) => [k, { anim: `AnimAttaque${n}`, from: 0, to: 0.65 }])),
   bete: { anim: 'AnimAttaque1815', from: 0, to: 1 },
   bond_bete: { anim: 'AnimDash', from: 0, to: 0.55 },

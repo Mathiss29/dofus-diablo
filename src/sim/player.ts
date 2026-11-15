@@ -30,7 +30,7 @@ import { avantImpact61, dommages61, echangeBalise61, hit61, viseBalise61, impact
 import { SORTS, dmgMoyen, gradeAuNiveau, niveauRequis, type PaireSorts, type SortGrade, type SortOfficiel } from './sorts';
 import { porteeSort } from './apercu';
 import { aimanter, alchiRhetorique, apresCoupEniripsa, envol, impactEniripsa, majEniripsa } from './eniripsa';
-import { arriveeBond, avantImpactOuginak, coupRecuOuginak, impactOuginak, interditBete, majOuginak, porteeBete, subisOuginak, type EtatOuginak } from './ouginak';
+import { aboie, arriveeBond, avantImpactOuginak, coupRecuOuginak, impactOuginak, interditBete, majOuginak, porteeBete, subisOuginak, type EtatOuginak } from './ouginak';
 import { arbrePassage, avantImpactSadida, impactSadida, majSadida, partagerDon, sentierDeRonces } from './sadida';
 import { avantImpactEcaflip, chateauBrise, impactEcaflip, majEcaflip, neuviemeVie, type Carte, type MainGagnante } from './ecaflip';
 import { impactSorts06, pasJoueur06 } from './sorts06';
@@ -1781,8 +1781,8 @@ export class Player extends Entity {
     this.hp -= dmg; this.flash = 0.1; this.invuln = this.cls.iframesOnHit; this.blesseA = this.age;
     const vol = (fi?.vol ?? 0) + (qui?.affixes.includes('vampirique') ? ELITES.affixes.vampirique.vol : 0);   // Nehik ; élite Vampirique
     if (vol && qui && dmg > 0) qui.hp = Math.min(qui.maxHp, qui.hp + Math.round(dmg * vol));
-    const a = Math.atan2(this.y - fromY, this.x - fromX);
-    this.kx += Math.cos(a) * 260; this.ky += Math.sin(a) * 260;
+    const a = Math.atan2(this.y - fromY, this.x - fromX), ab = aboie(this);   // Aboiement : inébranlable
+    if (!ab) { this.kx += Math.cos(a) * 260; this.ky += Math.sin(a) * 260; }
     world.emit({ k: 'hit', target: 'player', x: this.x, y: this.y, z: 50, amount: dmg, crit: false, element: element === 'meilleur' ? 'neutre' : element,
       ...(qui ? { de: qui.type } : {}), ...(world.coupSort ? { nomSort: world.coupSort } : {}) });
     world.emit({ k: 'playerHurt' });
@@ -1791,7 +1791,7 @@ export class Player extends Entity {
     world.emit(gros ? { k: 'impact', hitstop: G.fige, shake: G.secousse, big: true } : { k: 'impact', hitstop: 0.04, shake: 0.006, big: false });
     if (gros) world.emit({ k: 'grosCoup' });
     this.addRage(this.cls.rage.perHurt, world);
-    if (this.cls.ouginak) coupRecuOuginak(this, dmg, world);   // 3B : gros coups encaissés = Rage
+    if (this.oug) coupRecuOuginak(this, dmg, world, !(loin ?? Math.hypot(fromX - this.x, fromY - this.y) > CASE * 1.6));   // 3B : gros coups encaissés = Rage ; Aboiement
     this.passifsDofus(fromX, fromY, loin, world);
     if (this.cls.souffrance) {
       if (dmg > 0) this.chatiments();
