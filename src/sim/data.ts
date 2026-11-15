@@ -4,6 +4,7 @@ import zones from '../data/zones.json';
 import items from '../data/items.json';
 import armes from '../data/armes.json';
 import quetes from '../data/quetes.json';
+import campagne from '../data/campagne.json';
 import boutique from '../data/boutique.json';
 import recoltes from '../data/recoltes.json';
 import apparat from '../data/apparat.json';
@@ -18,6 +19,7 @@ import type { Teintures, ThemesHavreSac } from './havresac';
 import type { RecoltesData } from './recolte';
 import { FAMILIER_MAX, familierValeur, type FamilierDef, type ItemsData, type Stat } from './items';
 import type { QuetesData } from './quests';
+import { avecCampagne, type CampagneData } from './campagne';
 import type { GameData, WeaponProfile } from './defs';
 import { degatsMonstre } from './danger';
 import { setPotions } from './forgemagie';
@@ -46,7 +48,7 @@ for (const [id, f] of Object.entries(FAMILIERS.familiers)) {
 /** Auto-attaque par type d'arme (src/data/armes.json). */
 export const WEAPONS = Object.fromEntries(Object.entries(armes).filter(([k]) => !k.startsWith('_'))) as unknown as Record<string, WeaponProfile>;
 /** Quêtes, PNJ et succès (src/data/quetes.json, écrit par tools/contenu/quetes.py). */
-export const QUETES = quetes as unknown as QuetesData;
+export const QUETES = avecCampagne(quetes as unknown as QuetesData, campagne as unknown as CampagneData);
 // succès Cartographe (carte du monde 6D, src/data/carte.json écrit par tools/extraction/carte_peinte.py)
 Object.assign(QUETES.succes, (carte as unknown as Pick<QuetesData, 'succes'>).succes);
 // « Apparats : » 1C : succès de classe qui donnent les apparats de la classe (src/data/apparats_sources.json) ; ceux des classes pas encore en jeu attendent

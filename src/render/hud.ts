@@ -45,7 +45,7 @@ const HEADS: Record<string, string> = { iop: 'tete_iop', cra: 'tete_cra', iop_f:
 /** Nom court d'une touche pour le coin d'un emplacement (« Espace » ne tient pas). */
 const court = (t: string) => t === 'Espace' ? 'Esp.' : t;
 /** Action (render/touches.ts) de chaque menu de la colonne, pour son raccourci dans l'infobulle. */
-const ACTION_MENU: Record<string, string> = { Inventaire: 'inventaire', 'Caractéristiques': 'caracs', 'Métiers': 'metiers', Sorts: 'sorts', 'Carte du monde': 'carte', Bestiaire: 'bestiaire', 'Succès': 'succes', 'Havre-Sac': 'havresac', Social: 'social', Classement: 'ladder', Guide: 'guide', Boutique: 'boutique', 'Réglages': 'options' };
+const ACTION_MENU: Record<string, string> = { Inventaire: 'inventaire', 'Caractéristiques': 'caracs', 'Métiers': 'metiers', Sorts: 'sorts', 'Carte du monde': 'carte', Bestiaire: 'bestiaire', 'Succès': 'succes', 'Havre-Sac': 'havresac', Social: 'social', Classement: 'ladder', Guide: 'guide', Boutique: 'boutique', 'Réglages': 'options', 'Carnet des Fêlures': 'campagne' };
 /** Modules de l'interface qu'on peut déplacer (Réglages 6A), avec leur nom affiché pendant le déplacement. */
 const MODULES: Record<string, string> = { perso: 'Cadre du perso', mini: 'Mini-carte', suivi: 'Suivi de quête', dps: 'Dégâts par seconde' };
 /** Colonne de menus avec les icônes officielles en couleur de Dofus 3 (uiassets_2x) : icône, nom, raccourci (vide si aucun).
@@ -54,6 +54,8 @@ const MENUS: [string, string, string][] = [
   ['inventory', 'Inventaire', 'I'], ['characteristic', 'Caractéristiques', 'C'], ['job', 'Métiers', 'J'], ['spells', 'Sorts', 'S'], ['quest', 'Quêtes', ''],
   ['map', 'Carte du monde', ''], ['bestiary', 'Bestiaire', 'B'], ['success', 'Succès', 'U'], ['breach', 'Failles', ''],
   ['home', 'Havre-Sac', 'H'], ['social', 'Social', 'P'], ['ladder', 'Classement', 'L'], ['guide', 'Guide', 'G'], ['shop', 'Boutique', ''], ['options', 'Réglages', 'O'],
+  // Campagne 1A : le Carnet des Fêlures, une case de plus au bout de la colonne (sous Réglages, sans recouvrir un autre bouton)
+  ['campagne', 'Carnet des Fêlures', 'W'],
 ];
 
 const C = {
@@ -466,7 +468,9 @@ export class Hud {
   // suivi et butin
   private trackTitle: Txt; private trackBody: Txt;
   /** Quêtes : icône de la quête suivie, bouton « Passer » (tutoriel, 7A), ligne de succès discrète (19B), flèche au bord de l'écran (8B). */
-  private trackIcon: Img; private skipBtn: Txt; private succesLine: Txt; private succesT = 0; private arrow: Phaser.GameObjects.Graphics;
+  private trackIcon: Img; private skipBtn: Txt; private succesLine: Txt;
+  /** Campagne 2A : le chapitre en cours, en doré, en tête du suivi quand on suit une autre quête (clic : le suivre). */
+  private campLine!: Txt; private succesT = 0; private arrow: Phaser.GameObjects.Graphics;
   /** Flèche des quêtes (maquette Flèche 2A 3A+3B 6A) : icône officielle de la quête et nom du but + distance. */
   private arrowIcon: Img; private arrowLabel: Txt; private miniIcon: Img;
   /** Points des monstres sur la mini-carte : des images rondes réutilisées (un fillCircle par monstre et par image
@@ -615,6 +619,7 @@ export class Hud {
     this.pastille = txt(10, { ...bold, color: '#ffffff', backgroundColor: '#d8402f', padding: { x: 4, y: 1 }, strokeThickness: 0 }, 6).setOrigin(0.5).setVisible(false);
     this.pastilleSucces = txt(10, { ...bold, color: '#ffffff', backgroundColor: '#d8402f', padding: { x: 4, y: 1 }, strokeThickness: 0 }, 6).setOrigin(0.5).setVisible(false);
     for (const [icon, label, key] of MENUS) {
+      if (icon === 'campagne' && !world.quetes?.campagneOuverte) continue;   // campagne cachée hors partie de test (11B)
       const ic = img(`menu_${icon}`, 4);
       const zone = fixed(scene.add.zone(0, 0, 30, 30).setInteractive({ useHandCursor: true }), 4);
       zone.on('pointerover', () => { const t = ACTION_MENU[label] ? Touches.nomAction(ACTION_MENU[label]) : key; this.menuTip.setText(t ? `${label} (${t})` : label).setVisible(true).setPosition(zone.x - 22, zone.y); });
@@ -666,6 +671,10 @@ export class Hud {
     this.trackTitle = txt(13, { ...bold, color: css(C.xp) });
     this.trackBody = txt(12, { lineSpacing: 3 });
     this.trackIcon = img('qi_quest', 5).setVisible(false);
+    this.campLine = txt(12, { ...bold, color: '#f2d36b', lineSpacing: 2 }).setVisible(false).setInteractive({ useHandCursor: true });
+    this.campLine.on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, ev: Phaser.Types.Input.EventData) => {
+      const q = world.quetes, ch = q?.chapitre; if (!q || !ch) return; ev.stopPropagation(); q.suivie = ch.id;
+    });
     this.succesLine = txt(12, { ...bold, color: '#f2d36b' }).setAlpha(0).setInteractive({ useHandCursor: true });
     this.succesLine.on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, ev: Phaser.Types.Input.EventData) => {
       if (this.succesT <= 0 || !this.succesId) return; ev.stopPropagation(); this.onSucces(this.succesId);
@@ -779,6 +788,26 @@ export class Hud {
     const t = this.fixed(this.scene.add.text(0, 0, text, { ...STYLE, fontSize: '13px', color }).setOrigin(1, 1), 5);
     this.feed.unshift({ text: t, t: 5 });
     for (const f of this.feed.splice(6)) f.text.destroy();
+  }
+
+  /** Campagne (10B) : le Sceau gagné s'affiche en grand au centre, puis s'envole vers le bouton du Carnet des Fêlures. */
+  sceau(n: number, total: number) {
+    const W = this.scene.scale.width / this.k, H = this.scene.scale.height / this.k, cx = W / 2, cy = H * 0.38;
+    const g = this.fixed(this.scene.add.graphics(), 8);
+    g.fillStyle(0x2a1e0c, 0.92); g.fillCircle(0, 0, 58);
+    g.lineStyle(5, 0xe6b85c, 1); g.strokeCircle(0, 0, 54);
+    g.lineStyle(2, 0xf8e3a0, 0.8); g.strokeCircle(0, 0, 44);
+    const num = this.fixed(this.scene.add.text(0, 0, String(n), { ...STYLE, fontSize: '46px', fontStyle: 'bold', color: '#f2d36b', strokeThickness: 5 }).setOrigin(0.5), 8);
+    const sous = this.fixed(this.scene.add.text(0, 0, `Sceau des Douze  ${n} / ${total}`, { ...STYLE, fontSize: '18px', fontStyle: 'bold', color: '#f2d36b', strokeThickness: 4 }).setOrigin(0.5, 0), 8);
+    const rond = [g, num];
+    for (const o of rond) o.setPosition(cx, cy).setScale(0.2).setAlpha(0);
+    sous.setPosition(cx, cy + 70).setAlpha(0);
+    this.scene.tweens.add({ targets: rond, scale: 1, alpha: 1, duration: 450, ease: 'Back.Out' });
+    this.scene.tweens.add({ targets: sous, alpha: 1, duration: 450, delay: 200 });
+    const btn = this.menus.find(m => m.label === 'Carnet des Fêlures')?.zone;
+    this.scene.tweens.add({ targets: sous, alpha: 0, delay: 2000, duration: 300 });
+    this.scene.tweens.add({ targets: rond, delay: 2200, duration: 650, ease: 'Quad.In', x: btn?.x ?? cx, y: btn?.y ?? cy, scale: 0.25, alpha: btn ? 0.9 : 0,
+      onComplete: () => { for (const o of [g, num, sous]) o.destroy(); } });
   }
 
   /** Succès obtenu : une ligne discrète dans le suivi (19B), pas de bannière. */
@@ -1165,6 +1194,7 @@ export class Hud {
         gm.fillStyle(0x1b1a16, 1); gm.fillRoundedRect(lx, ly - bs / 2, bs, bs, 5);
         gm.fillStyle(0x3a3933, 1); gm.fillRoundedRect(lx + 1.5, ly - bs / 2 + 1.5, bs - 3, bs - 3, 4);
         gm.fillStyle(0x47463f, 1); gm.fillRoundedRect(lx + 2, ly - bs / 2 + 2, bs - 4, (bs - 4) / 2, { tl: 3, tr: 3, bl: 0, br: 0 });
+        if (m.label === 'Carnet des Fêlures') { gm.lineStyle(2, 0xe6b85c, 1); gm.strokeRoundedRect(lx + 1, ly - bs / 2 + 1, bs - 2, bs - 2, 5); }
       }
       const s = bs - 8, f = m.icon.frame, k = Math.min(s / f.width, s / f.height);
       m.icon.setPosition(x + bs / 2, y).setDisplaySize(f.width * k, f.height * k);
@@ -1316,7 +1346,7 @@ export class Hud {
       const [give, back] = QUEST_ICON[def.type];
       this.trackIcon.setTexture(`qi_${cq.aRendre ? back : give}`).setVisible(true);
       const k = 20 / Math.max(this.trackIcon.width, this.trackIcon.height); this.trackIcon.setScale(k); iconW = 24;
-      this.trackTitle.setText(def.nom);
+      this.trackTitle.setText(def.type === 'campagne' ? `${def.serie ?? ''} · ${def.nom}` : def.nom).setColor(def.type === 'campagne' ? '#f2d36b' : css(C.xp));
       const lines = cq.aRendre ? [`  Retourner voir ${Q.data.pnj[def.rendre!]?.nom ?? ''}`]
         : (e?.objectifs ?? []).map((o, i) => {
           const tot = Q.total(o), n = Math.min(cq.compte[i] ?? 0, tot), done = n >= tot;
@@ -1335,19 +1365,28 @@ export class Hud {
         juice ? '' : 'Effets d\'impact désactivés (F)',
       ].filter(Boolean).concat(recL).join('\n'));
     }
+    // Campagne 2A : le chapitre en cours reste en tête du suivi, en doré, quand une autre quête est suivie
+    const ch = Q?.chapitre, campHaut = !!(Q && ch && cq && ch.id !== cq.id);
+    if (campHaut) {
+      const d2 = Q!.def(ch!.id), e2 = Q!.etapeDe(ch!), o2 = e2?.objectifs.find((o, i) => (ch!.compte[i] ?? 0) < Q!.total(o));
+      this.campLine.setText(`◆ ${d2.serie ?? 'Campagne'} · ${d2.nom}${ch!.aRendre ? '' : o2 ? `\n   ${o2.texte}` : ''}`);
+    }
+    this.campLine.setVisible(campHaut);
+    const cl = campHaut ? this.campLine.height + 6 : 0;
     this.succesT = Math.max(0, this.succesT - dt); this.succesLine.setAlpha(Phaser.Math.Clamp(this.succesT, 0, 1));
     const sl = this.succesT > 0 ? this.succesLine.height + 4 : 0;
-    const tw2 = Math.max(this.trackTitle.width + iconW + (this.skipBtn.visible ? this.skipBtn.width + 12 : 0), this.trackBody.width, this.succesT > 0 ? this.succesLine.width : 0) + 20;
-    const th2 = this.trackTitle.height + this.trackBody.height + 18 + sl;
+    const tw2 = Math.max(this.trackTitle.width + iconW + (this.skipBtn.visible ? this.skipBtn.width + 12 : 0), this.trackBody.width, this.succesT > 0 ? this.succesLine.width : 0, campHaut ? this.campLine.width : 0) + 20;
+    const th2 = this.trackTitle.height + this.trackBody.height + 18 + sl + cl;
     // Petite fenêtre : si le suivi touche la barre de sorts, il remonte au-dessus d'elle (le bouton « Passer » reste visible)
     const [tx2, ty2] = this.place('suivi', 12, 12 + tw2 + 8 > x0 ? y0 - 8 - th2 : H - 12 - th2, tw2, th2);
     panel(tx2, ty2, tw2, th2, 0.8);
     this.rects.push([tx2, ty2, tw2, th2]);
-    this.trackIcon.setPosition(tx2 + 18, ty2 + 7 + this.trackTitle.height / 2);
-    this.trackTitle.setPosition(tx2 + 10 + iconW, ty2 + 7);
-    this.skipBtn.setPosition(tx2 + tw2 - this.skipBtn.width - 8, ty2 + 6);
-    this.trackBody.setPosition(tx2 + 10, ty2 + 10 + this.trackTitle.height);
-    this.succesLine.setPosition(tx2 + 10, ty2 + 12 + this.trackTitle.height + this.trackBody.height);
+    this.campLine.setPosition(tx2 + 10, ty2 + 7);
+    this.trackIcon.setPosition(tx2 + 18, ty2 + cl + 7 + this.trackTitle.height / 2);
+    this.trackTitle.setPosition(tx2 + 10 + iconW, ty2 + cl + 7);
+    this.skipBtn.setPosition(tx2 + tw2 - this.skipBtn.width - 8, ty2 + cl + 6);
+    this.trackBody.setPosition(tx2 + 10, ty2 + cl + 10 + this.trackTitle.height);
+    this.succesLine.setPosition(tx2 + 10, ty2 + cl + 12 + this.trackTitle.height + this.trackBody.height);
     // flèche au bord de l'écran (maquette Flèche 1A 2A 3A+3B 6A) : elle suit le trajet (passages, portes, portail, Zaap),
     // couleur et icône officielles du type de quête, nom du but et distance en cartes ; seulement quand le point est hors de l'écran
     this.arrow.clear();
@@ -1364,7 +1403,7 @@ export class Hud {
         // pas sous le cadre du perso, la mini-carte ni le bandeau (haut), la colonne de menus (droite) ni la barre de sorts (bas)
         const ax2 = Phaser.Math.Clamp(cx + co * d, m, W - 84), ay2 = Phaser.Math.Clamp(cy + si * d, 150, H - 150), pul = 0.8 + 0.2 * Math.sin(world.time * 5);
         const pt = (l: number, w2: number) => ({ x: ax2 + co * l - si * w2, y: ay2 + si * l + co * w2 });
-        const def = Q.def(cq.id), bleu = def.type === 'prime' || !!def.repetable, coul = bleu ? 0x37c3ea : 0x86cc1c;
+        const def = Q.def(cq.id), bleu = def.type === 'prime' || !!def.repetable, coul = def.type === 'campagne' ? 0xe6b85c : bleu ? 0x37c3ea : 0x86cc1c;   // campagne : flèche dorée
         const t0 = pt(30, 0), t1 = pt(-14, 22), t2 = pt(-4, 0), t3 = pt(-14, -22), ombre = [t0, t1, t2, t3].map(o => ({ x: o.x + 2, y: o.y + 3 }));
         this.arrow.fillStyle(0x000000, 0.4); this.arrow.fillPoints(ombre, true);
         this.arrow.fillStyle(coul, pul); this.arrow.lineStyle(3, 0x14230a, 1);

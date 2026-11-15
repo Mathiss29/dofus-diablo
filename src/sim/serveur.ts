@@ -8,6 +8,8 @@ export { COOP, Emetteur, entreeInvite, classeDe, garderUneFois } from './miroir'
 export { exporterJoueur, restaurerJoueur } from './sauvegarde';
 export { BOUTIQUE_OGRINES, apparatDuMois, prixOgrines, rangAbo } from './boutiqueOgrines';
 import QUETES_JSON from '../data/quetes.json';
+import CAMPAGNE_JSON from '../data/campagne.json';
 import type { QuetesData } from './quests';
-/** Quêtes et PNJ (monde ouvert tenu par le serveur, étape 4). */
-export const QUETES = QUETES_JSON as unknown as QuetesData;
+import { avecCampagne, type CampagneData } from './campagne';
+/** Quêtes et PNJ (monde ouvert tenu par le serveur, étape 4), avec les chapitres de la campagne. */
+export const QUETES = avecCampagne(QUETES_JSON as unknown as QuetesData, CAMPAGNE_JSON as unknown as CampagneData);

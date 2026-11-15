@@ -8,6 +8,7 @@ import { DECO } from './meubles';
 import { avantage } from './boutiqueOgrines';
 import { liensAPied, plusCourt, type GenreLien, type Lien, type Pt } from './trajet';
 import { nouvellesDuMonde } from './mondeVivant';
+import type { ActeDef } from './campagne';
 
 /** Trajet de la flèche des quêtes : `x, y` = le point à viser maintenant, `pts` = le trajet jusqu'à la première porte
  *  (ou au but), `cartes` = nombre de cartes à traverser, `autreZone` = nom de la zone du but quand il n'est pas ici. */
@@ -91,8 +92,10 @@ export interface RecompenseDef {
   metier?: [string, number];
   /** « Archis : » 11C : titre officiel et ornement officiel gagnés (comme ceux des succès). */
   titre?: string; ornement?: OrnementDef;
+  /** Campagne 6B : apparats (ids de apparat.json) qui rejoignent la collection à la fin de la campagne. */
+  apparats?: string[];
 }
-export type QueteType = 'tutoriel' | 'principale' | 'secondaire' | 'prime' | 'evenement';
+export type QueteType = 'tutoriel' | 'principale' | 'secondaire' | 'prime' | 'evenement' | 'campagne';
 export interface QueteDef {
   nom: string; type: QueteType;
   /** PNJ qui la donne (clé de pnj). Sans PNJ : elle démarre seule quand ses conditions sont remplies. */
@@ -140,6 +143,10 @@ export interface QueteDef {
   repetable?: 'jour' | 'semaine';
   /** Contrat du jour ou de la semaine (src/sim/contrats.ts) : la période où il a été proposé. */
   contrat?: string;
+  /** Chapitre de la campagne (src/sim/campagne.ts) : son acte, et le Sceau des Douze repris à la fin (3A). */
+  acte?: string; sceau?: number;
+  /** Chapitre qui vaut pour ces quêtes là où elles ouvrent un passage (bateau de Frigost : « Cap sur Frigost »). */
+  ouvre?: string[];
 }
 export interface PnjDef {
   nom: string; dofusId: number;
@@ -258,7 +265,9 @@ export interface SuccesDef {
 }
 export interface QuetesData { pnj: Record<string, PnjDef>; quetes: Record<string, QueteDef>; succes: Record<string, SuccesDef>;
   /** Contrats du jour : titres officiels et une ligne de texte par sous-zone (2A). */
-  contrats?: { titres: Record<string, [string, string][]> } }
+  contrats?: { titres: Record<string, [string, string][]> };
+  /** Actes de la campagne « Le Carnet des Fêlures » (src/data/campagne.json). */
+  campagne?: ActeDef[] }
 
 /** Une quête en cours. */
 export interface QueteEnCours { id: string; etape: number; compte: number[]; /** Étapes finies, en attente du rendu au PNJ. */ aRendre: boolean }
@@ -349,7 +358,11 @@ export class Quetes {
   classeId: string | null = null;
   get classe() { return this.classeId ?? this.world.opts.classId ?? 'iop'; }
 
+  /** Ce perso voit la campagne (partie de test tant que CAMPAGNE_PUBLIC est faux) : les anciennes quêtes principales deviennent
+   *  des quêtes secondaires (5C) et le Carnet des Fêlures s'ouvre. */
+  readonly campagneOuverte: boolean;
   constructor(readonly data: QuetesData, private world: World, readonly compte: Compte = { succes: [], persos: 0 }) {
+    this.campagneOuverte = !!world.player?.campagne && !!data.campagne?.length;
     for (const s of compte.succes) this.succes.add(s);
     const wg = world.worldGrid;
     if (wg) for (const [id, def] of Object.entries(data.pnj)) {
@@ -472,7 +485,18 @@ export class Quetes {
     this.recuperes = new Set(e.recuperes ?? []); this.defis = new Set(e.defis ?? []); this.compteurs = { ...e.compteurs };
     this.titreChoisi = e.titre ?? null; this.ornementChoisi = e.ornement ?? null; this.epingles = [...(e.epingles ?? [])];
   }
-  def(id: string): QueteDef { return this.data.quetes[id] ?? this.ecrireContrat(id) ?? this.ecrireDefi(id) ?? this.ecrireCommande(id)!; }
+  def(id: string): QueteDef {
+    const q = this.data.quetes[id];
+    if (q) return q.type === 'principale' && this.campagneOuverte ? this.enSecondaire(q) : q;
+    return this.ecrireContrat(id) ?? this.ecrireDefi(id) ?? this.ecrireCommande(id)!;
+  }
+  /** Campagne 5C : les quêtes principales d'avant restent, en quêtes secondaires. */
+  private secondaires = new WeakMap<QueteDef, QueteDef>();
+  private enSecondaire(q: QueteDef): QueteDef {
+    let s = this.secondaires.get(q);
+    if (!s) { s = { ...q, type: 'secondaire' }; this.secondaires.set(q, s); }
+    return s;
+  }
   /** La quête existe (écrite dans quetes.json, ou contrat dont la sous-zone existe). */
   existe(id: string) { return !!(this.data.quetes[id] ?? this.ecrireContrat(id) ?? this.ecrireDefi(id) ?? this.ecrireCommande(id)); }
 
@@ -618,7 +642,7 @@ export class Quetes {
   aDonnerTous(pnj: string): string[] {
     const lvl = this.world.player.level, out: string[] = [];
     for (const [id, q] of Object.entries(this.data.quetes)) {
-      if (q.pnj !== pnj || q.bientot || (q.v03 && !this.world.player.v03) || (q.v06 && !this.world.player.v06) || (this.finies.has(id) && !this.reprenable(id)) || this.enCours.some(c => c.id === id) || q.auDepart) continue;
+      if (q.pnj !== pnj || q.type === 'campagne' || q.bientot || (q.v03 && !this.world.player.v03) || (q.v06 && !this.world.player.v06) || (this.finies.has(id) && !this.reprenable(id)) || this.enCours.some(c => c.id === id) || q.auDepart) continue;
       if (q.niveau > lvl + 2 || !(q.requiert ?? []).every(r => this.finies.has(r))) continue;
       // une quête qui suit une autre (fil principal) démarre seule à la fin de la précédente : son PNJ ne la propose pas
       if (Object.values(this.data.quetes).some(o => o.suivante === id)) continue;
@@ -648,7 +672,10 @@ export class Quetes {
     const c: QueteEnCours = { id, etape: 0, compte: [], aRendre: false };
     this.enCours.push(c);
     this.suivie ??= id;
-    if (this.def(id).type === 'principale' || this.def(id).type === 'tutoriel') this.suivie = id;
+    const t = this.def(id).type;
+    if (t === 'principale' || t === 'tutoriel') this.suivie = id;
+    // campagne 2B : la flèche suit le chapitre quand rien d'autre n'est suivi, ou quand on suivait déjà la campagne
+    if (t === 'campagne' && (this.suivie === id || !this.enCours.some(c => c.id === this.suivie && c.id !== id) || this.def(this.suivie!).type === 'campagne')) this.suivie = id;
     this.world.emit({ k: 'queteDebut', id });
     this.entrerEtape(c);
   }
@@ -665,6 +692,11 @@ export class Quetes {
   private faireApparaitre(quete: string, o: Extract<ObjectifDef, { t: 'elite' }>) {
     const w = this.world, base = w.opts.data.monsters[o.monstre];
     if (!base || !w.worldGrid?.mapByTag(o.carte)) return;
+    // Campagne 9A (coop) : chacun garde sa campagne, mais l'élite d'une étape commune ne sort qu'une fois pour le groupe
+    for (const p of w.players) {
+      const autre = p.quetes; if (!autre || autre === this) continue;
+      for (const [m, qid] of autre.elites) if (qid === quete && w.monsters.some(x => x.id === m && !x.dead)) { this.elites.set(m, quete); return; }
+    }
     const q = w.openestCellOf(o.carte);
     const m = w.spawnMonster(o.monstre, q.x, q.y, { ...base, elite: true, hp: Math.round(base.hp * (o.pv ?? 3)), name: o.nom ?? base.name, xp: (base.xp ?? Math.round(base.hp / 5)) * 3 });
     this.elites.set(m.id, quete);
@@ -936,6 +968,7 @@ export class Quetes {
       }
     });
     this.verifier();
+    this.majCampagne(); if (this.campagneOuverte) this.majElitesCampagne();
     // succès de niveau et de sous-zone découverte
     this.verifierSucces();
   }
@@ -1007,7 +1040,7 @@ export class Quetes {
     }
   }
   /** Fin de la quête : récompense, quête suivante, succès. sautee = passée (tutoriel au 2e perso, bouton Passer). */
-  terminer(id: string, sautee = false) {
+  terminer(id: string, sautee = false, sansRecompense = false) {
     const q = this.def(id), w = this.world, p = w.player, c = this.enCours.find(x => x.id === id);
     this.enCours = this.enCours.filter(c => c.id !== id);
     if (this.finies.has(id)) return;
@@ -1021,7 +1054,7 @@ export class Quetes {
     this.finies.add(id);
     this.etapes(id).forEach((_, i) => this.etapesFinies.add(`${id}:${i}`));
     for (const [m, qid] of this.elites) if (qid === id) { this.elites.delete(m); }
-    const r = q.recompense;
+    const r: RecompenseDef = sansRecompense ? {} : q.recompense;   // Campagne 8A : acte passé = déblocages (titres, bateaux) sans sacs ni XP
     if (r.niveau) while (p.level < r.niveau && p.level < p.cls.maxLevel) p.gainXp(p.xpNeeded - p.xp, w);
     if (r.xp) p.gainXp(Math.round(r.xp * (1 + avantage(p.abo, 'xp'))), w);   // 17E
     if (r.kamas) p.kamas += r.kamas;
@@ -1039,6 +1072,7 @@ export class Quetes {
     if (q.codex) w.ouvrirCodex();
     if (r.pepites) w.donnerObjet(PEPITE, Math.round(r.pepites * (1 + (id.startsWith('ctr:') ? avantage(p.abo, 'pepites') : 0))));   // 17G
     if (r.dofus && w.player.gagnerDofus(r.dofus)) w.emit({ k: 'dofusGagne', id: r.dofus });
+    for (const a of r.apparats ?? []) w.ajouterApparat(a);   // Campagne 6B
     for (const o of this.etapes(id).flatMap(e => e.objectifs)) if (o.t === 'ramasser') delete this.objets[o.objet];
     if (this.suivie === id) this.suivie = null;
     w.emit({ k: 'queteFin', id, sautee });
@@ -1048,7 +1082,13 @@ export class Quetes {
       p.x = z.x; p.y = z.y; p.kx = p.ky = 0; p.z = 0; p.stopMove();
       w.emit({ k: 'portal', nom: this.def(id).nom });
     }
+    if (q.type === 'campagne' && !sautee) {
+      if (q.sceau) w.emit({ k: 'sceau', n: q.sceau, id });   // 10B : le Sceau s'affiche en grand
+      const a = this.acteDe(id);
+      if (a && a.chapitres[a.chapitres.length - 1] === id) w.emit({ k: 'acteFini', acte: a.id });
+    }
     if (q.suivante) this.prendre(q.suivante);
+    if (q.type === 'campagne' && !sautee && q.suivante && this.enCours.some(c => c.id === q.suivante)) w.emit({ k: 'campagneSuite', id: q.suivante });   // 2D
     this.suivie ??= this.enCours[0]?.id ?? null;
     this.verifierSucces();
   }
@@ -1057,6 +1097,76 @@ export class Quetes {
     const don = typeof e.donner === 'string' || Array.isArray(e.donner) ? e.donner : e.donner?.[this.classe];
     return don == null ? [] : Array.isArray(don) ? don : [don];
   }
+  // --- Campagne « Le Carnet des Fêlures » (maquette Campagne, ligne du 2026-11-15) ------------------------------------
+  /** Les actes de la campagne (aucun si ce perso ne la voit pas). */
+  get actes(): ActeDef[] { return this.campagneOuverte ? this.data.campagne ?? [] : []; }
+  acteDe(id: string): ActeDef | null { const a = this.data.quetes[id]?.acte; return a ? this.actes.find(x => x.id === a) ?? null : null; }
+  /** Le chapitre de la campagne en cours (un seul à la fois). */
+  get chapitre(): QueteEnCours | null {
+    return this.campagneOuverte ? this.enCours.find(c => this.data.quetes[c.id]?.type === 'campagne') ?? null : null;
+  }
+  /** Sceaux des Douze repris (3A) : les chapitres à Sceau finis. */
+  get sceaux(): number {
+    let n = 0;
+    for (const a of this.actes) for (const id of a.chapitres) if (this.data.quetes[id]?.sceau && this.finies.has(id)) n++;
+    return n;
+  }
+  etatChapitre(id: string): 'fini' | 'cours' | 'avenir' { return this.finies.has(id) ? 'fini' : this.enCours.some(c => c.id === id) ? 'cours' : 'avenir'; }
+  /** Avancement d'un acte entre 0 et 1 (le chapitre en cours compte pour ses étapes faites). */
+  avancementActe(a: ActeDef): number {
+    let n = 0;
+    for (const id of a.chapitres) {
+      if (this.finies.has(id)) { n++; continue; }
+      const c = this.enCours.find(x => x.id === id);
+      if (c) n += c.etape / Math.max(1, this.etapes(id).length);
+    }
+    return a.chapitres.length ? n / a.chapitres.length : 0;
+  }
+  /** Campagne 8A : dès le 2e perso du compte, on peut passer un acte (ses titres et ses bateaux, sans sacs ni XP). */
+  get peutPasserActe(): boolean { return this.compte.persos > 0; }
+  passerActe(acte: string): boolean {
+    const a = this.actes.find(x => x.id === acte);
+    if (!a || !this.peutPasserActe || a.chapitres.every(id => this.finies.has(id))) return false;
+    for (const id of a.chapitres) if (!this.finies.has(id)) { this.retirerElites(id); this.terminer(id, true, true); }
+    this.world.emit({ k: 'queteInfo', texte: `${a.nom} · ${a.region} passé` });
+    return true;
+  }
+  /** Cette quête est finie, ou un chapitre fini vaut pour elle (bateau de Frigost). */
+  ouvert(id: string): boolean {
+    if (this.finies.has(id)) return true;
+    for (const f of this.finies) if (this.data.quetes[f]?.ouvre?.includes(id)) return true;
+    return false;
+  }
+  /** Lance le chapitre où en est le perso : après le tutoriel, pour un perso d'avant la campagne, ou après un acte passé. */
+  private majCampagne() {
+    if (!this.campagneOuverte || this.chapitre || this.enCours.some(c => this.def(c.id).type === 'tutoriel')) return;
+    for (const a of this.actes) for (const id of a.chapitres) if (!this.finies.has(id)) { this.prendre(id); return; }
+  }
+  /** Élites de chapitre déjà annoncés (10A : la caméra glisse vers eux la première fois qu'on les approche). */
+  private elitesVues = new Set<number>();
+  private majElitesCampagne() {
+    const w = this.world, p = w.player;
+    for (const [m, qid] of this.elites) {
+      if (this.elitesVues.has(m) || this.data.quetes[qid]?.type !== 'campagne') continue;
+      const x = w.monsters.find(o => o.id === m);
+      if (x && !x.dead && Math.hypot(x.x - p.x, x.y - p.y) < 750) { this.elitesVues.add(m); w.emit({ k: 'campagneBoss', x: x.x, y: x.y, nom: x.def.name }); }
+    }
+  }
+  /** Zone du but d'un chapitre : celle du premier objectif pas fini (PNJ, sous-zone, Zaap, donjon), sinon celle du guide. */
+  private zoneCampagne(id: string): string | null {
+    const c = this.enCours.find(x => x.id === id), e = c && !c.aRendre ? this.etapeDe(c) : null; if (!e || !c) return null;
+    const Z = this.world.opts.data.zones;
+    for (let i = 0; i < e.objectifs.length; i++) {
+      const o = e.objectifs[i];
+      if ((c.compte[i] ?? 0) >= this.total(o)) continue;
+      if ((o.t === 'parler' || o.t === 'aller') && o.pnj) return this.data.pnj[o.pnj]?.zone ?? 'incarnam';
+      if ('sousZone' in o && o.sousZone != null) { const z = Object.keys(Z).find(k => Z[k].open?.subareas?.[String(o.sousZone)]); if (z) return z; }
+      if (o.t === 'activer') { const z = Object.keys(Z).find(k => Z[k].open?.checkpoints?.some(cp => cp.name === o.zaap)); if (z) return z; }
+      if (o.t === 'donjon') { const z = Object.keys(Z).find(k => [...(Z[k].open?.donjons ?? []), ...((Z[k].open as { donjonsTest?: { nom: string }[] } | undefined)?.donjonsTest ?? []), ...((Z[k].open as { donjonsV06?: { nom: string }[] } | undefined)?.donjonsV06 ?? [])].some(d => d.nom === o.donjon)); if (z) return z; }
+    }
+    return e.pnj ? this.data.pnj[e.pnj]?.zone ?? 'incarnam' : null;
+  }
+
   // --- Partie de test (maquette « Outil test » 3A-3E) : sauter, finir, remettre à zéro une quête -------------------
   /** Retire les élites encore en vie de cette quête. */
   private retirerElites(id: string) {
@@ -1338,6 +1448,7 @@ export class Quetes {
   /** Zone de la quête suivie (celle de son PNJ), pour la mener d'Incarnam à Astrub et inversement. */
   private zoneDe(id: string): string {
     const q = this.def(id), n = q.pnj ?? q.rendre;
+    if (q.type === 'campagne') { const z = this.zoneCampagne(id); if (z) return z; }
     return (n && this.data.pnj[n]?.zone) || 'incarnam';
   }
   /** Le trajet vers le but de la quête suivie : le prochain point à viser (porte, Zaap, portail, passage), le nom du but

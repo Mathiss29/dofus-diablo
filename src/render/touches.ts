@@ -23,6 +23,7 @@ export const ACTIONS: Action[] = [
   { id: 'bestiaire', nom: 'Bestiaire', groupe: 'Fenêtres', def: 'B' },
   { id: 'dofus', nom: 'Dofus', groupe: 'Fenêtres', def: 'D' },
   { id: 'succes', nom: 'Succès', groupe: 'Fenêtres', def: 'U' },
+  { id: 'campagne', nom: 'Carnet des Fêlures (campagne)', groupe: 'Fenêtres', def: 'W' },
   { id: 'guide', nom: 'Guide', groupe: 'Fenêtres', def: 'G' },
   { id: 'social', nom: 'Social (amis, groupe)', groupe: 'Fenêtres', def: 'P' },
   { id: 'ladder', nom: 'Classement (Ladder)', groupe: 'Fenêtres', def: 'L' },
