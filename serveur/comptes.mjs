@@ -56,6 +56,8 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
       sorte TEXT NOT NULL, nom TEXT NOT NULL DEFAULT '', nom_de TEXT NOT NULL DEFAULT '', depuis INTEGER NOT NULL, PRIMARY KEY (de, vers));
     CREATE TABLE IF NOT EXISTS social (compte INTEGER PRIMARY KEY REFERENCES comptes(id) ON DELETE CASCADE, hors_ligne INTEGER NOT NULL DEFAULT 0,
       inconnus INTEGER NOT NULL DEFAULT 0);
+    CREATE TABLE IF NOT EXISTS douteux (compte INTEGER NOT NULL REFERENCES comptes(id) ON DELETE CASCADE, emplacement INTEGER NOT NULL,
+      raison TEXT NOT NULL, quand INTEGER NOT NULL, PRIMARY KEY (compte, emplacement));
     CREATE TABLE IF NOT EXISTS parcours (jour TEXT NOT NULL, etape TEXT NOT NULL, n INTEGER NOT NULL, PRIMARY KEY (jour, etape));
     CREATE TABLE IF NOT EXISTS arrivees (jour TEXT NOT NULL, tranche TEXT NOT NULL, n INTEGER NOT NULL, ms INTEGER NOT NULL, PRIMARY KEY (jour, tranche));
     CREATE TABLE IF NOT EXISTS fluidite (jour TEXT NOT NULL, zone TEXT NOT NULL, envois INTEGER NOT NULL, images INTEGER NOT NULL, ms INTEGER NOT NULL, saccades INTEGER NOT NULL, PRIMARY KEY (jour, zone));`);
@@ -71,6 +73,9 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
     perso: db.prepare('SELECT maj FROM persos WHERE compte = ? AND emplacement = ?'),
     ecrire: db.prepare('INSERT INTO persos (compte, emplacement, donnees, maj) VALUES (?, ?, ?, ?) ON CONFLICT (compte, emplacement) DO UPDATE SET donnees = excluded.donnees, maj = excluded.maj'),
     effacer: db.prepare('DELETE FROM persos WHERE compte = ? AND emplacement = ?'),
+    douter: db.prepare('INSERT INTO douteux (compte, emplacement, raison, quand) VALUES (?, ?, ?, ?) ON CONFLICT (compte, emplacement) DO NOTHING'),
+    blanchir: db.prepare('DELETE FROM douteux WHERE compte = ? AND emplacement = ?'),
+    douteux: db.prepare('SELECT raison, quand FROM douteux WHERE compte = ? AND emplacement = ?'),
     coffres: db.prepare('SELECT sorte, donnees FROM coffres WHERE compte = ?'),
     coffre: db.prepare('INSERT INTO coffres (compte, sorte, donnees, maj) VALUES (?, ?, ?, ?) ON CONFLICT (compte, sorte) DO UPDATE SET donnees = excluded.donnees, maj = excluded.maj'),
     importe: db.prepare('UPDATE comptes SET importe = 1 WHERE id = ? AND importe = 0'),
@@ -211,6 +216,16 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
   const RANGS = { aventurier: 1, heros: 2, legende: 3 };
   const hdv = creerHdv({ db, connecte, lireCorps, dossier, env, maintenant, ...(catalogue ? { catalogue } : {}), rangAbo: c => RANGS[boutique.abonnement(c)?.palier] ?? 0,
     persoStocke: (c, i) => { const r = q.persos.all(c).find(x => x.emplacement === i); try { return r ? { perso: JSON.parse(r.donnees), maj: r.maj } : null; } catch { return null; } } });
+  /** « En ligne : » 2C : raison si la sauvegarde envoyée par le jeu n'est pas plausible après la précédente, sinon null. */
+  const sim = catalogue ?? (() => import(new URL('./partie/sim.mjs', import.meta.url).href));
+  async function verifier(compte, i, perso) {
+    try {
+      const S = await sim();
+      if (!S?.verifierSauvegarde) return null;
+      const r = q.persos.all(compte).find(x => x.emplacement === i), avant = r ? JSON.parse(r.donnees) : null;
+      return S.verifierSauvegarde(avant, perso, S.ITEMS, r ? hdv.kamasRecus(compte, i, r.maj) : 0);
+    } catch { return null; }
+  }
   /** Répond aux adresses des comptes ; renvoie false si l'adresse n'est pas la sienne. */
   async function route(req, res, url) {
     const p = url.pathname, m = req.method;
@@ -292,7 +307,7 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
       if (m === 'POST' && p === '/deconnexion') { q.sortir.run(empreinte(req.headers.authorization.slice(7))); return json(res, 200, { ok: true }), true; }
       const n = p === '/import' ? null : emplacement(p.slice('/persos/'.length));
       if (p !== '/import' && n == null) return json(res, 404, { erreur: 'emplacement' }), true;
-      if (m === 'DELETE' && n != null) { q.effacer.run(c.id, n); return json(res, 200, { ok: true }), true; }
+      if (m === 'DELETE' && n != null) { q.effacer.run(c.id, n); q.blanchir.run(c.id, n); return json(res, 200, { ok: true }), true; }
       if (m === 'PUT' || (m === 'POST' && p === '/import')) {
         const b = await lireCorps(req);
         const ici = p === '/import' ? emplacement(b.emplacement) : n;
@@ -304,8 +319,11 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
           if (avant) return json(res, 409, { erreur: 'occupe' }), true;
           if (q.importe.run(c.id).changes === 0) return json(res, 403, { erreur: 'deja-importe' }), true;
         } else if (avant && avant.maj > maj) return json(res, 409, { erreur: 'plus-recent', maj: avant.maj }), true;   // un autre PC a sauvé plus tard
+        // « En ligne : » 2C : la sauvegarde du solo comparée à la précédente ; douteuse, elle est gardée mais le perso sort du Ladder
+        const raison = p === '/import' ? null : await verifier(c.id, ici, b.perso);
+        if (raison) q.douter.run(c.id, ici, raison, maintenant());
         q.ecrire.run(c.id, ici, JSON.stringify(b.perso), maj);
-        return json(res, 200, { ok: true, maj }), true;
+        return json(res, 200, { ok: true, maj, ...(raison ? { douteux: raison } : {}) }), true;
       }
       return json(res, 405, { erreur: 'methode' }), true;
     } catch (err) {
@@ -408,7 +426,7 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
     regler(moi, horsLigne, inconnus) { q.regler.run(moi, horsLigne ? 1 : 0, inconnus ? 1 : 0); },
   };
 
-  const api = { route, copieNocturne, pret, ogrines, boutique, hdv, persoPartie, sauverPartie, compteDuJeton, social, stats: () => q.nb.get(), fermer: () => { clearInterval(minuterie); db.close(); },
+  const api = { route, copieNocturne, pret, ogrines, boutique, hdv, persoPartie, sauverPartie, douteux: (c, i) => q.douteux.get(c, i) ?? null, compteDuJeton, social, stats: () => q.nb.get(), fermer: () => { clearInterval(minuterie); db.close(); },
     /** Pour le classement (classement.mjs) : la base, le compte d'une requête, le corps JSON d'une requête. */
     db, connecte, lireCorps,
     /** Ladder 3B : appelé avec (compte, perso, stèle) quand un perso Hardcore meurt, avant qu'il soit effacé. */

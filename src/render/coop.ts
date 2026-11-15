@@ -49,6 +49,9 @@ function lireEssai(): boolean {
     return localStorage.getItem('diablofus.enLigne') === '1';
   } catch { return false; }
 }
+/** « HDV : » 4B : jouer sur le serveur même seul (réglage du navigateur, dans Social › Groupe). */
+export function jouerSurServeur(): boolean { try { return localStorage.getItem('diablofus.jouerServeur') === '1'; } catch { return false; } }
+export function reglerJouerSurServeur(oui: boolean) { try { localStorage.setItem('diablofus.jouerServeur', oui ? '1' : '0'); } catch { /* pas de stockage */ } }
 export const URL_COOP = (import.meta.env?.VITE_COOP_URL as string | undefined) ?? 'wss://api.diablofus.com/ws';
 /** Un invité mort chez l'hôte se relève à côté de lui au bout de ce temps (en attendant « relever un allié », 15C). */
 const RELEVE = 5;
@@ -122,10 +125,25 @@ class Salon {
   arene: string | null = null;
   /** « En ligne : » 1A + 5A : entrer dans le monde ouvert de son groupe pour cette zone (le serveur le crée au besoin). arrivee : la
    *  porte par laquelle on arrive. Seul (sans groupe), le serveur refuse : on reste sur son PC (2A). */
-  mondeGroupe(zone: string, compte: PersoCompte) {
-    this.compte = compte; this.arene = null; this.zoneMonde = zone;
-    this.connecter({ k: 'mondeGroupe', zone, jeton: compte.jeton, emplacement: compte.emplacement });
+  /** seul : « HDV : » 4B, sans groupe, il a choisi de jouer sur le serveur (un monde rien qu'à lui, son butin y est vu). */
+  mondeGroupe(zone: string, compte: PersoCompte, seul = false) {
+    this.compte = compte; this.arene = null; this.zoneMonde = zone; this.seul = seul;
+    this.connecter({ k: 'mondeGroupe', zone, jeton: compte.jeton, emplacement: compte.emplacement, ...(seul ? { seul: true } : {}) });
   }
+  /** Joue sur le serveur sans groupe (« HDV : » 4B). */
+  seul = false;
+  /** « En ligne : » 5B : rejoindre un allié d'un clic, là où il joue (monde du groupe ou donjon), à côté de lui. Depuis une partie
+   *  du serveur, le miroir tient jusqu'à l'arrivée ; en cas de refus, on reste (ou on revient) seul là où l'on était. */
+  rejoindreAllie(id: number, compte: PersoCompte) {
+    const garder = this.miroir;
+    if (garder) { this.bascule = { zone: this.zoneMonde ?? this.scene?.world.opts.zone ?? 'incarnam', position: this.positionIci() }; this.recus = []; this.attendPlein = true; }
+    this.scene?.annonce('Tu rejoins ton allié');
+    this.compte = compte; this.arene = null; this.retourMonde = null; this.versAllie = this.zoneMonde ?? this.scene?.world.opts.zone ?? 'incarnam';
+    this.connecter({ k: 'mondeGroupe', allie: id, jeton: compte.jeton, emplacement: compte.emplacement }, garder);
+  }
+  /** Rejoindre un allié en cours : la zone d'où l'on part (le salon dit ensuite si l'on arrive dans un monde ou un donjon). */
+  private versAllie: string | null = null;
+  private positionIci() { const p = this.scene?.world.player; return p ? { x: p.x, y: p.y } : undefined; }
   /** Zone du monde du groupe où l'on joue (null hors du monde du groupe). */
   zoneMonde: string | null = null;
   /** « En ligne : » 4C : parti en donjon depuis le monde du groupe de cette zone : le portail de sortie y ramène. */
@@ -157,7 +175,7 @@ class Salon {
   private fermer() {
     if (this.hote && this.scene) for (const i of this.invites.values()) this.retirer(i);
     this.etat = 'hors'; this.hote = false; this.serveur = false; this.compte = null; this.code = null; this.invites.clear(); this.recus = []; this.dansZoneHote = false;
-    this.zoneMonde = null; this.bascule = null; this.retourMonde = null;
+    this.zoneMonde = null; this.bascule = null; this.retourMonde = null; this.seul = false; this.versAllie = null;
     this.changer();
   }
   /** garder : bascule d'un monde du groupe à l'autre, le miroir reste affiché (dansZoneHote) jusqu'à la nouvelle zone. */
@@ -201,6 +219,12 @@ class Salon {
     switch (m.k) {
       case 'salon':
         this.etat = 'salon'; this.hote = !!m.hote; this.serveur = !!m.serveur; this.code = String(m.code);
+        // 5B : arrivé chez l'allié : dans le monde du groupe d'une zone, ou dans son donjon (le portail de sortie ramène au monde)
+        if (this.versAllie) {
+          const z = typeof m.monde === 'string' ? m.monde : null;
+          if (!z && MONDES_SERVEUR.has(this.versAllie)) this.retourMonde = this.versAllie;
+          this.zoneMonde = z; this.versAllie = null;
+        }
         if (!this.hote && this.scene) void this.bonjour(this.scene, !!this.bascule);
         this.changer();
         break;
@@ -212,6 +236,7 @@ class Salon {
           : m.raison === 'testeur' ? 'L’essai à plusieurs est réservé aux testeurs'
           : m.raison === 'deja' ? 'Ce perso joue déjà dans un groupe'
           : m.raison === 'donjon' ? 'Ce donjon n’est pas encore sur le serveur'
+          : m.raison === 'allie' ? 'Ton allié ne joue pas dans un monde du serveur en ce moment (Bastion, Havre-Sac…)'
           : m.raison === 'hardcore' ? 'Les persos Hardcore ne jouent pas encore à plusieurs' : 'Serveur plein, réessaie';
         this.ws?.close(); this.ws = null; this.fermer();
         // la bascule vers le monde du groupe a échoué : on y va seul, sur son PC (9A)
@@ -281,6 +306,10 @@ class Salon {
       if (dj && typeof dj.tag === 'string' && this.zoneMonde && this.compte) { this.versArene(dj.tag, typeof dj.nom === 'string' ? dj.nom : ''); return; }
       // portail de sortie du donjon : retour dans le monde du groupe, devant le gardien
       if (!d.vers && this.retourMonde && this.compte) { const z = this.retourMonde; this.retourMonde = null; this.basculer({ zone: z }); return; }
+      // « En ligne : » 3D : près du boss du monde : le combat commun à tous les groupes ; le combat fini : retour dans le monde du groupe
+      const bo = d.boss as { position?: unknown } | undefined, gr = d.groupe as { position?: unknown } | undefined;
+      if (bo && this.zoneMonde && this.compte) { this.basculer({ zone: this.zoneMonde, position: vec(bo.position) }, { boss: true }); return; }
+      if (gr && this.zoneMonde && this.compte) { this.basculer({ zone: this.zoneMonde, position: vec(gr.position) }); return; }
       const vers = versValide(d.vers);
       // « En ligne : » 5A : une porte vers une autre zone tenue par le serveur : on passe dans le monde du groupe de cette zone
       if (vers && this.zoneMonde && this.compte && MONDES_SERVEUR.has(vers.zone) && vers.zone !== this.zoneMonde) { this.basculer(vers); return; }
@@ -301,13 +330,13 @@ class Salon {
 
   /** Passe au monde du groupe d'une autre zone : on dit au serveur qu'on part (il sauve le perso), on attend la fermeture, puis on
    *  entre dans l'autre monde, qui relit le perso sauvé. Le miroir reste en place jusqu'à la nouvelle zone. */
-  private basculer(vers: Vers) {
+  private basculer(vers: Vers, plus: object = {}) {
     const compte = this.compte!;
     this.bascule = vers; this.recus = []; this.attendPlein = true;
     this.scene?.annonce(`En route vers ${GAME_DATA.zones[vers.zone]?.name ?? vers.zone}`);
     this.compte = compte; this.zoneMonde = vers.zone; this.arene = null;
     const { zone, ...transit } = vers;
-    this.connecter({ k: 'mondeGroupe', zone, jeton: compte.jeton, emplacement: compte.emplacement, ...transit }, true);
+    this.connecter({ k: 'mondeGroupe', zone, jeton: compte.jeton, emplacement: compte.emplacement, ...transit, ...plus, ...(this.seul ? { seul: true } : {}) }, true);
   }
 
   private versArene(tag: string, nom: string) {

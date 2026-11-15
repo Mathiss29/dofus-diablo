@@ -58,7 +58,8 @@ export function creerClassement({ comptes, enLigne = () => [], annoncer = () => 
         json_array_length(json_extract(p.donnees, '$.zones')) AS zones, json_array_length(json_extract(p.donnees, '$.etat.zaaps')) AS zaaps,
         json_array_length(json_extract(p.donnees, '$.etat.dofus')) AS dofus,
         json_extract(p.donnees, '$.etat.level') AS niveau, json_extract(p.donnees, '$.etat.quetes.points') AS succes, json_extract(p.donnees, '$.etat.xp') AS xp, json_extract(p.donnees, '$.etat.metiers') AS metiers
-      FROM persos p LEFT JOIN social s ON s.compte = p.compte WHERE coalesce(s.cache, 0) = 0`),
+      FROM persos p LEFT JOIN social s ON s.compte = p.compte
+      LEFT JOIN douteux d ON d.compte = p.compte AND d.emplacement = p.emplacement WHERE coalesce(s.cache, 0) = 0 AND d.compte IS NULL`),
     donnees: db.prepare(`SELECT p.donnees FROM persos p LEFT JOIN social s ON s.compte = p.compte WHERE p.compte = ? AND p.emplacement = ? AND coalesce(s.cache, 0) = 0`),
     records: db.prepare(`SELECT r.* FROM records r LEFT JOIN social s ON s.compte = r.compte WHERE coalesce(s.cache, 0) = 0 ORDER BY r.donjon, r.mode, r.idoles DESC, r.temps`),
     record: db.prepare('SELECT temps, idoles FROM records WHERE donjon = ? AND mode = ? AND compte = ? AND emplacement = ?'),

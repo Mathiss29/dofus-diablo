@@ -82,7 +82,7 @@ import { heureParis } from './heure';
 import { VivantView } from './vivantView';
 import { CalquesTest } from './calquesTest';
 import { REGLAGES_TEST, type CommandeTest } from '../sim/outilsTest';
-import { Coop, essaiEnLigne, MONDES_SERVEUR } from './coop';
+import { Coop, essaiEnLigne, jouerSurServeur, MONDES_SERVEUR } from './coop';
 import { brancherOrdres } from './ordres';
 import { appliquerInstantane, lisserMiroir } from '../sim/miroir';
 import { EnLigne, type MessageChat } from './presence';
@@ -715,13 +715,17 @@ export class ZoneScene extends Phaser.Scene {
    *  Plus de groupe alors qu'on y joue : retour seul, sur son PC, là où le serveur a sauvé le perso. */
   private versMondeGroupe() {
     if (!essaiEnLigne() || this.test || this.vitrine || this.essai || this.slot < 0 || !this.perso) return;
-    const g = EnLigne.groupe, enGroupe = !!g && g.membres.length >= 2;
-    if (Coop.miroir && Coop.zoneMonde) { if (!enGroupe && Coop.etat === 'salon') { this.hud.toast('Tu n’es plus en groupe : tu continues seul'); Coop.quitter(); } return; }
+    const g = EnLigne.groupe, enGroupe = !!g && g.membres.length >= 2, seul = !enGroupe && jouerSurServeur();
+    if (Coop.miroir && Coop.zoneMonde) {
+      if (!enGroupe && !Coop.seul && Coop.etat === 'salon') { this.hud.toast('Tu n’es plus en groupe : tu continues seul'); Coop.quitter(); }
+      else if (Coop.seul && (enGroupe || !jouerSurServeur()) && Coop.etat === 'salon') Coop.quitter();   // groupé, ou réglage décoché : on change de monde
+      return;
+    }
     const j = CompteEnLigne.jeton, t = performance.now();
-    if (!j || !enGroupe || Coop.etat !== 'hors' || this.perso.hardcore || !MONDES_SERVEUR.has(this.zoneId) || this.world.arene || t - this.essaiMonde < 10_000) return;
+    if (!j || (!enGroupe && !seul) || Coop.etat !== 'hors' || this.perso.hardcore || !MONDES_SERVEUR.has(this.zoneId) || this.world.arene || t - this.essaiMonde < 10_000) return;
     this.essaiMonde = t;
-    this.hud.toast('Tu rejoins le monde de ton groupe');
-    Coop.mondeGroupe(this.zoneId, { jeton: j, emplacement: this.slot });
+    this.hud.toast(seul ? 'Ta partie passe sur le serveur' : 'Tu rejoins le monde de ton groupe');
+    Coop.mondeGroupe(this.zoneId, { jeton: j, emplacement: this.slot }, seul);
   }
   /** Retour à l'écran d'accueil (main.ts relance la partie en vitrine). */
   private versAccueil(page?: 'persos') { this.sauver(); this.game.events.emit('accueil', page); }

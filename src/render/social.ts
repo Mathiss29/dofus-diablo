@@ -5,7 +5,7 @@
 import { GAME_DATA } from '../sim/data';
 import type { World } from '../sim/world';
 import { classeDe } from '../sim/miroir';
-import { Coop } from './coop';
+import { Coop, essaiEnLigne, jouerSurServeur, reglerJouerSurServeur } from './coop';
 import { Compte } from './compte';
 import { lirePersos } from './persos';
 import { EnLigne } from './presence';
@@ -166,6 +166,9 @@ export function rendreSocial(win: HTMLDivElement, titre: string, c: ContexteSoci
   $('[data-soc-monde]')?.addEventListener('click', () => { aAnnoncer = MONDE; Coop.creer(true, compte(), true); });
   $('[data-soc-rejoindre-donjon]')?.addEventListener('click', () => { const d = EnLigne.groupe?.donjon; if (d) Coop.rejoindre(d, compte()); });
   $('[data-soc-quitter-grp]')?.addEventListener('click', () => EnLigne.quitterGroupe());
+  // « En ligne : » 5B : rejoindre un allié d'un clic ; « HDV : » 4B : jouer sur le serveur seul
+  chaque('[data-soc-allie]', e => { const co = compte(); if (co) { c.fermer(); Coop.rejoindreAllie(Number(e.dataset.socAllie), co); } });
+  win.querySelector<HTMLInputElement>('[data-soc-serveur]')?.addEventListener('change', e => reglerJouerSurServeur((e.target as HTMLInputElement).checked));
   const rej = () => { const v = $<HTMLInputElement>('[data-soc-code]')?.value ?? ''; if (v.trim()) Coop.rejoindre(v, compte()); };
   $('[data-soc-rejoindre]')?.addEventListener('click', rej);
   $<HTMLInputElement>('[data-soc-code]')?.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') rej(); });
@@ -269,12 +272,14 @@ function groupe(c: ContexteSocial): string {
   // dans le donjon de groupe (partie tenue par le serveur) : la vie de chacun, et la sortie
   if (co.etat === 'salon') return `<p><b>Donjon de groupe</b> · ${esc(nomDonjon(Coop.arene ?? donjonChoisi))}. La partie tourne sur le serveur : chacun peut partir sans couper les autres.</p>
       <div class="mbrs" style="display:flex;flex-direction:column;gap:6px">${listeMembres(c)}</div>
+      ${allies()}
       <div class="code"><span>Code du donjon</span><b>${esc(co.code ?? '')}</b><span class="btn gris" data-soc-copier title="Copier le code">Copier</span></div>
       <div class="bas"><span class="btn gris" data-soc-quitter>Quitter le donjon</span></div>`;
   if (!EnLigne.connecte) return '<p class="note">Connexion au serveur…</p>';
   const err = co.erreur ? `<p class="err">${esc(co.erreur)}</p>` : '';
   if (!G) return `${err}<p>Crée un groupe puis invite tes amis (onglets <b>Discord</b> ou <b>Amis</b>, ou clic droit sur un joueur) : <b>chacun reste où il est</b>. Le chef lance ensuite le donjon, les autres le rejoignent.</p>
     <div class="bas" style="justify-content:flex-start"><span class="btn" data-soc-creer>Créer un groupe</span></div>
+    ${essaiEnLigne() ? `<label class="case" title="Ta partie tourne sur le serveur même seul : ton butin y est vu, donc vendable à l'Hôtel de Vente. Sinon, elle tourne sur ton PC."><input type="checkbox" data-soc-serveur ${jouerSurServeur() ? 'checked' : ''}> Jouer sur le serveur quand je suis seul</label>` : ''}
     <div class="titre">Rejoindre un donjon avec son code</div>
     <div class="rej"><input type="text" maxlength="5" placeholder="Code" autocomplete="off" data-soc-code><span class="btn gris" data-soc-rejoindre>Rejoindre</span></div>`;
   const chef = EnLigne.chef;
@@ -282,7 +287,7 @@ function groupe(c: ContexteSocial): string {
     const cl = classe(m.classe ?? 'iop'), moi = m.id === EnLigne.moi;
     return `<div class="mbr ${moi ? 'moi' : ''} ${m.enLigne ? '' : 'hors'}" ${moi ? '' : `data-joueur="${m.id}" data-nom="${esc(m.nom)}"`}><img src="assets/accueil/c_${cl}.png" alt="">
       <div><b>${m.id === G.chef ? '♛ ' : ''}${esc(m.nom)}</b>${moi ? ' (toi)' : ''}<small>${m.enLigne ? `${GAME_DATA.classes[cl].name} · niveau ${m.niveau} · ${esc(lieu(m.zone ?? ''))}` : 'déconnecté'}</small></div>
-      <div class="act">${chef && !moi ? `<span class="btn mini gris" data-soc-chef="${m.id}" title="Lui passer la couronne de chef">♛</span><span class="btn mini gris" data-soc-exclure="${m.id}" title="L'exclure du groupe">✕</span>` : ''}</div></div>`;
+      <div class="act">${!moi && m.enLigne && essaiEnLigne() ? `<span class="btn mini" data-soc-allie="${m.id}" title="Le rejoindre d'un clic, là où il joue">Rejoindre</span>` : ''}${chef && !moi ? `<span class="btn mini gris" data-soc-chef="${m.id}" title="Lui passer la couronne de chef">♛</span><span class="btn mini gris" data-soc-exclure="${m.id}" title="L'exclure du groupe">✕</span>` : ''}</div></div>`;
   }).join('');
   const donjon = chef
     ? `<select class="donjon" data-soc-choix title="Donjon à lancer">${DONJONS.map(d => `<option value="${d.tag}" ${d.tag === donjonChoisi ? 'selected' : ''}>${esc(d.nom)} (${d.zone === 'astrub' ? 'Astrub' : 'Incarnam'})</option>`).join('')}</select>`
@@ -294,6 +299,15 @@ function groupe(c: ContexteSocial): string {
     <div class="bas">${donjon}<span class="btn gris" data-soc-quitter-grp>Quitter le groupe</span></div>`;
 }
 
+/** « En ligne : » 5B : dans une partie du serveur, les membres du groupe qui jouent ailleurs, à rejoindre d'un clic. */
+function allies(): string {
+  const G = EnLigne.groupe;
+  if (!G || !essaiEnLigne()) return '';
+  const L = G.membres.filter(m => m.id !== EnLigne.moi && m.enLigne);
+  if (!L.length) return '';
+  return `<div class="titre">Rejoindre un allié</div><div style="display:flex;flex-wrap:wrap;gap:6px">${L.map(m =>
+    `<span class="btn mini" data-soc-allie="${m.id}" title="${esc(lieu(m.zone ?? ''))}">${esc(m.nom)}</span>`).join('')}</div>`;
+}
 /** Membres du groupe et leur vie : redessinés seuls toutes les secondes (le reste de la fenêtre ne bouge pas, les clics tiennent). */
 function listeMembres(c: ContexteSocial): string {
   const L = Coop.miroir ? membres(c.world) : [];

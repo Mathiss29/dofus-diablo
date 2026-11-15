@@ -156,6 +156,8 @@ export function nouvellesDuMonde(data: GameData, s: number, v06 = V06_PUBLIC): {
 
 export class MondeVivant {
   boss: BossEnCours | null = null;
+  /** « En ligne : » 3D : dernier envoi de chaque joueur vers le combat commun (w.time). */
+  private versBoss = new Map<number, number>();
   invasion: InvasionEnCours | null = null;
   evenements: Evenement[] = [];
   /** Dernier créneau annoncé (2D : 10 min avant). */
@@ -215,7 +217,14 @@ export class MondeVivant {
     const fenetreFinie = s - b.debut >= B.attente;
     if (!b.pose) {
       if (fenetreFinie) { b.fin = 'parti'; return; }
-      if (w.players.some(p => !p.dead && Math.abs(p.x - b.centre.x) + Math.abs(p.y - b.centre.y) <= World_POSE)) this.poser(b);
+      const pres = w.players.filter(p => !p.dead && Math.abs(p.x - b.centre.x) + Math.abs(p.y - b.centre.y) <= World_POSE);
+      if (!pres.length) return;
+      if (!w.opts.bossPartage) { this.poser(b); return; }
+      // « En ligne : » 3D : monde d'un groupe : chacun part dans le combat commun (au plus un rappel toutes les 5 s)
+      for (const p of pres) if (w.time - (this.versBoss.get(p.id) ?? -Infinity) >= 5) {
+        this.versBoss.set(p.id, w.time);
+        w.emit({ k: 'versBossMonde', joueur: p.id, cle: b.cle, creneau: b.creneau });
+      }
       return;
     }
     const vivants = b.monstres.filter(m => !m.dead);

@@ -205,6 +205,9 @@ export interface WorldOptions {
   sansGroupes?: boolean;
   /** Hôtel de Vente ouvert (« HDV : » 8, avec la MAJ en ligne) : « Défaire » chez Kerubim ne rend plus de kamas. */
   hdv?: boolean;
+  /** « En ligne : » 3D : monde d'un groupe sur le serveur : le boss du monde ne s'y pose pas, le joueur qui s'en approche part dans
+   *  le combat commun à tous les groupes (événement versBossMonde, serveur/partie.mjs). */
+  bossPartage?: boolean;
   /** Nuit à l'heure du PC (donnée par l'affichage, « Wabbits : 12A ») : l'îlot des Tombeaux se réveille. */
   nuit?: () => boolean;
   /** 0.5 « monde vivant » (2E) : heure de Paris en secondes « murales » (comme si Paris était à l'heure UTC), donnée par
