@@ -40,7 +40,13 @@ export async function chargerSim(dossier = new URL('./partie/', import.meta.url)
 /** Donjons en vagues que le serveur peut tenir : [{ tag, nom, zone }], dans l'ordre des zones. */
 export function arenesDisponibles(S) {
   const L = [];
-  for (const z of MONDES) if (S.mondes[z]) for (const d of S.GAME_DATA.zones[z]?.open?.donjons ?? []) if (d.arene?.tag) L.push({ tag: d.arene.tag, nom: d.nom, zone: z });
+  for (const z of MONDES) if (S.mondes[z]) {
+    const o = S.GAME_DATA.zones[z]?.open;
+    // les donjons de la 0.4 et de la 0.6, publics (« En ligne : » 4C), comme dans World
+    const tous = [...(o?.donjons ?? []), ...(S.V04_PUBLIC ? o?.donjonsTest ?? [] : []), ...(S.V06_PUBLIC ? o?.donjonsV06 ?? [] : [])];
+    const carte = new Set((S.mondes[z].maps ?? []).map(m => m.tag));
+    for (const d of tous) if (d.arene?.tag && !d.tresor && carte.has(d.arene.tag) && !L.some(x => x.tag === d.arene.tag)) L.push({ tag: d.arene.tag, nom: d.nom, zone: z });
+  }
   return L;
 }
 
@@ -159,6 +165,8 @@ export class Partie {
       const evs = w.drainEvents();
       // portail de sortie : ce joueur quitte la partie (son jeu ferme la connexion, il est alors sauvé et retiré)
       for (const e of evs) if (e.k === 'sortieArene') for (const [num, m] of this.membres) if (m.joueur === e.joueur && !m.sorti) { m.sorti = true; this.envoyer(num, { k: 'sortie' }); }
+      // « En ligne : » 4C : la porte d'un donjon dans le monde du groupe : il part dans l'arène du groupe (son jeu bascule)
+      for (const e of evs) if (e.k === 'versArene') for (const [num, m] of this.membres) if (m.joueur === e.joueur && !m.sorti) { m.sorti = true; this.envoyer(num, { k: 'sortie', donjon: { tag: e.tag, nom: e.nom } }); }
       for (const [num, m] of this.membres) {
         if (!m.em) continue;
         for (const e of evs) m.em.noter(e);

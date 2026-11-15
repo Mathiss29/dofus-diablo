@@ -97,7 +97,9 @@ test('monde ouvert d’Incarnam sur le serveur : chacun sa place, ses quêtes, e
 test('donjons de groupe : un donjon d’Astrub au choix, plus de PV et de monstres à plusieurs, un allié relève l’autre, butin chacun le sien', async () => {
   const S = await chargerSim();
   const tags = arenesDisponibles(S).map(a => a.tag);
-  assert.deepEqual(tags, ['arene_crypte', 'arene_grange', 'arene_chateau', 'arene_cour', 'arene_cache'], 'la Crypte et les quatre donjons d’Astrub');
+  assert.deepEqual(tags.slice(0, 5), ['arene_crypte', 'arene_grange', 'arene_chateau', 'arene_cour', 'arene_cache'], 'la Crypte et les quatre donjons d’Astrub');
+  assert.ok(tags.includes('arene_dragon_cochon') && tags.length >= 20, '« En ligne : » 4C : ceux de la 0.4 et de la 0.6 aussi');
+  assert.ok(!tags.includes('arene_tresor'), 'la Salle au trésor se prend par son portail, pas comme un donjon');
   const p = new Partie(S, () => {}, 3, null, { arene: 'arene_grange' });
   p.arrivee(1); p.arrivee(2);
   p.recu(1, { k: 'bonjour', classe: 'iop', etat: { level: 40 } });

@@ -133,3 +133,22 @@ test('fenêtres de l’invité : ses gestes (ordres) sont rejoués pour lui sur 
   assert.ok(!b.bag.some(it => it.id === '8243'));
   p.depart(1); p.depart(2);
 });
+
+test('donjon depuis le monde du groupe : la porte envoie le joueur vers l’arène du groupe, le monde continue sans lui', async () => {
+  const S = await chargerSim();
+  const recus = new Map([[1, []], [2, []]]);
+  const p = new Partie(S, (num, d) => recus.get(num).push(d), 4, null, { monde: 'astrub' });
+  p.arrivee(1); p.arrivee(2);
+  p.recu(1, { k: 'bonjour', classe: 'iop', etat: { level: 30 } });
+  p.recu(2, { k: 'bonjour', classe: 'cra', etat: { level: 30 } });
+  const w = p.w, [, b] = w.players;
+  const d = w.zone.open.donjons.find(x => x.arene?.tag === 'arene_grange');
+  w.commeJoueur(b, () => w['traverser']({ tag: d.arene.tag, ...w.worldGrid.cellToWorld(d.arene.arrivee) }, d.nom));
+  p.recu(2, { k: 'pret' });
+  p.avancer(1 / 60);
+  const s = recus.get(2).find(x => x.k === 'sortie');
+  assert.deepEqual(s?.donjon, { tag: 'arene_grange', nom: d.nom });
+  assert.equal(w.arene, null, 'pas d’arène dans le monde du groupe');
+  assert.ok(!recus.get(1).some(x => x.k === 'sortie'));
+  p.depart(1); p.depart(2);
+});

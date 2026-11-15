@@ -299,7 +299,15 @@ export function creerPresence({ comptes, envoyer }) {
   minuterie.unref();
   return { recu, quitter, tour, annoncer, groupes: () => groupes.size,
     /** « En ligne : » 1A : groupe d'un compte (son numéro), null s'il est seul ; membres : les comptes du groupe. */
-    groupeDe: compte => groupeDe.get(compte) ?? null, membresGroupe: id => groupes.get(id)?.membres ?? [], fermer: () => clearInterval(minuterie), nombre: () => joueurs.size,
+    groupeDe: compte => groupeDe.get(compte) ?? null, membresGroupe: id => groupes.get(id)?.membres ?? [],
+    /** « En ligne : » 4C : un membre a passé la porte d'un donjon dans le monde du groupe : les autres reçoivent « Rejoindre ». */
+    annoncerDonjon(compte, code, lieu) {
+      const g = groupes.get(groupeDe.get(compte)), j = [...joueurs.values()].find(x => x.compte === compte);
+      if (!g) return;
+      g.donjon = code;
+      for (const x of g.membres) { const u = socketDe(x); if (u && x !== compte) envoyer(u, { k: 'donjon', de: j?.profil.nom ?? '', code, lieu: String(lieu ?? '').slice(0, 40) }); }
+      envoyerGroupe(g);
+    }, fermer: () => clearInterval(minuterie), nombre: () => joueurs.size,
     /** Ladder 7B : persos en ligne (« compte-emplacement »), sauf ceux qui apparaissent hors ligne. */
     enLigne: () => [...joueurs.values()].filter(j => !j.horsLigne).map(j => `${j.compte}-${j.emplacement}`) };
 }
