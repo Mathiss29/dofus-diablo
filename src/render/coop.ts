@@ -38,7 +38,11 @@ function versValide(v: unknown): Vers | undefined {
 export const MONDES_SERVEUR = new Set(['incarnam', 'astrub']);
 /** Essai de la MAJ « En ligne » (« En ligne : » 11A, avant l'ouverture) : ?enligne=1 dans l'adresse l'allume pour ce navigateur,
  *  ?enligne=0 l'éteint. Éteint : le monde du groupe ne se rejoint pas tout seul (les boutons du Social restent). */
+let essai: boolean | null = null;
 export function essaiEnLigne(): boolean {
+  return essai ??= lireEssai();
+}
+function lireEssai(): boolean {
   try {
     const u = new URLSearchParams(location.search);
     if (u.has('enligne')) localStorage.setItem('diablofus.enLigne', u.get('enligne') === '0' ? '0' : '1');

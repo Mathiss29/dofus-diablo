@@ -50,7 +50,7 @@ class Presence {
   private ws: WebSocket | null = null;
   private voulu: { emplacement: number; zone: string; x: number; y: number; objets: string[]; titre: string; ornement: number } | null = null;
   private relance = 0;
-  private dernier = { t: 0, zone: '', x: 0, y: 0, a: '' };
+  private dernier: { t: number; zone: string; x: number; y: number; a: string; lieu?: string | null } = { t: 0, zone: '', x: 0, y: 0, a: '' };
   private ecouteurs = new Set<() => void>();
   /** Invitation reçue (« Social : » 7A) et petits messages du serveur. */
   onInvitation: (de: string, groupe: number) => void = () => {};
@@ -118,13 +118,14 @@ class Presence {
   private envoyer(m: object) { if (this.ws?.readyState === WebSocket.OPEN) this.ws.send(JSON.stringify(m)); }
 
   /** Position du perso, au plus 10 fois par seconde (tout de suite quand la zone change). */
-  position(zone: string, x: number, y: number, f: number, a: string, now: number) {
+  /** lieu (« En ligne : » 1C) : lieu partagé hors du Bastion (Cité d'Astrub, abords d'un Zaap), où l'on voit les autres passer. */
+  position(zone: string, x: number, y: number, f: number, a: string, now: number, lieu: string | null = null) {
     if (this.voulu) { this.voulu.zone = zone; this.voulu.x = x; this.voulu.y = y; }
-    const d = this.dernier, change = zone !== d.zone;
+    const d = this.dernier, change = zone !== d.zone || lieu !== (d.lieu ?? null);
     if (change) this.passants.clear();
     if (!this.connecte || (!change && now - d.t < 100) || (!change && x === d.x && y === d.y && a === d.a && now - d.t < 2000)) return;
-    Object.assign(d, { t: now, zone, x, y, a });
-    this.envoyer({ k: 'pos', zone, x: Math.round(x), y: Math.round(y), f: +f.toFixed(2), a });
+    Object.assign(d, { t: now, zone, x, y, a, lieu });
+    this.envoyer({ k: 'pos', zone, x: Math.round(x), y: Math.round(y), f: +f.toFixed(2), a, ...(lieu ? { l: lieu } : {}) });
   }
   demanderEnLigne() { this.envoyer({ k: 'enligne' }); }
   demanderAmis() { this.envoyer({ k: 'amis' }); }

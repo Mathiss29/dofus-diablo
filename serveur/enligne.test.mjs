@@ -152,3 +152,34 @@ test('donjon depuis le monde du groupe : la porte envoie le joueur vers l’arè
   assert.ok(!recus.get(1).some(x => x.k === 'sortie'));
   p.depart(1); p.depart(2);
 });
+
+test('lieux partagés : dans la Cité d’Astrub (ou au même Zaap), on voit passer les autres ; ailleurs, non', async () => {
+  const { dossier, J } = base();
+  const s = creerServeur({ comptes: creerComptes({ dossier, env: {}, origines: new Set() }) });
+  await new Promise(r => s.listen(0, '127.0.0.1', r));
+  const url = `ws://127.0.0.1:${s.address().port}/ws`;
+  const client = async () => {
+    const ws = new WebSocket(url, { origin: 'https://diablofus.com' }), file = [], attente = [];
+    ws.on('message', d => { const m = JSON.parse(String(d)); const a = attente.shift(); if (a) a(m); else file.push(m); });
+    await new Promise(ok => ws.on('open', ok));
+    const lire = () => file.length ? Promise.resolve(file.shift()) : new Promise(ok => attente.push(ok));
+    return { ws, envoi: m => ws.send(JSON.stringify(m)), attendre: async f => { for (;;) { const m = await lire(); if (f(m)) return m; } } };
+  };
+  const a = await client(), b = await client();
+  a.envoi({ k: 'presence', jeton: J[0], emplacement: 0, zone: 'astrub' });
+  b.envoi({ k: 'presence', jeton: J[1], emplacement: 0, zone: 'astrub' });
+  await a.attendre(m => m.k === 'presence'); await b.attendre(m => m.k === 'presence');
+  a.envoi({ k: 'pos', zone: 'astrub', x: 10, y: 10, l: 'cite' });
+  b.envoi({ k: 'pos', zone: 'astrub', x: 50, y: 20, l: 'cite' });
+  const vu = await a.attendre(m => m.k === 'autres' && m.l.length === 1);
+  assert.equal(vu.profils[0].nom, 'Brak');
+  // il sort de la Cité : Lyra ne le voit plus
+  b.envoi({ k: 'pos', zone: 'astrub', x: 900, y: 20 });
+  await a.attendre(m => m.k === 'autres' && m.l.length === 0);
+  // même Zaap : ils se revoient
+  a.envoi({ k: 'pos', zone: 'astrub', x: 10, y: 10, l: 'zaap:Zaap d’Astrub' });
+  b.envoi({ k: 'pos', zone: 'astrub', x: 30, y: 10, l: 'zaap:Zaap d’Astrub' });
+  await a.attendre(m => m.k === 'autres' && m.l.length === 1);
+  a.ws.close(); b.ws.close();
+  await new Promise(r => { s.close(r); s.closeAllConnections(); });
+});

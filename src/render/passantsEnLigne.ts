@@ -18,9 +18,10 @@ export class PassantsEnLigne {
   private vues = new Map<number, Vue>();
   constructor(private scene: Phaser.Scene) {}
 
-  maj(actif: boolean, dt: number, px: number, py: number) {
+  /** sauf : comptes à ne pas dessiner (« En ligne : » 1C : son groupe, déjà là en vrai dans le monde du groupe). */
+  maj(actif: boolean, dt: number, px: number, py: number, sauf: Set<number> | null = null) {
     EnLigne.avancer(dt);
-    const L = actif ? [...EnLigne.passants.values()].filter(p => p.profil)
+    const L = actif ? [...EnLigne.passants.values()].filter(p => p.profil && !sauf?.has(p.id))
       .sort((a, b) => Math.hypot(a.x - px, a.y - py) - Math.hypot(b.x - px, b.y - py)).slice(0, MAX) : [];
     const gardes = new Set(L.map(p => p.id));
     for (const [id, u] of this.vues) if (!gardes.has(id)) { this.oublier(u); this.vues.delete(id); }

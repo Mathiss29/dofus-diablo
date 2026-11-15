@@ -460,7 +460,7 @@ export class World {
     if (open && this.v06Ouvert) this.worldGrid?.ouvrirV06();   // 0.6 cachée : ses régions seulement en partie de test
     if (open) { this.buildPortes(); this.buildRecoltes(); this.buildPostes(); }
     if (open?.guerre && this.essaiOuvert && this.map instanceof WorldGrid && open.guerre.champs.every(c => this.map instanceof WorldGrid && this.map.mapByTag(c.tag))) this.guerre = new Guerre(this, open.guerre.champs);
-    if (open && this.map instanceof WorldGrid && opts.zone === 'astrub' && !opts.partieServeur) this.vivant = new MondeVivant(this);
+    if (open && this.map instanceof WorldGrid && opts.zone === 'astrub' && !opts.sansGroupes) this.vivant = new MondeVivant(this);   // aussi dans le monde du groupe sur le serveur (« En ligne : » 4D)
     if (open && opts.arrivee) this.arriver(opts.arrivee);
     if (open) this.sortieHavreSac(opts);
     // les PNJ d'abord : les groupes de monstres ne se posent pas sur eux
