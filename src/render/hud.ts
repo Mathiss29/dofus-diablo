@@ -1093,7 +1093,7 @@ export class Hud {
       let nRp = 0;
       if (wg?.world.reperes && this.rpPos?.wg !== wg) {
         const l: { x: number; y: number; g: number }[] = [], parCarte = new Map<string, number>();
-        for (const r of wg.world.reperes) {
+        for (const r of world.reperes) {
           if (!famille(r) || secret(r)) continue;
           const m = wg.mapByTag(r.t); if (!m || m.inside) continue;
           const c = wg.cellCenter(wg.cellOf(r.t, 280)), s2 = wg.toScreen(c.x, c.y), q = ISO.toWorld(s2.x, s2.y), i = parCarte.get(r.t) ?? 0;

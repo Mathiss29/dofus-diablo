@@ -1,4 +1,4 @@
-import { appliquerCarte, majCarteJoueur } from './carte';
+import { appliquerCarte, majCarteJoueur, reperesJeu, type Repere } from './carte';
 import { achatsDuJour, BENEDICTION, BENEDICTIONS, CONFORT, etalDuJour, MAGASIN, type Benediction, type CtxMagasin, type Offre } from './magasin';
 import { angleDiff, Rng } from './math';
 import type { AtelierDef, DonjonDef, Element, GameData, HitZone, MonsterSpell, SubAreaDef, ZoneDef } from './defs';
@@ -383,6 +383,18 @@ export class World {
   get essaiOuvert(): boolean { return V04_PUBLIC || !!this.opts.test; }
   /** Régions de la 0.6 (Abraknydes, Koalaks, Cania, Porcos, Bourgade) : publiques dès que V06_PUBLIC est vrai, sinon partie de test. */
   get v06Ouvert(): boolean { return V06_PUBLIC || !!this.opts.test; }
+
+  private reperesCache: { wg: WorldGrid; l: Repere[] } | null = null;
+  /** Repères montrés en jeu (carte, minicarte, lieux à découvrir) : officiels sans ceux qui ne mènent à rien, plus nos bateaux et routes. */
+  get reperes(): Repere[] {
+    const wg = this.worldGrid;
+    if (!wg) return [];
+    if (this.reperesCache?.wg !== wg) {
+      const ouverte = (t: string) => { const m = wg.mapByTag(t); return !(m?.essai && !this.essaiOuvert) && !(m?.v06 && !this.v06Ouvert); };
+      this.reperesCache = { wg, l: reperesJeu(wg.world.reperes ?? [], this.zone.open, ouverte, id => this.opts.quetes?.quetes[id]?.nom ?? 'une quête') };
+    }
+    return this.reperesCache.l;
+  }
 
   constructor(readonly opts: WorldOptions) {
     this.coffre = opts.coffre ?? coffreVide();
