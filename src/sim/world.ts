@@ -540,7 +540,8 @@ export class World {
   /** La zone du Bastion existe (absente des données de certains tests). */
   private get bastionOuvert() { return !!this.opts.data.zones.bastion?.open?.bastion; }
   /** Arrivée en sortant du Havre-Sac : au Zaap choisi (2C), sinon là où l'on était (2A). */
-  private sortieHavreSac(opts: WorldOptions) {
+  /** Arrivée par un Zaap, une position ou la sortie du Havre-Sac (aussi pour un joueur qui rejoint le monde de son groupe sur le serveur). */
+  sortieHavreSac(opts: Pick<WorldOptions, 'retour' | 'zaap' | 'position' | 'point'>) {
     const p = this.player, wg = this.worldGrid!, open = this.zone.open!;
     this.retour = opts.retour ?? null;
     const cp = opts.zaap ? open.checkpoints.find(c => c.name === opts.zaap) : null, m = cp && wg.mapByCoords(...cp.map);

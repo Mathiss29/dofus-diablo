@@ -20,8 +20,11 @@ const depart = Date.now();
 
 /** Salons de coop (maquette « Multi : » 3A) : 2 à 4 joueurs, le premier est l'hôte. Le serveur ne regarde pas la partie,
  *  il relaie : instantanés de l'hôte vers ses invités, entrées des invités vers l'hôte. */
-export const SALON = { max: 4, salons: 300, parties: 20, debit: 120, lettres: 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', taille: 5 };
+/** continents : mondes du continent entier en même temps (« En ligne : » 1A, environ 70 Mo chacun, sous les 1,5 Go de Node). */
+export const SALON = { max: 4, salons: 300, parties: 40, continents: 14, debit: 120, lettres: 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', taille: 5 };
 const salons = new Map();
+/** « En ligne : » 1A : monde ouvert de chaque groupe, « groupe:zone » → code de son salon (une partie par zone tenue par le serveur). */
+const mondes = new Map();
 function nouveauCode() {
   for (;;) {
     let c = '';
@@ -59,6 +62,7 @@ export function sauverParties() { for (const sa of parties()) sa.partie.sauverTo
 const parties = () => [...salons.values()].filter(sa => sa.partie);
 function fermerPartie(sa) {
   salons.delete(sa.code);
+  if (sa.cleMonde && mondes.get(sa.cleMonde) === sa.code) mondes.delete(sa.cleMonde);
   try { sa.partie.sauverTout(); } catch (e) { console.warn('partie : sauvegarde ratée', e.message); }
   for (const m of sa.partie.membres.values()) if (m.compte) enJeu.delete(`${m.compte.compte}:${m.compte.emplacement}`);
   for (const m of sa.membres.values()) { m.salon = null; envoyer(m, { k: 'fin', raison: 'erreur' }); }
@@ -75,20 +79,54 @@ function tourner() {
     }
   }, 1000 / 60);
 }
-/** monde : la partie est Incarnam en monde ouvert (étape 4, monde partagé), sinon l'arène d'un donjon (arene : son tag, la Crypte par défaut). */
-async function creerPartie(s, monde = false, arene = null) {
+/** monde : la partie est un monde ouvert (true = Incarnam, ou le nom de sa zone : « En ligne : » 1A), sinon l'arène d'un donjon
+ *  (arene : son tag, la Crypte par défaut). cleMonde : « groupe:zone », le monde de ce groupe (les autres membres le rejoignent). */
+async function creerPartie(s, monde = false, arene = null, cleMonde = null) {
   const S = await chargerSim();
   if (s.readyState !== 1) return;
+  if (cleMonde && mondes.has(cleMonde)) return entrerMonde(s, cleMonde);   // un autre membre l'a créé pendant qu'on chargeait
   if (!S) return envoyer(s, { k: 'refus', raison: 'indisponible' });
   if (arene && !monde && !arenesDisponibles(S).some(a => a.tag === arene)) return envoyer(s, { k: 'refus', raison: 'donjon' });
-  if (salons.size >= SALON.salons || parties().length >= SALON.parties) return envoyer(s, { k: 'refus', raison: 'plein' });
-  const sa = { code: nouveauCode(), membres: new Map([[1, s]]), suivant: 2 };
+  const lourd = typeof monde === 'string' && monde !== 'incarnam';
+  if (salons.size >= SALON.salons || parties().length >= SALON.parties || lourd && parties().filter(x => x.partie.zoneMonde && x.partie.zoneMonde !== 'incarnam').length >= SALON.continents)
+    return envoyer(s, { k: 'refus', raison: 'plein' });
+  const sa = { code: nouveauCode(), membres: new Map([[1, s]]), suivant: 2, cleMonde };
+  if (cleMonde) mondes.set(cleMonde, sa.code);
   sa.partie = new Partie(S, (num, d) => { const c = sa.membres.get(num); if (c) envoyer(c, `{"k":"recu","de":0,"d":${JSON.stringify(d)}}`); },
     undefined, (c, perso) => lesComptes?.sauverPartie(c.compte, c.emplacement, perso), { monde, arene, donjonFini: (nom, temps, L, idoles) => leClassement?.noterDonjon(nom, temps, L, idoles) });
   sa.partie.arrivee(1);
   salons.set(sa.code, sa); s.salon = sa; s.num = 1;
   tourner();
   return envoyer(s, { k: 'salon', code: sa.code, id: 1, hote: false, serveur: true });
+}
+/** Fait entrer un joueur dans un salon de partie existant (par son code). */
+function entrerSalon(s, sa) {
+  quitter(s);
+  s.salon = sa; s.num = sa.suivant++; sa.membres.set(s.num, s);
+  sa.partie.arrivee(s.num);
+  return envoyer(s, { k: 'salon', code: sa.code, id: s.num, hote: false, serveur: true });
+}
+function entrerMonde(s, cle) {
+  const sa = salons.get(mondes.get(cle));
+  if (!sa?.partie) { mondes.delete(cle); return false; }
+  if (sa.membres.size >= SALON.max) return envoyer(s, { k: 'refus', raison: 'complet' }), true;
+  entrerSalon(s, sa); return true;
+}
+/** « En ligne : » 1A + 5A : un membre d'un groupe entre dans une zone du monde ouvert (en arrivant dans la zone, par une porte, ou en
+ *  se groupant) : il rejoint le monde de son groupe pour cette zone, créé s'il n'existe pas. Le jeton dit qui il est ; seul, il joue
+ *  sur son PC (2A) : refus « groupe ». arrivee : la porte par laquelle il arrive, gardée pour son bonjour. */
+async function mondeGroupe(s, m) {
+  const c = lesComptes?.persoPartie(m.jeton, m.emplacement);
+  if (!c) return envoyer(s, { k: 'refus', raison: 'perso' });
+  const g = presence?.groupeDe(c.compte);
+  if (g == null) return envoyer(s, { k: 'refus', raison: 'groupe' });
+  const S = await chargerSim();
+  const zone = typeof m.zone === 'string' ? m.zone : '';
+  if (!S || !S.mondes[zone]) return envoyer(s, { k: 'refus', raison: 'indisponible' });
+  s.arrivee = Array.isArray(m.arrivee) ? m.arrivee.slice(0, 2) : null;
+  s.transit = { zaap: m.zaap, position: m.position, point: m.point, retour: m.retour };
+  const cle = `${g}:${zone}`;
+  if (!entrerMonde(s, cle)) { quitter(s); await creerPartie(s, zone, null, cle); }
 }
 /** Un joueur arrive dans une partie du serveur avec son jeton : on lit SON perso sur son compte (4A), le jeu n'envoie que
  *  l'emplacement. Jeton faux, emplacement vide ou perso déjà en jeu : refus, le jeu le dit au joueur. */
@@ -101,7 +139,8 @@ function bonjourCompte(s, sa, d) {
   const raison = !c ? 'perso' : !c.testeur ? 'testeur' : c.perso.hardcore ? 'hardcore' : enJeu.has(cle) || sa.partie.membres.get(s.num)?.compte ? 'deja' : null;
   if (raison) { envoyer(s, { k: 'refus', raison }); quitter(s); return null; }
   enJeu.add(cle);
-  return { ...reste, compte: c };
+  const arrivee = s.arrivee, transit = s.transit ?? {}; s.arrivee = null; s.transit = null;
+  return { ...reste, compte: c, ...transit, ...(arrivee ? { arrivee } : {}) };
 }
 /** Présence en ligne et Bastion partagé (presence.mjs), créée avec le serveur. */
 let presence = null;
@@ -118,13 +157,14 @@ function recu(s, m, brut) {
     salons.set(sa.code, sa); s.salon = sa; s.num = 1;
     return envoyer(s, { k: 'salon', code: sa.code, id: 1, hote: true });
   }
+  if (m.k === 'mondeGroupe') return void mondeGroupe(s, m);
   if (m.k === 'rejoindre') {
     const sa = salons.get(String(m.code ?? '').toUpperCase().trim());
     if (!sa) return envoyer(s, { k: 'refus', raison: 'code' });
     if (sa.membres.size >= SALON.max) return envoyer(s, { k: 'refus', raison: 'complet' });
+    if (sa.partie) return entrerSalon(s, sa);
     quitter(s);
     s.salon = sa; s.num = sa.suivant++; sa.membres.set(s.num, s);
-    if (sa.partie) { sa.partie.arrivee(s.num); return envoyer(s, { k: 'salon', code: sa.code, id: s.num, hote: false, serveur: true }); }
     envoyer(s, { k: 'salon', code: sa.code, id: s.num, hote: false });
     return envoyer(sa.membres.get(1), { k: 'arrivee', id: s.num });
   }
@@ -171,6 +211,8 @@ export function creerServeur({ comptes = creerComptes({ dossier: process.env.DON
   });
   const ws = new WebSocketServer({
     server: http, path: '/ws', maxPayload: 256 * 1024,
+    // « En ligne : » 8A : messages compressés (les instantanés passent d'environ 3 fois moins d'octets) ; les petits partent tels quels
+    perMessageDeflate: { threshold: 1024, zlibDeflateOptions: { level: 1 }, serverNoContextTakeover: false, clientNoContextTakeover: true },
     verifyClient: ({ origin }) => !origin || ORIGINES.has(origin),
   });
   ws.on('connection', socket => {

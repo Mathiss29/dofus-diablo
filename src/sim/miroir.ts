@@ -276,9 +276,17 @@ export function appliquerInstantane(w: World, s: Instantane, lisser = false): Si
 
 /** Entrées d'un invité gardées par l'hôte : seulement ce qui sert au combat (pas de quêtes, fenêtres, Zaaps ni outils de test). */
 /** Gestes d'un seul pas (monde partagé) : gardés entre deux envois ou deux pas, puis joués une seule fois. */
-export type UneFois = Pick<PlayerInput, 'talk' | 'reponse' | 'versPortail' | 'carte'>;
+export type UneFois = Pick<PlayerInput, 'talk' | 'reponse' | 'versPortail' | 'carte' | 'recolte' | 'atelier' | 'versZaap' | 'zaap' | 'havreSac' | 'coffre' | 'boisson'>;
 export function garderUneFois(u: UneFois, i: Partial<PlayerInput>) {
   if (i.talk) u.talk = i.talk;
+  // « En ligne : » 4A + 4B : récolter, aller à un atelier ou à un Zaap, voyager, Havre-Sac, coffre de l'Enutrof, boisson
+  if (i.recolte != null) u.recolte = i.recolte;
+  if (i.atelier != null) u.atelier = i.atelier;
+  if (i.versZaap) u.versZaap = i.versZaap;
+  if (i.zaap != null) u.zaap = i.zaap;
+  if (i.havreSac) u.havreSac = true;
+  if (i.coffre) u.coffre = true;
+  if (i.boisson) u.boisson = true;
   if (i.reponse != null) u.reponse = i.reponse;
   if (i.versPortail) u.versPortail = i.versPortail;
   if (i.carte) u.carte = { ...u.carte, ...i.carte };
@@ -293,6 +301,9 @@ export function entreeInvite(i: Partial<PlayerInput> | null | undefined): Player
     pressed: typeof i?.pressed === 'string' ? i.pressed : null, holdAttack: !!i?.holdAttack, potion: !!i?.potion,
     dest: v(i?.dest), pickup: n(i?.pickup), target: n(i?.target), castOn: n(i?.castOn), approach: !!i?.approach, meute: n(i?.meute),
     versPortail: typeof i?.versPortail === 'string' ? i.versPortail.slice(0, 80) : null,
+    // « En ligne : » 4A + 4B : récolte (maintenue ou non), atelier, Zaap, Havre-Sac, coffre de l'Enutrof, boisson
+    recolte: n(i?.recolte), recolteTenue: !!i?.recolteTenue, atelier: n(i?.atelier), versZaap: typeof i?.versZaap === 'string' ? i.versZaap.slice(0, 80) : null,
+    zaap: Number.isInteger(i?.zaap) && i!.zaap! >= -1 && i!.zaap! < 500 ? i!.zaap : null, havreSac: !!i?.havreSac, coffre: !!i?.coffre, boisson: !!i?.boisson,
     // monde partagé : parler à un PNJ, lui répondre
     talk: typeof i?.talk === 'string' ? i.talk.slice(0, 60) : null, reponse: Number.isInteger(i?.reponse) && i!.reponse! >= -1 && i!.reponse! < 20 ? i!.reponse : null,
     // carte du monde : drapeaux du groupe (14A), signal Alt + clic (14B)

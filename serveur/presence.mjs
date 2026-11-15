@@ -297,7 +297,9 @@ export function creerPresence({ comptes, envoyer }) {
   }
   const minuterie = setInterval(tour, 1000 / PRESENCE.frequence);
   minuterie.unref();
-  return { recu, quitter, tour, annoncer, groupes: () => groupes.size, fermer: () => clearInterval(minuterie), nombre: () => joueurs.size,
+  return { recu, quitter, tour, annoncer, groupes: () => groupes.size,
+    /** « En ligne : » 1A : groupe d'un compte (son numéro), null s'il est seul ; membres : les comptes du groupe. */
+    groupeDe: compte => groupeDe.get(compte) ?? null, membresGroupe: id => groupes.get(id)?.membres ?? [], fermer: () => clearInterval(minuterie), nombre: () => joueurs.size,
     /** Ladder 7B : persos en ligne (« compte-emplacement »), sauf ceux qui apparaissent hors ligne. */
     enLigne: () => [...joueurs.values()].filter(j => !j.horsLigne).map(j => `${j.compte}-${j.emplacement}`) };
 }
