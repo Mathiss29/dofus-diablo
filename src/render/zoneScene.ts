@@ -83,6 +83,7 @@ import { VivantView } from './vivantView';
 import { CalquesTest } from './calquesTest';
 import { REGLAGES_TEST, type CommandeTest } from '../sim/outilsTest';
 import { Coop, essaiEnLigne, MONDES_SERVEUR } from './coop';
+import { brancherOrdres } from './ordres';
 import { appliquerInstantane, lisserMiroir } from '../sim/miroir';
 import { EnLigne, type MessageChat } from './presence';
 import { Compte as CompteEnLigne } from './compte';
@@ -507,6 +508,8 @@ export class ZoneScene extends Phaser.Scene {
     Coop.attacher({ world: wc, annonce: t => this.hud.toast(t), nom: this.perso?.nom ?? '', sauver: () => this.sauver(),
       allerA: (zone, position, arrivee, sacHote, transit) => { if (this.world === wc) this.scene.restart(zone ? { slot: this.slot, zone, position, arrivee, sacHote, ...transit } : { slot: this.slot }); } });
     this.events.once('shutdown', () => Coop.detacher(wc));
+    // « En ligne : » 4B : chez l'invité, les gestes de fenêtre partent aussi vers celui qui fait la partie
+    if (this.miroir) { const off = brancherOrdres(wc, o => Coop.ordre(o)); this.events.once('shutdown', off); }
     // Présence en ligne (Bastion partagé) : seulement avec un perso du compte, hors partie de test et hors vitrine
     if (this.perso && persosEnLigne() && !this.test && !this.vitrine && !this.essai && this.slot >= 0) {
       const p = this.world.player;

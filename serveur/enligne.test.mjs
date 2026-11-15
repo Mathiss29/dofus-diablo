@@ -110,3 +110,26 @@ test('continent sur le serveur : on garde sa place dans Astrub, on arrive par un
   assert.ok(!recus.get(1).some(d => d.k === 'sortie'));
   p.depart(1); p.depart(2);
 });
+
+test('fenêtres de l’invité : ses gestes (ordres) sont rejoués pour lui sur le serveur, les autres refusés', async () => {
+  const S = await chargerSim();
+  const p = new Partie(S, () => {}, 9, null, { monde: 'astrub' });
+  p.arrivee(1); p.arrivee(2);
+  p.recu(1, { k: 'bonjour', classe: 'iop', etat: { level: 20 } });
+  p.recu(2, { k: 'bonjour', classe: 'cra', etat: { level: 20 } });
+  const [a, b] = p.w.players;
+  const k = 'vitalite';
+  const pts = b.points, va = a.base[k] ?? 0, vb = b.base[k] ?? 0;
+  assert.ok(pts > 0, 'des points à placer');
+  p.recu(2, { k: 'ordre', c: 'p', f: 'spendPoint', a: [k, 1] });
+  assert.equal(b.base[k], vb + 1, 'le point est placé chez le joueur 2');
+  assert.ok(b.points < pts);
+  assert.equal(a.base[k] ?? 0, va, 'pas chez le joueur 1');
+  // geste hors liste (achats d'Ogrines, outils) : ignoré
+  const kamas = b.kamas;
+  p.recu(2, { k: 'ordre', c: 'w', f: 'recevoirAchats', a: [['x']] });
+  p.recu(2, { k: 'ordre', c: 'w', f: 'donnerObjet', a: ['8243', 99] });
+  assert.equal(b.kamas, kamas);
+  assert.ok(!b.bag.some(it => it.id === '8243'));
+  p.depart(1); p.depart(2);
+});

@@ -8,6 +8,7 @@ import { exporterJoueur, restaurerJoueur, type EtatJoueur } from '../sim/sauvega
 import { Compte } from './compte';
 import { sacVuValide, type SacVu } from '../sim/meubles';
 import type { PointDeRetour, RetourHavreSac } from '../sim/events';
+import { jouerOrdre, ordreValide, type Ordre } from '../sim/ordres';
 
 /** Où l'on va en quittant une partie à plusieurs par une porte, un Zaap ou le Havre-Sac (« En ligne : » 5A). */
 export interface Vers { zone: string; arrivee?: [string, number]; position?: { x: number; y: number }; point?: PointDeRetour; zaap?: string; retour?: RetourHavreSac }
@@ -260,6 +261,10 @@ class Salon {
         if (e.potion) i.potion = true;
         garderUneFois(i.une, e);
       } else if (d.k === 'pret') { i.pret = true; i.em?.toutRenvoyer(); }
+      else if (d.k === 'ordre') {   // « En ligne : » 4B : un geste de fenêtre de l'invité, rejoué pour lui
+        const o = ordreValide(d), w = this.scene?.world, q = w?.players.find(p => p.id === i.joueur);
+        if (o && w && q) jouerOrdre(w, q, o);
+      }
       return;
     }
     if (d.k === 'sortie') {
@@ -378,6 +383,8 @@ class Salon {
       castOn: i.castOn ?? null, approach: !!i.approach, meute: i.meute ?? null, recolteTenue: !!i.recolteTenue, pressed: a.pressed, potion: a.potion, ...a.une } });
     a.pressed = null; a.potion = false; a.une = {};
   }
+  /** « En ligne : » 4B : geste de fenêtre de l'invité, envoyé à celui qui fait la partie. */
+  ordre(o: Ordre) { if (this.miroir) this.envoyer({ k: 'ordre', ...o }); }
   /** Instantanés arrivés depuis la dernière image, dans l'ordre. */
   prendre(): Instantane[] { const r = this.recus; this.recus = []; return r; }
 }

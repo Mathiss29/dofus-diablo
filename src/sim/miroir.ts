@@ -53,7 +53,9 @@ export const COOP = {
 /** Champs du sac et de la progression : refusés pour les autres, envoyés à leur propriétaire seul (instantané.sac). */
 const SAC = ['bag', 'resources', 'kamas', 'metiers', 'apparats', 'dofus', 'trophees', 'zaaps', 'codex', 'codexOuvert', 'ames', 'cleDonjon', 'renfortDonjon', 'guerre', 'vivant', 'recetteSuivie',
   'commandeFM', 'lootFilter', 'autoDefaire', 'almanaxJour', 'magasin', 'sacEnPlus', 'benediction', 'repas', 'elixir', 'parchemins', 'ceinture', 'zonesVues', 'explore', 'lieuxVus', 'tombe',
-  'coffreVitrine', 'coffreJournal', 'coffreRecords', 'recoltees'] as const;
+  'coffreVitrine', 'coffreJournal', 'coffreRecords', 'recoltees',
+  // « En ligne : » 4B : ce que changent ses fenêtres (préréglages, sorts appris, idoles, renommée, sanctuaires, chasse)
+  'prereglages', 'learned', 'idoles', 'renommee', 'sanctuaires', 'chasse'] as const;
 const REFUS: Record<Sorte | 'a', Set<string>> = {
   j: new Set(['cls', 'items', 'bag', 'resources', 'codex', 'learned', 'zonesVues', 'metiers', 'prereglages', 'ames', 'areneAmes', 'apparats', 'dofus', 'trophees',
     'commandeFM', 'quetes', 'monde', 'evenements', 'cleDonjon', 'renfortDonjon', 'guerre', 'vivant', 'recetteSuivie', 'zaaps', '_pouvoirs', 'almanaxJour', 'magasin', 'sacEnPlus', 'benediction', 'repas', 'elixir', 'parchemins', 'ceinture', 'boissonCd', 'codexOuvert', 'lootFilter', 'autoDefaire', 'kamas', 'v03', 'v04', 'v06', 'chasse', 'bossSansLeg', 'idoles', 'renommee', 'sanctuaires', 'fxIdoles', 'bouclierVu', 'idoleT', 'repathT', 'bufferT', 'buffer', 'explore', '_explore', 'lieuxVus', 'tombe', 'carteIci',
@@ -266,7 +268,7 @@ export function appliquerInstantane(w: World, s: Instantane, lisser = false): Si
   }
   for (const [k, v] of Object.entries(s.w ?? {})) poser(w, k, depuisReseau(v, w));
   poser(w, 'time', s.t);
-  for (const [k, v] of Object.entries(s.sac ?? {})) if ((SAC as readonly string[]).includes(k)) poser(moi, k, depuisReseau(v, w));
+  for (const [k, v] of Object.entries(s.sac ?? {})) if ((SAC as readonly string[]).includes(k)) poser(moi, k, depuisReseau(v, w, (moi as unknown as Record<string, unknown>)[k]));
   if (s.q && typeof s.q === 'object' && w.quetes) w.quetes.recopier(s.q as unknown as EtatQuetes & { dialogue?: Dialogue | null });
   const evs = (s.ev ?? []).map(e => depuisReseau(e, w) as SimEvent);
   if (moi.hp < hpAvant && !moi.dead) evs.push({ k: 'playerHurt' });

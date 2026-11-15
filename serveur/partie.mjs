@@ -87,6 +87,10 @@ export class Partie {
       if (e.potion) m.potion = true;
       this.S.garderUneFois(m.une, e);
     } else if (d.k === 'pret') { m.pret = true; m.em?.toutRenvoyer(); }
+    else if (d.k === 'ordre') {   // « En ligne : » 4B : un geste de fenêtre (équiper, forgemager, fabriquer…), rejoué pour ce joueur
+      const o = this.S.ordreValide(d), q = o && this.w?.players.find(p => p.id === m.joueur);
+      if (q) this.S.jouerOrdre(this.w, q, o);
+    }
   }
 
   /** Pose le perso d'un joueur dans l'arène (la partie démarre avec le premier) et l'y appelle. */

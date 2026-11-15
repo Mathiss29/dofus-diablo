@@ -6,6 +6,7 @@ export { GAME_DATA, ITEMS } from './data';
 export { NO_INPUT, type PlayerInput } from './input';
 export { COOP, Emetteur, entreeInvite, classeDe, garderUneFois } from './miroir';
 export { exporterJoueur, restaurerJoueur } from './sauvegarde';
+export { ordreValide, jouerOrdre } from './ordres';
 export { BOUTIQUE_OGRINES, apparatDuMois, prixOgrines, rangAbo } from './boutiqueOgrines';
 import QUETES_JSON from '../data/quetes.json';
 import CAMPAGNE_JSON from '../data/campagne.json';
