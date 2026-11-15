@@ -16,7 +16,7 @@ import themes from '../data/havresac_themes.json';
 import teintures from '../data/teintures.json';
 import type { Teintures, ThemesHavreSac } from './havresac';
 import type { RecoltesData } from './recolte';
-import type { FamilierDef, ItemsData, Stat } from './items';
+import { FAMILIER_MAX, familierValeur, type FamilierDef, type ItemsData, type Stat } from './items';
 import type { QuetesData } from './quests';
 import type { GameData, WeaponProfile } from './defs';
 import { degatsMonstre } from './danger';
@@ -41,7 +41,7 @@ export const FAMILIERS = familiers as unknown as { xp: number[]; familiers: Reco
 for (const [id, f] of Object.entries(FAMILIERS.familiers)) {
   if (f.apparat || ITEMS.equipment[id]) continue;
   ITEMS.equipment[id] = { name: f.nom, slot: 'familier', level: f.niveau, icon: f.icon, familier: f,
-    stats: Object.fromEntries((f.stats ?? []).map(([k, b, p]) => [k, [Math.max(1, Math.floor(b)), Math.floor(b + 100 * p)]])) as Partial<Record<Stat, [number, number]>> };
+    stats: Object.fromEntries((f.stats ?? []).map(l => [l[0], [Math.max(1, familierValeur(l, 1)), familierValeur(l, FAMILIER_MAX)]])) as Partial<Record<Stat, [number, number]>> };
 }
 /** Auto-attaque par type d'arme (src/data/armes.json). */
 export const WEAPONS = Object.fromEntries(Object.entries(armes).filter(([k]) => !k.startsWith('_'))) as unknown as Record<string, WeaponProfile>;
