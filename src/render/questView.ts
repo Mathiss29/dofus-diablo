@@ -48,8 +48,9 @@ export class QuestView {
       if (!scene.textures.exists(key)) continue;
       const L = PNJ_LOOKS[sp] ?? { scale: 0.82, anim: 'AnimStatique_1' };
       const s = ISO.toScreen(p.x, p.y);
-      const img = scene.add.sprite(s.x, s.y, key, `${L.anim}_0`).setScale(L.scale);
-      const tex = scene.textures.get(key), nb = (a: string) => tex.getFrameNames().filter(f => f.startsWith(a + '_')).length;
+      const tex = scene.textures.get(key), sc = L.scale / EntityView.hd(tex);   // planche en 2x : réduite d'autant (aussi nette que le perso)
+      const img = scene.add.sprite(s.x, s.y, key, `${L.anim}_0`).setScale(sc);
+      const nb = (a: string) => tex.getFrameNames().filter(f => f.startsWith(a + '_')).length;
       if (L.boucle && !scene.anims.exists(`${key}_idle`)) {
         scene.anims.create({ key: `${key}_idle`, frames: Array.from({ length: L.boucle }, (_, i) => ({ key, frame: `${L.anim}_${i}` })), frameRate: 24, repeat: -1 });
       }
@@ -64,11 +65,11 @@ export class QuestView {
       if (meta?.cell && meta.origin) img.setOrigin(meta.origin[0] / meta.cell[0], meta.origin[1] / meta.cell[1]);
       // hauteur du corps au-dessus des pieds (pour le nom et l'icône)
       const top = (img.frame as unknown as { data: { spriteSourceSize?: { y: number } } }).data.spriteSourceSize?.y ?? 0;
-      const h = ((meta?.origin?.[1] ?? img.frame.realHeight) - top) * L.scale;
+      const h = ((meta?.origin?.[1] ?? img.frame.realHeight) - top) * sc;
       const name = scene.add.text(s.x, s.y, p.def.nom, { ...STYLE, fontSize: '13px', fontStyle: 'bold', color: '#f1ecd8', stroke: '#14130f', strokeThickness: 3 }).setOrigin(0.5, 1);
       const icon = scene.add.image(s.x, s.y, 'qi_quest').setVisible(false);
       // même ombre au sol que le perso et les monstres (EntityView), largeur prise sur la pose de repos (fixe pendant les animations)
-      const w = Math.min(70, Math.max(34, img.frame.realWidth * L.scale * 0.7));
+      const w = Math.min(70, Math.max(34, img.frame.realWidth * sc * 0.7));
       const shadow = scene.add.image(0, 0, EntityView.ombre(scene)).setDisplaySize(w, w * 0.45).setAlpha(0.28);
       this.pnjs.push({ id: p.id, img, name, icon, shadow, x: p.x, y: p.y, tag: p.tag, h: Math.min(h, 230), L, key,
         prochainFun: world.time + Phaser.Math.FloatBetween(1, FUN_PAUSE[1]), iconY: 0 });

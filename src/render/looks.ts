@@ -741,7 +741,8 @@ for (const [k, d] of Object.entries(MONS)) {
   if (base && !LOOKS[k]) LOOKS[k] = { ...base, scale: base.scale * (d.archiEchelle ?? 1) * 1.15, tint: GOLD };
 }
 
-/** PNJ dans le monde (planches tools/extraction/monster_planche.py, PNJ=1, SCALE = 1,32 x échelle officielle du look).
+/** PNJ dans le monde (planches tools/extraction/monster_planche.py, PNJ=1 HD=2, SCALE = 1,32 x échelle officielle du look ;
+ *  HD=2 : dessinées en 2x, réduites par QuestView via meta.hd, aussi nettes que le perso).
  *  Dofus montre un PNJ immobile (AnimStatique, une seule image) qui joue de temps en temps une de ses animations « fun »
  *  (npcsdataroot.animFunList : nom et poids du tirage). `scale` = échelle d'affichage (0,82 comme le perso : même netteté).
  *  Ganymède n'a que l'orientation 3, animée en boucle (60 images). */

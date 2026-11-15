@@ -731,3 +731,16 @@ Ville vivante (maquette Ville 5F, 8 nov. 2026) :
   Clos des Blops au bord des Pics de Cania [-14,-43] (entrée officielle [-7,-43], Champs de Cania pas encore exportés) ;
   Dragon Cochon en [5,32] (entrée officielle par les Souterrains des Porcos, pas encore exportés).
 
+
+## PNJ et habitants en 2x (15 nov. 2026)
+
+Les PNJ et les habitants paraissaient pixelisés à côté du perso : leurs planches étaient dessinées 2 fois (PNJ) à 2,8 fois
+(habitants) moins fines que celle du joueur (`PersoVivant.RESOLUTION = 2`), puis agrandies par le zoom et les vrais pixels de l'écran.
+Toutes sont refaites avec `HD=2` : planche dessinée 2 fois plus grand, `meta.hd = 2` dans le JSON, et le jeu la réduit d'autant
+(`EntityView.hd`, lu par `QuestView`, `EntityView` et `VivantView`). Même taille à l'écran, deux fois plus de détails.
+- PNJ : `PNJ=1 HD=2 SCALE=<1,32 x échelle du look> monster_planche.py <bone> pnj_<id> <Bones> public/assets/sprites`
+  (mêmes `ANIMS`, `SKINS`, `COULEURS` qu'avant). Exceptions d'échelle : Ganymède 0,83 ; Représentant des Temples, Nepra, Jim,
+  Cindy et le Gardien des Geôles 1,32 (leur `scale` d'affichage est déjà réduit dans `PNJ_LOOKS`) ; le Gardien des Geôles n'a plus
+  que `AnimStatique_1` (ses transitions vers la course faisaient une planche trop large en 2x).
+- Habitants : `HD=2 BREEDS=breeds.json habitant_planche.py <persos> '<look>' <sortie absolue>` (SCALE 0,5 ; Bailli 0,7).
+- Tout nouveau PNJ ou habitant se fait avec `HD=2`.
