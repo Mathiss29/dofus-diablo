@@ -120,7 +120,7 @@ PNJ = {
   # Noms et apparences officiels, dialogues inédits. apres = ils n'emménagent qu'après la première visite de cette zone.
   # Cases : dans le Marché couvert, Kerubim à sa porte (tools/extraction/marche.py, recopiées dans zones.json > bastion > pnj ;
   # les marchands sont sur la carte « marche », cases de la salle).
-  'kerubim': {'nom': 'Kerubim Crépin', 'dofusId': 3043, 'zone': 'bastion', 'carte': 'bastion', 'case': BASTION['kerubim'], 'apres': 'astrub', 'titre': 'Antiquaire',
+  'kerubim': {'nom': 'Kerubim Crépin', 'dofusId': 3043, 'zone': 'bastion', 'carte': 'bastion', 'case': BASTION['kerubim'], 'titre': 'Antiquaire',
     'phrase': "Entre, entre ! Chez Kerubim, rien n'est inutile : il y a juste des trésors qui ne savent pas encore qu'ils en sont.",
     'services': [{'texte': 'Défaire des objets contre des runes et des kamas.', 'service': 'recycler'}],
     'discussion': [{'reponse': 'Tu rachètes vraiment tout ?', 'texte': "Tout. Une fois, j'ai racheté une chaussette à un Iop… relique sacrée."},

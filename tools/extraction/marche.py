@@ -73,7 +73,7 @@ ETALS = [('etal_consommables', (0, -330), False, 230, ('bouillotte', (0, 80))),
 OBJETS = []
 # dehors : la porte de l'Hôtel de vente des cosmétiques d'Astrub (as_boutique en (-1000, 200) dans bastion.py), Kerubim à côté
 PORTE_DEHORS = (-935, -35)
-KERUBIM = (-830, 30)
+KERUBIM = (-701, 94)                    # devant son échoppe, sur la place (avant : (-830, 30), caché derrière la façade, retour joueur 2026-11-15)
 ASSISTANTE = (-175, 63)                  # l'Assistante d'Otomaï, un peu à droite de son étal (les PNJ restent à 200 px l'un de l'autre)
 LUMIERES = {305396, 404317, 57871, 57971, 806080, 305477, 60327, 36648, 39767, 42481, 44653, 805552, 402668, 806081, 62942, 63044}
 
