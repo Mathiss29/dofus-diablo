@@ -7,16 +7,25 @@
 // - 6A : liens d'objets (Ctrl+clic sur un objet pendant qu'on écrit), fiche au survol ;
 // - 7A-D : heure, lignes répétées « ×3 », nom à la couleur de la classe, son discret et onglet qui clignote pour un privé ;
 // - 8A+8B : flèche du haut = messages déjà envoyés, Tab complète commandes et noms ; 9A+9B : réglages dans Options › Tchat.
-// Commandes : /w (ou /p) nom, /r, /g, /b, /t, /inviter nom, /ami nom, /ignorer nom, /aide.
+// Canaux (maquette du 2026-11-15, « Tchat : 1B 2A 3A+3B+3C 4A+4B+4D 5A 6A+6B 7A 8A 9A+9C ») :
+// - 1B 2A : onglets Général (joueurs seuls, serveur en gris : 5A), Groupe, Combat (journal, résumés, récap de mort : 3A-3C),
+//   Événements (boss du monde, invasions, cawottes, annonces : 4A 4D, « Y aller » : 4B), Privé ;
+// - 6A : pastille sur l'onglet ; 6B : au repos, les événements flottent aussi sur Général ; 7A : en solo, Combat ouvert d'office ;
+// - 8A : les onglets jamais réglés passent aux nouveaux, les autres gardent leurs réglages (chatOnglets.migrerOnglets).
+// Commandes : /w (ou /p) nom, /r, /g, /b, /t, /inviter nom, /ami nom, /ignorer nom, /annonce texte (admins), /aide.
 import { EnLigne, type Canal, type MessageChat } from './presence';
 import { inviterJoueur, menuJoueur } from './social';
 import { sauverReglages, type Reglages } from './ambiance';
-import { COULEUR_CLASSE, FILTRES, LIEN, MAX_ONGLETS, ONGLETS_DEFAUT, completer, couleurRarete, deplier, ficheObjet, filtreDe, lienObjet, lireLien, nomLien, ongletsVisibles, regrouper, type Filtre } from './chatOutils';
+import { COULEUR_CLASSE, COULEUR_INFO, FILTRES, LIEN, MAX_ONGLETS, ONGLETS_DEFAUT, VERSION_ONGLETS, completer, migrerOnglets, couleurRarete, deplier, ficheObjet, filtreDe, lienObjet, lireLien, nomLien, ongletsVisibles, regrouper, type Filtre } from './chatOutils';
 import { MANIFESTE, Son } from './son';
 import type { Item } from '../sim/items';
 
 /** Couleur de chaque canal. */
 export const COULEURS: Record<Canal, string> = { tout: '#ece6d4', groupe: '#6fc6ff', bastion: '#ffcf6b', prive: '#d0a2ff', infos: '#9be070' };
+/** Couleur d'une ligne : celle du canal, ou pour une ligne du jeu celle de sa sorte (serveur en gris). */
+const couleurDe = (m: MessageChat) => (m.canal === 'infos' ? COULEUR_INFO[m.sorte ?? 'serveur'] : COULEURS[m.canal]);
+/** Couleur d'un filtre (onglet d'un seul genre). */
+const COULEUR_FILTRE: Record<Filtre, string> = { ...COULEURS, serveur: COULEUR_INFO.serveur, infos: COULEUR_INFO.jeu, butin: COULEUR_INFO.jeu, evenements: COULEUR_INFO.evenement };
 const NOM_CANAL: Record<Canal, string> = { tout: 'Tout', groupe: 'Groupe', bastion: 'Bastion', prive: 'Privé', infos: '' };
 type Parle = Exclude<Canal, 'infos'>;
 /** 4A : au repos, au plus ces lignes-là flottent. */
@@ -32,6 +41,10 @@ const CSS = `
 .chat-df .ch-msgs b[data-nom]{cursor:pointer}
 .chat-df .ch-h{color:#8d8775;font-size:.85em;margin-right:4px}
 .chat-df .ch-x{color:#8d8775;font-size:.85em;margin-left:4px}
+.chat-df .ch-go{color:#ffcf6b;text-decoration:underline;cursor:pointer;margin-left:6px}
+.chat-df .ch-go:hover{color:#fff}
+.chat-df .ch-msgs>div.ev{background:#3a2a0e66;border-left:2px solid #ff9a3c;padding-left:4px;border-radius:2px}
+.chat-df.ouvert .ch-msgs>div.hors,.chat-df:hover .ch-msgs>div.hors{display:none}
 .chat-df .ch-lien{background:#0006;border-radius:3px;padding:0 3px;cursor:help;text-decoration:underline dotted}
 .chat-df .ch-bas{display:none;padding:0 6px 6px;border-radius:0 0 5px 5px}
 .chat-df .ch-rond{display:flex;align-items:center;gap:6px;margin:4px 0 0 2px;font-size:11px;color:#a9a493;cursor:pointer;width:max-content}
@@ -66,6 +79,12 @@ const CSS = `
 .ch-menu .bt{display:flex;gap:10px;margin-top:5px;color:#a9a493}
 .ch-menu .bt span{cursor:pointer}.ch-menu .bt span:hover{color:#fff}
 .ch-menu input[type=text]{width:100%;box-sizing:border-box;background:#0008;border:1px solid #5b5844;border-radius:3px;color:#f1ecd8;font:inherit;padding:2px 5px;margin-bottom:3px}
+.ch-recap{position:fixed;z-index:41;background:#160d0cf5;border:1px solid #8a3a2e;border-radius:6px;padding:9px 12px;font:12px/1.5 Lexend,sans-serif;color:#ece6d4;box-shadow:0 6px 22px #000c;width:290px}
+.ch-recap .t{font:15px Rowdies,sans-serif;color:#ff7a5c;margin-bottom:4px}
+.ch-recap .l{display:flex;justify-content:space-between;gap:10px}
+.ch-recap .tot{border-top:1px solid #5a2a22;margin-top:4px;padding-top:4px;color:#ffcf6b}
+.ch-recap .c{color:#a9a493;margin-top:5px}
+.ch-recap .x{position:absolute;top:4px;right:8px;cursor:pointer;color:#a9a493}
 .ch-fiche{position:fixed;z-index:41;background:#1b1914f5;border:1px solid #6b6650;border-radius:5px;padding:7px 9px;font:12px/1.45 Lexend,sans-serif;color:#ece6d4;box-shadow:0 6px 18px #000a;max-width:260px;pointer-events:none}
 `;
 
@@ -74,6 +93,8 @@ export interface ContexteChat {
   /** Le perso est en ligne (sinon : journal seul, 1B). */
   enLigne: boolean;
   auBastion: () => boolean;
+  /** Canaux 4B : « Y aller » sur un événement (drapeau suivi par la flèche). */
+  allerVers?: (x: number, y: number, nom: string) => void;
 }
 
 export class ChatVue {
@@ -86,6 +107,10 @@ export class ChatVue {
   private menu: HTMLDivElement | null = null;
   private fiche: HTMLDivElement;
   private onglet = 0;
+  /** 7A : en solo, l'onglet Combat s'ouvre d'office (une fois). */
+  private premier = true;
+  private lignes: MessageChat[] = [];
+  private recapEl: HTMLDivElement | null = null;
   private neufs = new Set<number>();
   /** 3A : canal où l'on parle ; 3B : le canal par défaut d'où il vient (s'il change, le canal suit). */
   private canal: Parle = 'tout';
@@ -122,6 +147,9 @@ export class ChatVue {
     this.rond.addEventListener('click', () => this.ouvrir());
     this.canalBt.addEventListener('click', e => { e.stopPropagation(); this.menuCanal(); });
     this.msgs.addEventListener('click', e => {
+      const go = (e.target as HTMLElement).closest<HTMLElement>('[data-go]'), m = go && this.lignes[+go.dataset.go!];
+      if (m?.aller) { this.ctx.allerVers?.(m.aller.x, m.aller.y, m.aller.nom); return; }
+      if (m?.recap) { this.montrerRecap(m.recap, e.clientX, e.clientY); return; }
       const n = (e.target as HTMLElement).closest<HTMLElement>('[data-nom]')?.dataset.nom;
       if (n && this.ctx.enLigne) this.ouvrir(`/w ${n} `);
     });
@@ -205,15 +233,20 @@ export class ChatVue {
     this.msgs.style.maxHeight = `${h}px`;
     this.root.style.fontSize = `${Math.round(13 * (R.chatTexte || 1) * 10) / 10}px`;
     this.root.style.setProperty('--fond', `rgba(15,14,11,${Math.min(1, Math.max(0, R.chatFond ?? 0.82))})`);
-    if (!R.chatOnglets?.length) R.chatOnglets = ONGLETS_DEFAUT.map(o => ({ ...o, f: [...o.f] }));
+    if (R.chatOngletsV !== VERSION_ONGLETS || !R.chatOnglets?.length) { R.chatOnglets = migrerOnglets(R.chatOnglets); R.chatOngletsV = VERSION_ONGLETS; sauverReglages(R); }
     if (this.onglet >= R.chatOnglets.length) this.onglet = 0;
+    if (this.premier) {   // 7A : en solo, Combat (le premier onglet qui montre le journal) s'ouvre d'office
+      this.premier = false;
+      const c = R.chatOnglets.findIndex(o => o.f.includes('infos'));
+      if (!this.ctx.enLigne && c >= 0 && !R.chatOnglets[this.onglet].f.includes('infos')) this.onglet = c;
+    }
     this.champ.placeholder = this.ctx.enLigne ? 'Entrée pour écrire · /aide · Ctrl+clic sur un objet' : 'Hors ligne : ici, le journal de ta partie';
     this.canalBt.style.display = this.ctx.enLigne ? '' : 'none';
     this.rendreOnglets(); this.rendreCanal(); this.rendre();
   }
   destroy() {
     EnLigne.chuchoter = () => {}; this.finLecture(); this.finEcoute(); clearInterval(this.minute);
-    this.fermerMenu(); this.fiche.remove(); this.root.remove();
+    this.fermerMenu(); this.fermerRecap(); this.fiche.remove(); this.root.remove();
   }
 
   private taille(): [number, number] { const t = this.ctx.reglages.chatTaille; return t?.length === 2 ? [t[0], t[1]] : [360, 170]; }
@@ -245,7 +278,9 @@ export class ChatVue {
   /** 2B : les canaux utiles en ce moment. */
   private actifs(): Set<Filtre> {
     const a = new Set<Filtre>(['infos', 'butin']);
+    if (EnLigne.messages.some(m => m.canal === 'infos' && m.sorte === 'evenement')) a.add('evenements');
     if (!this.ctx.enLigne) return a;
+    if (EnLigne.messages.some(m => m.canal === 'infos' && !m.sorte)) a.add('serveur');
     if (EnLigne.connecte) a.add('tout');
     if (EnLigne.groupe) a.add('groupe');
     if (this.ctx.auBastion()) a.add('bastion');
@@ -257,7 +292,7 @@ export class ChatVue {
     const O = this.onglets, vis = ongletsVisibles(O, this.actifs(), this.onglet);
     const seul = vis.length <= 1 && !this.ctx.enLigne;
     this.tabs.style.display = seul ? 'none' : '';
-    const coul = (i: number) => { const f = O[i].f; return f.length === 1 ? COULEURS[(f[0] === 'butin' ? 'infos' : f[0]) as Canal] : ''; };
+    const coul = (i: number) => { const c = new Set(O[i].f.map(f => COULEUR_FILTRE[f])); return c.size === 1 ? [...c][0] : ''; };
     this.tabs.innerHTML = vis.map(i => `<span data-o="${i}" class="${i === this.onglet ? 'on' : ''}${this.neufs.has(i) ? ' neuf' : ''}" style="${i === this.onglet || !coul(i) ? '' : `color:${coul(i)}`}" title="Clic droit : régler l'onglet">${esc(O[i].nom)}</span>`).join('')
       + (O.length < MAX_ONGLETS ? '<span class="plus" data-plus title="Ajouter un onglet">+</span>' : '');
     this.tabs.querySelectorAll<HTMLElement>('[data-o]').forEach(e => {
@@ -339,11 +374,15 @@ export class ChatVue {
 
   private rendre() {
     const R = this.ctx.reglages, ouvert = this.root.classList.contains('ouvert');
-    const L = regrouper(EnLigne.messages.filter(m => this.montre(m))).slice(-80), t = performance.now(), eff = this.effacement();
+    // 6B : au repos, les événements flottent aussi quand l'onglet ne les montre pas (cachés dès qu'on ouvre le tchat)
+    const ev = (m: MessageChat) => m.canal === 'infos' && m.sorte === 'evenement';
+    const L = regrouper(EnLigne.messages.filter(m => this.montre(m) || (ev(m) && this.recoit(m)))).slice(-80), t = performance.now(), eff = this.effacement();
+    this.lignes = L.map(x => x.m);
     const heure = (h: number) => { const d = new Date(h); return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
     this.msgs.innerHTML = L.map(({ m, n }, i) => {
-      const vieux = i < L.length - LIGNES_REPOS || (eff > 0 && t - m.t > eff);
-      return `<div class="${vieux ? 'vieux' : ''}" data-t="${m.t}" data-i="${i}" style="color:${COULEURS[m.canal]}">${R.chatHeure !== false ? `<span class="ch-h">${heure(m.heure)}</span>` : ''}${ligne(m)}${n > 1 ? `<span class="ch-x">×${n}</span>` : ''}</div>`;
+      const vieux = i < L.length - LIGNES_REPOS || (eff > 0 && t - m.t > eff), cl = [vieux ? 'vieux' : '', ev(m) ? 'ev' : '', this.montre(m) ? '' : 'hors'].filter(Boolean).join(' ');
+      const go = m.aller && this.ctx.allerVers ? `<span class="ch-go" data-go="${i}">Y aller</span>` : m.recap ? `<span class="ch-go" data-go="${i}">voir le récapitulatif</span>` : '';
+      return `<div class="${cl}" data-t="${m.t}" data-i="${i}" style="color:${couleurDe(m)}">${R.chatHeure !== false ? `<span class="ch-h">${heure(m.heure)}</span>` : ''}${ligne(m)}${go}${n > 1 ? `<span class="ch-x">×${n}</span>` : ''}</div>`;
     }).join('');
     if (ouvert || this.root.matches(':hover')) this.msgs.scrollTop = this.msgs.scrollHeight;
   }
@@ -352,7 +391,22 @@ export class ChatVue {
     const t = performance.now(), eff = this.effacement(); if (!eff) return;
     this.msgs.querySelectorAll<HTMLElement>('div[data-t]').forEach(d => { if (t - Number(d.dataset.t) > eff) d.classList.add('vieux'); });
   }
-  private info(texte: string) { EnLigne.noter({ canal: 'infos', de: '', id: null, texte }); }
+  /** Réponse du tchat (aide, erreurs) : message du serveur en gris dans Général ; hors ligne, dans le journal (Combat). */
+  private info(texte: string) { if (this.ctx.enLigne) EnLigne.noter({ canal: 'infos', de: '', id: null, texte }); else EnLigne.journal(texte); }
+  /** 3C : le récapitulatif de mort, à côté du tchat, jusqu'au prochain clic. */
+  private montrerRecap(html: string, x: number, y: number) {
+    this.fermerRecap();
+    const r = this.recapEl = document.createElement('div'); r.className = 'ch-recap';
+    r.innerHTML = `<span class="x" title="Fermer">✕</span>${html}`;
+    for (const ev of ['pointerdown', 'pointerup', 'wheel', 'contextmenu'] as const) r.addEventListener(ev, e => e.stopPropagation());
+    r.addEventListener('click', () => this.fermerRecap());
+    document.body.appendChild(r);
+    const b = r.getBoundingClientRect();
+    r.style.left = `${Math.min(window.innerWidth - b.width - 8, x + 16)}px`; r.style.top = `${Math.max(8, y - b.height - 12)}px`;
+    const loin = (e: PointerEvent) => { if (!r.contains(e.target as Node)) { this.fermerRecap(); window.removeEventListener('pointerdown', loin, true); } };
+    setTimeout(() => window.addEventListener('pointerdown', loin, true), 0);
+  }
+  private fermerRecap() { this.recapEl?.remove(); this.recapEl = null; }
 
   private touche(e: KeyboardEvent) {
     e.stopPropagation();
@@ -401,6 +455,7 @@ export class ChatVue {
         }
         case 'ami': if (reste.trim()) EnLigne.ajouterAmi(reste.trim()); else this.info('Écris /ami nom'); return;
         case 'ignorer': if (reste.trim()) EnLigne.ignorer(reste.trim()); else this.info('Écris /ignorer nom'); return;
+        case 'annonce': if (reste.trim()) EnLigne.annonceAdmin(reste.trim()); else this.info('Écris /annonce texte (admins)'); return;
         default: this.info(`Commande inconnue : /${c} (/aide pour la liste)`); return;
       }
     }

@@ -233,6 +233,8 @@ export class World {
   /** Joueurs présents dans cette simulation (Multi, étape 0) : le premier est le joueur de cet écran.
    *  Pour l'instant une partie normale n'en a qu'un ; ajouterJoueur() en pose d'autres (tests, coop à venir). */
   readonly players: Player[] = [];
+  /** Nom du sort de monstre en train de frapper (le temps d'un coup), pour le récap de mort du tchat. */
+  coupSort?: string;
   /** Joueur qui agit pendant son pas (sorts, coups, monstres tués) ; null hors de ce moment. */
   private acteur: Player | null = null;
   /** Le joueur dont on parle : celui qui agit pendant son pas, sinon le joueur de cet écran. Tout le code « un joueur »
@@ -1738,7 +1740,9 @@ export class World {
         const jet = e.perPa ? e.min * k * Math.max(0, p.paMax - p.pa) : this.rng.range(e.min, e.max + 1) * k;
         const n = Math.round(jet * (1 + m.furyPct / 100) + m.furyFlat * k);   // + bonus de Dommages (Frénésie…)
         if (n <= 0) continue;
+        this.coupSort = spell.name;   // récap de mort (canaux du tchat 3C)
         landed = p.hurt(n, m.x, m.y, this, e.element);
+        this.coupSort = undefined;
         if (!landed) return;
         if (e.steal) m.hp = Math.min(m.maxHp, m.hp + Math.round(n / 2 * m.soinsK));
       } else if (!landed) return;

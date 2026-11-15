@@ -203,6 +203,21 @@ export class CarteMonde {
   montrer(m: MarqueCarte) { this.fermer(true); this.ouvrir(m); }
   /** Idée 3 (2026-11-08) : clic sur l'objectif du suivi, la carte s'ouvre centrée sur le but de la quête. */
   montrerQuete() { this.fermer(true); this.ouvrir(undefined, true); }
+  /** Canaux du tchat 4B (« Y aller ») : drapeau suivi par la flèche du HUD sur ce point du jeu (monde où l'on est). Le drapeau part
+   *  dans l'entrée du joueur, comme un drapeau posé à la main. Faux si ce monde n'a pas de carte. */
+  async suivrePoint(wx: number, wy: number, note: string): Promise<boolean> {
+    if (!this.dispo) return false;
+    await this.charger(this.monde);
+    const u = this.versUnites(wx, wy); if (!u) return false;
+    const p = this.world.player, l = p.drapeaux.filter(d => d.note !== note.slice(0, NOTE_MAX));
+    while (l.length >= MAX_DRAPEAUX) l.shift();
+    l.push({ zone: this.zoneId, x: Math.round(u.x * 100) / 100, y: Math.round(u.y * 100) / 100, note: note.slice(0, NOTE_MAX) });
+    Son.jouer(MANIFESTE.ui.bouton, 'interface', { vol: 0.7 });
+    this.onGeste({ drapeaux: l });
+    p.drapeaux = l;   // tout de suite à l'écran ; la partie confirme à la prochaine image
+    this.suivi = l.length - 1; this.dernierDyn = '';
+    return true;
+  }
   fermer(silence = false) {
     if (!this.root) return;
     if (!silence && !this.sur) Son.jouer(MANIFESTE.ui.fermer, 'interface', { vol: 0.8 });
@@ -834,7 +849,7 @@ export class CarteMonde {
 }
 
 /** Centre d'une carte (intérieur) en point du jeu. */
-function centreCarte(w: World, tag: string): [number, number] {
+export function centreCarte(w: World, tag: string): [number, number] {
   const wg = w.worldGrid!, m = wg.cellCenter(wg.cellOf(tag, 280)), s = wg.toScreen(m.x, m.y), q = ISO.toWorld(s.x, s.y);
   return [q.x, q.y];
 }

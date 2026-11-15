@@ -6,9 +6,16 @@ import { RARITY_COLORS, RARITY_NAMES, STATS, STAT_NAMES, lignePouvoir, type Item
 import type { Filtre, Onglet } from './chatOnglets';
 export * from './chatOnglets';
 
+/** Ligne du jeu (canal infos) : butin, journal de la partie, résumé de combat (Combat) ou événement ; sans sorte = message du serveur. */
+export type SorteInfo = 'butin' | 'jeu' | 'combat' | 'evenement';
 /** Ce qu'il faut d'un message pour le classer et le regrouper. */
-export interface LigneChat { canal: 'tout' | 'groupe' | 'bastion' | 'prive' | 'infos'; sorte?: 'butin'; de: string; texte: string; vers?: string }
-export const filtreDe = (m: LigneChat): Filtre => (m.canal === 'infos' && m.sorte === 'butin' ? 'butin' : m.canal);
+export interface LigneChat { canal: 'tout' | 'groupe' | 'bastion' | 'prive' | 'infos'; sorte?: SorteInfo; de: string; texte: string; vers?: string }
+export function filtreDe(m: LigneChat): Filtre {
+  if (m.canal !== 'infos') return m.canal;
+  return m.sorte === 'butin' ? 'butin' : m.sorte === 'evenement' ? 'evenements' : m.sorte ? 'infos' : 'serveur';
+}
+/** Couleur d'une ligne du jeu : serveur en gris (canaux 5A), événements orange, résumés de combat rouge orangé, journal vert. */
+export const COULEUR_INFO: Record<SorteInfo | 'serveur', string> = { serveur: '#a9a493', jeu: '#9be070', butin: '#9be070', combat: '#ff8a5c', evenement: '#ff9a3c' };
 
 /** 2B : un onglet n'apparaît que si l'un de ses canaux sert (actifs = canaux utiles en ce moment). L'onglet ouvert reste. */
 export function ongletsVisibles(onglets: Onglet[], actifs: Set<Filtre>, ouvert: number): number[] {

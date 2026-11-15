@@ -197,6 +197,6 @@ export function creerServeur({ comptes = creerComptes({ dossier: process.env.DON
 if (import.meta.url === `file://${process.argv[1]}`) {
   const s = creerServeur();
   s.listen(PORT, HOTE, () => console.log(`Diablofus ${VERSION} : http://${HOTE}:${PORT}`));
-  const fin = () => { console.log('arrêt'); sauverParties(); s.close(() => process.exit(0)); setTimeout(() => process.exit(0), 3000).unref(); };
+  const fin = () => { console.log('arrêt'); presence?.annoncer('Le serveur redémarre : tu seras reconnecté dans un instant'); sauverParties(); s.close(() => process.exit(0)); setTimeout(() => process.exit(0), 3000).unref(); };
   process.on('SIGTERM', fin); process.on('SIGINT', fin);
 }

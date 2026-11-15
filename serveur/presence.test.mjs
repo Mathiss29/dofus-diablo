@@ -114,3 +114,30 @@ test('présence : qui est en ligne, passants du Bastion, invitation', async () =
   await new Promise(r => setTimeout(r, 100));
   await new Promise(r => { s.close(r); s.closeAllConnections(); });
 });
+
+test('présence : annonce d’un admin à tous (canaux du tchat 4D)', async () => {
+  const { dossier, J } = base();
+  const db = new DatabaseSync(join(dossier, 'diablofus.db')); db.prepare('UPDATE comptes SET roles = ? WHERE id = 1').run('["42"]'); db.close();
+  const s = creerServeur({ comptes: creerComptes({ dossier, env: { ROLES_ADMIN: '42' }, origines: new Set() }) });
+  await new Promise(r => s.listen(0, '127.0.0.1', r));
+  const url = `ws://127.0.0.1:${s.address().port}/ws`;
+  const client = async () => {
+    const ws = new WebSocket(url), file = [], attente = [];
+    ws.on('message', d => { const m = JSON.parse(String(d)); const a = attente.shift(); if (a) a(m); else file.push(m); });
+    await new Promise(ok => ws.on('open', ok));
+    const lire = () => file.length ? Promise.resolve(file.shift()) : new Promise(ok => attente.push(ok));
+    return { ws, envoi: m => ws.send(JSON.stringify(m)), attendre: async f => { for (;;) { const m = await lire(); if (f(m)) return m; } } };
+  };
+  const a = await client(), b = await client();
+  a.envoi({ k: 'presence', jeton: J[0], emplacement: 0, zone: 'astrub' }); await a.attendre(m => m.k === 'presence');
+  b.envoi({ k: 'presence', jeton: J[1], emplacement: 0, zone: 'astrub' }); await b.attendre(m => m.k === 'presence');
+  // un joueur sans rôle admin : refusé
+  b.envoi({ k: 'annonce', texte: 'coucou' });
+  assert.match((await b.attendre(m => m.k === 'info')).texte, /admins/);
+  // l'admin : tout le monde la reçoit
+  a.envoi({ k: 'annonce', texte: '  Code cadeau : DIABLOFUS-06  ' });
+  assert.equal((await b.attendre(m => m.k === 'annonce')).texte, 'Code cadeau : DIABLOFUS-06');
+  assert.equal((await a.attendre(m => m.k === 'annonce')).texte, 'Code cadeau : DIABLOFUS-06');
+  a.ws.close(); b.ws.close();
+  await new Promise(r => s.close(r));
+});
