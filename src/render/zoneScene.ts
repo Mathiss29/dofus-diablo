@@ -53,7 +53,9 @@ import { WorldView } from './worldView';
 import { Particules, type SysData } from './particles';
 import { ambiance, chargerReglages, matriceSaturation, sauverReglages, type Reglages } from './ambiance';
 import { ICON_SHEET, iconFrame } from './icons';
-import { CarteMonde, COULEURS_GROUPE, type GesteCarte } from './carteMonde';
+import { CarteMonde, COULEURS_GROUPE, centreCarte, type GesteCarte } from './carteMonde';
+import { bossAnnonce } from '../sim/mondeVivant';
+import { SuiviCombat, elementDominant, nomElement, recapMort } from './chatCombat';
 import { SIGNAL_DUREE } from '../sim/carte';
 import { Windows } from './windows';
 import { mmss } from './forgeVue';
@@ -80,11 +82,11 @@ import { CalquesTest } from './calquesTest';
 import { REGLAGES_TEST, type CommandeTest } from '../sim/outilsTest';
 import { Coop } from './coop';
 import { appliquerInstantane, lisserMiroir } from '../sim/miroir';
-import { EnLigne } from './presence';
+import { EnLigne, type MessageChat } from './presence';
 import { Compte as CompteEnLigne } from './compte';
 import { PassantsEnLigne } from './passantsEnLigne';
 import { ChatVue } from './chat';
-import { lienObjet } from './chatOutils';
+import { lienObjet, type SorteInfo } from './chatOutils';
 import { BullesChat } from './bullesChat';
 import { demandesEnAttente, menuJoueur, montrerInvitation } from './social';
 /** Archimonstres du jeu (carnet des âmes, « Archis : » 8A). */
@@ -507,7 +509,9 @@ export class ZoneScene extends Phaser.Scene {
     // tchat (« Tchat : » 1B) : aussi hors ligne, où il ne montre que le journal de la partie
     if (!this.vitrine) {
       const enLigne = !!this.perso && persosEnLigne() && !this.test && !this.essai && this.slot >= 0;
-      const ch = this.chat = new ChatVue({ reglages: this.reglages, enLigne, auBastion: () => !!this.world.dansBastion });
+      const ch = this.chat = new ChatVue({ reglages: this.reglages, enLigne, auBastion: () => !!this.world.dansBastion,
+        // canaux 4B : « Y aller » = drapeau suivi par la flèche
+        allerVers: (x, y, nom) => { void this.carte?.suivrePoint(x, y, nom).then(ok => this.hud.toast(ok ? `La flèche te guide : ${nom}` : 'Pas de carte du monde ici')); } });
       this.windows.lienObjet = (it, nom) => ch.insererObjet(it, nom);
       this.events.once('shutdown', () => { ch.destroy(); if (this.chat === ch) this.chat = null; });
     }
@@ -1348,8 +1352,19 @@ export class ZoneScene extends Phaser.Scene {
     this.render();
   }
 
-  /** « Tchat : » 1A : ce que l'onglet Infos du tchat garde de la partie (la bulle au centre, elle, s'efface). */
-  private journalDe(e: SimEvent): [string, 'butin'?] | null {
+  /** Canaux du tchat 3B + 3C : dégâts et XP du combat en cours, coups reçus par le joueur de cet écran. */
+  private suiviCombat = new SuiviCombat();
+  private noterCombat(e: SimEvent) {
+    const t = this.world.time;
+    if (e.k === 'hit' && e.target === 'monster') this.suiviCombat.coupDonne(t, e.id, e.amount, () => this.world.monsters.find(m => m.id === e.id)?.type);
+    else if (e.k === 'xp') this.suiviCombat.xp(t, e.n);
+    else if (e.k === 'hit' && e.target === 'player' && Math.hypot(e.x - this.world.player.x, e.y - this.world.player.y) < 8)
+      this.suiviCombat.coupRecu({ t, n: e.amount, el: e.element ?? 'neutre', de: e.de, sort: e.nomSort });
+  }
+  /** « Tchat : » 1A : ce que le tchat garde de la partie (la bulle au centre, elle, s'efface). Canaux (2026-11-15) : butin et journal
+   *  vont dans Combat (3A), avec un résumé par combat (3B) et le récap de mort (3C) ; boss du monde, invasions, cawottes dans Événements (4A),
+   *  avec « Y aller » (4B). */
+  private journalDe(e: SimEvent): [string, SorteInfo?, Pick<MessageChat, 'aller' | 'recap'>?] | null {
     const pl = (n: number, m: string) => `${n} ${m}${n > 1 ? 's' : ''}`;
     switch (e.k) {
       case 'loot': return e.item.rarity === 'commun' ? null : [`Tu as obtenu ${lienObjet(e.item)} (${RARITY_NAMES[e.item.rarity]})`, 'butin'];
@@ -1371,14 +1386,22 @@ export class ZoneScene extends Phaser.Scene {
       case 'menagerie': return [`Ménagerie : ${e.nom} (${e.n} familier${e.n > 1 ? 's' : ''})`];
       case 'almanax': return [`Almanax : offrande faite, +${e.pepites} Pépites et « ${e.bonus} » jusqu'à minuit`];
       case 'bagFull': return ['Sac plein : défais des objets chez Kerubim Crépin, au Bastion des Douze'];
-      case 'bossDown': return [`${GAME_DATA.monsters[e.monster]?.name ?? 'Boss'} vaincu !`];
+      case 'bossDown': return [this.suiviCombat.boss(e.monster, GAME_DATA.monsters[e.monster]?.name ?? 'Boss'), 'combat'];
       case 'forge': return e.issue !== 'echec' && (e.exo || e.over) ? [`Forgemagie : ${e.exo ? 'exo' : 'over'} ${STAT_NAMES[e.stat as Stat] ?? e.stat} passé sur ${e.objet}`] : null;
-      case 'massacreFin': return e.n >= 10 ? [`Massacre de ${e.n} monstres`] : null;
+      case 'massacreFin': return [this.suiviCombat.massacre(e.n), 'combat'];
+      case 'playerDeath': {
+        const p = this.world.player; if (!p.dead) return null;
+        const l = this.suiviCombat.mort(this.world.time), el = elementDominant(l);
+        const r = recapMort(l, t => GAME_DATA.monsters[t]?.name ?? 'Monstre', p.stat(`res${nomElement(el)}` as Stat));
+        return [`Tué par ${r.tueur}`, 'combat', { recap: r.html }];
+      }
+      case 'guerreDebut': return [`Guerre des cawottes : ${e.champ} est attaqué (${e.vagues} vagues)`, 'evenement'];
       case 'guerreFin': return [e.coffre ? `${e.champ} défendu : ${e.sauvees} / ${e.total} cawottes, +${e.gain} Cawottes` : `${e.champ} ravagé : toutes les cawottes ont été volées`];
-      case 'bossMondeAnnonce': return [`Boss du monde : ${e.nom} à ${e.heure}, ${e.lieu}`];
-      case 'bossMondeVaincu': return [`${e.nom} vaincu : coffre et ${e.pepites} Pépites${e.premier ? `, titre « ${e.titre} »` : ''}`, 'butin'];
-      case 'invasionDebut': return [`Invasion : ${e.nom}, pendant une heure`];
-      case 'invasionPleine': return [`Invasion de ${e.nom} repoussée : +${e.pepites} Pépites`, 'butin'];
+      case 'bossMondeAnnonce': { const bm = bossAnnonce(this.world), c = bm && this.world.worldGrid?.mapByTag(bm.carte) ? centreCarte(this.world, bm.carte) : null; return [`Boss du monde : ${e.nom} à ${e.heure}, ${e.lieu}`, 'evenement', c ? { aller: { x: c[0], y: c[1], nom: e.nom } } : undefined]; }
+      case 'bossMondeArrive': return [`Boss du monde : ${e.nom} est arrivé, ${e.lieu}`, 'evenement', { aller: { x: e.x, y: e.y, nom: e.nom } }];
+      case 'bossMondeVaincu': return [`${e.nom} vaincu : coffre et ${e.pepites} Pépites${e.premier ? `, titre « ${e.titre} »` : ''}`, 'evenement'];
+      case 'invasionDebut': { const c = this.world.vivant?.centreSousZone(e.sub); return [`Invasion : ${e.nom}, pendant une heure`, 'evenement', c ? { aller: { x: c.x, y: c.y, nom: `Invasion : ${e.nom}` } } : undefined]; }
+      case 'invasionPleine': return [`Invasion de ${e.nom} repoussée : +${e.pepites} Pépites`, 'evenement'];
       default: return null;
     }
   }
@@ -1389,7 +1412,7 @@ export class ZoneScene extends Phaser.Scene {
       if (this.perso?.stats && this.perso.session) noter(e, this.perso.stats, this.perso.session, this.bestiaire, GAME_DATA.monsters, ITEMS.equipment);
       this.fx.handle(e);
       this.hud.handle(e);
-      if (this.chat) { const jn = this.journalDe(e); if (jn) EnLigne.journal(jn[0], jn[1]); }
+      if (this.chat) { this.noterCombat(e); const jn = this.journalDe(e); if (jn) EnLigne.journal(jn[0], jn[1], jn[2]); }
       // Forgemagie v2 9C : le groupe l'apprend
       if (e.k === 'forge' && e.issue !== 'echec' && (e.exo || e.over) && EnLigne.groupe) EnLigne.dire('groupe', `✦ vient de passer un ${e.exo ? 'exo' : 'over'} ${STAT_NAMES[e.stat as Stat] ?? e.stat} sur ${e.objet} !`);
       this.havreSacView?.handle(e);

@@ -4,6 +4,7 @@
 import { URL_COOP, Coop } from './coop';
 import { Compte } from './compte';
 import type { Apparence } from './squelette';
+import type { SorteInfo } from './chatOutils';
 
 export interface Profil { id: number; nom: string; classe: string; sexe: 'm' | 'f'; niveau: number; apparence: Apparence | null; objets: string[]; titre?: string; ornement?: number }
 /** Un joueur du Bastion vu ici : sa position reçue (tx, ty) et celle affichée (x, y), qui la rejoint en douceur. */
@@ -14,8 +15,13 @@ export interface MessageChat {
   canal: Canal; de: string; id: number | null; texte: string; vers?: string;
   /** t : performance.now() (effacement) ; heure : Date.now() (« Tchat : » 7A). */
   t: number; heure: number;
-  /** « Tchat : » 1A : ligne de butin du journal (onglet Infos : butin) ; 7C : classe de celui qui parle. */
-  sorte?: 'butin'; classe?: string;
+  /** Ligne du jeu : butin, journal, résumé de combat ou événement (canaux du tchat, 2026-11-15) ; sans sorte = message du serveur.
+   *  7C : classe de celui qui parle. */
+  sorte?: SorteInfo; classe?: string;
+  /** Canaux 4B : « Y aller » pose un drapeau suivi sur ce point du jeu. */
+  aller?: { x: number; y: number; nom: string };
+  /** Canaux 3C : récapitulatif de mort (HTML), ouvert au clic. */
+  recap?: string;
 }
 export interface JoueurEnLigne { id: number; nom: string; classe: string; niveau: number; zone: string; groupe: boolean; ami?: boolean }
 /** Mon groupe (« Social : » 7A 7B), tenu par le serveur de présence : on se groupe sans bouger. */
@@ -62,11 +68,13 @@ class Presence {
   /** Ajoute un message au chat (reçu, ou info du jeu dans le canal Infos). */
   noter(m: Omit<MessageChat, 't' | 'heure'>) {
     const n = { ...m, t: performance.now(), heure: Date.now() };
-    this.messages.push(n); if (this.messages.length > 200) this.messages.shift();
+    this.messages.push(n); if (this.messages.length > 400) this.messages.shift();
     for (const f of this.lecteurs) f(n);
   }
-  /** « Tchat : » 1A : une ligne du journal de la partie (onglet Infos), même hors ligne. */
-  journal(texte: string, sorte?: 'butin') { this.noter({ canal: 'infos', de: '', id: null, texte, ...(sorte ? { sorte } : {}) }); }
+  /** « Tchat : » 1A : une ligne du journal de la partie (onglets Combat et Événements), même hors ligne. */
+  journal(texte: string, sorte: SorteInfo = 'jeu', plus?: Pick<MessageChat, 'aller' | 'recap'>) { this.noter({ canal: 'infos', de: '', id: null, texte, sorte, ...plus }); }
+  /** Canaux 4D : annonce à tous les joueurs en ligne (réservé aux admins, le serveur vérifie). */
+  annonceAdmin(texte: string) { this.envoyer({ k: 'annonce', texte }); }
   /** Envoie un message (canal Privé : a = nom du perso). */
   dire(canal: Exclude<Canal, 'infos'>, texte: string, a?: string) { this.envoyer({ k: 'dire', canal, texte, ...(a ? { a } : {}) }); }
   private changer() { for (const f of this.ecouteurs) f(); }
@@ -161,6 +169,7 @@ class Presence {
     }
     else if (m.k === 'donjon') { this.onDonjon(String(m.de), String(m.code), String(m.lieu ?? '')); this.noter({ canal: 'infos', de: '', id: null, texte: `${String(m.de)} part en donjon : rejoins-le` }); }
     else if (m.k === 'invitation') { this.onInvitation(String(m.de), Number(m.groupe)); this.noter({ canal: 'infos', de: '', id: null, texte: `${String(m.de)} t'invite dans son groupe` }); }
+    else if (m.k === 'annonce') this.journal(`📢 ${String(m.texte).slice(0, 200)}`, 'evenement');
     else if (m.k === 'info') { this.onInfo(String(m.texte)); this.noter({ canal: 'infos', de: '', id: null, texte: String(m.texte) }); }
     else if (m.k === 'chat') {
       const c = String(m.canal);

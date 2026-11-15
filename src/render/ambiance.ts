@@ -86,6 +86,8 @@ export interface Reglages {
   /** 9B : recevoir les canaux Tout et Bastion. */
   chatTout: boolean;
   chatBastion: boolean;
+  /** Canaux du tchat (2026-11-15, 8A) : version des onglets, pour ne migrer qu'une fois. */
+  chatOngletsV?: number;
 }
 /** 7B : ce que règle chaque qualité prédéfinie. */
 export const QUALITES: Record<'basse' | 'moyenne' | 'haute', Partial<Reglages>> = {

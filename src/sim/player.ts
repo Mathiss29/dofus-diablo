@@ -1769,7 +1769,8 @@ export class Player extends Entity {
     if (vol && qui && dmg > 0) qui.hp = Math.min(qui.maxHp, qui.hp + Math.round(dmg * vol));
     const a = Math.atan2(this.y - fromY, this.x - fromX);
     this.kx += Math.cos(a) * 260; this.ky += Math.sin(a) * 260;
-    world.emit({ k: 'hit', target: 'player', x: this.x, y: this.y, z: 50, amount: dmg, crit: false, element: element === 'meilleur' ? 'neutre' : element });
+    world.emit({ k: 'hit', target: 'player', x: this.x, y: this.y, z: 50, amount: dmg, crit: false, element: element === 'meilleur' ? 'neutre' : element,
+      ...(qui ? { de: qui.type } : {}), ...(world.coupSort ? { nomSort: world.coupSort } : {}) });
     world.emit({ k: 'playerHurt' });
     // 3A (maquette « Danger ») : un gros coup secoue l'écran, fige l'action et rougit les bords
     const G = DANGER.grosCoup, gros = dmg >= this.maxHp * G.part;

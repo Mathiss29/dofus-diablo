@@ -82,6 +82,8 @@ export function creerPresence({ comptes, envoyer }) {
     return g;
   }
   const info = (s, texte) => envoyer(s, { k: 'info', texte });
+  /** Canaux du tchat 4D : annonce du serveur (redémarrage, admin) à tous les joueurs en ligne. */
+  const annoncer = texte => { for (const s of joueurs.keys()) envoyer(s, { k: 'annonce', texte }); };
   /** La liste d'amis d'un joueur (« Social : » 2B) : qui est en ligne, avec quel perso, où ; demandes ; ignorés ; réglages. */
   function envoyerAmis(s, j) {
     if (!so) return;
@@ -114,7 +116,7 @@ export function creerPresence({ comptes, envoyer }) {
       joueurs.set(s, {
         compte: c.compte, emplacement: c.emplacement, profil: profilDe(c.perso, m.objets, { titre: m.titre, ornement: m.ornement }), zone: typeof m.zone === 'string' ? m.zone.slice(0, 40) : '',
         x: fini(m.x), y: fini(m.y), f: fini(m.f), a: 'idle', vus: avant?.vus ?? new Set(), invite: avant?.invite ?? 0, salon: avant?.salon ?? null,
-        dits: avant?.dits ?? [], horsLigne: false, inconnus: false,
+        dits: avant?.dits ?? [], horsLigne: false, inconnus: false, admin: !!c.admin,
       });
       const j = joueurs.get(s);
       if (so) { const L = so.liens(c.compte); j.horsLigne = L.horsLigne; j.inconnus = L.inconnus; }
@@ -131,7 +133,7 @@ export function creerPresence({ comptes, envoyer }) {
       return true;
     }
     const j = joueurs.get(s);
-    if (!j) return ['pos', 'enligne', 'inviter', 'groupe', 'dire', 'amis', 'ami+', 'ami-', 'ignorer', 'reglagesSociaux', 'grpCreer', 'grpOui', 'grpNon', 'grpQuitter', 'grpExclure', 'grpChef', 'grpDonjon'].includes(m.k);
+    if (!j) return ['pos', 'enligne', 'inviter', 'groupe', 'dire', 'annonce', 'amis', 'ami+', 'ami-', 'ignorer', 'reglagesSociaux', 'grpCreer', 'grpOui', 'grpNon', 'grpQuitter', 'grpExclure', 'grpChef', 'grpDonjon'].includes(m.k);
     if (m.k === 'pos') {
       if (typeof m.zone === 'string') j.zone = m.zone.slice(0, 40);
       j.x = fini(m.x); j.y = fini(m.y); j.f = fini(m.f);
@@ -198,6 +200,13 @@ export function creerPresence({ comptes, envoyer }) {
       return true;
     }
     // chat (« Social : » 4A 4C) : Tout (tous les joueurs en ligne), Groupe, Bastion (ceux qui y sont), Privé (un joueur, par le nom de son perso)
+    // Canaux du tchat 4D : annonce d'un admin à tous les joueurs en ligne (onglet Événements)
+    if (m.k === 'annonce') {
+      if (!j.admin) return info(s, 'Seuls les admins de Diablofus peuvent faire une annonce'), true;
+      const t = String(m.texte ?? '').trim().slice(0, 200);
+      if (t) annoncer(t);
+      return true;
+    }
     if (m.k === 'dire') {
       const texte = propre(m.texte), canal = CANAUX.has(m.canal) ? m.canal : 'tout', t = Date.now();
       if (!texte) return true;
@@ -288,7 +297,7 @@ export function creerPresence({ comptes, envoyer }) {
   }
   const minuterie = setInterval(tour, 1000 / PRESENCE.frequence);
   minuterie.unref();
-  return { recu, quitter, tour, groupes: () => groupes.size, fermer: () => clearInterval(minuterie), nombre: () => joueurs.size,
+  return { recu, quitter, tour, annoncer, groupes: () => groupes.size, fermer: () => clearInterval(minuterie), nombre: () => joueurs.size,
     /** Ladder 7B : persos en ligne (« compte-emplacement »), sauf ceux qui apparaissent hors ligne. */
     enLigne: () => [...joueurs.values()].filter(j => !j.horsLigne).map(j => `${j.compte}-${j.emplacement}`) };
 }
