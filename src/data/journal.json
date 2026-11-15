@@ -2198,6 +2198,7 @@
       "legende": "Effets officiels du Sadida et de l'Écaflip, 15 novembre 2026.",
       "lignes": {
         "Nouveautés": [
+          {"titre": "L'arène des âmes", "phrase": "La Gardienne de l'arène, au Marché couvert, relâche jusqu'à 5 âmes de boss ou d'archimonstres à la suite.", "details": "Un défi au hasard rapporte plus de butin, 3 boss enchaînés donnent un coffre, une âme sur 20 revient corrompue. Une âme de boss offerte chaque lundi.", "icone": "boss", "etiquettes": ["Bastion des Douze", "Marché couvert"]},
           {"titre": "Invocations max affichées", "phrase": "Ton nombre d'Invocations se lit dans les Caractéristiques et dans le détail des sorts qui invoquent.", "details": "Chaque sort d'invocation dit combien de places prend sa bête. S'il n'y a plus de place, la plus ancienne repart.", "icone": "caracs", "etiquettes": ["Touche C", "Osamodas"]},
           {"titre": "Ce que donne ton familier", "phrase": "Survole ton familier : ses bonus à son niveau, et ce qu'il donnera au niveau 100.", "details": "La Ménagerie et l'Animalerie montrent aussi chaque bonus, du niveau 1 au niveau 100.", "icone": "bestiaire", "etiquettes": ["Inventaire", "Ménagerie"]},
           {"titre": "Panoplies bien rangées", "phrase": "Un bouton au coin du socle de l'inventaire montre tes panoplies : pièces, bonus actifs et palier suivant.", "details": "La même fiche apparaît sous chaque objet de panoplie. Un éclat doré te prévient quand tu gagnes un palier.", "icone": "sac", "etiquettes": ["Touche I"]},

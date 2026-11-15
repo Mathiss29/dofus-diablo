@@ -2,6 +2,7 @@ import { ALMANAX } from './almanax';
 import { ELITES } from './elites';
 import { AUTELS, type AutelActif } from './autels';
 import { bonusSanctuaires, potionsRenommee } from './renommee';
+import { areneAmesVide, type EtatAreneAmes } from './areneAmes';
 import { etatIdolesVide, type EtatIdoles, type FxIdole } from './idoles';
 import type { StyleChoisi, Tenue } from './style';
 import { BENEDICTIONS, type AchatsDuJour, type Benediction } from './magasin';
@@ -147,6 +148,8 @@ export class Player extends Entity {
   codex: EntreeCodex[] = [];
   /** 15B : archimonstres capturés (clés des monstres). */
   ames: string[] = [];
+  /** Arène des âmes (« Arène : ») : victoires, records, âme de la semaine prise. */
+  areneAmes: EtatAreneAmes = areneAmesVide();
   /** « Familiers : » 6A : familiers obtenus par ce perso (la Ménagerie du compte est dans le coffre, Coffre.familiers). */
   menagerie: string[] = [];
   /** « Familiers : » 4C : familier de départ déjà choisi à l'Animalerie. */

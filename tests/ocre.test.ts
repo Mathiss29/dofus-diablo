@@ -75,11 +75,14 @@ describe('quête du Dofus Ocre, « L\'éternelle moisson » (Archis 7A 9A 9C 10A
     expect(w.dansAreneAmes()).toBe(true);
     expect(w.relacherAme(ame)).toBe(true);
     expect(p.resources[ame]).toBeUndefined();
+    for (let i = 0; i < 120; i++) w.step(1 / 60, NO_INPUT);   // « Arène : » : l'âme revient après une courte pause
     const rel = w.monsters.filter(m => m.relache);
     expect(rel.length).toBeGreaterThanOrEqual(1 + ARCHI.groupe[0]);
     expect(rel.filter(m => m.type === archi).length).toBe(1);
     expect(rel.every(m => m.arene)).toBe(true);
-    expect(w.relacherAme(ame)).toBe(false);   // une seule âme à la fois
+    p.resources[ame] = 1;
+    expect(w.relacherAme(ame)).toBe(false);   // l'arène est occupée
+    delete p.resources[ame];
     // vaincu à nouveau : pas de nouvelle capture, la pierre reste
     w.killMonster(rel.find(m => m.type === archi)!);
     expect(p.resources[ame]).toBeUndefined();

@@ -34,6 +34,7 @@ import { DecoHavreSac, gagnerMeuble } from './deco';
 import { hache } from './contrats';
 import { DECO, MEUBLES, meubleDeRecette, raresDuTheme, type SacVu, type SorteSpeciale } from './meubles';
 import { COFFRE_FUYARD, defCoffreFuyard, piloterCoffre } from './coffreFuyard';
+import { ARENE_AMES, CombatAmes, DEFIS, ameDeLaSemaine, semaineDe, toutesAmes } from './areneAmes';
 import { portailPas, tenterPortail, PORTAIL_TRESOR, type PortailTresor, type VisiteTresor } from './salleTresor';
 import { defAffixes, elitesPas, poserAffixes, tirerAffixes } from './elites';
 import { idolesApparition, idolesGroupe, idolesMort, idolesPas, type ZoneIdole } from './idolesCombat';
@@ -288,6 +289,8 @@ export class World {
   zonesIdoles: ZoneIdole[] = [];
   /** Autels de combat posés (0.6, 21). */
   autels: Autel[] = [];
+  /** Arène des âmes (« Arène : ») : combat en cours dans l'arène commune du Bastion (areneAmes.ts). */
+  combatAmes: CombatAmes | null = null;
   /** 0.6 (22B) : portail doré laissé par le Coffre Malveillant ; visite de la Salle au trésor en cours (salleTresor.ts). */
   portailTresor: PortailTresor | null = null;
   visiteTresor: VisiteTresor | null = null;
@@ -917,24 +920,79 @@ export class World {
   /** « Archis : » 7B : dans l'arène des âmes du Bastion, relâcher une âme capturée : l'archimonstre revient avec son groupe (le boss seul),
    *  au milieu de l'arène, et se bat tout de suite ; meilleur butin (celui d'un boss), mais il ne se capture pas. L'âme est perdue. */
   dansAreneAmes(): boolean { const p = this.player; return this.dansBastion && this.worldGrid?.mapAt(p.x, p.y)?.tag === ARCHI.arene; }
-  relacherAme(id: string): boolean {
-    const p = this.player, r = this.opts.items?.resources[id], type = r?.ame, d = type ? this.opts.data.monsters[type] : undefined;
-    if (!d || !(p.resources[id] > 0) || p.dead) return false;
+  /** Clic droit sur une âme dans le sac : même chose que la fenêtre de la Gardienne (« Arène : » 3A), une seule âme. */
+  relacherAme(id: string): boolean { return this.invoquerAmes([id]); }
+  /** « Arène : » : on peut invoquer au Marché couvert (devant la Gardienne et le Gardien) ou dans l'arène des âmes. */
+  pretPourArene(): boolean {
+    const t = this.worldGrid?.mapAt(this.player.x, this.player.y)?.tag;
+    return this.dansBastion && (t === 'marche' || t === ARCHI.arene);
+  }
+  /** Où l'on revient après l'arène : devant la Gardienne (case de quetes.json), sinon au milieu du Marché. */
+  private retourArene(): { x: number; y: number } {
+    const wg = this.worldGrid!, d = this.quetes?.data.pnj.gardienne_arene;
+    return d?.case != null ? wg.cellToWorld(wg.cellOf('marche', d.case)) : this.openestCellOf('marche');
+  }
+  /** « Arène : » 3-7, 12A-14A : relâche 1 à 5 âmes du sac ; le groupe proche part dans l'arène, les âmes reviennent une par une. */
+  invoquerAmes(ids: string[]): boolean {
+    const p = this.player, R = this.opts.items?.resources ?? {}, M = this.opts.data.monsters;
     const non = (text: string) => { this.emit({ k: 'status', x: p.x, y: p.y - 60, text, color: '#ff9a5a' }); return false; };
-    if (!this.dansAreneAmes()) return non('À relâcher dans l\'arène des âmes, au Marché couvert du Bastion');
-    if (this.monsters.some(m => m.relache && !m.dead)) return non('L\'arène est déjà occupée');
-    p.resources[id]--; if (!p.resources[id]) delete p.resources[id];
-    const wg = this.worldGrid!, c = this.openestCellOf(ARCHI.arene), libres = wg.freeByMap.get(ARCHI.arene);
-    const types = [type!];
-    if (d.archiDe) { const [a, b] = ARCHI.groupe; for (let i = a + Math.floor(this.rng.next() * (b - a + 1)); i > 0; i--) types.push(d.archiDe); }
-    types.forEach((t, i) => {
-      const ang = i * 2 * Math.PI / Math.max(1, types.length - 1), q = i ? wg.nearestFree(c.x + Math.cos(ang) * 90, c.y + Math.sin(ang) * 45, libres) : c;
-      const m = this.spawnMonster(t, q.x, q.y); m.arene = true; m.relache = true;
+    if (!ids.length || ids.length > ARENE_AMES.max || p.dead) return false;
+    if (!this.pretPourArene()) return non('Va voir la Gardienne de l\'arène, au Marché couvert du Bastion');
+    if (this.combatAmes) return non('L\'arène est déjà occupée');
+    const besoin: Record<string, number> = {};
+    for (const id of ids) besoin[id] = (besoin[id] ?? 0) + 1;
+    if (Object.entries(besoin).some(([id, n]) => !R[id]?.ame || !M[R[id].ame!] || (p.resources[id] ?? 0) < n)) return false;
+    for (const [id, n] of Object.entries(besoin)) { p.resources[id] -= n; if (!p.resources[id]) delete p.resources[id]; }
+    const file = ids.map(id => ({ id, type: R[id].ame!, corrompue: this.rng.next() < ARENE_AMES.corrompue }));
+    // 7B : tout le groupe proche part avec lui ; chacun son butin
+    const groupe = this.players.filter(q => !q.dead && (q === p || Math.hypot(q.x - p.x, q.y - p.y) <= ARENE_AMES.rayonGroupe));
+    const dedans = this.worldGrid?.mapAt(p.x, p.y)?.tag === ARCHI.arene;
+    const c = this.openestCellOf(ARCHI.arene);
+    for (const q of groupe) this.commeJoueur(q, () => {
+      if (this.worldGrid?.mapAt(q.x, q.y)?.tag === ARCHI.arene) return;
+      q.stopMove();
+      this.passage = { to: { tag: ARCHI.arene, x: c.x, y: c.y }, nom: 'Arène des âmes', t: World.PASSAGE };
+      this.emit({ k: 'portalStart', nom: 'Arène des âmes' });
     });
-    this.emit({ k: 'impact', hitstop: 0.05, shake: 0.012, big: true });
-    this.emit({ k: 'ameRelachee', monster: type!, x: c.x, y: c.y });
+    const defi = DEFIS[this.rng.int(DEFIS.length)];
+    this.combatAmes = new CombatAmes(this, file, groupe.map(q => q.id), defi, this.retourArene(), p.id, dedans ? 1.2 : World.PASSAGE + 1.5);
+    for (const q of groupe) this.commeJoueur(q, () => this.emit({ k: 'areneAmesDebut', ames: file.map(f => f.type), defi: ARENE_AMES.defis[defi].nom, texte: this.combatAmes!.texteDefi() }));
     return true;
   }
+  /** « Arène : » 9B : relance la même file d'âmes, si le lanceur les a encore. */
+  encoreAmes(): boolean {
+    const c = this.combatAmes, p = this.player;
+    if (!c || !c.victoire || c.lanceur !== p.id || !c.encorePossible(p)) return false;
+    const ids = c.file.map(f => f.id);
+    this.combatAmes = null;
+    return this.invoquerAmes(ids);
+  }
+  /** Fin du combat de l'arène : ceux qui y sont encore reviennent devant la Gardienne (9A). */
+  finirCombatAmes() {
+    const c = this.combatAmes;
+    if (!c) return;
+    this.combatAmes = null;
+    for (const m of this.monsters) if (m.relache && !m.dead) { m.dead = true; m.t = 0.6; }
+    for (const q of c.participants) this.commeJoueur(q, () => {
+      if (q.dead || this.worldGrid?.mapAt(q.x, q.y)?.tag !== ARCHI.arene || this.passage) return;
+      q.stopMove();
+      this.passage = { to: { tag: 'marche', x: c.retour.x, y: c.retour.y }, nom: 'Marché couvert', t: World.PASSAGE };
+      this.emit({ k: 'portalStart', nom: 'Marché couvert' });
+    });
+  }
+  /** « Arène : » 16A : l'âme de la semaine, offerte une fois par semaine à chaque perso. */
+  ameDeLaSemaine() { const h = this.opts.horloge; return h ? ameDeLaSemaine(this, h()) : null; }
+  ameDeLaSemaineDispo(): boolean { const h = this.opts.horloge; return !!h && !!this.ameDeLaSemaine() && this.player.areneAmes.lundi !== semaineDe(h()); }
+  prendreAmeDeLaSemaine(): boolean {
+    const a = this.ameDeLaSemaine(), h = this.opts.horloge, p = this.player;
+    if (!a || !h || !this.ameDeLaSemaineDispo() || !this.pretPourArene()) return false;
+    p.areneAmes.lundi = semaineDe(h());
+    p.resources[a.id] = (p.resources[a.id] ?? 0) + 1;
+    this.emit({ k: 'lootResource', id: a.id, n: 1 });
+    return true;
+  }
+  /** Âmes relâchables du jeu (fenêtre de la Gardienne). */
+  toutesAmes() { return toutesAmes(this); }
   /** Clé de ce donjon encore valable (14A) : vague atteinte, sinon 0. */
   cleValable(nom: string): number {
     const c = this.player.cleDonjon;
@@ -1431,6 +1489,7 @@ export class World {
   private updateOpen(dt: number) {
     const open = this.zone.open!;
     this.updateArene(dt);
+    this.combatAmes?.update(dt);
     this.guerre?.update(dt);
     this.vivant?.update(dt);
     if (!this.opts.groupesPartout) this.poserAutourDesJoueurs();
@@ -1503,6 +1562,10 @@ export class World {
       // le cercle autour du joueur à terre : où se tenir, et où en est la relève
       this.telegraphs.push({ kind: 'circle', x: q.x, y: q.y, r: R.portee, progress: Math.min(1, q.releve / R.temps), danger: false });
       if (q.releve >= R.temps) { this.relever(q, q.x, q.y, R.pv); this.emit({ k: 'status', x: q.x, y: q.y - 60, text: 'Relevé !', color: '#7fc47a' }); }
+      else if (q.aTerre >= R.seul && this.combatAmes?.joueurs.includes(q.id)) {   // « Arène : » 9A : tombé dans l'arène = relevé devant la Gardienne
+        const r = this.combatAmes.retour, f = this.worldGrid!.nearestFree(r.x, r.y, this.worldGrid!.freeByMap.get('marche'));
+        this.combatAmes.retirer(q.id); this.relever(q, f.x, f.y, 1);
+      }
       else if (q.aTerre >= R.seul) {
         if (this.arene || !this.zone.open) { const a = this.arene?.pts.arrivee ?? this.players.find(o => !o.dead) ?? q, f = this.map.nearestFree(a.x, a.y); this.relever(q, f.x, f.y, 1); }
         else this.commeJoueur(q, () => this.respawnPlayer());
@@ -2127,7 +2190,7 @@ export class World {
     this.emit({ k: 'kill', x: m.x, y: m.y, radius: m.radius, monster: m.type });
     const p = this.player;
     p.soigner(p.cls.healOnKill + p.legendary('vampire'));
-    if (!this.vivant?.monstreVaincu(m)) { this.dropLoot(m); if (m.champion) this.dropLoot(m); if (this.player.autel?.effet === 'fortune') this.dropLoot(m); if (m.fuyard) for (let i = 1; i < COFFRE_FUYARD.butins; i++) this.dropLoot(m); if (m.dore) this.dropLoot(m); }
+    if (!this.vivant?.monstreVaincu(m)) { this.dropLoot(m); if (m.champion) this.dropLoot(m); if (this.player.autel?.effet === 'fortune') this.dropLoot(m); if (m.fuyard) for (let i = 1; i < COFFRE_FUYARD.butins; i++) this.dropLoot(m); if (m.dore) this.dropLoot(m); if (m.corrompu) this.dropLoot(m); if (m.relache && m.def.archiDe) this.rareDArchi(m); }
     if (m.fuyard) tenterPortail(this, m);   // 0.6 (22B) : une fois sur 20, un portail vers la Salle au trésor   // coffre qui fuit : butin ×5   // Djim : le Champion donne deux fois ; autel de Fortune   // boss du monde : son coffre est donné par le monde vivant (4A)
     if ((m.def.archiDe || (m.def.boss && m.def.ame)) && !m.relache) this.capturer(m);
     const alm = (this.almanax?.effet === 'xp' ? 1 + ALMANAX.xp : 1) * (1 + p.beni('xp')) * (1 + this.bonusDuWeekEnd('xp'));   // 15C, Magasin 6D, 9B (week-end)
@@ -2157,7 +2220,7 @@ export class World {
     return (sub?.monsters ?? []).filter(t => !this.opts.data.monsters[t]?.elite && !this.opts.data.monsters[t]?.boss);
   }
   /** Bonus d'XP et de butin des idoles (part de 1), plafonné en donjon. */
-  get bonusIdoles(): number { return bonusIdoles(this.idolesActives, !!this.arene); }
+  get bonusIdoles(): number { return bonusIdoles(this.idolesActives, !!this.arene || !!this.combatAmes); }
   /** « Métiers : » 9C : l'arène en cours a été ouverte avec une clé renforcée (par un des joueurs). */
   get renforce(): boolean { const a = this.arene; return !!a && this.players.some(q => q.cleDonjon?.renforcee && q.cleDonjon.nom === a.d.nom); }
   /** Recette de l'idole chez le Bricoleur. */
@@ -2295,6 +2358,10 @@ export class World {
       const id = this.rng.pick(pool).id, r: Rarity = this.rng.next() < garanti.legendaire ? 'legendaire' : garanti.rarete;
       this.poserButin({ ressources: [], objets: [rollItem(id, I.equipment[id], r, this.rng, this.nextId++, this.contexteButin(cle, rang, niveau).pouvoirs)], kamas: 0 }, x, y, pour);
     });
+  }
+  /** « Arène : » 8C : un archimonstre relâché donne un Rare garanti à chaque joueur proche. */
+  private rareDArchi(m: Monster) {
+    for (const q of this.joueursProches(m.x, m.y)) this.butinMonstre(q, m.type, 'boss', m.def.level ?? this.monsterLevel(m), m.x, m.y, 0, { rarete: 'rare', legendaire: 0 });
   }
   /** 9B : valeur du bonus officiel du week-end s'il est de cette sorte (0 sinon). */
   bonusDuWeekEnd(cle: BonusWeekEnd['cle']): number { const b = this.weekEnd; return b?.cle === cle ? b.n : 0; }
