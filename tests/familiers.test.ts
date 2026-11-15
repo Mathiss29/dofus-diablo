@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { APPARATS, BOUTIQUES, FAMILIERS, GAME_DATA, ITEMS, QUETES } from '../src/sim/data';
 import { WorldGrid, type WorldData } from '../src/sim/gridmap';
 import { NO_INPUT } from '../src/sim/input';
-import { PEPITE, rollItem } from '../src/sim/items';
+import { familierStats, familierValeur, PEPITE, rollItem } from '../src/sim/items';
 import { exporterJoueur, restaurerJoueur } from '../src/sim/sauvegarde';
 import { World } from '../src/sim/world';
 
@@ -26,6 +26,21 @@ describe('familiers (maquette Familiers 1A+1C+1D 2C 3A 4A 5A 6A)', () => {
     expect(ITEMS.equipment[PIOUTE].stats.puissance).toEqual([7, 70]);
     expect(Object.values(ITEMS.equipment).filter(d => d.familier?.monstres?.includes('piou_violet')).length).toBeGreaterThan(0);
     expect(QUETES.succes.dans_les_nuages.recompense?.objet).toBe('1711');
+  });
+
+  it('chaque familier à bonus donne quelque chose (bonus fixes, PA/PM/Portée/Invocations jusqu\'au niveau 80)', () => {
+    for (const f of Object.values(FAMILIERS.familiers)) if (!f.apparat) expect(f.stats?.length, f.nom).toBeGreaterThan(0);
+    const F = FAMILIERS.familiers;
+    // Chienchien : +20 Sagesse fixe (non évolutif, possibleEffects officiels)
+    expect(familierStats(F['1711'], 1)).toEqual({ sagesse: 20 }); expect(familierStats(F['1711'], 100)).toEqual({ sagesse: 20 });
+    // Chachyène : 2 Invocations et 1 PM gagnés jusqu'au niveau 80
+    expect(familierStats(F['15110'], 1)).toEqual({});
+    expect(familierStats(F['15110'], 40)).toEqual({ invocations: 1 });
+    expect(familierStats(F['15110'], 80)).toEqual({ invocations: 2, pm: 1 });
+    expect(familierStats(F['15110'], 100)).toEqual({ invocations: 2, pm: 1 });
+    // Pioute violet : Puissance de 7 à 70 + 2 Invocations au niveau 80
+    const pv = F[PIOUTE].stats!.find(l => l[0] === 'invocations')!;
+    expect(familierValeur(pv, 100)).toBe(2);
   });
 
   it('niveau 1 à 100 : XP en chassant et en nourrissant, bonus qui grandissent', () => {

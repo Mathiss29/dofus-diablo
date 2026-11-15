@@ -80,8 +80,8 @@ import { LOOKS } from './looks';
 import { niveauHorsPartie, rangDe } from '../sim/butin';
 import { DOSSIER, PALETTES, ZONES, apparenceValide, assemblagePour, fiches, objetsPortes, type Apparence, type Assemblage, type FichePerso } from './squelette';
 import {
-  BASE_STATS, REDUCTION_RECHARGES_MAX, FAMILIER_MAX, FAMILIER_XP, METIER_XP, lignePouvoir, PEPITE, RARITY_COLORS, RARITY_NAMES, STATS, STAT_NAMES, metierXpNeeded, kamasDefaire, noteObjet,
-  type EquipSlot, type Item, type Rarity, type ResourceDef, type Stat,
+  BASE_STATS, REDUCTION_RECHARGES_MAX, FAMILIER_MAX, FAMILIER_XP, familierValeur, familierProchain, METIER_XP, lignePouvoir, PEPITE, RARITY_COLORS, RARITY_NAMES, STATS, STAT_NAMES, metierXpNeeded, kamasDefaire, noteObjet,
+  type EquipSlot, type Item, type Rarity, type ResourceDef, type Stat, type FamilierDef,
 } from '../sim/items';
 import { Player } from '../sim/player';
 import { POUVOIR_PAR_ID } from '../sim/pouvoirs';
@@ -860,6 +860,20 @@ type Mode = 'inv' | 'car' | 'job' | 'art' | 'opt' | 'sorts' | 'quetes' | 'succes
  *  Les clics appellent l'API de la partie (World / Player). */
 /** Onglets de la fenêtre des marchands : Défaire (Kerubim), boutique d'un PNJ, et ceux du Marché du Bastion. */
 type OngletEmp = 'recycler' | 'boutique' | 'apparat' | 'etal' | 'conso' | 'cles' | 'animalerie' | 'style' | 'confort' | 'havresac';
+/** Bonus d'un familier en une ligne : « 1 à 70 », « 20 (fixe) », « 0 à 1 (au niveau 80) ». */
+function fourchetteFamilier(l: [Stat, number, number, number?]): string {
+  const a = familierValeur(l, 1), b = familierValeur(l, FAMILIER_MAX);
+  return l[2] === 0 || a === b ? `${b} (fixe)` : `${a} à ${b}${l[3] && l[3] < FAMILIER_MAX ? ` (au niveau ${l[3]})` : ''}`;
+}
+/** Infobulle d'un familier : ses bonus à son niveau, et ce qu'il donnera au bout. */
+function bonusFamilierHtml(f: FamilierDef, n: number): string {
+  const l = (f.stats ?? []).map(x => {
+    const v = familierValeur(x, n), max = familierValeur(x, FAMILIER_MAX), pro = familierProchain(x, n);
+    const jt = x[2] === 0 ? 'fixe' : v >= max ? 'maximum' : `${max} au niveau ${x[3] ?? FAMILIER_MAX}${x[3] && pro && pro !== x[3] ? ` · +1 au niveau ${pro}` : ''}`;
+    return `<div class="tl"${v > 0 ? '' : ' style="opacity:.55"'}><span>+${v} ${STAT_NAMES[x[0]]}</span><span class="jt">${jt}</span></div>`;
+  }).join('');
+  return l ? `<div class="sub" style="margin-top:6px">Ce qu'il te donne au niveau ${n}</div>${l}` : '<div class="hint">Aucun bonus : pour le plaisir</div>';
+}
 export class Windows {
   private root: HTMLDivElement;
   private win: HTMLDivElement | null = null;
@@ -2457,7 +2471,9 @@ export class Windows {
     const id = this.bestFam, f = F[id];
     if (!f) return { liste, fiche: '' };
     const s = src(id), p = W.player, eu = a.has(id);
-    const bonus = (f.stats ?? []).map(([k, b, g]) => `<div><span>${STAT_NAMES[k] ?? k}</span><b>${Math.floor(b)} à ${Math.floor(b + 100 * g)}</b></div>`).join('') || '<div><span>Aucun bonus : pour le plaisir</span></div>';
+    const nivM = p === W.players[0] ? W.coffre.familiers?.[id] : undefined;   // niveau le plus haut atteint (Ménagerie du compte)
+    const bonus = (f.stats ?? []).map(l => `<div><span>${STAT_NAMES[l[0]] ?? l[0]}</span><b>${nivM ? `+${familierValeur(l, nivM)} · ` : ''}${fourchetteFamilier(l)}</b></div>`).join('') || '<div><span>Aucun bonus : pour le plaisir</span></div>';
+    const bonusTitre = `<div class="sub" style="margin:8px 0 4px">${f.stats?.length ? nivM ? `Ses bonus (le tien est niveau ${nivM} ; du niveau 1 au niveau ${FAMILIER_MAX}) :` : `Ses bonus, du niveau 1 au niveau ${FAMILIER_MAX} :` : 'Ses bonus :'}</div>`;
     const monstres = s?.k === 'famille' ? [...new Set(s.monstres.filter(m => !m.startsWith('archi_')))].map(m => `<span class="btn" data-fmon="${m}">${escB(GAME_DATA.monsters[m]?.name ?? m)}</span>`).join(' ') : '';
     const niv = p === W.players[0] ? W.coffre.familiers?.[id] : undefined, ici = p.bag.some(o => o.id === id) || p.equipment.familier?.id === id || W.coffre.onglets.some(l => l.some(o => o.id === id));
     const sortir = eu && niv && !ici ? `<span class="btn" data-fsortir>Le sortir (niveau ${niv})</span>` : '';
@@ -2466,7 +2482,7 @@ export class Windows {
     const fiche = `<div class="tete"><span style="transform:scale(2.4);margin:40px;${eu ? '' : 'filter:grayscale(1) brightness(.55)'}">${iconHtml(f.icon)}</span><div><h3>${escB(f.nom)}</h3>
         <div class="sub">${eu ? 'Dans ta Ménagerie : son apparence se porte sur n\'importe quel familier (Apparence, inventaire).' : 'Pas encore obtenu.'}</div>
         <div class="sub">${escB(ouTrouverFamilier(s, k => GAME_DATA.monsters[k]?.name ?? k, k => QUETES.succes[k]?.nom ?? k))}</div></div></div>
-      <div class="kv">${bonus}</div>${monstres ? `<div class="sub" style="margin:8px 0 4px">Monstres qui le lâchent (une chance sur ${REGLAGES_BUTIN.familier.normal}, élite ${REGLAGES_BUTIN.familier.elite}, boss ${REGLAGES_BUTIN.familier.boss}) :</div><div>${monstres}</div>` : ''}
+      ${bonusTitre}<div class="kv">${bonus}</div>${monstres ? `<div class="sub" style="margin:8px 0 4px">Monstres qui le lâchent (une chance sur ${REGLAGES_BUTIN.familier.normal}, élite ${REGLAGES_BUTIN.familier.elite}, boss ${REGLAGES_BUTIN.familier.boss}) :</div><div>${monstres}</div>` : ''}
       ${sortir || dons ? `<div style="margin-top:10px">${sortir} ${dons}</div>` : ''}
       ${eu && !sortir && !dons ? '<div class="hint" style="margin-top:10px">Un double ne tombe plus. Acheté en double, il se mange (gros repas) ou se donne à un ami du groupe.</div>' : ''}`;
     return { liste, fiche };
@@ -2794,8 +2810,8 @@ export class Windows {
       // « Familiers : » 1B + 4A : les familiers domestiques, toujours en vente, en kamas ; 4C : un familier offert au niveau 10
       const S = FAMILIERS_SOURCES, deja = new Set(W.menagerie());
       const ligneF = (id: string, fin: string) => { const d = ITEMS.equipment[id], f = d?.familier; if (!f) return '';
-        const bonus = (f.stats ?? []).map(([k, b, g]) => `${STAT_NAMES[k] ?? k} ${Math.floor(b)} à ${Math.floor(b + 100 * g)}`).join(' · ') || 'Aucun bonus : pour le plaisir';
-        return `<div class="rec" data-essai="${id}">${iconHtml(f.icon)}<div><b>${escB(f.nom)}</b> <span class="hint">familier${deja.has(id) ? ' · déjà dans ta Ménagerie' : ''}</span>${porteur(id)}<div style="font-size:12px;color:#c9c4ab">${bonus} (niveau 1 à 100)</div></div>${fin}</div>`; };
+        const bonus = (f.stats ?? []).map(l => `${STAT_NAMES[l[0]] ?? l[0]} ${fourchetteFamilier(l)}`).join(' · ');
+        return `<div class="rec" data-essai="${id}">${iconHtml(f.icon)}<div><b>${escB(f.nom)}</b> <span class="hint">familier${deja.has(id) ? ' · déjà dans ta Ménagerie' : ''}</span>${porteur(id)}<div style="font-size:12px;color:#c9c4ab">${bonus ? `${bonus} (du niveau 1 au niveau ${FAMILIER_MAX})` : 'Aucun bonus : pour le plaisir'}</div></div>${fin}</div>`; };
       const depart = W.familierDeDepartPossible() ? `<div class="ent">Familier offert <span class="hint">· un seul, au choix, pour fêter ton niveau ${S.depart.niveau}</span></div>${S.depart.familiers.map(id => ligneF(id, `<span class="btn" data-fdep="${id}">Le prendre</span>`)).join('')}` : '';
       corps = `<div class="cata">${apercu()}<div class="shop">${depart}
           <div class="ent">Familiers domestiques <span class="hint">· les autres se trouvent sur les monstres de leur famille (Ménagerie du Bestiaire)</span></div>
@@ -3263,7 +3279,7 @@ export class Windows {
       const etq = exo ? '<span class="etq x">EXO</span>' : over ? `<span class="etq o">OVER</span> <span class="jm">(max ${m})</span>` : '';
       return `<div class="tl ${exo ? 'exo' : over ? 'over' : it.extra.includes(k) ? 'ex' : v < 0 ? 'down' : ''}"><span>${v > 0 ? '+' : ''}${v} ${STAT_NAMES[k]}${etq}</span>${jet ? `<span class="jt">${jet}</span>` : ''}</div>`;
     };
-    const stats = STATS.filter(k => it.stats[k] !== undefined).map(k => line(k, it.stats[k]!)).join('');
+    const stats = d.familier ? '' : STATS.filter(k => it.stats[k] !== undefined).map(k => line(k, it.stats[k]!)).join('');   // familier : bonusFamilierHtml
     const potion = it.potion ? ITEMS.resources[it.potion] : undefined;
     const weapon = (d.weapon ? `<div>${dmgArme(d, it).map(x => `${x.min}–${x.max} dommages ${x.element}`).join(' · ')}</div>` : '')
       + (potion ? `<div class="potfm">${potion.name} : dommages neutres en ${potion.potionFM}</div>` : '')
@@ -3302,9 +3318,8 @@ export class Windows {
     let fam = '';
     if (d.familier) {   // familier : son niveau, son XP, et ses bonus au niveau 100
       const n = it.niv ?? 1, c = FAMILIERS.xp, a = c[n - 1] ?? 0, b = c[n] ?? a, x = it.xpF ?? 0;
-      const max = STATS.filter(k => d.stats[k]).map(k => `${d.stats[k]![1]} ${STAT_NAMES[k]}`).join(' · ');
       fam = `<div class="ex">Familier niveau ${n} / ${FAMILIER_MAX}</div>${porteur(it.id)}${n < FAMILIER_MAX ? `<div class="xpf"><i style="width:${Math.round(100 * Math.min(1, (x - a) / Math.max(1, b - a)))}%"></i></div>` : ''}
-        ${max ? `<div class="hint">Au niveau 100 : ${max}</div>` : ''}
+        ${bonusFamilierHtml(d.familier, n)}
         <div class="hint">Il gagne de l'XP quand tu chasses, et quand tu le nourris (Alt + clic sur un objet ou une ressource du sac).</div>`;
     } else if (p.equipment.familier && !worn) fam = `<div class="hint">Alt + clic : le donner à manger au familier (+${FAMILIER_XP.objet(d.level, it.rarity)} XP)</div>`;
     this.tip.innerHTML = `<h4 style="color:${RARITY_COLORS[it.rarity]}">${d.name}</h4>

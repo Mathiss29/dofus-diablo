@@ -55,8 +55,9 @@ export interface FamilierDef {
   nom: string; niveau: number; icon: number;
   /** Planche (assets/sprites/<planche>.json) et ses animations : repos (diagonales 1 et 5) puis course ou marche. */
   planche: string; anims: string[];
-  /** [carac, valeur au niveau 0, gain par niveau] (evolutiveeffects). */
-  stats?: [Stat, number, number][];
+  /** [carac, valeur au niveau 0, gain par niveau, niveau où le gain s'arrête (100 si absent)] (evolutiveeffects) ;
+   *  gain 0 = bonus fixe d'un familier non évolutif (Chienchien, Chacha Blanc… : possibleEffects). */
+  stats?: [Stat, number, number, number?][];
   /** 1A : monstres de sa famille qui peuvent le lâcher ; 1C : succès qui le donne. */
   monstres?: string[]; succes?: string;
   /** Familier d'apparat (5A) : change seulement l'apparence du familier porté. */
@@ -68,8 +69,19 @@ export const FAMILIER_MAX = 100;
 /** Bonus d'un familier à ce niveau (officiel : valeur au niveau 0 + gain × niveau). */
 export function familierStats(f: FamilierDef, niv: number): Stats {
   const st: Stats = {};
-  for (const [k, base, par] of f.stats ?? []) { const v = Math.floor(base + par * niv); if (v > 0) st[k] = v; }
+  for (const l of f.stats ?? []) { const v = familierValeur(l, niv); if (v > 0) st[l[0]] = v; }
   return st;
+}
+/** Valeur d'un bonus de familier à ce niveau : PA, PM, Portée et Invocations se gagnent jusqu'au niveau 80 (officiel). */
+export function familierValeur([, base, par, fin]: [Stat, number, number, number?], niv: number): number {
+  return Math.floor(base + par * Math.min(Math.max(0, niv), fin ?? FAMILIER_MAX) + 1e-6);
+}
+/** Niveau où ce bonus gagne son prochain point (null s'il est au maximum ou fixe). */
+export function familierProchain(l: [Stat, number, number, number?], niv: number): number | null {
+  const max = familierValeur(l, FAMILIER_MAX), v = familierValeur(l, niv);
+  if (v >= max) return null;
+  for (let n = niv + 1; n <= FAMILIER_MAX; n++) if (familierValeur(l, n) > v) return n;
+  return null;
 }
 /** Niveau d'un familier selon son XP totale (courbe officielle : XP totale par niveau). */
 export function familierNiveau(xp: number, courbe: number[]): number {

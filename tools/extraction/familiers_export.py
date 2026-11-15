@@ -21,9 +21,13 @@ out = sys.argv[4] if len(sys.argv) > 4 else os.path.join(R, 'public/assets/sprit
 T = load_i18n(fr)
 
 
+REFS = {}
+
+
 def table(n):
     d = json.load(open(os.path.join(tables, n + '.json')))
     Rf = {r['rid']: r['data'] for r in d['references']['RefIds']}
+    REFS.update(Rf)   # effets possibles des objets (possibleEffects = renvois)
     o = d['objectsById']
     return {int(k): Rf.get(v['rid']) for k, v in zip(o['m_keys'], o['m_values'])}
 
@@ -93,14 +97,21 @@ for i, v in sorted(I.items()):
             ev = EV.get(int(x)); s = ev and STAT.get(int(ev['actionId']))
             if not s: continue
             r = ev['progressionPerLevelRange']
-            base, par = r[0]['values'][1], (r[1]['values'][1] if len(r) > 1 else 0)
-            if base + 100 * par >= 1: st.append([s, round(base, 2), round(par, 4)])
+            if len(r) == 1:   # [[80, gain]] : PA, PM, Portée, Invocations gagnés jusqu'au niveau 80 (80 × gain = valeur officielle)
+                lv, par = r[0]['values']; base, cap = 0, int(lv)
+            else: base, par, cap = r[0]['values'][1], r[1]['values'][1], 100
+            if base + cap * par >= 1: st.append([s, round(base, 2), round(par, 4)] + ([cap] if cap != 100 else []))
+        if not v['evolutiveEffectIds'] and int(v['typeId']) == 18:   # familier non évolutif (Chienchien, Chacha Blanc…) : bonus fixe de possibleEffects
+            for x in v['possibleEffects']:
+                pe = REFS.get(int(x['rid'])) if isinstance(x, dict) else None
+                s = pe and STAT.get(int(pe['effectId']))
+                if s and int(pe['diceNum']) > 0: st.append([s, int(pe['diceNum']), 0])
         e['stats'] = st
         if nom in SOURCES: e['monstres'] = SOURCES[nom]
         if nom in SUCCES: e['succes'] = SUCCES[nom]
     if os.path.exists(os.path.join(out, f'fam_{b}.json')) or not os.environ.get('SANS_PLANCHES'): fam[str(i)] = e   # planche ratée (ex. 1804) : écarté
 courbe = EVT[1]['experienceByLevel']
-json.dump({'_': 'Fait par tools/extraction/familiers_export.py. stats = [carac, valeur au niveau 0, gain par niveau] ; xp = XP totale par niveau (evolutiveitemtypes 1).',
+json.dump({'_': 'Fait par tools/extraction/familiers_export.py. stats = [carac, valeur au niveau 0, gain par niveau, (niveau où le gain s\'arrête, 100 sinon)] ; xp = XP totale par niveau (evolutiveitemtypes 1).',
            'xp': courbe[:101], 'familiers': fam}, open(os.path.join(R, 'src/data/familiers.json'), 'w'), ensure_ascii=False, separators=(',', ':'))
 print(len(fam), 'familiers', sum(1 for x in fam.values() if x.get('apparat')), 'apparats,', sum(1 for x in faits.values() if x), 'planches')
 if os.environ.get('SANS_PLANCHES'): sys.exit()   # relancer ensuite avec SANS_PLANCHES=1 pour écarter les planches ratées
