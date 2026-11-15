@@ -6,7 +6,7 @@ import { createServer } from 'node:http';
 import { readFileSync } from 'node:fs';
 import { WebSocketServer } from 'ws';
 import { creerComptes } from './comptes.mjs';
-import { arenesDisponibles, chargerSim, Partie } from './partie.mjs';
+import { arenesDisponibles, chargerSim, heureParis, Partie } from './partie.mjs';
 import { creerPresence } from './presence.mjs';
 import { annonceurDiscord, creerClassement } from './classement.mjs';
 
@@ -21,7 +21,9 @@ const depart = Date.now();
 /** Salons de coop (maquette « Multi : » 3A) : 2 à 4 joueurs, le premier est l'hôte. Le serveur ne regarde pas la partie,
  *  il relaie : instantanés de l'hôte vers ses invités, entrées des invités vers l'hôte. */
 /** continents : mondes du continent entier en même temps (« En ligne : » 1A, environ 70 Mo chacun, sous les 1,5 Go de Node). */
-export const SALON = { max: 4, salons: 300, parties: 40, continents: 14, debit: 120, lettres: 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', taille: 5 };
+/** attenteVide : un monde ouvert vide attend son groupe ce temps (ms) avant de fermer (« En ligne : » 8B) ; bossMax : joueurs du
+ *  combat commun d'un boss du monde (3D). */
+export const SALON = { max: 4, salons: 300, parties: 40, continents: 14, debit: 120, lettres: 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', taille: 5, attenteVide: 120_000, bossMax: 16 };
 const salons = new Map();
 /** « En ligne : » 1A : monde ouvert de chaque groupe, « groupe:zone » → code de son salon (une partie par zone tenue par le serveur). */
 const mondes = new Map();
@@ -44,7 +46,8 @@ function quitter(s) {
     const m = sa.partie.membres.get(s.num);
     sa.partie.depart(s.num);
     if (m?.compte) enJeu.delete(`${m.compte.compte}:${m.compte.emplacement}`);
-    if (!sa.membres.size) fermerPartie(sa);
+    // « En ligne : » 8B : le monde d'un groupe attend 2 min (un retour de donjon, une connexion qui saute) ; le reste ferme tout de suite
+    if (!sa.membres.size) { if (sa.partie.monde && sa.cleMonde && !sa.cleMonde.startsWith('boss:')) sa.videDepuis = Date.now(); else fermerPartie(sa); }
     return;
   }
   if (s.num === 1) { for (const m of sa.membres.values()) { m.salon = null; envoyer(m, { k: 'fin', raison: 'hote' }); } salons.delete(sa.code); return; }
@@ -68,6 +71,11 @@ function fermerPartie(sa) {
   for (const m of sa.membres.values()) { m.salon = null; envoyer(m, { k: 'fin', raison: 'erreur' }); }
   if (!parties().length && boucle) { clearInterval(boucle); boucle = null; }
 }
+/** « En ligne : » 8B : ferme les mondes vides depuis plus de SALON.attenteVide (les persos ont été sauvés au départ de chacun). */
+export function fermerMondesVides(t = Date.now()) {
+  for (const sa of parties()) if (sa.videDepuis != null && !sa.membres.size && t - sa.videDepuis >= SALON.attenteVide) fermerPartie(sa);
+}
+let derniereRonde = 0;
 function tourner() {
   if (boucle) return;
   avant = performance.now();
@@ -77,11 +85,12 @@ function tourner() {
       try { sa.partie.avancer(dt); }
       catch (e) { console.warn(`partie ${sa.code} arrêtée :`, e.message); fermerPartie(sa); }
     }
+    if (t - derniereRonde > 5000) { derniereRonde = t; fermerMondesVides(); }
   }, 1000 / 60);
 }
 /** monde : la partie est un monde ouvert (true = Incarnam, ou le nom de sa zone : « En ligne : » 1A), sinon l'arène d'un donjon
  *  (arene : son tag, la Crypte par défaut). cleMonde : « groupe:zone », le monde de ce groupe (les autres membres le rejoignent). */
-async function creerPartie(s, monde = false, arene = null, cleMonde = null) {
+async function creerPartie(s, monde = false, arene = null, cleMonde = null, o = {}) {
   const S = await chargerSim();
   if (s.readyState !== 1) return;
   if (cleMonde && mondes.has(cleMonde)) return entrerMonde(s, cleMonde);   // un autre membre l'a créé pendant qu'on chargeait
@@ -90,10 +99,10 @@ async function creerPartie(s, monde = false, arene = null, cleMonde = null) {
   const lourd = typeof monde === 'string' && monde !== 'incarnam';
   if (salons.size >= SALON.salons || parties().length >= SALON.parties || lourd && parties().filter(x => x.partie.zoneMonde && x.partie.zoneMonde !== 'incarnam').length >= SALON.continents)
     return envoyer(s, { k: 'refus', raison: 'plein' });
-  const sa = { code: nouveauCode(), membres: new Map([[1, s]]), suivant: 2, cleMonde };
+  const sa = { code: nouveauCode(), membres: new Map([[1, s]]), suivant: 2, cleMonde, max: o.max ?? SALON.max };
   if (cleMonde) mondes.set(cleMonde, sa.code);
   sa.partie = new Partie(S, (num, d) => { const c = sa.membres.get(num); if (c) envoyer(c, `{"k":"recu","de":0,"d":${JSON.stringify(d)}}`); },
-    undefined, (c, perso) => lesComptes?.sauverPartie(c.compte, c.emplacement, perso), { monde, arene, donjonFini: (nom, temps, L, idoles) => leClassement?.noterDonjon(nom, temps, L, idoles), signer: it => lesComptes?.hdv?.signer(it) });
+    undefined, (c, perso) => lesComptes?.sauverPartie(c.compte, c.emplacement, perso), { monde, arene, donjonFini: (nom, temps, L, idoles) => leClassement?.noterDonjon(nom, temps, L, idoles), signer: it => lesComptes?.hdv?.signer(it), ...o });
   sa.partie.arrivee(1);
   salons.set(sa.code, sa); s.salon = sa; s.num = 1;
   tourner();
@@ -102,14 +111,14 @@ async function creerPartie(s, monde = false, arene = null, cleMonde = null) {
 /** Fait entrer un joueur dans un salon de partie existant (par son code). */
 function entrerSalon(s, sa) {
   quitter(s);
-  s.salon = sa; s.num = sa.suivant++; sa.membres.set(s.num, s);
+  s.salon = sa; s.num = sa.suivant++; sa.membres.set(s.num, s); sa.videDepuis = null;
   sa.partie.arrivee(s.num);
-  return envoyer(s, { k: 'salon', code: sa.code, id: s.num, hote: false, serveur: true });
+  return envoyer(s, { k: 'salon', code: sa.code, id: s.num, hote: false, serveur: true, monde: sa.partie.zoneMonde });
 }
 function entrerMonde(s, cle) {
   const sa = salons.get(mondes.get(cle));
   if (!sa?.partie) { mondes.delete(cle); return false; }
-  if (sa.membres.size >= SALON.max) return envoyer(s, { k: 'refus', raison: 'complet' }), true;
+  if (sa.membres.size >= (sa.max ?? SALON.max)) return envoyer(s, { k: 'refus', raison: 'complet' }), true;
   entrerSalon(s, sa); return true;
 }
 /** « En ligne : » 1A + 5A : un membre d'un groupe entre dans une zone du monde ouvert (en arrivant dans la zone, par une porte, ou en
@@ -118,9 +127,30 @@ function entrerMonde(s, cle) {
 async function mondeGroupe(s, m) {
   const c = lesComptes?.persoPartie(m.jeton, m.emplacement);
   if (!c) return envoyer(s, { k: 'refus', raison: 'perso' });
-  const g = presence?.groupeDe(c.compte);
+  const g0 = presence?.groupeDe(c.compte);
+  // « HDV : » 4B : seul, il peut choisir de jouer sur le serveur (son butin y est vu, donc vendable) : un monde rien qu'à lui
+  const g = g0 ?? (m.seul === true ? `solo${c.compte}` : null);
   if (g == null) return envoyer(s, { k: 'refus', raison: 'groupe' });
   const S = await chargerSim();
+  // « En ligne : » 5B : rejoindre un allié d'un clic : la partie où il joue (monde du groupe ou donjon), à côté de lui
+  if (m.allie != null) {
+    const id = Number(m.allie);
+    if (g0 == null || presence?.groupeDe(id) !== g0) return envoyer(s, { k: 'refus', raison: 'allie' });
+    const sa = parties().find(x => x.partie.positionDe(id));
+    if (!sa) return envoyer(s, { k: 'refus', raison: 'allie' });
+    if (sa.membres.size >= (sa.max ?? SALON.max)) return envoyer(s, { k: 'refus', raison: 'complet' });
+    s.arrivee = null; s.transit = sa.partie.monde ? { position: sa.partie.positionDe(id) } : null;
+    entrerSalon(s, sa); return;
+  }
+  // « En ligne : » 3D : le boss du monde de ce créneau : un seul combat pour tous les groupes de la zone
+  if (m.boss === true) {
+    const zone = typeof m.zone === 'string' && S?.mondes[m.zone] ? m.zone : null;
+    if (!zone || !S.VIVANT) return envoyer(s, { k: 'refus', raison: 'indisponible' });
+    const cle = `boss:${zone}:${Math.floor(heureParis() / S.VIVANT.boss.periode)}`;
+    s.arrivee = null; s.transit = { position: m.position };
+    if (!entrerMonde(s, cle)) { quitter(s); await creerPartie(s, zone, null, cle, { max: SALON.bossMax, combatBoss: true }); }
+    return;
+  }
   // « En ligne : » 4C : la porte d'un donjon dans le monde du groupe : l'arène du groupe pour ce donjon (les autres reçoivent « Rejoindre »)
   if (typeof m.arene === 'string') {
     const a = S && arenesDisponibles(S).find(x => x.tag === m.arene);
@@ -138,7 +168,7 @@ async function mondeGroupe(s, m) {
   s.arrivee = Array.isArray(m.arrivee) ? m.arrivee.slice(0, 2) : null;
   s.transit = { zaap: m.zaap, position: m.position, point: m.point, retour: m.retour };
   const cle = `${g}:${zone}`;
-  if (!entrerMonde(s, cle)) { quitter(s); await creerPartie(s, zone, null, cle); }
+  if (!entrerMonde(s, cle)) { quitter(s); await creerPartie(s, zone, null, cle, { bossPartage: zone !== 'incarnam' }); }
 }
 /** Un joueur arrive dans une partie du serveur avec son jeton : on lit SON perso sur son compte (4A), le jeu n'envoie que
  *  l'emplacement. Jeton faux, emplacement vide ou perso déjà en jeu : refus, le jeu le dit au joueur. */

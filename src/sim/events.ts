@@ -99,6 +99,8 @@ export type SimEvent =
   | { k: 'bossMondeCombat'; cle: string; nom: string; minuterie: number }
   | { k: 'bossMondePalier'; cle: string; nom: string; n: number; x: number; y: number }
   | { k: 'bossMondeFin'; cle: string; nom: string; fin: 'vaincu' | 'parti' | 'enfui' }
+  /** « En ligne : » 3D : dans le monde d'un groupe, ce joueur arrive près du boss du monde : il part dans le combat commun. */
+  | { k: 'versBossMonde'; joueur: number; cle: string; creneau: number }
   | { k: 'bossMondeVaincu'; cle: string; nom: string; premier: boolean; titre: string; pepites: number }
   /** Invasion de l'heure (5B), jauge pleine (7A : Pépites de ce joueur, coffre posé), coffre ouvert avec des Éclats (7B). */
   | { k: 'invasionDebut'; nom: string; sub: number; fin: number }

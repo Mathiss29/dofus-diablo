@@ -163,6 +163,14 @@ posée quand il apparaît dans une partie du serveur (`Partie.signerNeufs`). Le 
 `DONNEES/hdv.secret` au premier lancement (ou `HDV_SECRET` dans l'environnement) : le garder avec la base, jamais dans le dépôt.
 Rien à régler sur le VPS.
 
+## Mondes en ligne (« En ligne : », `index.mjs`, `partie.mjs`)
+
+- Chaque groupe a son monde du continent (`groupe:zone`) ; seul, le joueur qui coche « Jouer sur le serveur » (Social › Groupe) a le sien (`solo<compte>:zone`, « HDV : » 4B).
+- 8B : le dernier joueur parti, le monde attend `SALON.attenteVide` (2 min) sans tourner, puis ferme. Les persos sont sauvés au départ de chacun.
+- 5B : `mondeGroupe` avec `allie` : entre dans la partie où joue cet allié du même groupe, posé à côté de lui.
+- 3D : près du boss du monde, le monde du groupe envoie vers le combat commun du créneau (`boss:zone:créneau`, 16 joueurs au plus) ; le boss fini, chacun rentre dans le monde de son groupe.
+- 2C : chaque sauvegarde envoyée par le jeu (solo) est comparée à la précédente (`src/sim/verifSauvegarde.ts`). Douteuse, elle est gardée, mais le perso entre dans la table `douteux` et sort du Ladder. Pour le blanchir : `DELETE FROM douteux WHERE compte = ? AND emplacement = ?`.
+
 ## Classement (Ladder, maquette « Ladder : »)
 
 Le serveur calcule le classement une fois par minute (`classement.mjs`) depuis les persos en ligne : `GET /classement`

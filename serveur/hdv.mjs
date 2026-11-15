@@ -45,6 +45,7 @@ export function creerHdv({ db, connecte, lireCorps, persoStocke, rangAbo = () =>
     CREATE TABLE IF NOT EXISTS hdv_signes (signe TEXT PRIMARY KEY, compte INTEGER NOT NULL);
     CREATE TABLE IF NOT EXISTS hdv_quota (compte INTEGER NOT NULL, jour TEXT NOT NULL, n INTEGER NOT NULL, PRIMARY KEY (compte, jour));
     CREATE TABLE IF NOT EXISTS hdv_depenses (compte INTEGER NOT NULL, emplacement INTEGER NOT NULL, kamas INTEGER NOT NULL, quand INTEGER NOT NULL);
+    CREATE TABLE IF NOT EXISTS hdv_recus (compte INTEGER NOT NULL, emplacement INTEGER NOT NULL, kamas INTEGER NOT NULL, quand INTEGER NOT NULL);
     CREATE TABLE IF NOT EXISTS hdv_favoris (compte INTEGER NOT NULL REFERENCES comptes(id) ON DELETE CASCADE, cle TEXT NOT NULL, nom TEXT NOT NULL,
       seuil INTEGER, PRIMARY KEY (compte, cle));`);
   const q = {
@@ -65,6 +66,9 @@ export function creerHdv({ db, connecte, lireCorps, persoStocke, rangAbo = () =>
     nbColis: db.prepare('SELECT COUNT(*) AS n, COALESCE(SUM(kamas), 0) AS kamas FROM hdv_colis WHERE compte = ?'),
     ajouterColis: db.prepare('INSERT INTO hdv_colis (compte, kamas, objet, texte, quand) VALUES (?, ?, ?, ?, ?)'),
     oterColis: db.prepare('DELETE FROM hdv_colis WHERE id = ?'),
+    recu: db.prepare('INSERT INTO hdv_recus (compte, emplacement, kamas, quand) VALUES (?, ?, ?, ?)'),
+    recus: db.prepare('SELECT COALESCE(SUM(kamas), 0) AS k FROM hdv_recus WHERE compte = ? AND emplacement = ? AND quand > ?'),
+    vieuxRecus: db.prepare('DELETE FROM hdv_recus WHERE quand < ?'),
     signe: db.prepare('SELECT compte FROM hdv_signes WHERE signe = ?'),
     signer: db.prepare('INSERT INTO hdv_signes (signe, compte) VALUES (?, ?) ON CONFLICT (signe) DO UPDATE SET compte = excluded.compte'),
     quota: db.prepare('SELECT n FROM hdv_quota WHERE compte = ? AND jour = ?'),
@@ -218,6 +222,8 @@ export function creerHdv({ db, connecte, lireCorps, persoStocke, rangAbo = () =>
       } else if (objet) r.objets.push(objet);
       r.kamas += x.kamas; r.textes.push(x.texte); q.oterColis.run(x.id);
     }
+    // « En ligne : » 2C : kamas rendus au jeu en solo, comptés quand le serveur vérifie la sauvegarde suivante
+    if (!P && r.kamas > 0) { q.recu.run(c.id, i, r.kamas, maintenant()); q.vieuxRecus.run(maintenant() - 30 * 86400_000); }
     return r;
   }
 
@@ -281,5 +287,7 @@ export function creerHdv({ db, connecte, lireCorps, persoStocke, rangAbo = () =>
       return json(res, 503, { erreur: 'serveur' }), true;
     }
   }
-  return { route, signer, signature, vendre, acheter, retirer, encaisser, set partieDe(f) { partieDe = f ?? (() => null); }, get partieDe() { return partieDe; } };
+  /** « En ligne : » 2C : kamas des ventes encaissés en solo par ce perso depuis cet instant (ms). */
+  const kamasRecus = (compte, emplacement, depuis) => q.recus.get(compte, emplacement, depuis).k;
+  return { route, signer, signature, vendre, acheter, retirer, encaisser, kamasRecus, set partieDe(f) { partieDe = f ?? (() => null); }, get partieDe() { return partieDe; } };
 }

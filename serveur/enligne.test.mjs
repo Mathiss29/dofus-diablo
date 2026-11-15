@@ -7,7 +7,7 @@ import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { DatabaseSync } from 'node:sqlite';
 import WebSocket from 'ws';
-import { creerServeur } from './index.mjs';
+import { creerServeur, fermerMondesVides } from './index.mjs';
 import { creerComptes } from './comptes.mjs';
 import { chargerSim, Partie } from './partie.mjs';
 
@@ -79,7 +79,12 @@ test('monde du groupe : les membres d’un groupe entrent dans le même monde du
   assert.equal((await sante()).parties, 2);
   for (const x of [pa, pb, pc, a, b, c]) x.ws.close();
   await new Promise(r => setTimeout(r, 200));
-  assert.equal((await sante()).parties, 0, 'un monde vide se ferme (après avoir sauvé les persos)');
+  // 8B : un monde vide attend son groupe 2 minutes, puis se ferme (les persos sont sauvés au départ de chacun)
+  assert.equal((await sante()).parties, 2, 'les mondes vides attendent leur groupe');
+  fermerMondesVides(Date.now() + 60_000);
+  assert.equal((await sante()).parties, 2);
+  fermerMondesVides(Date.now() + 121_000);
+  assert.equal((await sante()).parties, 0, 'un monde vide se ferme au bout de 2 minutes');
   await new Promise(r => { s.close(r); s.closeAllConnections(); });
 });
 

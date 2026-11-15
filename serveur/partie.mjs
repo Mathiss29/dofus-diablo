@@ -16,6 +16,9 @@ export const PARTIE = {
   rattrapage: 8,
   /** Les persos du compte sont sauvés toutes les … secondes (et quand le joueur part). */
   sauvegarde: 60,
+  /** « En ligne : » 3D : combat commun du boss du monde : après la fin du boss, chacun rentre dans le monde de son groupe au bout
+   *  de ce temps (s) ; plus loin que ce rayon (en losange, comme World_RETRAIT), il rentre aussi. */
+  bossRetour: 8, bossLoin: 5200,
 };
 /** Ce que la partie garde du perso d'avant : où il était dans SON monde (la partie se passe ailleurs) et ses quêtes. */
 const GARDES = ['zone', 'x', 'y', 'retour', 'havreSac', 'quetes', 'zaaps', 'zonesVues', 'cleDonjon'];
@@ -83,6 +86,14 @@ export class Partie {
     /** « HDV : » 4A : signe un objet apparu ici (serveur/hdv.mjs) ; les objets apportés par le perso ne le sont pas. */
     this.signer = o.signer ?? null;
     this.monde = !!o.monde;
+    /** Joueurs au plus (4 ; le combat commun du boss du monde en prend plus, « En ligne : » 3D). */
+    this.max = o.max ?? 4;
+    /** « En ligne : » 3D : monde d'un groupe (le boss du monde y envoie vers le combat commun) ou combat commun lui-même. */
+    this.bossPartage = !!o.bossPartage; this.combatBoss = !!o.combatBoss;
+    /** Créneau du boss du monde où chaque compte est déjà passé par le combat commun (on ne l'y renvoie pas). */
+    this.bossVus = new Map();
+    /** « En ligne : » 8B : le dernier joueur parti, le monde attend 2 min (index.mjs) : son perso reste posé, la partie ne tourne plus. */
+    this.fantome = null;
     /** Zone du monde ouvert tenu ici (« En ligne : » 1A) ; null pour une arène de donjon. */
     this.zoneMonde = this.monde ? (typeof o.monde === 'string' && S.mondes[o.monde] ? o.monde : 'incarnam') : null;
     const a = arenesDisponibles(S).find(x => x.tag === o.arene) ?? arenesDisponibles(S).find(x => x.tag === PARTIE.arene);
@@ -100,7 +111,8 @@ export class Partie {
     if (m) this.sauverMembre(m);
     this.membres.delete(num);
     const q = m && this.w?.players.find(p => p.id === m.joueur);
-    if (q && !this.w.retirerJoueur(q)) this.w = null;   // c'était le dernier : la partie s'arrête
+    // c'était le dernier : un monde ouvert attend (8B), une arène s'arrête
+    if (q && !this.w.retirerJoueur(q)) { if (this.monde) this.fantome = q; else this.w = null; }
   }
   get vide() { return this.membres.size === 0; }
 
@@ -148,7 +160,7 @@ export class Partie {
       this.w = new S.World({ data: S.GAME_DATA, zone, map: new S.WorldGrid(S.mondes[zone]), seed: this.seed, classId: classe, items: S.ITEMS, partieServeur: true,
         // ce que le jeu donne aussi à sa partie : marchands, récoltes, apparats, teintures, familiers, heure et date de Paris
         boutiques: S.BOUTIQUES, apparats: S.APPARATS, themesHavreSac: S.THEMES_HAVRESAC, teintures: S.TEINTURES, familierXp: S.FAMILIERS?.xp, recoltes: S.RECOLTES,
-        aujourdhui: jourParis(), horloge: heureParis, nuit: nuitParis, hdv: true,
+        aujourdhui: jourParis(), horloge: heureParis, nuit: nuitParis, hdv: true, bossPartage: this.bossPartage,
         ...(this.monde ? { quetes: S.QUETES, reprise: quetes.reprise, zonesVues: Array.isArray(brut?.zonesVues) ? brut.zonesVues : [] } : { sansGroupes: true }) });
       if (!this.monde) {
         this.w.allerArene(this.arene.tag);
@@ -158,8 +170,9 @@ export class Partie {
       this.w.drainEvents();
       q = this.w.players[0];
     } else {
-      if (this.w.players.length >= 4) return;
+      if (this.w.players.length - (this.fantome ? 1 : 0) >= this.max) return;
       q = this.w.ajouterJoueur(classe, quetes);
+      if (this.fantome) { this.w.retirerJoueur(this.fantome); this.fantome = null; }
     }
     if (etat) { try { this.w.commeJoueur(q, () => S.restaurerJoueur(this.w, etat)); } catch (e) { console.warn('partie : perso illisible', e.message); } }
     if (arrivee) this.w.commeJoueur(q, () => this.w.arriver(arrivee));
@@ -175,7 +188,7 @@ export class Partie {
   /** Avance la partie du temps écoulé (en secondes), par pas fixes ; envoie un instantané tous les COOP.tous pas. */
   avancer(dt) {
     const w = this.w, S = this.S;
-    if (!w) return;
+    if (!w || this.vide) return;
     this.reste = Math.min(this.reste + dt, PARTIE.pas * PARTIE.rattrapage);
     while (this.reste >= PARTIE.pas) {
       this.reste -= PARTIE.pas;
@@ -193,6 +206,14 @@ export class Partie {
       for (const e of evs) if (e.k === 'sortieArene') for (const [num, m] of this.membres) if (m.joueur === e.joueur && !m.sorti) { m.sorti = true; this.envoyer(num, { k: 'sortie' }); }
       // « En ligne : » 4C : la porte d'un donjon dans le monde du groupe : il part dans l'arène du groupe (son jeu bascule)
       for (const e of evs) if (e.k === 'versArene') for (const [num, m] of this.membres) if (m.joueur === e.joueur && !m.sorti) { m.sorti = true; this.envoyer(num, { k: 'sortie', donjon: { tag: e.tag, nom: e.nom } }); }
+      // « En ligne : » 3D : près du boss du monde : il part dans le combat commun à tous les groupes (une fois par créneau)
+      for (const e of evs) if (e.k === 'versBossMonde') for (const [num, m] of this.membres) {
+        if (m.joueur !== e.joueur || m.sorti || !m.compte || this.bossVus.get(m.compte.compte) === e.creneau) continue;
+        const q = w.players.find(p => p.id === m.joueur);
+        this.bossVus.set(m.compte.compte, e.creneau); m.sorti = true;
+        this.envoyer(num, { k: 'sortie', boss: { cle: e.cle, creneau: e.creneau, position: { x: q.x, y: q.y } } });
+      }
+      if (this.combatBoss) this.retourBoss(PARTIE.pas);
       for (const [num, m] of this.membres) {
         if (!m.em) continue;
         for (const e of evs) m.em.noter(e);
@@ -233,6 +254,29 @@ export class Partie {
       q.dead = false; q.hp = q.maxHp; q.x = f.x; q.y = f.y; q.invuln = 2; q.setAnim('idle');
       m.mortDepuis = 0;
     }
+  }
+  /** « En ligne : » 3D : combat commun du boss du monde : le boss fini (ou parti), ou le joueur trop loin, il rentre dans le monde
+   *  de son groupe, là où il est (son jeu bascule). */
+  retourBoss(dt) {
+    const w = this.w, b = w.vivant?.boss;
+    this.finBoss = b && !b.fin ? 0 : (this.finBoss ?? 0) + dt;
+    for (const [num, m] of this.membres) {
+      const q = m.joueur != null && w.players.find(p => p.id === m.joueur);
+      if (!q || m.sorti) continue;
+      const loin = b && Math.abs(q.x - b.centre.x) + Math.abs(q.y - b.centre.y) > PARTIE.bossLoin;
+      if (this.finBoss < PARTIE.bossRetour && !loin) continue;
+      m.sorti = true;
+      this.envoyer(num, { k: 'sortie', groupe: { position: { x: q.x, y: q.y } } });
+    }
+  }
+  /** Position d'un compte qui joue ici (rejoindre un allié, « En ligne : » 5B), ou null. */
+  positionDe(compte) {
+    for (const m of this.membres.values()) {
+      if (m.compte?.compte !== compte || m.joueur == null) continue;
+      const q = this.w?.players.find(p => p.id === m.joueur);
+      if (q) return { x: q.x, y: q.y };
+    }
+    return null;
   }
   /** Sauve le perso d'un membre venu avec son compte : son état dans la partie, mais sa place et ses quêtes d'avant. */
   sauverMembre(m) {
