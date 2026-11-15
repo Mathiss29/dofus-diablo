@@ -1,5 +1,5 @@
 # /etc/systemd/system/diablofus.service : serveur multijoueur de Diablofus, à côté d'Idlus sur le même VPS.
-# Limites demandées par le projet Idlus : 1 cœur, 1 Go, et c'est Diablofus qui saute en premier si la mémoire manque.
+# Limites demandées par le projet Idlus : 2 cœurs (2 fils de parties, « En ligne : » 7B), 2 Go, et c'est Diablofus qui saute en premier si la mémoire manque.
 [Unit]
 Description=Diablofus (serveur multijoueur)
 After=network-online.target
@@ -10,7 +10,7 @@ User=diablofus
 Group=diablofus
 WorkingDirectory=/home/diablofus/app
 ExecStart=/home/diablofus/node/bin/node --max-old-space-size=1536 index.mjs
-Environment=NODE_ENV=production PORT=3100 HOTE=127.0.0.1 DONNEES=/home/diablofus/donnees
+Environment=NODE_ENV=production PORT=3100 HOTE=127.0.0.1 DONNEES=/home/diablofus/donnees FILS=2
 # Secrets de la connexion Discord (lus par systemd avant de lancer le service ; « - » = facultatif), voir LISEZMOI.md
 EnvironmentFile=-/etc/diablofus/discord.env
 Restart=always
@@ -18,7 +18,7 @@ RestartSec=3
 # Limites (projet Idlus) : pas de swap sur la machine, donc OOMScoreAdjust=500 pour que ce soit nous qui partions
 MemoryHigh=1800M
 MemoryMax=2G
-CPUQuota=100%
+CPUQuota=200%
 TasksMax=256
 OOMScoreAdjust=500
 # Le service ne peut écrire que dans son dossier de données

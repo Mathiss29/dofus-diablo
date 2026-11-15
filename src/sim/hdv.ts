@@ -197,3 +197,32 @@ export function relireObjetHdv(x: unknown): ObjetHdv | null {
     && it.stats && typeof it.stats === 'object' && Array.isArray(it.extra) && JSON.stringify(it).length < 4000) return { k: 'objet', item: it };
   return null;
 }
+
+/** Gestes de l'HDV sur un perso qui joue dans une partie du serveur (serveur/hdv.mjs) : nommés plutôt que des fonctions, pour
+ *  passer d'un fil Node à l'autre (« En ligne : » 7B, une partie par fil). Rejoué pour ce joueur (w.commeJoueur). */
+export type OpHdv =
+  | { op: 'objet'; uid: number }
+  | { op: 'vendre'; objet: ObjetHdv; taxe: number }
+  | { op: 'acheter'; objet: ObjetHdv; prix: number }
+  | { op: 'donner'; objet: ObjetHdv }
+  | { op: 'colis'; objet: ObjetHdv | null; kamas: number };
+export function opHdv(w: World, j: Player, o: OpHdv): unknown {
+  switch (o.op) {
+    case 'objet': return j.bag.find(it => it.uid === o.uid) ?? null;
+    case 'vendre': {
+      if (j.kamas < o.taxe) return { erreur: 'kamas' };
+      const r = retirerHdv(j, o.objet);
+      if (!r) return { erreur: 'absent' };
+      j.kamas -= o.taxe; return { objet: r };
+    }
+    case 'acheter':
+      if (j.kamas < o.prix) return 'kamas';
+      if (o.objet.k === 'objet' && j.bag.length >= j.tailleSac) return 'place';   // le coffre du compte n'est pas dans la partie
+      j.kamas -= o.prix; donnerHdv(w, j, o.objet, false, true); return null;
+    case 'donner': return donnerHdv(w, j, o.objet, false, true) !== 'sac' ? 'place' : null;
+    case 'colis':
+      if (o.objet && donnerHdv(w, j, o.objet, false, true) !== 'sac') return false;
+      j.kamas += o.kamas; return true;
+  }
+  return null;
+}

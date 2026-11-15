@@ -21,14 +21,14 @@ function base(noms = ['Lyra', 'Brak', 'Solo']) {
   noms.forEach((nom, i) => {
     db.prepare('INSERT INTO comptes (discord, nom, roles, cree, vu) VALUES (?, ?, ?, ?, ?)').run(String(100 + i), `${nom}Discord`, '[]', t, t);
     db.prepare('INSERT INTO jetons VALUES (?, ?, ?, ?)').run(createHash('sha256').update(J[i]).digest('hex'), i + 1, t, t + 864e5);
-    db.prepare('INSERT INTO persos VALUES (?, 0, ?, 1)').run(i + 1, JSON.stringify({ nom, classe: 'iop', sexe: 'm', hardcore: false, cree: t, maj: 1, temps: 0, lieu: '', zones: [], etat: { level: 20, zone: 'astrub' } }));
+    db.prepare('INSERT INTO persos VALUES (?, 0, ?, 1)').run(i + 1, JSON.stringify({ nom, classe: 'iop', sexe: 'm', hardcore: false, cree: t, maj: 1, temps: 0, lieu: '', zones: [], etat: { level: 20, kamas: 0, zone: 'astrub' } }));
   });
   db.close();
   return { dossier, J };
 }
-async function lancer(dossier) {
+async function lancer(dossier, nFils = 0) {
   const comptes = creerComptes({ dossier, env: {}, origines: new Set() });
-  const s = creerServeur({ comptes });
+  const s = creerServeur({ comptes, nFils });
   await new Promise(r => s.listen(0, '127.0.0.1', r));
   const url = `ws://127.0.0.1:${s.address().port}/ws`;
   const client = async () => {
@@ -144,4 +144,42 @@ test('3D : près du boss du monde, le monde du groupe envoie vers le combat comm
   for (let i = 0; i < (PARTIE.bossRetour + 1) * 60 && !r2.some(d => d.k === 'sortie'); i++) { c.w.vivant.boss = null; c.avancer(1 / 60); }
   assert.ok(r2.find(d => d.k === 'sortie')?.groupe?.position, 'il rentre là où il est');
   c.depart(1);
+});
+
+test('7B : une partie dans un fil à part : monde du groupe, rejoindre un allié, gestes de l’HDV, sauvegarde', async () => {
+  const { dossier, J } = base(['Lyra', 'Brak']);
+  const { client, comptes, fin } = await lancer(dossier, 1);
+  const pa = await client(), pb = await client();
+  pa.envoi({ k: 'presence', jeton: J[0], emplacement: 0, zone: 'astrub' });
+  pb.envoi({ k: 'presence', jeton: J[1], emplacement: 0, zone: 'astrub' });
+  await pa.attendre(m => m.k === 'presence'); await pb.attendre(m => m.k === 'presence');
+  pa.envoi({ k: 'enligne' });
+  const brak = (await pa.attendre(m => m.k === 'enligne')).l.find(x => x.nom === 'Brak');
+  pa.envoi({ k: 'inviter', id: brak.id });
+  pb.envoi({ k: 'grpOui', groupe: (await pb.attendre(m => m.k === 'invitation')).groupe });
+  await pa.attendre(m => m.k === 'groupe' && m.membres?.length === 2);
+  const b = await client();
+  b.envoi({ k: 'mondeGroupe', zone: 'astrub', jeton: J[1], emplacement: 0 });
+  const sb = await b.attendre(m => m.k === 'salon');
+  b.envoi({ k: 'envoi', d: { k: 'bonjour', jeton: J[1], emplacement: 0, nom: 'Brak' } });
+  assert.equal((await b.attendre(m => m.k === 'recu' && m.d.k === 'zone')).d.zone, 'astrub');
+  b.envoi({ k: 'envoi', d: { k: 'pret' } });
+  await b.attendre(m => m.k === 'recu' && m.d.k === 'instantane');
+  // l'HDV parle à la partie dans son fil
+  const P = comptes.hdv.partieDe(brak.id, 0);
+  assert.ok(P, 'le perso de Brak joue dans une partie');
+  assert.equal(await P.appliquer({ op: 'colis', objet: null, kamas: 5 }), true);
+  // Lyra le rejoint d'un clic : la position vient du fil
+  await new Promise(r => setTimeout(r, 1200));
+  const a = await client();
+  a.envoi({ k: 'mondeGroupe', allie: brak.id, jeton: J[0], emplacement: 0 });
+  assert.equal((await a.attendre(m => m.k === 'salon')).code, sb.code);
+  // Brak part : son perso est sauvé par le fil (kamas reçus compris)
+  b.envoi({ k: 'quitter' });
+  await new Promise(r => setTimeout(r, 300));
+  const db = comptes.db.prepare('SELECT donnees FROM persos WHERE compte = ?').get(brak.id);
+  const etat = JSON.parse(db.donnees).etat;
+  assert.ok(etat.kamas >= 5, `sauvé avec les kamas de l’HDV : ${JSON.stringify(etat).slice(0, 200)}`);
+  for (const x of [pa, pb, a, b]) x.ws.close();
+  await fin();
 });

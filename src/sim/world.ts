@@ -479,7 +479,9 @@ export class World {
       if (lieu) this.passants = new Passants(this.map, lieu.cartes, opts.seed ?? 1, -100, lieu.habitants);
       if (!this.passants?.liste.length) this.passants = null;
     }
-    if (open && !opts.sansGroupes) this.spawnGroups();
+    // « En ligne : » 8C : les analyses de cartes (≈ 60 Mo sur le continent) ne servent qu'à poser les groupes : on les jette ensuite
+    // (l'éditeur de placement les refait à la demande), un monde du serveur passe d'environ 80 à 20 Mo
+    if (open && !opts.sansGroupes) { this.spawnGroups(); this.analyses.clear(); }
     if (open?.havreSac?.poutch != null) this.poserPoutch(open.havreSac.poutch);
     if (open?.havreSac && this.player.v06 && this.map instanceof WorldGrid) { this.deco = new DecoHavreSac(this, this.map); this.deco.installer(); }
     if (open) this.visiter(opts.zonesVues ?? []);

@@ -12,7 +12,7 @@ Il tourne sur le VPS OVH d'Idlus (VPS-3, Ubuntu 24.04), **sans toucher à Idlus*
 - tout dans `/home/diablofus` : `node/` (Node 22 officiel), `app/` (ce dossier), `donnees/` (base, sauvegardes) ;
 - écoute sur `127.0.0.1:3100` seulement ; le monde y arrive par un **tunnel Cloudflare** (`api.diablofus.com`), donc ni le
   Caddy d'Idlus (conteneur Supabase) ni le pare-feu ne changent ;
-- service systemd limité à 1 cœur et 2 Go (1 Go jusqu'au 2026-11-08), `OOMScoreAdjust=500` (c'est lui qui part en premier si la mémoire manque) ;
+- service systemd limité à 2 cœurs (1 jusqu'à « En ligne : » 7B) et 2 Go (1 Go jusqu'au 2026-11-08), `OOMScoreAdjust=500` (c'est lui qui part en premier si la mémoire manque) ;
 - mise à jour **tirée par le VPS** : toutes les 5 minutes, `diablofus-maj.timer` lance `maj.sh` (utilisateur `diablofus`),
   qui regarde `main` du dépôt public et, s'il a changé, copie `serveur/` dans `~/app` et redémarre ce seul service (sudoers
   limité à `systemctl restart diablofus` et `systemctl is-active diablofus`). Aucune clé SSH ni secret côté GitHub.
@@ -169,6 +169,8 @@ Rien à régler sur le VPS.
 - 8B : le dernier joueur parti, le monde attend `SALON.attenteVide` (2 min) sans tourner, puis ferme. Les persos sont sauvés au départ de chacun.
 - 5B : `mondeGroupe` avec `allie` : entre dans la partie où joue cet allié du même groupe, posé à côté de lui.
 - 3D : près du boss du monde, le monde du groupe envoie vers le combat commun du créneau (`boss:zone:créneau`, 16 joueurs au plus) ; le boss fini, chacun rentre dans le monde de son groupe.
+- 7B : avec `FILS=n`, chaque partie tourne dans un des n fils (`fil.mjs`) ; le fil principal garde connexions, salons et base, et relaie. Les gestes de l'HDV passent par des gestes nommés (`opHdv` dans `src/sim/hdv.ts`).
+- 8C : un monde jette ses analyses de cartes après avoir posé les groupes (environ 20 Mo par monde du continent au lieu de 80).
 - 2C : chaque sauvegarde envoyée par le jeu (solo) est comparée à la précédente (`src/sim/verifSauvegarde.ts`). Douteuse, elle est gardée, mais le perso entre dans la table `douteux` et sort du Ladder. Pour le blanchir : `DELETE FROM douteux WHERE compte = ? AND emplacement = ?`.
 
 ## Classement (Ladder, maquette « Ladder : »)
@@ -194,6 +196,16 @@ Sans cette ligne, le classement marche pareil, sans annonces.
 - Copie de la base aussi sur R2 (5B), avec une clé R2 limitée à un seul dossier.
 - Désinstaller : `sudo systemctl disable --now diablofus diablofus-maj.timer cloudflared`, supprimer les fichiers posés ci-dessus (dont `/usr/local/lib/diablofus/`) et
   `sudo deluser --remove-home diablofus`.
+
+## À installer (bloc pour le projet Idlus)
+
+- 2026-11-15, « En ligne : » 7B : les parties tournent dans 2 fils Node (`fils.mjs`, `FILS=2`), donc 2 cœurs (`CPUQuota=200%`). Mémoire inchangée (2 Go) : un monde du continent prend environ 20 Mo depuis 8C (80 avant), chaque fil environ 90 Mo à vide et 700 Mo au plus. Rien d'autre ne change (même utilisateur, mêmes droits, même tunnel). Sans `FILS`, le serveur garde tout dans un seul fil comme avant.
+
+```bash
+cd /tmp && curl -fsSLO https://raw.githubusercontent.com/Mathiss29/dofus-diablo/main/serveur/installation/diablofus.service
+sudo install -m 644 diablofus.service /etc/systemd/system/ && sudo systemctl daemon-reload
+sudo systemctl restart diablofus && systemctl show diablofus -p CPUQuotaPerSecUSec -p MemoryMax && curl -fsS http://127.0.0.1:3100/sante
+```
 
 ## Changements déjà installés
 
