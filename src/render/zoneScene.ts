@@ -91,6 +91,8 @@ import { ChatVue } from './chat';
 import { lienObjet, type SorteInfo } from './chatOutils';
 import { BullesChat } from './bullesChat';
 import { demandesEnAttente, menuJoueur, montrerInvitation } from './social';
+import { BTN, brancherJeu, brancheActuelle, manetteActive, type BrancheJeu, type ImageManette } from './manette';
+import { BOUTONS_JEU, COUCHE_LT, MenuStart, cibleAuto, dirMonde, interactionProche } from './manetteJeu';
 /** Archimonstres du jeu (carnet des âmes, « Archis : » 8A). */
 const NB_ARCHIS = Object.values(GAME_DATA.monsters).filter(d => d.archiDe).length;
 
@@ -155,6 +157,15 @@ export class ZoneScene extends Phaser.Scene {
   private hud!: Hud;
   private keys!: Record<string, Phaser.Input.Keyboard.Key>;
   private pressed: SkillId | null = null;
+  /** Manette (maquette « Console : ») : sticks, A maintenu, cible gardée (R3), boutons tenus -> action, menu Start. */
+  private manG = { x: 0, y: 0 };
+  private manD = { x: 0, y: 0 };
+  private manAttaque = false;
+  private manRecolte = false;
+  private manGardee: number | null = null;
+  private manTenues = new Map<number, string>();
+  private manAim: { x: number; y: number } | null = null;
+  private menuStart: MenuStart | null = null;
   private potion = false;
   private boisson = false;
   private hitstop = 0;
@@ -566,6 +577,7 @@ export class ZoneScene extends Phaser.Scene {
       const s = ISO.toScreen(this.world.player.x, this.world.player.y);
       this.cameras.main.centerOn(s.x, s.y - 30); this.snapCam = true;
       this.bindInput();
+      this.brancherManette();
     }
     if (this.perso || this.test) {
       const quitter = () => this.sauver(), cache = () => { if (document.hidden) this.sauver(); };
@@ -827,7 +839,7 @@ export class ZoneScene extends Phaser.Scene {
     this.events.once('shutdown', () => { window.removeEventListener('keydown', bas); window.removeEventListener('keyup', haut); window.removeEventListener('blur', perdu); });
     this.keys.ESC.on('down', () => { if (this.panneau?.pose) { this.panneau.posee(); return; } if (this.essai) { this.essai = null; this.game.events.emit('accueil', 'creation'); return; } if (this.dialogueView?.ouvert) { this.dialogueView.touche(-1); return; } this.aimId = null; this.aimKey = null;
       // Échap ferme d'abord ce qui est ouvert (fenêtre, carte, menu d'un PNJ, outils F1) ; sinon, ouvre ou ferme le menu principal
-      if (this.windows?.open || this.carte?.ouverte || this.dialogueView?.menuOuvert || this.panneau?.ouvert) { this.dialogueView?.fermerMenu(); this.windows?.close(); this.carte?.fermer(); if (this.panneau?.ouvert) this.panneau.basculer(); return; }
+      if (this.fermerOuvert()) return;
       if (!this.vitrine) this.windows?.toggle('menu');
     });
     // K : changer de classe, seulement sans perso (mode dév #cra / #jeu, partie de test) ; sinon la classe se choisit à la création
@@ -1108,6 +1120,92 @@ export class ZoneScene extends Phaser.Scene {
       loop.sleep(); loop.wake();
     }
   }
+  /** Ferme ce qui est ouvert (fenêtre, carte, menu d'un PNJ, outils F1, menu Start) ; faux s'il n'y avait rien. */
+  private fermerOuvert(): boolean {
+    this.menuStart?.fermer(false);
+    if (!(this.windows?.open || this.carte?.ouverte || this.dialogueView?.menuOuvert || this.panneau?.ouvert)) return false;
+    this.dialogueView?.fermerMenu(); this.windows?.close(); this.carte?.fermer(); if (this.panneau?.ouvert) this.panneau.basculer();
+    return true;
+  }
+
+  /** Manette (maquette « Console : ») : la boucle de render/manette.ts envoie ici les boutons et les sticks quand aucune interface n'est ouverte. */
+  private brancherManette() {
+    this.menuStart = new MenuStart(o => {
+      if (o === 'carte') { this.windows?.close(false); if (!this.carte?.ouverte) this.basculerCarte(); return; }
+      if (this.carte?.ouverte) this.carte.fermer();
+      if (this.windows?.ouverte !== o) this.windows?.toggle(o);
+    }, () => { this.windows?.close(); this.carte?.fermer(); });
+    const b: BrancheJeu = {
+      interface: () => {
+        if (!this.sys.isActive() || this.vitrine) return document.body;
+        const ui = (this.dialogueView?.ouvert || this.dialogueView?.menuOuvert ? this.dialogueView.element : null)
+          ?? this.windows?.fenetre ?? this.carte?.element ?? null;
+        if (!ui && this.menuStart?.ouvert) this.menuStart.fermer(false);   // fenêtre fermée autrement (souris, touche)
+        return ui;
+      },
+      boutonUi: bt => {
+        const m = this.menuStart;
+        if (m?.ouvert && (bt === BTN.LB || bt === BTN.RB)) { m.tourner(bt === BTN.RB ? 1 : -1); return true; }
+        if (bt === BTN.START) { if (m?.ouvert) m.fermer(); else this.fermerOuvert(); return true; }
+        if (bt === BTN.SELECT) { this.windows?.close(false); this.basculerCarte(); return true; }
+        return false;
+      },
+      retour: () => {
+        if (this.dialogueView?.ouvert) { this.dialogueView.touche(-1); return; }
+        this.fermerOuvert();
+      },
+      image: m => this.imageManette(m),
+    };
+    brancherJeu(b);
+    this.events.once('shutdown', () => { this.menuStart?.fermer(false); if (brancheActuelle() === b) brancherJeu(null); });
+  }
+  private imageManette(m: ImageManette) {
+    this.manG = m.gauche; this.manD = m.droite;
+    const p = this.world.player, osa = p.bar[Player.INVOC] != null;
+    for (const bt of m.appuyes) {
+      if (bt === BTN.START) { this.menuStart?.montrer(); continue; }
+      if (bt === BTN.R3) { const c = this.manGardee == null ? cibleAuto(this.world, p, null, null) : null; this.manGardee = c?.id ?? null; this.hud.toast(c ? 'Cible gardée' : 'Cible libérée', 1200); continue; }
+      if (osa && m.tenu(BTN.LT) && COUCHE_LT[bt]) { this.manTenues.set(bt, COUCHE_LT[bt]); this.action(COUCHE_LT[bt], true); continue; }
+      if (bt === BTN.LT && osa) continue;   // Osamodas : LT ne sert que de couche
+      if (bt === BTN.A) { this.boutonA(); continue; }
+      const a = BOUTONS_JEU[bt];
+      if (a) { this.manTenues.set(bt, a); this.action(a, true); }
+    }
+    for (const bt of m.relaches) {
+      if (bt === BTN.A) { this.manAttaque = false; if (this.manRecolte) { this.manRecolte = false; this.recolteMaintenu = false; } }
+      const a = this.manTenues.get(bt);
+      if (a) { this.manTenues.delete(bt); this.action(a, false); }
+    }
+  }
+  /** A : parler, ramasser, prendre un Zaap ou un portail, utiliser un atelier, récolter ; sinon attaquer (maintenu : en boucle). */
+  private boutonA() {
+    const i = interactionProche(this.world, this.world.player);
+    if (!i) { this.manAttaque = true; this.pressed = 'attaque'; return; }
+    if (i.k === 'pnj') this.talkClick = i.id;
+    else if (i.k === 'drop') this.pickClick = i.id;
+    else if (i.k === 'zaap') this.zaapClick = i.id;
+    else if (i.k === 'portail') this.portailClick = i.id;
+    else if (i.k === 'poste') this.posteClick = i.id;
+    else { this.recolteClick = i.id; this.recolteMaintenu = true; this.manRecolte = true; }
+  }
+  /** Entrées de la manette par-dessus celles de la souris : marche au stick, visée au stick droit ou auto-visée, A maintenu. */
+  private appliquerManette(input: PlayerInput) {
+    const p = this.world.player, g = this.manG, r = this.manD, bouge = !!(g.x || g.y);
+    if (bouge) { input.move = dirMonde(g); input.dest = null; input.target = null; }
+    let cible = null;
+    if (r.x || r.y) { const d = dirMonde(r); input.aim = { x: p.x + d.x * 240, y: p.y + d.y * 240 }; input.castOn = null; }
+    else {
+      cible = cibleAuto(this.world, p, this.manGardee, bouge ? input.move : null);
+      if (this.manGardee != null && cible?.id !== this.manGardee) this.manGardee = null;
+      if (cible) { input.aim = { x: cible.x, y: cible.y }; input.castOn = input.pressed && input.pressed !== 'attaque' ? cible.id : null; }
+      else { const f = bouge ? input.move : { x: Math.cos(p.facing), y: Math.sin(p.facing) }; input.aim = { x: p.x + f.x * 150, y: p.y + f.y * 150 }; }
+    }
+    if (this.manAttaque) {
+      if (cible && !bouge) input.target = cible.id;
+      else input.holdAttack = true;
+    }
+    this.manAim = input.aim;
+  }
   /** Fluidité 8A : au premier monstre tué, une seule fois, l'astuce de l'attaque sur place vers la souris. */
   private astuceAttaque() {
     const CLE = 'diablofus.astuceAttaque';
@@ -1215,7 +1313,7 @@ export class ZoneScene extends Phaser.Scene {
     const pc = this.portailClick && this.world.portes.find(o => o.dessin && o.nom === this.portailClick);
     if (pc) { input.dest = { x: pc.ends[0].x, y: pc.ends[0].y }; input.versPortail = pc.nom; this.clickMode = null; }
     this.portailClick = null;
-    if (this.recolteMaintenu && !this.input.activePointer.leftButtonDown()) this.recolteMaintenu = false;
+    if (this.recolteMaintenu && !this.input.activePointer.leftButtonDown() && !this.manRecolte) this.recolteMaintenu = false;
     input.recolteTenue = this.recolteMaintenu;
     const ar = this.recolteClick != null ? this.world.approcheRecolte(this.recolteClick) : null;
     if (ar) { input.recolte = this.recolteClick; input.dest = ar; this.clickMode = null; }
@@ -1230,6 +1328,7 @@ export class ZoneScene extends Phaser.Scene {
     // clic bref sur le sol : une seule destination
     if (!held && this.clickMode === 'ground' && this.clickDest) { input.dest = aim; }
     this.clickDest = held && this.clickMode === 'ground';
+    if (manetteActive()) this.appliquerManette(input); else this.manAim = null;
     this.pressed = null; this.potion = false; this.boisson = false;
     // curseur : une épée sur un monstre
     const surPnj = this.questView?.pnjUnder(ptr, this.cameras.main) ?? null;
@@ -2257,7 +2356,7 @@ export class ZoneScene extends Phaser.Scene {
     {
       const p = w.player, id = this.aimId ?? this.hoverId, ptr = this.input.activePointer;
       const wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2, m = this.monsterUnder(ptr);
-      const aim = m && !m.dead ? { x: m.x, y: m.y } : ISO.toWorld(wp.x, wp.y);
+      const aim = this.manAim ?? (m && !m.dead ? { x: m.x, y: m.y } : ISO.toWorld(wp.x, wp.y));
       this.fx.apercu(id && !p.dead ? apercuSort(w, id, aim) : null, p, w.monsters.filter(q => !q.dead), !!this.keys?.SHIFT?.isDown && !p.dead ? p.attackReach() : 0);
     }
     this.drawDrops();
