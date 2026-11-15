@@ -2100,20 +2100,9 @@
             "phrase": "Le prochain boss du monde et l'invasion de l'heure en direct, ton perso et Continuer réunis au même endroit.",
             "details": "La touche Entrée relance ta partie. Le dernier carnet du Journal remplace le diaporama.",
             "icone": "boss",
-            "etiquettes": [
-              "Accueil"
-            ]
+            "etiquettes": ["Accueil"]
           },
-          {
-            "titre": "Le Sadida en essai",
-            "phrase": "Plante tes Arbres, Infecte les monstres et lâche tes Poupées : un sort sur un Infecté les touche tous.",
-            "details": "Jouable dans la partie de test, jusqu'au niveau 60, avec la Folle, la Bloqueuse, la Sacrifiée et le Groute. X rallie tes Poupées sur l'ennemi sous la souris.",
-            "icone": "sorts",
-            "etiquettes": [
-              "Partie de test",
-              "Touche X"
-            ]
-          }
+          {"titre": "Le Sadida en essai", "phrase": "Plante tes Arbres, Infecte les monstres et lâche tes Poupées : un sort sur un Infecté les touche tous.", "details": "Jouable dans la partie de test, jusqu'au niveau 60, avec la Folle, la Bloqueuse, la Sacrifiée et le Groute. X rallie tes Poupées sur l'ennemi sous la souris.", "icone": "sorts", "etiquettes": ["Partie de test", "Touche X"]}
         ],
         "Le monde": [],
         "Combat": [
@@ -2122,40 +2111,28 @@
             "phrase": "Iop, Crâ, Osamodas et Sacrieur reçoivent leurs vrais sorts du niveau 61 au 90, en temps réel.",
             "details": "Emprise, Flèche Dévorante, Esprit Glouton, Berserk, Libation et les autres. En partie de test jusqu'à la sortie de la 0.6.",
             "icone": "sorts",
-            "etiquettes": [
-              "Partie de test",
-              "Touche S"
-            ]
+            "etiquettes": ["Partie de test", "Touche S"]
           },
           {
             "titre": "12 sorts Iop et Crâ (25-60)",
             "phrase": "Vitalité, Souffle, Épée de Iop, Tempête de Puissance, Œil de Taupe, Tirs Puissants et les autres arrivent.",
             "details": "Avec la Balise de Survie du Crâ, tous les sorts jusqu'au niveau 90 sont là. En partie de test jusqu'à la 0.6.",
             "icone": "sorts",
-            "etiquettes": [
-              "Partie de test",
-              "Touche S"
-            ]
+            "etiquettes": ["Partie de test", "Touche S"]
           },
           {
             "titre": "Aéropique et Discipline pour l'Osamodas",
             "phrase": "Aéropique fonce sur la cible et la repousse, Discipline la ralentit et la tire vers toi.",
             "details": "Sur une de tes bêtes, Aéropique repousse tout ce qui la touche. En partie de test jusqu'à la 0.6.",
             "icone": "sorts",
-            "etiquettes": [
-              "Partie de test",
-              "Touche S"
-            ]
+            "etiquettes": ["Partie de test", "Touche S"]
           },
           {
             "titre": "La Balise de Survie du Crâ",
             "phrase": "Une balise posée 6 s soigne les alliés qui la voient ; tire dessus pour échanger de place.",
             "details": "Elle soigne 7 % des PV à la pose puis 3 s après. En partie de test jusqu'à la 0.6.",
             "icone": "sorts",
-            "etiquettes": [
-              "Partie de test",
-              "Touche S"
-            ]
+            "etiquettes": ["Partie de test", "Touche S"]
           }
         ],
         "Corrections": [
@@ -2187,75 +2164,18 @@
       "legende": "La 0.6, 14 novembre 2026.",
       "lignes": {
         "Nouveautés": [
-          {
-            "titre": "Cinq régions jusqu'au niveau 90",
-            "phrase": "Koalaks, Abraknydes, Cania, Porcos et Frigost s'ouvrent à tous, sans coupure avec Amakna.",
-            "details": "Le bateau de Madrestam mène à Frigost après la quête du marin. La renommée de chaque région débloque ses sanctuaires.",
-            "icone": "carte",
-            "etiquettes": [
-              "Niveau 60 à 90",
-              "Frigost"
-            ]
-          },
-          {
-            "titre": "L'Écaflip et le Sadida pour tous",
-            "phrase": "Deux classes de plus à la création : le Poker de l'Écaflip et les Arbres du Sadida.",
-            "details": "Tous leurs sorts jusqu'au niveau 90 et leurs légendaires, officiels et inventés.",
-            "icone": "perso",
-            "etiquettes": [
-              "Création de perso"
-            ]
-          },
-          {
-            "titre": "Idoles et élites à affixes",
-            "phrase": "Les idoles rendent les monstres plus forts contre plus d'XP et de butin, et comptent au Ladder.",
-            "details": "Touche Y pour les choisir, fabriquées chez le Bricoleur. Les élites de la 0.6 sortent avec 2 ou 3 affixes.",
-            "icone": "dofus",
-            "etiquettes": [
-              "Touche Y",
-              "Ladder"
-            ]
-          },
-          {
-            "titre": "Le Sadida jusqu'au niveau 90",
-            "phrase": "Arbre de Vie, Gonflable, Tremblement, Inoculation, Don Naturel et Surpuissante rejoignent ses sorts.",
-            "details": "Avec 8 légendaires de plus sur ces sorts. Tremblement regroupe les monstres, Inoculation encaisse toute l'Infection d'un coup.",
-            "icone": "sorts",
-            "etiquettes": [
-              "Niveau 65 à 90"
-            ]
-          },
-          {
-            "titre": "Légendaires du Sadida",
-            "phrase": "40 pouvoirs officiels de la Panoplie Sauvage et 16 inventés qui transforment ses sorts.",
-            "details": "Forêt dense, Écorce épineuse, Buisson incendiaire, Poupée immortelle… Les boss du jeu ont chacun leurs préférés.",
-            "icone": "dofus"
-          }
+          {"titre": "Cinq régions jusqu'au niveau 90", "phrase": "Koalaks, Abraknydes, Cania, Porcos et Frigost s'ouvrent à tous, sans coupure avec Amakna.", "details": "Le bateau de Madrestam mène à Frigost après la quête du marin. La renommée de chaque région débloque ses sanctuaires.", "icone": "carte", "etiquettes": ["Niveau 60 à 90", "Frigost"]},
+          {"titre": "L'Écaflip et le Sadida pour tous", "phrase": "Deux classes de plus à la création : le Poker de l'Écaflip et les Arbres du Sadida.", "details": "Tous leurs sorts jusqu'au niveau 90 et leurs légendaires, officiels et inventés.", "icone": "perso", "etiquettes": ["Création de perso"]},
+          {"titre": "Idoles et élites à affixes", "phrase": "Les idoles rendent les monstres plus forts contre plus d'XP et de butin, et comptent au Ladder.", "details": "Touche Y pour les choisir, fabriquées chez le Bricoleur. Les élites de la 0.6 sortent avec 2 ou 3 affixes.", "icone": "dofus", "etiquettes": ["Touche Y", "Ladder"]},
+          {"titre": "Le Sadida jusqu'au niveau 90", "phrase": "Arbre de Vie, Gonflable, Tremblement, Inoculation, Don Naturel et Surpuissante rejoignent ses sorts.", "details": "Avec 8 légendaires de plus sur ces sorts. Tremblement regroupe les monstres, Inoculation encaisse toute l'Infection d'un coup.", "icone": "sorts", "etiquettes": ["Niveau 65 à 90"]},
+          {"titre": "Légendaires du Sadida", "phrase": "40 pouvoirs officiels de la Panoplie Sauvage et 16 inventés qui transforment ses sorts.", "details": "Forêt dense, Écorce épineuse, Buisson incendiaire, Poupée immortelle… Les boss du jeu ont chacun leurs préférés.", "icone": "dofus"}
         ],
         "Le monde": [
-          {
-            "titre": "Les 5 régions prennent vie",
-            "phrase": "Bois, plantes et poissons officiels à récolter dans les 5 régions, avec leurs musiques.",
-            "details": "Kaliptus, Bombu, Ébène, Perche et Kralamoure arrivent. Les Koalaks, Frigost, la Bourgade et la Forêt Malsaine ont leur musique.",
-            "icone": "metier"
-          },
-          {
-            "titre": "Souterrains, tavernes et Mine de Dédé",
-            "phrase": "47 salles officielles s'ouvrent dans les 5 régions : souterrains, tavernes, boutiques de Frigost.",
-            "details": "Les Souterrains des Porcos ont leurs monstres. La Mine de Dédé et la Tour des Voyageurs se visitent salle après salle.",
-            "icone": "carte"
-          }
+          {"titre": "Les 5 régions prennent vie", "phrase": "Bois, plantes et poissons officiels à récolter dans les 5 régions, avec leurs musiques.", "details": "Kaliptus, Bombu, Ébène, Perche et Kralamoure arrivent. Les Koalaks, Frigost, la Bourgade et la Forêt Malsaine ont leur musique.", "icone": "metier"},
+          {"titre": "Souterrains, tavernes et Mine de Dédé", "phrase": "47 salles officielles s'ouvrent dans les 5 régions : souterrains, tavernes, boutiques de Frigost.", "details": "Les Souterrains des Porcos ont leurs monstres. La Mine de Dédé et la Tour des Voyageurs se visitent salle après salle.", "icone": "carte"}
         ],
         "Combat": [
-          {
-            "titre": "Cinq donjons en vagues",
-            "phrase": "Blops, Draegnerys, Reine Nyée, Abraknyde Ancestral et Labyrinthe du Dragon Cochon, chacun avec sa mécanique.",
-            "details": "Clés chez Goultard. Le Labyrinthe a son classement de la semaine au Ladder.",
-            "icone": "boss",
-            "etiquettes": [
-              "Niveau 60 à 100"
-            ]
-          }
+          {"titre": "Cinq donjons en vagues", "phrase": "Blops, Draegnerys, Reine Nyée, Abraknyde Ancestral et Labyrinthe du Dragon Cochon, chacun avec sa mécanique.", "details": "Clés chez Goultard. Le Labyrinthe a son classement de la semaine au Ladder.", "icone": "boss", "etiquettes": ["Niveau 60 à 100"]}
         ],
         "Corrections": [
           "Les Blops Coco du Clos des Blops ne s'invoquent plus en chaîne, sans fin."
@@ -2278,87 +2198,16 @@
       "legende": "Effets officiels du Sadida et de l'Écaflip, 15 novembre 2026.",
       "lignes": {
         "Nouveautés": [
-          {
-            "titre": "Invocations max affichées",
-            "phrase": "Ton nombre d'Invocations se lit dans les Caractéristiques et dans le détail des sorts qui invoquent.",
-            "details": "Chaque sort d'invocation dit combien de places prend sa bête. S'il n'y a plus de place, la plus ancienne repart.",
-            "icone": "caracs",
-            "etiquettes": [
-              "Touche C",
-              "Osamodas"
-            ]
-          },
-          {
-            "titre": "Ce que donne ton familier",
-            "phrase": "Survole ton familier : ses bonus à son niveau, et ce qu'il donnera au niveau 100.",
-            "details": "La Ménagerie et l'Animalerie montrent aussi chaque bonus, du niveau 1 au niveau 100.",
-            "icone": "bestiaire",
-            "etiquettes": [
-              "Inventaire",
-              "Ménagerie"
-            ]
-          },
-          {
-            "titre": "Panoplies bien rangées",
-            "phrase": "Un bouton au coin du socle de l'inventaire montre tes panoplies : pièces, bonus actifs et palier suivant.",
-            "details": "La même fiche apparaît sous chaque objet de panoplie. Un éclat doré te prévient quand tu gagnes un palier.",
-            "icone": "sac",
-            "etiquettes": [
-              "Touche I"
-            ]
-          },
-          {
-            "titre": "Le tchat en canaux",
-            "phrase": "Général ne montre plus que les joueurs ; le butin et tes combats vont dans Combat, les boss dans Événements.",
-            "details": "Combat résume chaque massacre et dit qui t'a tué, avec tes derniers coups reçus. « Y aller » pose une flèche vers un boss du monde ou une invasion.",
-            "icone": "journal",
-            "etiquettes": [
-              "Tchat",
-              "Touche Entrée"
-            ]
-          },
-          {
-            "titre": "Le Carnet des Fêlures",
-            "phrase": "Une campagne guidée de 59 chapitres te mène d'île en île, du Temple Céleste à Frigost.",
-            "details": "Touche W : actes, Sceaux des Douze, Zaap conseillé et titre à chaque fin d'acte. En essai dans la partie de test.",
-            "icone": "principale",
-            "etiquettes": [
-              "Touche W",
-              "Partie de test"
-            ]
-          },
-          {
-            "titre": "24 palettes de couleurs",
-            "phrase": "À la création et à la garde-robe : palettes Classiques, Dofus, Nations et Enfers, rangées en onglets.",
-            "details": "Une palette Dofus s'ouvre quand un de tes persos trouve ce Dofus ; les palettes fermées s'achètent aussi chez Tissebelle. Teints de peau, bouton Hasard et 8 mélanges gardés pour le compte.",
-            "icone": "apparat",
-            "etiquettes": [
-              "Création",
-              "Garde-robe"
-            ]
-          },
-          {
-            "titre": "Partage ton look",
-            "phrase": "Copie le code de tes couleurs et colle celui d'un ami pour reprendre son look.",
-            "details": "Un nouveau salon #looks sur le Discord accueille vos captures et vos codes.",
-            "icone": "perso",
-            "etiquettes": [
-              "Création",
-              "Discord"
-            ]
-          }
+          {"titre": "Invocations max affichées", "phrase": "Ton nombre d'Invocations se lit dans les Caractéristiques et dans le détail des sorts qui invoquent.", "details": "Chaque sort d'invocation dit combien de places prend sa bête. S'il n'y a plus de place, la plus ancienne repart.", "icone": "caracs", "etiquettes": ["Touche C", "Osamodas"]},
+          {"titre": "Ce que donne ton familier", "phrase": "Survole ton familier : ses bonus à son niveau, et ce qu'il donnera au niveau 100.", "details": "La Ménagerie et l'Animalerie montrent aussi chaque bonus, du niveau 1 au niveau 100.", "icone": "bestiaire", "etiquettes": ["Inventaire", "Ménagerie"]},
+          {"titre": "Panoplies bien rangées", "phrase": "Un bouton au coin du socle de l'inventaire montre tes panoplies : pièces, bonus actifs et palier suivant.", "details": "La même fiche apparaît sous chaque objet de panoplie. Un éclat doré te prévient quand tu gagnes un palier.", "icone": "sac", "etiquettes": ["Touche I"]},
+          {"titre": "Le tchat en canaux", "phrase": "Général ne montre plus que les joueurs ; le butin et tes combats vont dans Combat, les boss dans Événements.", "details": "Combat résume chaque massacre et dit qui t'a tué, avec tes derniers coups reçus. « Y aller » pose une flèche vers un boss du monde ou une invasion.", "icone": "journal", "etiquettes": ["Tchat", "Touche Entrée"]},
+          {"titre": "Le Carnet des Fêlures", "phrase": "Une campagne guidée de 59 chapitres te mène d'île en île, du Temple Céleste à Frigost.", "details": "Touche W : actes, Sceaux des Douze, Zaap conseillé et titre à chaque fin d'acte. En essai dans la partie de test.", "icone": "principale", "etiquettes": ["Touche W", "Partie de test"]},
+          {"titre": "24 palettes de couleurs", "phrase": "À la création et à la garde-robe : palettes Classiques, Dofus, Nations et Enfers, rangées en onglets.", "details": "Une palette Dofus s'ouvre quand un de tes persos trouve ce Dofus ; les palettes fermées s'achètent aussi chez Tissebelle. Teints de peau, bouton Hasard et 8 mélanges gardés pour le compte.", "icone": "apparat", "etiquettes": ["Création", "Garde-robe"]},
+          {"titre": "Partage ton look", "phrase": "Copie le code de tes couleurs et colle celui d'un ami pour reprendre son look.", "details": "Un nouveau salon #looks sur le Discord accueille vos captures et vos codes.", "icone": "perso", "etiquettes": ["Création", "Discord"]}
         ],
         "Le monde": [
-          {
-            "titre": "Kerubim dès Incarnam",
-            "phrase": "Kerubim Crépin tient boutique au Bastion des Douze dès le début, sans passer par Astrub.",
-            "details": "Prends un Zaap d'Incarnam ou ton Havre-Sac (touche H) pour le rejoindre et défaire tes objets en trop.",
-            "icone": "zaap",
-            "etiquettes": [
-              "Bastion des Douze",
-              "Incarnam"
-            ]
-          }
+          {"titre": "Kerubim dès Incarnam", "phrase": "Kerubim Crépin tient boutique au Bastion des Douze dès le début, sans passer par Astrub.", "details": "Prends un Zaap d'Incarnam ou ton Havre-Sac (touche H) pour le rejoindre et défaire tes objets en trop.", "icone": "zaap", "etiquettes": ["Bastion des Douze", "Incarnam"]}
         ],
         "Corrections": [
           "Les 22 sorts du Sadida et 14 sorts de l'Écaflip ont enfin leurs effets visuels officiels.",
