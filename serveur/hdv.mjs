@@ -23,6 +23,20 @@ function secret(dossier, env) {
   return readFileSync(f, 'utf8').trim();
 }
 
+/** 4A : signature des objets apparus dans une partie du serveur, avec le secret ; aussi dans les fils des parties (fil.mjs). */
+export function creerSigneur(cle) {
+  const mac = (n, it) => createHmac('sha256', cle).update(`${n}|${it.id}|${it.rarity}|${it.legendary?.id ?? ''}|${it.legendary2?.id ?? ''}`).digest('hex').slice(0, 24);
+  return {
+    /** Signe un objet (une seule fois). */
+    signer(it) { if (it && typeof it === 'object' && !it.srv) { const n = randomBytes(6).toString('hex'); it.srv = `${n}.${mac(n, it)}`; } return it; },
+    /** Signature valable de cet objet (son nonce), ou null. */
+    signature(it) {
+      const m = /^([0-9a-f]{12})\.([0-9a-f]{24})$/.exec(typeof it?.srv === 'string' ? it.srv : '');
+      return m && m[2] === mac(m[1], it) ? m[1] : null;
+    },
+  };
+}
+
 /**
  * @param {{ db: import('node:sqlite').DatabaseSync, connecte: (req: any) => any, lireCorps: (req: any) => Promise<any>,
  *   persoStocke: (compte: number, emplacement: number) => { perso: any, maj: number } | null, rangAbo?: (compte: number) => number,
@@ -82,15 +96,9 @@ export function creerHdv({ db, connecte, lireCorps, persoStocke, rangAbo = () =>
     moinsCher: db.prepare('SELECT MIN(CAST(prix AS REAL) / n) AS u FROM hdv_annonces WHERE cle = ?'),
   };
   const cle = secret(dossier, env);
-  const mac = (n, it) => createHmac('sha256', cle).update(`${n}|${it.id}|${it.rarity}|${it.legendary?.id ?? ''}|${it.legendary2?.id ?? ''}`).digest('hex').slice(0, 24);
-  /** 4A : signe un objet apparu dans une partie du serveur (une seule fois). */
-  function signer(it) { if (it && typeof it === 'object' && !it.srv) { const n = randomBytes(6).toString('hex'); it.srv = `${n}.${mac(n, it)}`; } return it; }
-  /** Signature valable de cet objet (son nonce), ou null. */
-  function signature(it) {
-    const m = /^([0-9a-f]{12})\.([0-9a-f]{24})$/.exec(typeof it?.srv === 'string' ? it.srv : '');
-    return m && m[2] === mac(m[1], it) ? m[1] : null;
-  }
-  /** Partie du serveur où ce perso joue en ce moment : posé par index.mjs. Rend { appliquer(f: (w, joueur) => any) } ou null. */
+  const { signer, signature } = creerSigneur(cle);
+  /** Partie du serveur où ce perso joue en ce moment : posé par index.mjs. Rend { appliquer(op) } (geste nommé, src/sim/hdv.ts opHdv,
+   *  rejoué pour ce joueur, résultat direct ou promesse quand la partie tourne dans un autre fil), ou null. */
   let partieDe = () => null;
 
   const json = (res, code, corps) => { res.writeHead(code, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' }); res.end(JSON.stringify(corps)); };
@@ -127,7 +135,7 @@ export function creerHdv({ db, connecte, lireCorps, persoStocke, rangAbo = () =>
     const P = partieDe(c.id, i);
     // dans une partie du serveur : l'objet de la partie fait foi, pas celui qu'envoie le jeu
     if (P && o.k === 'objet') {
-      const uid = o.item.uid, vrai = P.appliquer((w, j) => j.bag.find(it => it.uid === uid));
+      const vrai = await P.appliquer({ op: 'objet', uid: o.item.uid });
       if (!vrai) return { erreur: 'absent' };
       o = { k: 'objet', item: vrai };
     }
@@ -145,13 +153,9 @@ export function creerHdv({ db, connecte, lireCorps, persoStocke, rangAbo = () =>
     if (unites && !P && (q.quota.get(c.id, jour)?.n ?? 0) + unites > S.HDV.soloJour) return { erreur: 'quota', reste: Math.max(0, S.HDV.soloJour - (q.quota.get(c.id, jour)?.n ?? 0)) };
     const taxe = S.taxeHdv(prix);
     if (P) {
-      const ok = P.appliquer((w, j) => {
-        if (j.kamas < taxe) return 'kamas';
-        const r = S.retirerHdv(j, o);
-        if (!r) return 'absent';
-        j.kamas -= taxe; o = r; return null;
-      });
-      if (ok) return { erreur: ok };
+      const r = await P.appliquer({ op: 'vendre', objet: o, taxe });
+      if (!r || r.erreur) return { erreur: r?.erreur ?? 'absent' };
+      o = r.objet;
     }
     const objet = o.k === 'objet' ? { k: 'objet', item: { ...o.item, uid: 0 } } : o;
     const t = maintenant(), vendeur = String(st.perso?.nom ?? '').slice(0, 20) || 'Aventurier';
@@ -173,11 +177,7 @@ export function creerHdv({ db, connecte, lireCorps, persoStocke, rangAbo = () =>
     if (b.prix != null && Number(b.prix) !== a.prix) return { erreur: 'prixChange', prix: a.prix };
     const objet = JSON.parse(a.objet), P = partieDe(c.id, i);
     if (P) {
-      const ko = P.appliquer((w, j) => {
-        if (j.kamas < a.prix) return 'kamas';
-        if (objet.k === 'objet' && j.bag.length >= j.tailleSac) return 'place';   // le coffre du compte n'est pas dans la partie
-        j.kamas -= a.prix; S.donnerHdv(w, j, objet, false, true); return null;
-      });
+      const ko = await P.appliquer({ op: 'acheter', objet, prix: a.prix });
       if (ko) return { erreur: ko };
     } else {
       // kamas du perso sauvé (le jeu sauve juste avant), moins les achats faits depuis
@@ -200,7 +200,7 @@ export function creerHdv({ db, connecte, lireCorps, persoStocke, rangAbo = () =>
     if (!a || a.compte !== c.id || i == null || !persoStocke(c.id, i)) return { erreur: 'annonce' };
     q.oter.run(a.id);
     const objet = JSON.parse(a.objet), P = partieDe(c.id, i);
-    if (P && P.appliquer((w, j) => S.donnerHdv(w, j, objet, false, true) !== 'sac' ? 'place' : null)) {
+    if (P && await P.appliquer({ op: 'donner', objet })) {
       q.ajouterColis.run(c.id, 0, a.objet, `${a.nom} : annonce retirée, revenue dans ton coffre`, maintenant());
       return { ok: true, colis: true };
     }
@@ -217,7 +217,7 @@ export function creerHdv({ db, connecte, lireCorps, persoStocke, rangAbo = () =>
     for (const x of L) {
       const objet = x.objet ? JSON.parse(x.objet) : null;
       if (P) {
-        const ok = P.appliquer((w, j) => { if (objet && S.donnerHdv(w, j, objet, false, true) !== 'sac') return false; j.kamas += x.kamas; return true; });
+        const ok = await P.appliquer({ op: 'colis', objet, kamas: x.kamas });
         if (!ok) continue;
       } else if (objet) r.objets.push(objet);
       r.kamas += x.kamas; r.textes.push(x.texte); q.oterColis.run(x.id);
@@ -289,5 +289,5 @@ export function creerHdv({ db, connecte, lireCorps, persoStocke, rangAbo = () =>
   }
   /** « En ligne : » 2C : kamas des ventes encaissés en solo par ce perso depuis cet instant (ms). */
   const kamasRecus = (compte, emplacement, depuis) => q.recus.get(compte, emplacement, depuis).k;
-  return { route, signer, signature, vendre, acheter, retirer, encaisser, kamasRecus, set partieDe(f) { partieDe = f ?? (() => null); }, get partieDe() { return partieDe; } };
+  return { route, signer, signature, cleSignature: cle, vendre, acheter, retirer, encaisser, kamasRecus, set partieDe(f) { partieDe = f ?? (() => null); }, get partieDe() { return partieDe; } };
 }

@@ -302,14 +302,23 @@ export class Partie {
       for (const it of [...q.bag, ...Object.values(q.equipment)]) if (it && !it.srv && !m.apportes.has(it)) this.signer(it);
     }
   }
-  /** Le perso de ce compte joue-t-il ici ? Rend { appliquer(f) } (f(monde, joueur) rejoué pour lui), ou null (« HDV : » : gestes de l'HDV). */
+  /** Le perso de ce compte joue-t-il ici ? Rend { appliquer(op) } (geste de l'HDV nommé, src/sim/hdv.ts opHdv, rejoué pour lui), ou null. */
   joueurDuCompte(compte, emplacement) {
     for (const m of this.membres.values()) {
       if (m.compte?.compte !== compte || m.compte.emplacement !== emplacement || m.joueur == null) continue;
       const q = this.w?.players.find(p => p.id === m.joueur);
-      if (q) return { appliquer: f => this.w.commeJoueur(q, () => f(this.w, q)) };
+      if (q) return { appliquer: op => this.w.commeJoueur(q, () => this.S.opHdv(this.w, q, op)) };
     }
     return null;
+  }
+  /** Comptes qui jouent ici, avec leur position (fils des parties : copie gardée par le fil principal, « En ligne : » 7B). */
+  positions() {
+    const L = [];
+    for (const m of this.membres.values()) {
+      const q = m.compte && m.joueur != null && this.w?.players.find(p => p.id === m.joueur);
+      if (q) L.push([m.compte.compte, m.compte.emplacement, Math.round(q.x), Math.round(q.y)]);
+    }
+    return L;
   }
   /** Sauve tout le monde (serveur qui s'arrête). */
   sauverTout() { for (const m of this.membres.values()) this.sauverMembre(m); }

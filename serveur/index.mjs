@@ -9,6 +9,7 @@ import { creerComptes } from './comptes.mjs';
 import { arenesDisponibles, chargerSim, heureParis, Partie } from './partie.mjs';
 import { creerPresence } from './presence.mjs';
 import { annonceurDiscord, creerClassement } from './classement.mjs';
+import { creerFils } from './fils.mjs';
 
 const PORT = Number(process.env.PORT ?? 3100);
 const HOTE = process.env.HOTE ?? '127.0.0.1';
@@ -20,10 +21,10 @@ const depart = Date.now();
 
 /** Salons de coop (maquette « Multi : » 3A) : 2 à 4 joueurs, le premier est l'hôte. Le serveur ne regarde pas la partie,
  *  il relaie : instantanés de l'hôte vers ses invités, entrées des invités vers l'hôte. */
-/** continents : mondes du continent entier en même temps (« En ligne : » 1A, environ 70 Mo chacun, sous les 1,5 Go de Node). */
+/** continents : mondes du continent entier en même temps (« En ligne : » 1A, environ 20 Mo chacun depuis 8C, sous les 1,5 Go de Node). */
 /** attenteVide : un monde ouvert vide attend son groupe ce temps (ms) avant de fermer (« En ligne : » 8B) ; bossMax : joueurs du
  *  combat commun d'un boss du monde (3D). */
-export const SALON = { max: 4, salons: 300, parties: 40, continents: 14, debit: 120, lettres: 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', taille: 5, attenteVide: 120_000, bossMax: 16 };
+export const SALON = { max: 4, salons: 300, parties: 80, continents: 40, debit: 120, lettres: 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', taille: 5, attenteVide: 120_000, bossMax: 16 };
 const salons = new Map();
 /** « En ligne : » 1A : monde ouvert de chaque groupe, « groupe:zone » → code de son salon (une partie par zone tenue par le serveur). */
 const mondes = new Map();
@@ -61,15 +62,19 @@ let lesComptes = null;
 /** Persos du compte en cours de partie (« compte:emplacement ») : un même perso ne joue pas deux fois en même temps. */
 const enJeu = new Set();
 /** Sauve les persos de toutes les parties (arrêt du serveur). */
-export function sauverParties() { for (const sa of parties()) sa.partie.sauverTout(); }
+export function sauverParties() { return Promise.all(parties().map(sa => { try { return sa.partie.sauverTout(); } catch (e) { console.warn('partie : sauvegarde ratée', e.message); return null; } })); }
+/** « En ligne : » 7B : fils des parties (fils.mjs), FILS=2 sur le VPS ; sans, les parties tournent dans ce fil. */
+let fils = null;
 const parties = () => [...salons.values()].filter(sa => sa.partie);
 function fermerPartie(sa) {
   salons.delete(sa.code);
   if (sa.cleMonde && mondes.get(sa.cleMonde) === sa.code) mondes.delete(sa.cleMonde);
-  try { sa.partie.sauverTout(); } catch (e) { console.warn('partie : sauvegarde ratée', e.message); }
+  let fini = null;
+  try { fini = sa.partie.distante ? sa.partie.fermer() : sa.partie.sauverTout(); } catch (e) { console.warn('partie : sauvegarde ratée', e.message); }
   for (const m of sa.partie.membres.values()) if (m.compte) enJeu.delete(`${m.compte.compte}:${m.compte.emplacement}`);
   for (const m of sa.membres.values()) { m.salon = null; envoyer(m, { k: 'fin', raison: 'erreur' }); }
   if (!parties().length && boucle) { clearInterval(boucle); boucle = null; }
+  return fini;
 }
 /** « En ligne : » 8B : ferme les mondes vides depuis plus de SALON.attenteVide (les persos ont été sauvés au départ de chacun). */
 export function fermerMondesVides(t = Date.now()) {
@@ -82,6 +87,7 @@ function tourner() {
   boucle = setInterval(() => {
     const t = performance.now(), dt = (t - avant) / 1000; avant = t;
     for (const sa of parties()) {
+      if (sa.partie.distante) continue;   // son fil la fait tourner
       try { sa.partie.avancer(dt); }
       catch (e) { console.warn(`partie ${sa.code} arrêtée :`, e.message); fermerPartie(sa); }
     }
@@ -101,8 +107,9 @@ async function creerPartie(s, monde = false, arene = null, cleMonde = null, o = 
     return envoyer(s, { k: 'refus', raison: 'plein' });
   const sa = { code: nouveauCode(), membres: new Map([[1, s]]), suivant: 2, cleMonde, max: o.max ?? SALON.max };
   if (cleMonde) mondes.set(cleMonde, sa.code);
-  sa.partie = new Partie(S, (num, d) => { const c = sa.membres.get(num); if (c) envoyer(c, `{"k":"recu","de":0,"d":${JSON.stringify(d)}}`); },
-    undefined, (c, perso) => lesComptes?.sauverPartie(c.compte, c.emplacement, perso), { monde, arene, donjonFini: (nom, temps, L, idoles) => leClassement?.noterDonjon(nom, temps, L, idoles), signer: it => lesComptes?.hdv?.signer(it), ...o });
+  sa.partie = fils?.n ? fils.creer(sa.code, S, Math.floor(Math.random() * 2 ** 31), { monde, arene, ...o })
+    : new Partie(S, (num, d) => { const c = sa.membres.get(num); if (c) envoyer(c, `{"k":"recu","de":0,"d":${JSON.stringify(d)}}`); },
+      undefined, (c, perso) => lesComptes?.sauverPartie(c.compte, c.emplacement, perso), { monde, arene, donjonFini: (nom, temps, L, idoles) => leClassement?.noterDonjon(nom, temps, L, idoles), signer: it => lesComptes?.hdv?.signer(it), ...o });
   sa.partie.arrivee(1);
   salons.set(sa.code, sa); s.salon = sa; s.num = 1;
   tourner();
@@ -224,8 +231,15 @@ function recu(s, m, brut) {
 }
 
 /** @param {{ comptes?: ReturnType<typeof creerComptes>, annoncer?: (texte: string) => void }} [o] */
-export function creerServeur({ comptes = creerComptes({ dossier: process.env.DONNEES ?? new URL('./donnees', import.meta.url).pathname, origines: ORIGINES }), annoncer = annonceurDiscord(process.env.DISCORD_ANNONCES) } = {}) {
+export function creerServeur({ comptes = creerComptes({ dossier: process.env.DONNEES ?? new URL('./donnees', import.meta.url).pathname, origines: ORIGINES }), annoncer = annonceurDiscord(process.env.DISCORD_ANNONCES),
+  nFils = Number(process.env.FILS ?? 0) || 0 } = {}) {
   lesComptes = comptes;
+  void fils?.fermer();
+  fils = nFils > 0 ? creerFils({ n: Math.min(nFils, 8), cle: comptes.hdv?.cleSignature,
+    recevoir: (code, num, texte) => { const c = salons.get(code)?.membres.get(num); if (c) envoyer(c, `{"k":"recu","de":0,"d":${texte}}`); },
+    sauver: (compte, emplacement, perso) => lesComptes?.sauverPartie(compte, emplacement, perso),
+    donjonFini: (nom, temps, L, idoles) => leClassement?.noterDonjon(nom, temps, L, idoles),
+    arret: code => { const sa = salons.get(code); if (sa?.partie) fermerPartie(sa); } }) : null;
   presence?.fermer();
   presence = creerPresence({ comptes, envoyer });
   leClassement?.fermer();
@@ -276,13 +290,17 @@ export function creerServeur({ comptes = creerComptes({ dossier: process.env.DON
   // battement : coupe les connexions mortes toutes les 30 s
   const battement = setInterval(() => { for (const s of ws.clients) { if (s.vivant === false) { s.terminate(); continue; } s.vivant = false; s.ping(); } }, 30_000);
   ws.on('connection', s => { s.vivant = true; s.on('pong', () => { s.vivant = true; }); });
-  http.on('close', () => { clearInterval(battement); presence?.fermer(); leClassement?.fermer(); for (const sa of parties()) fermerPartie(sa); comptes.fermer(); });
+  http.on('close', () => {
+    clearInterval(battement); presence?.fermer(); leClassement?.fermer();
+    const f = fils; fils = null;
+    void Promise.all(parties().map(fermerPartie)).finally(() => { void f?.fermer(); comptes.fermer(); });
+  });
   return http;
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const s = creerServeur();
   s.listen(PORT, HOTE, () => console.log(`Diablofus ${VERSION} : http://${HOTE}:${PORT}`));
-  const fin = () => { console.log('arrêt'); presence?.annoncer('Le serveur redémarre : tu seras reconnecté dans un instant'); sauverParties(); s.close(() => process.exit(0)); setTimeout(() => process.exit(0), 3000).unref(); };
+  const fin = () => { console.log('arrêt'); presence?.annoncer('Le serveur redémarre : tu seras reconnecté dans un instant'); void sauverParties().finally(() => s.close(() => process.exit(0))); setTimeout(() => process.exit(0), 3000).unref(); };
   process.on('SIGTERM', fin); process.on('SIGINT', fin);
 }

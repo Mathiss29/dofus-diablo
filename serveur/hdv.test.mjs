@@ -90,7 +90,7 @@ test('perso dans une partie du serveur : le serveur fait le geste lui-même, san
   const joueur = (kamas, bag = [], resources = {}) => ({ kamas, bag, resources, apparats: [], apparat: {}, tailleSac: 60 });
   const monde = j => ({ newUid: () => 99, players: [j], coffre: { onglets: [[]] }, opts: { items: S.ITEMS }, commeJoueur: (_q, f) => f() });
   const L = joueur(100, [hdv.signer({ ...CHAPEAU })], { 289: 600 }), B = joueur(5000);
-  hdv.partieDe = c => { const j = c === 1 ? L : B; return { appliquer: f => f(monde(j), j) }; };
+  hdv.partieDe = c => { const j = c === 1 ? L : B; return { appliquer: op => Promise.resolve(S.opHdv(monde(j), j, op)) }; };   // comme une partie dans un autre fil
   const v = await hdv.vendre(lyra, { emplacement: 0, objet: { k: 'ressource', id: '289', n: 100 }, prix: 1000 });
   assert.equal(v.applique, true); assert.equal(L.resources[289], 500); assert.equal(L.kamas, 80);
   for (let i = 0; i < 5; i++) assert.equal((await hdv.vendre(lyra, { emplacement: 0, objet: { k: 'ressource', id: '289', n: 100 }, prix: 10 })).ok, true);   // 600 unités en tout : pas de limite ici
