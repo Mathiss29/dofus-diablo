@@ -33,7 +33,9 @@ export type SimEvent =
       /** Coup d'arme : éclat de la couleur de l'élément (maquette Armes 3B). */
       eclat?: boolean;
       /** Sort qui a frappé (partie de test : DPS sort par sort, journal des coups ; « poussee », « saignement », « renvoi »). */
-      sort?: string }
+      sort?: string;
+      /** Coup reçu par un joueur (canaux du tchat 3C, récap de mort) : monstre qui frappe (type) et nom de son sort officiel. */
+      de?: string; nomSort?: string }
   /** XP gagnée en tuant un monstre (choix 1A : chiffre au-dessus de lui). */
   | { k: 'xp'; x: number; y: number; z: number; n: number }
   | { k: 'kill'; x: number; y: number; radius: number; monster: string }

@@ -334,7 +334,7 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
     const c = q.session.get(empreinte(jeton), maintenant());
     const r = c && q.persos.all(c.id).find(x => x.emplacement === i);
     if (!r) return null;
-    try { return { compte: c.id, emplacement: i, perso: JSON.parse(r.donnees), testeur: vue(c).testeur }; } catch { return null; }
+    try { return { compte: c.id, emplacement: i, perso: JSON.parse(r.donnees), testeur: vue(c).testeur, admin: vue(c).admin }; } catch { return null; }
   }
   /** Sauve le perso joué dans une partie, daté de maintenant : une copie plus ancienne envoyée par le jeu sera refusée (409). */
   function sauverPartie(compte, n, perso) {
