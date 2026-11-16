@@ -19,7 +19,13 @@ final class Pont {
   Pont(Context ctx, Activity activite, Window fenetre) { this.ctx = ctx; this.activite = activite; this.fenetre = fenetre; }
 
   @JavascriptInterface public String manette() { return Manette.json(); }
-  @JavascriptInterface public String version() { return "1"; }
+  @JavascriptInterface public String version() { return String.valueOf(Principale.VERSION); }
+  /** Journal de l'appli (pages tuées, erreurs) et version du moteur web, pour le rapport de l'écran du bas. */
+  @JavascriptInterface public String journal() {
+    String w = "?";
+    try { android.content.pm.PackageInfo p = android.webkit.WebView.getCurrentWebViewPackage(); if (p != null) w = p.packageName + " " + p.versionName; } catch (Throwable ignore) { }
+    return "Appli " + Principale.VERSION + " · WebView " + w + "\n" + Journal.lire(ctx);
+  }
 
   /** Forces de 0 à 1 : la Thor n'a qu'un moteur, on prend la plus forte. */
   @JavascriptInterface public void vibrer(double fort, double faible, double ms) {

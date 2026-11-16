@@ -34,6 +34,10 @@ final class Journal {
       Files.write(f.toPath(), l, StandardCharsets.UTF_8);
     } catch (Throwable ignore) { /* rien */ }
   }
+  /** Les évènements gardés (pour le rapport de l'écran du bas). */
+  static synchronized String lire(Context c) {
+    try { File f = evts(c); return f.exists() ? new String(Files.readAllBytes(f.toPath()), StandardCharsets.UTF_8) : ""; } catch (Throwable e) { return String.valueOf(e); }
+  }
   /** Lancement : un marqueur reste tant que l'appli n'est pas quittée proprement (une fermeture brutale le laisse). */
   static void marquerLancement(Context c) { try { new FileOutputStream(marqueur(c)).close(); } catch (Throwable ignore) { } }
   static void marquerSortie(Context c) { marqueur(c).delete(); }
