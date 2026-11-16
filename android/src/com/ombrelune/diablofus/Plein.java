@@ -12,6 +12,7 @@ final class Plein {
 
   static void appliquer(Window w) {
     w.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    w.getDecorView();   // crée la fenêtre : sans elle, getInsetsController() plante (rapport de Mathis, 1.0 à 1.2)
     if (Build.VERSION.SDK_INT >= 30) {
       w.setDecorFitsSystemWindows(false);
       WindowInsetsController c = w.getInsetsController();

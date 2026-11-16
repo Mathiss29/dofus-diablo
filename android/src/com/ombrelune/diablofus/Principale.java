@@ -19,7 +19,7 @@ import android.webkit.WebView;
  * besoin d'être mise à jour. Plein écran, écran toujours allumé, manette lue ici et passée aux deux pages.
  */
 public final class Principale extends Activity {
-  static final int VERSION = 4;
+  static final int VERSION = 5;
   /** Mode sûr : après un plantage, on lance le jeu seul (sans l'écran du bas). */
   private boolean sansBas = false;
   private WebView vue;
@@ -73,21 +73,6 @@ public final class Principale extends Activity {
       android.content.ClipboardManager m = (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
       if (m != null) m.setPrimaryClip(android.content.ClipData.newPlainText("Diablofus", t));
       signaler("Rapport copié : colle-le dans le fil");
-    }
-  }
-
-  private long dernierePerte = 0;
-  private WebView nouvelleVue() { return Toile.creer(this, new Pont(this, this, getWindow()), Toile.JEU, new Perte()); }
-  /** Page du jeu tuée par Android : on en refait une (au lieu de fermer l'appli) ; deux fois en une minute, sans l'écran du bas. */
-  final class Perte implements Toile.SurPerte {
-    @Override public void pagePerdue(WebView w) {
-      long t = android.os.SystemClock.uptimeMillis();
-      if (t - dernierePerte < 60_000 && !sansBas) { sansBas = true; if (bas != null) { bas.fermer(); bas = null; } signaler("Le jeu a manqué de mémoire : l'écran du bas est éteint pour cette fois"); }
-      dernierePerte = t;
-      if (w == vue) {
-        WebView n = nouvelleVue(); vue = n; setContentView(n);
-        try { w.destroy(); } catch (Throwable ignore) { }
-      } else if (bas != null && w == bas.vue) { bas.fermer(); bas = null; main.postDelayed(new Runnable() { @Override public void run() { ouvrirBas(); } }, 1500); }
     }
   }
 
