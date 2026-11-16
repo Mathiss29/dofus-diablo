@@ -1396,7 +1396,7 @@ export class ZoneScene extends Phaser.Scene {
   private suivreEcranDuBas() {
     const relie = compagnonRelie() && !this.vitrine;
     this.hud.basRelie = relie;
-    if (!relie) return;
+    if (!relie || this.menuStart?.ouvert) return;   // menu Start : ses onglets restent en haut (sinon le sac partait en bas et le menu se fermait)
     const m = this.windows?.ouverte;
     if (m === 'inv' || m === 'quetes') { this.windows!.close(false); ongletBas(m === 'inv' ? 'sac' : 'quetes'); }
     if (this.carte?.ouverte) { this.carte.fermer(true); ongletBas('carte'); }
