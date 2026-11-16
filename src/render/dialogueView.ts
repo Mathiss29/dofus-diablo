@@ -7,6 +7,14 @@ import { chrono } from '../sim/quests';
 import { PEPITE, RARITY_COLORS, RARITY_NAMES } from '../sim/items';
 import type { World } from '../sim/world';
 import { QUEST_ICON, type QuestView } from './questView';
+import { BTN, manetteActive } from './manette';
+
+/** Interfaces Thor 6A : bouton de la manette de chaque réponse (A, X, Y dans l'ordre, B pour la dernière ; -1 = à la croix). */
+export function boutonsReponses(n: number): number[] {
+  if (n <= 1) return n ? [BTN.A] : [];
+  return Array.from({ length: n }, (_, i) => i === n - 1 ? BTN.B : i < 3 ? [BTN.A, BTN.X, BTN.Y][i] : -1);
+}
+const NOM_BTN: Record<number, string> = { [BTN.A]: 'A', [BTN.B]: 'B', [BTN.X]: 'X', [BTN.Y]: 'Y' };
 
 /** Dialogue avec les PNJ, comme Dofus 3 (maquette « Dialogues », tranchée le 2026-11-06 : 1C 2A+2C 3A+3B+3C 4A+4B+4C 5A+5C 6B+6C 7B 8A+8B 9A 10A+10B).
  *  - bulle sombre à contour clair qui pointe vers le PNJ, ruban parchemin officiel (npcdialogskin_all 1) avec son nom, croix ;
@@ -16,6 +24,7 @@ import { QUEST_ICON, type QuestView } from './questView';
 const CSS = `
 .dlgv{position:fixed;inset:0;pointer-events:none;z-index:9;font:600 14px/1.45 Lexend,Verdana,sans-serif;color:#f4efe0}
 .dlgv .dlg{position:absolute;width:min(400px,46vw);display:grid;gap:10px;pointer-events:auto}
+html.console .dlgv{font-size:15.5px}html.console .dlgv .dlg{width:min(470px,56vw)}html.console .dlgv .rep .r{padding:9px 10px}
 .dlgv .bul{position:relative;background:#1b1711f2;border:2px solid #f1ecd8;border-radius:16px;padding:30px 20px 16px;box-shadow:0 6px 20px #000a;white-space:pre-line}
 .dlgv .bul::after{content:"";position:absolute;top:var(--py,40%);border:10px solid transparent}
 .dlgv .dlg.d .bul::after{left:-20px;border-right:12px solid #f1ecd8}
@@ -29,6 +38,8 @@ const CSS = `
 .dlgv .rep .r{background:#3a352c;border-radius:6px;padding:7px 10px;cursor:pointer;display:flex;gap:8px;align-items:center}
 .dlgv .rep .r:hover{background:#4f5a2c;box-shadow:inset 0 0 0 2px #b9e54b}
 .dlgv .rep .r small{color:#c9a55a;font-weight:bold}
+.dlgv .rep .r small.pad{flex:none;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;background:#555;box-shadow:inset 0 -2px 0 #0006}
+.dlgv .rep .r small.pad.b0{background:#3f9b3a}.dlgv .rep .r small.pad.b1{background:#c2412f}.dlgv .rep .r small.pad.b2{background:#2f6fc2}.dlgv .rep .r small.pad.b3{background:#c99a1f}
 .dlgv .rep .r em{color:#c9a55a;font-style:normal;font-weight:normal;font-size:12px}
 .dlgv .rep .r img{width:20px;height:20px;object-fit:contain}
 .dlgv .rew{display:flex;flex-wrap:wrap;gap:6px 14px;font-weight:bold;color:#f2d36b;padding:0 4px 2px;font-size:13px}
@@ -56,6 +67,14 @@ export class DialogueView {
   private shown: Dialogue | null = null;
   /** Réponse cliquée ou tapée, envoyée au prochain pas (input.reponse). */
   reponse: number | null = null;
+  private pad: boolean | null = null;
+  /** 6A : un bouton A, X, Y ou B choisit sa réponse ; faux si ce bouton n'en porte aucune. */
+  boutonManette(bt: number): boolean {
+    const d = this.world.quetes?.dialogue; if (!d) return false;
+    const i = boutonsReponses(d.reponses.length).indexOf(bt);
+    if (i < 0) return false;
+    this.reponse = i; return true;
+  }
   /** PNJ choisi dans le menu du clic droit : on va lui parler. */
   menuTalk: string | null = null;
 
@@ -78,8 +97,18 @@ export class DialogueView {
 
   update() {
     const d = this.world.quetes?.dialogue ?? null;
-    if (d !== this.shown) { this.box?.remove(); this.box = d ? this.construire(d) : null; this.shown = d; if (d) this.fermerMenu(); }
+    if (d !== this.shown) { this.box?.remove(); this.box = d ? this.construire(d) : null; this.shown = d; this.pad = null; if (d) this.fermerMenu(); }
     if (!d || !this.box) return;
+    // 6A : à la manette, chaque réponse porte son bouton (A, X, Y, B) ; au clavier, son chiffre
+    const pad = manetteActive();
+    if (pad !== this.pad) {
+      this.pad = pad;
+      const bs = boutonsReponses(d.reponses.length);
+      this.box.querySelectorAll<HTMLElement>('.r small[data-n]').forEach((s, i) => {
+        const b = pad ? bs[i] : -1;
+        s.textContent = b >= 0 ? NOM_BTN[b] : s.dataset.n!; s.className = b >= 0 ? `pad b${b}` : '';
+      });
+    }
     const a = this.qv.ancre(d.pnj);
     if (!a) { this.box.hidden = true; return; }
     this.box.hidden = false;
@@ -101,7 +130,7 @@ export class DialogueView {
       const q = 'quete' in r ? Q.def(r.quete) : null;
       const cle = r.a === 'entrer' && d.donjon?.cle ? ITEMS.resources[d.donjon.cle] : null;
       const ic = r.a === 'voir' && q ? `<img src="${v(`assets/ui/quetes/${QUEST_ICON[q.type][0]}.png`)}" alt="">` : cle ? iconHtml(cle.icon ?? 0) : '';
-      return `<div class="r" data-i="${i}"><small>${i + 1}</small>${ic}<span>${esc(r.texte)}${r.detail ? ` <em>(${esc(r.detail)})</em>` : ''}</span></div>`;
+      return `<div class="r" data-i="${i}"><small data-n="${i + 1}">${i + 1}</small>${ic}<span>${esc(r.texte)}${r.detail ? ` <em>(${esc(r.detail)})</em>` : ''}</span></div>`;
     }).join('');
     el.innerHTML = `<div class="bul"><div class="rub">${esc(Q.data.pnj[d.pnj]?.nom ?? '')}</div><span class="x" title="Fermer (Échap)">✕</span>${esc(d.texte)}${d.donjon ? infoDonjon(d.donjon) : ''}</div>
       <div class="rep">${d.recompense ? `<div class="rew">${recompense(d.recompense, Q.classe)}</div>` : ''}${reps}</div>`;

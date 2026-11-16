@@ -89,8 +89,11 @@ function lire() {
 
 /** Zone d'interface pilotée : l'accueil, l'écran « se joue sur PC », sinon ce que le jeu dit (fenêtre, menu, carte, dialogue). */
 function zoneUi(): HTMLElement | null {
-  for (const id of ['tel', 'acc']) { const e = document.getElementById(id); if (e && !e.hidden && e.offsetParent !== null) return e; }
-  return jeu ? jeu.interface() : document.body;
+  const j = jeu ? jeu.interface() : document.body;
+  if (j && j !== document.body) return j;   // fenêtre du jeu ouverte (Options par-dessus l'accueil…)
+  // #acc est en position fixe : pas d'offsetParent, on regarde s'il a une boîte à l'écran
+  for (const id of ['tel', 'acc']) { const e = document.getElementById(id); if (e && !e.hidden && e.getClientRects().length) return e; }
+  return j;
 }
 
 // ---------- Interface : focus d'un bouton à l'autre, et curseur au stick droit ----------
@@ -108,6 +111,7 @@ function ui(zone: HTMLElement, m: ImageManette) {
   if (focus && (!focus.isConnected || !zone.contains(focus))) focus = null;
   for (const b of m.appuyes) {
     if (branche?.boutonUi?.(b)) continue;
+    if (!duJeu && accueilBouton(zone, b)) continue;
     if (b === BTN.A) activer('click');
     else if (b === BTN.X) activer('contextmenu');
     else if (b === BTN.Y) activer('dblclick');
@@ -207,6 +211,19 @@ function activer(type: 'click' | 'contextmenu' | 'dblclick') {
   else if (e instanceof HTMLElement && typeof e.click === 'function' && !(e instanceof HTMLSelectElement)) e.click();
   else envoyer(e, 'click');
 }
+/** Interfaces Thor 7A : à l'accueil, LB / RB changent d'onglet, Start lance « Jouer », B quitte la case du nom. */
+function accueilBouton(zone: HTMLElement, b: number): boolean {
+  if (b === BTN.LB || b === BTN.RB) {
+    const l = Array.from(zone.querySelectorAll<HTMLElement>('.nav[data-nav]')); if (!l.length) return false;
+    const i = l.findIndex(e => e.classList.contains('on'));
+    l[(i + (b === BTN.RB ? 1 : -1) + l.length) % l.length].click();
+    focus = null; return true;
+  }
+  if (b === BTN.START) { const j = zone.querySelector<HTMLElement>('[data-jouer],[data-go="jouer"]'); if (j) { j.click(); return true; } return false; }
+  const a = document.activeElement;
+  if (b === BTN.B && (a instanceof HTMLInputElement || a instanceof HTMLTextAreaElement) && zone.contains(a)) { a.blur(); return true; }
+  return false;
+}
 function retour(branche: BrancheJeu | null) {
   if (branche?.retour) { branche.retour(); return; }
   // accueil : Échap, comme au clavier
@@ -242,4 +259,7 @@ background:no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/200
   Object.assign(cadre.style, { left: `${q.left - 3}px`, top: `${q.top - 3}px`, width: `${q.width + 6}px`, height: `${q.height + 6}px` });
 }
 function cacherCurseur() { modeCurseur = false; if (curseur) curseur.hidden = true; }
+/** Vrai si la croix a posé le focus sur un bouton (A le clique alors, au lieu du raccourci du jeu). */
+export function focusManette(): boolean { return !!focus && !modeCurseur && focus.isConnected; }
+export function elementManette(): HTMLElement | null { return focusManette() ? focus : null; }
 function cacherFocus() { if (cadre) cadre.hidden = true; if (survol) survoler(null); focus = null; focusZone = null; }

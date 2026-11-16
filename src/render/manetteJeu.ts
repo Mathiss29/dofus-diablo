@@ -30,6 +30,27 @@ export function cibleAuto(w: World, p: Player, gardee: number | null, devant: Ve
   return best;
 }
 
+/** Interfaces Thor 10A : centre du paquet de monstres le plus dense qu'un sort de zone (rayon, portée) peut toucher, devant de préférence.
+ *  null s'il n'y a pas au moins 2 monstres à prendre ensemble (l'auto-visée garde alors sa cible). */
+export function paquetDense(w: World, p: Player, portee: number, rayon: number, devant: Vec | null): Vec | null {
+  const l = w.monsters.filter(m => !m.dead && Math.hypot(m.x - p.x, m.y - p.y) <= portee + rayon);
+  if (l.length < 2) return null;
+  const fx = devant?.x ?? Math.cos(p.facing), fy = devant?.y ?? Math.sin(p.facing);
+  let best: Vec | null = null, bs = 0;
+  for (const c of l) {
+    const v = l.filter(m => Math.hypot(m.x - c.x, m.y - c.y) <= rayon);
+    let x = v.reduce((s, m) => s + m.x, 0) / v.length, y = v.reduce((s, m) => s + m.y, 0) / v.length;
+    const d = Math.hypot(x - p.x, y - p.y);
+    if (d > portee && d > 0) { x = p.x + (x - p.x) * portee / d; y = p.y + (y - p.y) * portee / d; }
+    const n = l.filter(m => Math.hypot(m.x - x, m.y - y) <= rayon).length;
+    if (n < 2) continue;
+    const cos = d ? ((x - p.x) * fx + (y - p.y) * fy) / d : 1;
+    const s = n + 0.4 * cos;
+    if (s > bs) { bs = s; best = { x, y }; }
+  }
+  return best;
+}
+
 export type Interaction =
   | { k: 'pnj'; id: string } | { k: 'drop'; id: number } | { k: 'zaap'; id: string } | { k: 'portail'; id: string }
   | { k: 'poste'; id: number } | { k: 'recolte'; id: number };

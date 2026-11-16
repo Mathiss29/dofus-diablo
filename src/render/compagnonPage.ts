@@ -4,7 +4,7 @@
 import { API, Compte } from './compte';
 import { dernier, lirePersos, type Perso } from './persos';
 import { CLE_UNE_TEXTURE, texteDiag, uneTexture, type DiagGpu } from './diagGpu';
-import { Canal, type ActionCompagnon, type OngletBas, type OrdreBas } from './compagnon';
+import { Canal, type ActionCompagnon, type LigneTchat, type OngletBas, type OrdreBas } from './compagnon';
 import type { CarteBas, EtatBas, ObjetBas, QuetesBas, SacBas } from './compagnonEtat';
 import { CSS_BAS, MiroirBas } from './miroir';
 import { v } from './assetUrl';
@@ -12,7 +12,7 @@ import { verifierVersion } from './miseAJour';
 import { ITEMS } from '../sim/data';
 import { RARITY_COLORS, type Item } from '../sim/items';
 
-const ONGLETS: [OngletBas, string, string][] = [['carte', 'Carte', '🗺'], ['sac', 'Sac', '🎒'], ['perso', 'Perso', '🧍'], ['quetes', 'Quêtes', '📜']];
+const ONGLETS: [OngletBas, string, string][] = [['carte', 'Carte', '🗺'], ['sac', 'Sac', '🎒'], ['perso', 'Perso', '🧍'], ['quetes', 'Quêtes', '📜'], ['tchat', 'Tchat', '💬']];
 const CLE_ONGLET = 'diablofus.compagnon.onglet';
 const EMPL: Record<string, string> = { chapeau: 'Chapeau', cape: 'Cape', amulette: 'Amulette', anneau1: 'Anneau', anneau2: 'Anneau', ceinture: 'Ceinture', bottes: 'Bottes', arme: 'Arme', bouclier: 'Bouclier', familier: 'Familier' };
 const FENETRES: Record<string, string> = { car: 'Caractéristiques', sorts: 'Sorts', job: 'Métiers', art: 'Artisanat', succes: 'Succès', forge: 'Forgemagie', emp: 'Services', boutique: 'Boutique', hdv: 'Hôtel des ventes',
@@ -29,7 +29,7 @@ html,body{margin:0;background:#0d0f14;overscroll-behavior:none}
 #cmp .vues{position:relative;overflow:hidden}
 #cmp .vue{position:absolute;inset:0;display:none;overflow:auto;padding:8px 10px;box-sizing:border-box}
 #cmp .vue.on{display:block}
-#cmp nav{display:grid;grid-template-columns:repeat(4,1fr) 52px;border-top:1px solid #2a2f3a;background:#12151c}
+#cmp nav{display:grid;grid-template-columns:repeat(5,1fr) 46px;border-top:1px solid #2a2f3a;background:#12151c}
 #cmp nav button{border:0;border-radius:0;background:none;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:12px;color:#8e8a78}
 #cmp nav button b{font-size:19px;line-height:1;filter:grayscale(1) opacity(.6)}
 #cmp nav button.on{color:#d3f46f;background:#1a2012;box-shadow:inset 0 3px 0 #d3f46f}
@@ -101,6 +101,16 @@ html,body{margin:0;background:#0d0f14;overscroll-behavior:none}
 #cmp .q .tag{float:right;font-size:10.5px;color:#d3f46f}
 #cmp h3{font:400 13px Rowdies,Lexend,sans-serif;color:#8e8a78;margin:8px 0 5px;letter-spacing:.03em}
 #cmp .gp{display:grid;grid-template-columns:1fr 1.2fr;gap:8px;align-items:center;font-size:12.5px;margin-bottom:4px}
+/* tchat + journal (4C+4D) */
+#cmp .vue.tchat{display:none;padding:6px 8px}
+#cmp .vue.tchat.on{display:flex;flex-direction:column}
+#cmp .tl{flex:1;overflow:auto;background:#0a0b0f;border-radius:9px;padding:6px 8px;font-size:13px;line-height:1.35;user-select:text;-webkit-user-select:text}
+#cmp .tl p{margin:0 0 3px}#cmp .tl p.j{color:#b9b29c;font-size:12.5px}
+#cmp .tl .vide{margin-top:40px}
+#cmp .te{display:flex;gap:6px;margin-top:6px}
+#cmp .te input{flex:1;min-width:0;font:500 14px Lexend,sans-serif;color:#e8e2d4;background:#161a22;border:1px solid #2a2f3a;border-radius:9px;padding:8px 10px}
+#cmp .te[hidden]{display:none}
+#cmp .seg button i{font-style:normal;color:#ffd24d;margin-left:4px}
 /* fenêtre du jeu reçue */
 #cmp .fen{position:absolute;inset:0;z-index:4;background:#0d0f14;display:grid;grid-template-rows:38px minmax(0,1fr)}
 #cmp .fen[hidden]{display:none}
@@ -138,6 +148,8 @@ export function ecranCompagnon() {
         <div class="droite"><div class="fi"><div class="vide" style="margin-top:30px">Touche un objet</div></div><div class="fb"></div></div></div>
       <div class="vue" data-v="perso"></div>
       <div class="vue" data-v="quetes"></div>
+      <div class="vue tchat" data-v="tchat"><div class="seg"><button data-t="tchat" class="on">Tchat</button><button data-t="journal">Journal<i></i></button></div><div class="tl"></div>
+        <form class="te"><input maxlength="200" placeholder="Écrire aux joueurs…" enterkeyhint="send" autocomplete="off"><button>Envoyer</button></form></div>
       <div class="vue" data-v="liens"><div class="liens">${Object.keys(NOMS).map(k => `<div class="lien" data-l="${k}"><b><i></i>${NOMS[k]}</b><span>jamais</span></div>`).join('')}</div>
         <div class="btns"><button data-d="ping">Coucou au jeu</button><button data-d="rapport">Copier le rapport</button><button data-d="texture">Essai carrés noirs</button><button data-d="retour">Retour</button></div>
         <div class="journal"></div></div>
@@ -176,6 +188,7 @@ export function ecranCompagnon() {
     if (o === 'carte') { centrerSiBesoin(); dessinerCarte(); }
     else if (o === 'sac') dessinerSac();
     else if (o === 'quetes') dessinerQuetes();
+    else if (o === 'tchat') dessinerTchat();
     dessiner();
   };
   q('nav').addEventListener('click', e => {
@@ -189,6 +202,29 @@ export function ecranCompagnon() {
   const miroir = new MiroirBas(q('.fen .fc'), e => ordre({ k: 'evt', e }));
   q('.fen [data-f="x"]').addEventListener('click', () => action('fermer'));
 
+  // ---------- tchat et journal (4C+4D, 8A) ----------
+  let tchat: LigneTchat[] = [], tchatEnLigne = false, vueT: 'tchat' | 'journal' = 'tchat', nonLus = 0;
+  const journal: LigneTchat[] = [];
+  const marquerNonLus = () => { q('.vue.tchat .seg i').textContent = nonLus ? `${Math.min(nonLus, 99)}` : ''; };
+  const dessinerTchat = () => {
+    const tl = q('.vue.tchat .tl');
+    const bas = tl.scrollHeight - tl.scrollTop - tl.clientHeight < 30;
+    r.querySelectorAll<HTMLElement>('.vue.tchat .seg button').forEach(b => b.classList.toggle('on', b.dataset.t === vueT));
+    if (vueT === 'journal') { nonLus = 0; marquerNonLus(); }
+    const l = vueT === 'tchat' ? tchat.filter(x => !x.j) : [...tchat.filter(x => x.j), ...journal];
+    tl.innerHTML = l.length ? l.map(x => `<p class="${x.j ? 'j' : ''}"${x.c ? ` style="color:${x.c}"` : ''}>${x.h}</p>`).join('')
+      : `<div class="vide">${vueT === 'journal' ? 'Le butin, les combats et les quêtes s\'écrivent ici.' : enJeu ? (tchatEnLigne ? 'Personne n\'a encore parlé.' : 'Le tchat des joueurs s\'ouvre en mode « En ligne ».') : 'Lance le jeu sur l\'écran du haut.'}</div>`;
+    if (bas) tl.scrollTop = tl.scrollHeight;
+    const f = q<HTMLFormElement>('.vue.tchat .te'); f.hidden = vueT !== 'tchat' || !tchatEnLigne || !relie();
+  };
+  q('.vue.tchat .seg').addEventListener('click', e => { const t = (e.target as HTMLElement).closest('button')?.dataset.t; if (t === 'tchat' || t === 'journal') { vueT = t; dessinerTchat(); } });
+  q('.vue.tchat .te').addEventListener('submit', e => {
+    e.preventDefault();
+    const inp = q<HTMLInputElement>('.vue.tchat .te input'), t = inp.value.trim();
+    if (!t) return;
+    ordre({ k: 'dire', texte: t.slice(0, 200) }); inp.value = '';
+  });
+
   c.ecoute = (m, par) => {
     const t = performance.now();
     vu[par] = t;
@@ -198,6 +234,9 @@ export function ecranCompagnon() {
       case 'carte': carte = m.c; if (onglet === 'carte') dessinerCarte(); break;
       case 'sac': sac = m.s; if (onglet === 'sac') dessinerSac(); break;
       case 'quetes': quetes = m.q; if (onglet === 'quetes') dessinerQuetes(); break;
+      case 'tchat': tchat = m.l; tchatEnLigne = m.enLigne; if (onglet === 'tchat') dessinerTchat(); break;
+      case 'annonce': toast(m.t); journal.push({ h: `${new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}  ${esc(m.t)}`, j: true, c: m.c }); if (journal.length > 80) journal.splice(0, journal.length - 80);
+        if (onglet === 'tchat' && vueT === 'journal') dessinerTchat(); else { nonLus++; marquerNonLus(); } break;
       case 'styles': stJeu.textContent = m.css; stylesRecus = true; break;
       case 'fiche': if (m.uid === choisi?.uid) { ficheHtml = m.html; dessinerFiche(); } break;
       case 'fenetre': {
@@ -526,13 +565,14 @@ export function ecranCompagnon() {
     ro.hidden = !lectureSeule;
     if (lectureSeule) ro.textContent = sauve ? `Lecture seule : d'après la sauvegarde de ${new Date(sauve.maj).toLocaleTimeString('fr-FR')}. Lance le jeu en haut pour tout piloter.` : 'Lance le jeu sur l\'écran du haut et entre en jeu : cette page le trouve toute seule.';
     if (!ok && miroir.ouverte) { miroir.montrer(null); q('.fen').hidden = true; }
-    const ctx = q<HTMLButtonElement>('.ctx'), inter = ok && !miroir.ouverte && onglet !== 'carte' ? etat?.inter : null;
+    const ctx = q<HTMLButtonElement>('.ctx'), inter = ok && !miroir.ouverte && onglet !== 'carte' && onglet !== 'tchat' ? etat?.inter : null;
     ctx.hidden = !inter; if (inter && ctx.textContent !== inter) ctx.textContent = inter;
     if (onglet === 'perso') dessinerPerso();
     else if (onglet === 'liens') dessinerLiens();
     else if (onglet === 'sac' && (!sacLu || !ok)) { sacLu = true; dessinerSac(); }
     else if (onglet === 'quetes' && !ok) dessinerQuetes();
     else if (onglet === 'carte' && !ok) dessinerCarte();
+    else if (onglet === 'tchat') { const f = q<HTMLFormElement>('.vue.tchat .te'), cache = vueT !== 'tchat' || !tchatEnLigne || !ok; if (f.hidden !== cache) f.hidden = cache; }
     if (etat && t - etatT > 3000) etat = null;
   }
   setInterval(dessiner, 250);

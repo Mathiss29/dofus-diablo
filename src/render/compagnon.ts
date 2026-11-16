@@ -7,24 +7,26 @@ import { diagGpu, type DiagGpu } from './diagGpu';
 import type { CarteBas, EtatBas, QuetesBas, SacBas } from './compagnonEtat';
 import { CSS_JEU, MiroirJeu, stylesDuJeu, type EvtBas, type FenetreBas } from './miroir';
 
-export type OngletBas = 'carte' | 'sac' | 'perso' | 'quetes';
+export type OngletBas = 'carte' | 'sac' | 'perso' | 'quetes' | 'tchat';
+/** Une ligne du tchat ou du journal (« Interfaces Thor : » 4C+4D) : html déjà mis en forme par chat.ts ; journal = ligne du jeu (butin, combat…). */
+export interface LigneTchat { h: string; j: boolean; c?: string }
 export type ActionCompagnon = 'potion' | 'inv' | 'sorts' | 'car' | 'carte' | 'quetes' | 'job' | 'succes' | 'fermer' | 'recharger';
 /** Ordres de l'écran du bas vers le jeu. */
 export type OrdreBas =
   | { k: 'equiper'; uid: number } | { k: 'retirer'; slot: string } | { k: 'cadenas'; uid: number } | { k: 'defaire'; uid: number }
-  | { k: 'fiche'; uid: number; porte: boolean } | { k: 'fleche'; x: number; y: number } | { k: 'zaap'; i: number } | { k: 'evt'; e: EvtBas } | { k: 'interagir' };
+  | { k: 'fiche'; uid: number; porte: boolean } | { k: 'fleche'; x: number; y: number } | { k: 'zaap'; i: number } | { k: 'evt'; e: EvtBas } | { k: 'interagir' } | { k: 'dire'; texte: string };
 export type MsgCompagnon =
   | { k: 'bonjour'; neuf?: boolean } | { k: 'ping'; n: number; t: number } | { k: 'pong'; n: number; t: number }
   | { k: 'etat'; e: EtatBas | null } | { k: 'carte'; c: CarteBas | null } | { k: 'sac'; s: SacBas | null } | { k: 'quetes'; q: QuetesBas | null }
   | { k: 'fiche'; uid: number; html: string } | { k: 'fenetre'; f: FenetreBas | null } | { k: 'styles'; css: string } | { k: 'onglet'; o: OngletBas | 'suivant' }
-  | { k: 'diag'; d: DiagGpu } | { k: 'action'; a: ActionCompagnon } | { k: 'ordre'; o: OrdreBas };
+  | { k: 'tchat'; l: LigneTchat[]; enLigne: boolean } | { k: 'annonce'; t: string; c?: string } | { k: 'diag'; d: DiagGpu } | { k: 'action'; a: ActionCompagnon } | { k: 'ordre'; o: OrdreBas };
 export type Lien = 'direct' | 'stockage';
 type De = 'jeu' | 'ecran';
 interface Enveloppe { de: De; id: string; m: MsgCompagnon }
 
 const CANAL = 'diablofus-compagnon', CLE = 'diablofus.compagnon.';
 /** Messages lourds : seulement par le lien direct quand il existe (le stockage partagé est petit et lent). */
-const LOURDS = new Set(['styles', 'fenetre', 'sac', 'quetes', 'fiche', 'carte']);
+const LOURDS = new Set(['styles', 'fenetre', 'sac', 'quetes', 'fiche', 'carte', 'tchat']);
 
 /** Les deux voies directes entre le jeu et l'écran du bas. Chaque message part sur les deux, il n'est traité qu'une fois. */
 export class Canal {
@@ -65,6 +67,7 @@ export interface BrancheCompagnon {
   carte(): CarteBas | null;
   sac(): SacBas | null;
   quetes(): QuetesBas | null;
+  tchat(): { l: LigneTchat[]; enLigne: boolean } | null;
   fiche(uid: number, porte: boolean): string;
   /** Fenêtre du jeu à montrer en bas (null : aucune, ou une qui reste en haut). */
   fenetre(): { el: HTMLElement; mode: string } | null;
@@ -80,6 +83,8 @@ const derniers: Record<string, string> = {};
 export const compagnonRelie = () => !!canalJeu && performance.now() < actifJusque;
 /** Change l'onglet de l'écran du bas (Select, I, M…). */
 export function ongletBas(o: OngletBas | 'suivant') { if (compagnonRelie()) canalJeu!.envoyer({ k: 'onglet', o }); }
+/** 8A : petit texte (toast, ligne de butin) montré en bas plutôt qu'en haut ; faux si l'écran du bas n'est pas là. */
+export function annonceBas(t: string, c?: string): boolean { if (!compagnonRelie()) return false; canalJeu!.envoyer({ k: 'annonce', t, c }); return true; }
 
 /** Appelé à chaque lancement de la scène de jeu : la page n'a qu'un canal, la scène du moment répond. */
 export function brancherCompagnon(b: BrancheCompagnon) {
@@ -108,11 +113,11 @@ export function brancherCompagnon(b: BrancheCompagnon) {
 }
 
 /** Envoie le sac ou les quêtes si leur contenu a changé depuis le dernier envoi (ou si tout doit repartir). */
-function siChange(k: 'sac' | 'quetes', v: SacBas | QuetesBas | null) {
+function siChange(k: string, v: unknown, m: MsgCompagnon) {
   const j = JSON.stringify(v);
   if (!toutRenvoyer && derniers[k] === j) return;
   derniers[k] = j;
-  canalJeu!.envoyer(k === 'sac' ? { k, s: v as SacBas | null } : { k, q: v as QuetesBas | null });
+  canalJeu!.envoyer(m);
 }
 
 /** À chaque image : perso et carte 4 fois par seconde, sac et quêtes quand ils changent, la fenêtre ouverte en copie. */
@@ -133,8 +138,10 @@ export function tickCompagnon() {
     lentT = t;
     const n = document.querySelectorAll('style').length;
     if (toutRenvoyer || n !== nbStyles) { nbStyles = n; c.envoyer({ k: 'styles', css: stylesDuJeu() }); }
-    siChange('sac', b?.sac() ?? null);
-    siChange('quetes', b?.quetes() ?? null);
+    const sac = b?.sac() ?? null, qu = b?.quetes() ?? null, tc = b?.tchat() ?? null;
+    siChange('sac', sac, { k: 'sac', s: sac });
+    siChange('quetes', qu, { k: 'quetes', q: qu });
+    if (tc) siChange('tchat', tc, { k: 'tchat', ...tc });
     toutRenvoyer = false;
   }
   if (t - diagT > 2000) { diagT = t; c.envoyer({ k: 'diag', d: diagGpu() }); }
