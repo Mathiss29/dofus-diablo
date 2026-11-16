@@ -13,7 +13,7 @@ import { adresseLadder } from './render/ladder';
 import { ecranTelephone, surTelephone } from './render/telephone';
 import { demarrerManette, reglerControles } from './render/manette';
 import { brancherMiseAJour } from './render/miseAJour';
-import { ecranCompagnon } from './render/compagnon';
+import { ecranCompagnon } from './render/compagnonPage';
 import { brancherDiagGpu, uneTexture } from './render/diagGpu';
 
 // Compte Discord (maquette « Vrai multi : ») : lit le jeton renvoyé par le serveur (#connexion=…) avant de regarder l'adresse

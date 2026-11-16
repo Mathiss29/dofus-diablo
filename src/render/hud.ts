@@ -405,7 +405,10 @@ export class Hud {
   private modTxt = new Map<string, Txt>();
   private drag: { id: string; x: number; y: number; ox: number; oy: number } | null = null;
   /** Place un module (6A) : position de départ + décalage choisi, gardé dans l'écran. */
+  /** Écran du bas relié (« Écran du bas : » 6B) : le cadre du perso et le suivi des quêtes passent en bas, le haut s'allège. */
+  basRelie = false;
   private place(id: string, x: number, y: number, w: number, h: number): [number, number] {
+    if (this.basRelie && (id === 'perso' || id === 'suivi')) { this.modRects.delete(id); return [-9000, -9000]; }
     const W = this.scene.scale.width / this.k, H = this.scene.scale.height / this.k, o = this.reglages?.modules?.[id] ?? [0, 0];
     const nx = Phaser.Math.Clamp(x + o[0], 0, Math.max(0, W - w)), ny = Phaser.Math.Clamp(y + o[1], 0, Math.max(0, H - h));
     this.modRects.set(id, [nx, ny, w, h]);

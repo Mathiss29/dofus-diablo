@@ -2249,9 +2249,12 @@
     },
     {
       "date": "2026-11-16",
-      "titre": "Le butin s'affiche sur console",
-      "resume": "Les objets au sol, les récoltes et les icônes des PNJ ne tombent plus en carrés noirs sur les consoles et téléphones Android.",
+      "titre": "La Thor gagne son écran du bas",
+      "resume": "L'écran du bas de l'AYN Thor devient un vrai second écran (carte, sac, perso, quêtes), et fini les carrés noirs sur console.",
       "lignes": {
+        "Nouveautés": [
+          {"titre": "L'écran du bas de l'AYN Thor", "phrase": "Ouvre diablofus.com/#compagnon en bas : carte, sac, perso et quêtes au doigt.", "details": "Les fenêtres du jeu (caracs, sorts, forgemagie…) s'ouvrent en bas et le haut reste libre. Select change d'onglet.", "icone": "carte", "etiquettes": ["AYN Thor", "Écran du bas"]}
+        ],
         "Corrections": [
           "Console et téléphone : plus de carrés noirs à la place du butin au sol, des récoltes et des icônes des PNJ.",
           "Console : les grandes planches de décor trop hautes pour la carte graphique sont découpées, fini le noir.",
