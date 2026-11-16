@@ -17,7 +17,8 @@ export interface PersoBas {
 }
 export interface SortBas { icone: number; nom: string; t: number; frac: number; charges: number | null }
 export interface EffetBas { nom: string; t: number; sorte: 'sort' | 'monstre' | 'objet' }
-export interface EtatBas { perso: PersoBas; sorts: SortBas[]; effets: EffetBas[] }
+/** inter : ce que A maintenu prendrait (« Parler à Ganymède »), montré en bouton sur l'écran du bas (Confort Thor 1E). */
+export interface EtatBas { perso: PersoBas; sorts: SortBas[]; effets: EffetBas[]; inter?: string | null }
 
 /** Carte : en pixels du plan du monde (carte_fondu.webp) quand le monde a une carte, sinon en cases autour du perso (radar). */
 export interface CarteBas {

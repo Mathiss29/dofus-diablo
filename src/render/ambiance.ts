@@ -90,6 +90,8 @@ export interface Reglages {
   chatOngletsV?: number;
   /** Manette (maquette « Console : ») : auto = l'appareil touché en dernier ; clavier = manette ignorée ; manette = visée à la manette même si la souris bouge. */
   controles: 'auto' | 'clavier' | 'manette';
+  /** Confort Thor 4A : la manette vibre aux moments forts. */
+  vibrations: boolean;
 }
 /** 7B : ce que règle chaque qualité prédéfinie. */
 export const QUALITES: Record<'basse' | 'moyenne' | 'haute', Partial<Reglages>> = {
@@ -100,7 +102,7 @@ export const QUALITES: Record<'basse' | 'moyenne' | 'haute', Partial<Reglages>> 
 export const REGLAGES_DEFAUT: Reglages = { heure: 'auto', lumieres: 1, saturation: 1, chaleur: 0, zoom: 0.8, volume: 1, volMusique: 0.5, volEffets: 0.7, volMonstres: 0.5, volAmbiance: 0.6, volInterface: 0.7, musiqueBoss: true, muet: false, vent: true, eau: true, particules: true, transparence: true, lancer: 'relache', approche: false, flecheQuete: true,
   touches: {}, clavier: 'auto', chiffres: true, tailleChiffres: 'normale', dps: false, barresVie: 'blesses', zoomMolette: true, deplacement: 'gauche',
   verrou: true, modules: {}, coords: true, recoltesMini: true, echelle: 1, qualite: 'haute', fps: 0, compteurFps: false, alerteButin: true, pulsePv: true, resolution: 'ecran',
-  chatOnglets: ONGLETS_DEFAUT, chatTaille: [360, 170], chatHeure: true, chatFond: 0.82, chatTexte: 1, chatEffacement: '20', chatTout: true, chatBastion: true, controles: 'auto' };
+  chatOnglets: ONGLETS_DEFAUT, chatTaille: [360, 170], chatHeure: true, chatFond: 0.82, chatTexte: 1, chatEffacement: '20', chatTout: true, chatBastion: true, controles: 'auto', vibrations: true };
 const CLE = 'diablofus.reglages';
 
 export function chargerReglages(): Reglages {

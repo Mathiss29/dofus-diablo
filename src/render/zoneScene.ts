@@ -96,8 +96,9 @@ import { brancherCompagnon, compagnonRelie, ongletBas, tickCompagnon } from './c
 import { carteBas, depuisPlan, etatBas, quetesBas, sacBas } from './compagnonEtat';
 import { rangAbo } from '../sim/boutiqueOgrines';
 import type { EquipSlot } from '../sim/items';
-import { BTN, brancherJeu, brancheActuelle, manetteActive, reglerControles, type BrancheJeu, type ImageManette } from './manette';
-import { BOUTONS_JEU, COUCHE_LT, MenuStart, cibleAuto, dirMonde, interactionProche } from './manetteJeu';
+import { BTN, brancherJeu, brancheActuelle, manetteActive, reglerControles, reglerVibrations, vibrer, type BrancheJeu, type ImageManette } from './manette';
+import { BOUTONS_JEU, COUCHE_LT, MenuStart, cibleAuto, dirMonde, interactionProche, type Interaction } from './manetteJeu';
+import { A_LONG, cibleDansDirection, decrireInteraction, Pichenette, RoueConso } from './confortManette';
 /** Archimonstres du jeu (carnet des âmes, « Archis : » 8A). */
 const NB_ARCHIS = Object.values(GAME_DATA.monsters).filter(d => d.archiDe).length;
 
@@ -170,6 +171,19 @@ export class ZoneScene extends Phaser.Scene {
   private manGardee: number | null = null;
   private manTenues = new Map<number, string>();
   private manAim: { x: number; y: number } | null = null;
+  /** Confort Thor (2026-11-16) : A court = frapper, maintenu = interagir (1D) avec sa bulle (1B) ; cercle de la cible (3A),
+   *  pichenette du stick droit (3B), roue des consommables sur ↓ maintenue (7A), marche auto au clic de L3 (6A). */
+  private aAppui: { t: number; fait: boolean } | null = null;
+  private bulleA: Phaser.GameObjects.Text | null = null;
+  private marquesManette: Phaser.GameObjects.Graphics | null = null;
+  private pich = new Pichenette();
+  private roue = new RoueConso();
+  private basAppui: number | null = null;
+  private l3Appui: number | null = null;
+  private marcheAuto = false;
+  private manCible: number | null = null;
+  private ramasseT = new Map<number, number>();
+  private vibreT = 0;
   private menuStart: MenuStart | null = null;
   private potion = false;
   private boisson = false;
@@ -598,6 +612,10 @@ export class ZoneScene extends Phaser.Scene {
       this.bindInput();
       this.brancherManette();
       this.brancherEcranDuBas();
+      // Confort Thor 5B : console fermée ou appli quittée, le perso est sauvé tout de suite
+      const cache = () => { if (document.hidden && !this.vitrine && this.sys.isActive()) this.sauver(); };
+      document.addEventListener('visibilitychange', cache);
+      this.events.once('shutdown', () => { document.removeEventListener('visibilitychange', cache); this.roue.fermer(); });
     }
     if (this.perso || this.test) {
       const quitter = () => this.sauver(), cache = () => { if (document.hidden) this.sauver(); };
@@ -1153,7 +1171,7 @@ export class ZoneScene extends Phaser.Scene {
   /** Réglages (maquette « Réglages ») qui ne passent pas par l'ambiance ni le son : touches, interface, chiffres, images par seconde. */
   private appliquerReglages() {
     const r = this.reglages;
-    Touches.appliquer(r.touches); Touches.regler(r.clavier); reglerControles(r.controles);
+    Touches.appliquer(r.touches); Touches.regler(r.clavier); reglerControles(r.controles); reglerVibrations(r.vibrations !== false);
     this.hud.reglages = r; this.hud.flecheQuete = r.flecheQuete;
     this.fx.chiffres = r.chiffres; this.fx.tailleChiffres = r.tailleChiffres === 'petite' ? 0.8 : r.tailleChiffres === 'grande' ? 1.3 : 1;
     EntityView.barresVie = r.barresVie;
@@ -1177,7 +1195,11 @@ export class ZoneScene extends Phaser.Scene {
     let connus: Set<number> | null = null;
     const jeu = () => !this.vitrine && this.sys.isActive();
     brancherCompagnon({
-      etat: () => jeu() ? etatBas(this.world, this.perso?.nom ?? this.world.player.cls.name, this.perso?.sexe ?? 'm') : null,
+      etat: () => {
+        if (!jeu()) return null;
+        const i = interactionProche(this.world, this.world.player), d = i ? decrireInteraction(this.world, i) : null;   // 1E : bouton en bas
+        return { ...etatBas(this.world, this.perso?.nom ?? this.world.player.cls.name, this.perso?.sexe ?? 'm'), inter: d?.texte ?? null };
+      },
       carte: () => jeu() ? carteBas(this.world, k => interactionProche(this.world, this.world.player)?.k === k) : null,
       sac: () => {
         if (!jeu()) return null;
@@ -1218,11 +1240,72 @@ export class ZoneScene extends Phaser.Scene {
           const q = depuisPlan(this.world, o.x, o.y);
           if (q) void this.carte?.suivrePoint(q.x, q.y, 'Écran du bas').then(ok => this.hud.toast(ok ? 'La flèche te guide' : 'Pas de carte du monde ici'));
         } else if (o.k === 'zaap') this.zaapChoix = o.i;
+        else if (o.k === 'interagir') { const i = interactionProche(this.world, p); if (i) this.interagir(i); }
         this.windows?.refresh();
       },
       annonce: t => this.hud.toast(t),
     });
   }
+  /** Confort Thor : chaque image, A maintenu, sa bulle, le cercle de la cible, le ramassage en marchant, la roue, L3 maintenu. */
+  private confortManette() {
+    const actif = manetteActive() && !this.vitrine && this.sys.isActive(), t = performance.now() / 1000, p = this.world.player;
+    const ui = !!(this.windows?.open || this.carte?.ouverte || this.dialogueView?.ouvert || this.dialogueView?.menuOuvert || this.menuStart?.ouvert);
+    const i = actif && !ui ? this.interactionA() : null;
+    const a = this.aAppui, prog = a && !a.fait ? Math.min(1, (t - a.t) / A_LONG) : 0;
+    if (a && !a.fait && prog >= 1) { a.fait = true; if (i) { this.manAttaque = false; this.pressed = null; this.interagir(i); } }
+    const g = this.marquesManette ??= (() => { const o = this.add.graphics().setDepth(1e6); this.cameras.getCamera('mini')?.ignore(o); this.events.once('shutdown', () => { o.destroy(); this.marquesManette = null; }); return o; })();
+    g.clear();
+    // 1B : bulle au-dessus de ce que A maintenu va prendre (rien en combat : A frappe)
+    const d = i ? decrireInteraction(this.world, i) : null, k = densite() / this.cameras.main.zoom;
+    if (d) {
+      const b = this.bulleA ??= (() => { const o = this.add.text(0, 0, '', { fontFamily: 'Lexend, sans-serif', fontSize: '15px', fontStyle: 'bold', color: '#f4efe0', backgroundColor: '#0b0910e6', padding: { x: 9, y: 5 } })
+        .setOrigin(0.5, 1).setDepth(1e6 + 1); this.cameras.getCamera('mini')?.ignore(o); this.events.once('shutdown', () => { o.destroy(); this.bulleA = null; }); return o; })();
+      const s = ISO.toScreen(d.x, d.y);
+      b.setText(`Maintiens A · ${d.texte}`).setPosition(s.x, s.y - 90).setScale(k).setVisible(true);
+      if (prog > 0) { g.fillStyle(0xd3f46f, 1); g.fillRect(b.x - b.displayWidth / 2, b.y + 1 * k, b.displayWidth * prog, 4 * k); }
+    } else this.bulleA?.setVisible(false);
+    // 3A : cercle rouge sous la cible de l'auto-visée
+    const m = actif && this.manCible != null ? this.world.monsters.find(x => x.id === this.manCible && !x.dead) : null;
+    if (m) { const s = ISO.toScreen(m.x, m.y), r = 34 * (m.def.boss ? 1.8 : m.def.elite ? 1.3 : 1); g.lineStyle(3, 0xff3b30, 0.9); g.strokeEllipse(s.x, s.y, r * 2, r); }
+    // 2A : le butin au-dessus du filtre se ramasse en marchant dessus
+    if (actif && !ui) for (const dr of this.world.drops) {
+      if (dr.t < 0 || !dr.item || !this.world.shown(dr) || Math.hypot(dr.x - p.x, dr.y - p.y) > 48 * 0.9 || t - (this.ramasseT.get(dr.uid) ?? -9) < 2) continue;
+      this.ramasseT.set(dr.uid, t); this.pickClick = dr.uid; break;
+    }
+    // 7A : ↓ maintenue = roue des consommables ; 6A : L3 maintenu = Havre-Sac
+    if (this.basAppui != null && !this.roue.ouverte && t - this.basAppui >= 0.35 && actif) this.roue.ouvrir(p);
+    if (this.roue.ouverte) { if (!actif) this.roue.fermer(); else this.roue.viser(this.manG); }
+    if (this.l3Appui != null && this.l3Appui >= 0 && t - this.l3Appui >= 0.6) { this.l3Appui = -1; this.marcheAuto = false; this.havreSacDemande = true; }
+  }
+  /** 7A : boire, manger, lire ce que la roue a choisi (comme le clic droit du sac). */
+  private consommer(id: string) {
+    if (id === 'potion') { this.potion = true; return; }
+    const r = ITEMS.resources[id]; if (!r) return;
+    const ok = r.rappel ? this.world.rappel(id) : r.deguisement ? this.world.boire(id) : this.world.utiliser(id);
+    if (!ok) this.hud.toast(`${r.name} : pas maintenant`);
+    this.windows?.refresh();
+  }
+  private basculerMarcheAuto() {
+    if (this.marcheAuto) { this.marcheAuto = false; this.hud.toast('Marche auto coupée'); return; }
+    if (!this.butMarcheAuto()) { this.hud.toast('Aucune flèche à suivre (suis une quête ou pose un drapeau sur la carte)'); return; }
+    this.marcheAuto = true; this.hud.toast('Marche auto : bouge le stick pour reprendre la main');
+  }
+  /** But de la marche auto : le drapeau suivi, sinon le prochain point du trajet de la quête suivie (fin : c'est le but). */
+  private butMarcheAuto(): { x: number; y: number; fin: boolean } | null {
+    const ds = this.hud.drapeauSuivi; if (ds) return { x: ds.x, y: ds.y, fin: true };
+    const it = this.world.quetes?.itineraire(); if (!it) return null;
+    const fin = it.pts[it.pts.length - 1];
+    return { x: it.x, y: it.y, fin: !fin || (Math.abs(fin.x - it.x) < 1 && Math.abs(fin.y - it.y) < 1) };
+  }
+  /** 4A : vibrer aux moments forts (gros coup reçu, boss, butin Légendaire ou mieux, coup critique). */
+  private vibrerSur(e: SimEvent) {
+    if (e.k === 'grosCoup') vibrer(0.9, 0.5, 220);
+    else if (e.k === 'bossIntro') vibrer(1, 1, 600);
+    else if (e.k === 'loot' && (e.item.rarity === 'legendaire' || e.item.rarity === 'mythique')) vibrer(0.6, 1, 400);
+    else if (e.k === 'hit' && e.target === 'monster' && e.crit) { const t = performance.now(); if (t - this.vibreT > 250) { this.vibreT = t; vibrer(0.15, 0.45, 70); } }
+  }
+  /** Personne d'autre dans la partie (pas de coop ni de monde tenu par le serveur) : le menu Start peut la mettre en pause. */
+  private seulEnPartie() { return Coop.etat === 'hors' && !this.miroir && this.world.players.length === 1; }
   /** Écran du bas relié : le sac, les quêtes et la carte s'ouvrent en bas (leur onglet), le haut s'allège (6B). */
   private suivreEcranDuBas() {
     const relie = compagnonRelie() && !this.vitrine;
@@ -1279,21 +1362,32 @@ export class ZoneScene extends Phaser.Scene {
       if (bt === BTN.RT) { this.manTenues.set(bt, 'CLICD'); this.down('CLICD', p.bar[6]); continue; }   // case « Clic D » de la barre (sort favori)
       if (osa && m.tenu(BTN.LT) && COUCHE_LT[bt]) { this.manTenues.set(bt, COUCHE_LT[bt]); this.action(COUCHE_LT[bt], true); continue; }
       if (bt === BTN.LT && osa) continue;   // Osamodas : LT ne sert que de couche
-      if (bt === BTN.A) { this.boutonA(); continue; }
+      if (bt === BTN.A) { this.aAppui = { t: performance.now() / 1000, fait: false }; this.manAttaque = true; this.pressed = 'attaque'; continue; }   // 1D : frappe tout de suite
+      if (bt === BTN.BAS) { this.basAppui = performance.now() / 1000; continue; }   // 7A : court = potion, maintenu = roue
+      if (bt === BTN.L3) { this.l3Appui = performance.now() / 1000; continue; }   // 6A : court = marche auto, maintenu = Havre-Sac
       if (bt === BTN.SELECT && compagnonRelie()) { ongletBas('suivant'); continue; }   // « Écran du bas : » 8A
       const a = BOUTONS_JEU[bt];
       if (a) { this.manTenues.set(bt, a); this.action(a, true); }
     }
     for (const bt of m.relaches) {
-      if (bt === BTN.A) { this.manAttaque = false; if (this.manRecolte) { this.manRecolte = false; this.recolteMaintenu = false; } }
+      if (bt === BTN.A) { this.aAppui = null; this.manAttaque = false; if (this.manRecolte) { this.manRecolte = false; this.recolteMaintenu = false; } }
+      if (bt === BTN.BAS && this.basAppui != null) {
+        this.basAppui = null;
+        if (this.roue.ouverte) { const c = this.roue.fermer(); if (c) this.consommer(c.id); } else this.potion = true;
+      }
+      if (bt === BTN.L3 && this.l3Appui != null) { if (this.l3Appui >= 0) this.basculerMarcheAuto(); this.l3Appui = null; }
       const a = this.manTenues.get(bt);
       if (a) { this.manTenues.delete(bt); if (a === 'CLICD') this.up('CLICD'); else this.action(a, false); }
     }
   }
-  /** A : parler, ramasser, prendre un Zaap ou un portail, utiliser un atelier, récolter ; sinon attaquer (maintenu : en boucle). */
-  private boutonA() {
-    const i = interactionProche(this.world, this.world.player);
-    if (!i) { this.manAttaque = true; this.pressed = 'attaque'; return; }
+  /** A maintenu (1D) : ce qu'il prendrait. Rien tant qu'un monstre est à 4 cases : en combat, A ne fait que frapper. */
+  private interactionA(): Interaction | null {
+    const p = this.world.player;
+    if (this.world.monsters.some(m => !m.dead && Math.hypot(m.x - p.x, m.y - p.y) < 48 * 4)) return null;
+    return interactionProche(this.world, p);
+  }
+  /** Parler, ramasser, prendre un Zaap ou un portail, utiliser un atelier, récolter (A maintenu, bouton de l'écran du bas). */
+  private interagir(i: Interaction) {
     if (i.k === 'pnj') this.talkClick = i.id;
     else if (i.k === 'drop') this.pickClick = i.id;
     else if (i.k === 'zaap') this.zaapClick = i.id;
@@ -1303,12 +1397,23 @@ export class ZoneScene extends Phaser.Scene {
   }
   /** Entrées de la manette par-dessus celles de la souris : marche au stick, visée au stick droit ou auto-visée, A maintenu. */
   private appliquerManette(input: PlayerInput) {
-    const p = this.world.player, g = this.manG, r = this.manD, bouge = !!(g.x || g.y);
+    const p = this.world.player, g = this.roue.ouverte ? { x: 0, y: 0 } : this.manG, r = this.manD, bouge = !!(g.x || g.y), t = performance.now() / 1000;
     if (bouge) { input.move = dirMonde(g); input.dest = null; input.target = null; }
+    // 6A : marche auto vers la flèche (drapeau suivi, sinon prochain point du trajet de la quête) ; le stick reprend la main
+    if (this.marcheAuto) {
+      const but = bouge ? null : this.butMarcheAuto();
+      if (!but) { this.marcheAuto = false; this.hud.toast(bouge ? 'Marche auto coupée' : 'Plus de flèche à suivre'); }
+      else if (Math.hypot(but.x - p.x, but.y - p.y) < 48 * 1.2 && but.fin) { this.marcheAuto = false; this.hud.toast('Arrivé !'); }
+      else input.dest = { x: but.x, y: but.y };
+    }
+    // 3B : pichenette du stick droit = cible suivante dans cette direction ; stick tenu = visée libre
+    const fl = this.pich.lire(r, t);
+    if (fl) { const m = cibleDansDirection(this.world, p, dirMonde(fl), this.manCible); if (m) this.manGardee = m.id; }
     let cible = null;
-    if (r.x || r.y) { const d = dirMonde(r); input.aim = { x: p.x + d.x * 240, y: p.y + d.y * 240 }; input.castOn = null; }
+    if ((r.x || r.y) && this.pich.tenu(t)) { const d = dirMonde(r); input.aim = { x: p.x + d.x * 240, y: p.y + d.y * 240 }; input.castOn = null; this.manCible = null; }
     else {
       cible = cibleAuto(this.world, p, this.manGardee, bouge ? input.move : null);
+      this.manCible = cible?.id ?? null;
       if (this.manGardee != null && cible?.id !== this.manGardee) this.manGardee = null;
       if (cible) { input.aim = { x: cible.x, y: cible.y }; input.castOn = input.pressed && input.pressed !== 'attaque' ? cible.id : null; }
       else { const f = bouge ? input.move : { x: Math.cos(p.facing), y: Math.sin(p.facing) }; input.aim = { x: p.x + f.x * 150, y: p.y + f.y * 150 }; }
@@ -1480,7 +1585,7 @@ export class ZoneScene extends Phaser.Scene {
   }
   update(_: number, deltaMs: number) {
     const t0 = performance.now();
-    tickCompagnon(); this.suivreEcranDuBas();
+    tickCompagnon(); this.suivreEcranDuBas(); this.confortManette();
     this.updateJeu(deltaMs);
     // Fluidité 5B : images et saccades par zone (pas en vitrine ni sous le rideau d'un voyage)
     if (!this.vitrine && !this.worldView?.presse) ZoneScene.mesure.noter(this.world.area?.name ?? this.world.zone.name, deltaMs);
@@ -1540,8 +1645,9 @@ export class ZoneScene extends Phaser.Scene {
   }
   private updateJeu(deltaMs: number) {
     // Panneau test 5A-5C : pause (le jeu attend, sauf une image demandée), ralenti, accéléré
-    const pt = this.panneau, echelle = pt ? (pt.pause ? 0 : pt.vitesse) : 1;
-    if (pt && (this.anims.globalTimeScale !== echelle || this.tweens.timeScale !== echelle)) { this.anims.globalTimeScale = echelle; this.tweens.timeScale = echelle; }
+    // Confort Thor 5A : le menu Start met la partie en pause quand on joue seul
+    const pt = this.panneau, pauseStart = !!this.menuStart?.ouvert && this.seulEnPartie(), echelle = pauseStart ? 0 : pt ? (pt.pause ? 0 : pt.vitesse) : 1;
+    if (this.anims.globalTimeScale !== echelle || this.tweens.timeScale !== echelle) { this.anims.globalTimeScale = echelle; this.tweens.timeScale = echelle; }
     if (pt?.pause && (pt.pasDemande || this.cmdTest.length)) { pt.pasDemande = false; this.acc += ZoneScene.STEP; }   // une image (ou un ordre du panneau)
     const dt = Math.min(deltaMs / 1000, 0.1) * echelle;
     this.fx.update(dt);
@@ -1658,6 +1764,7 @@ export class ZoneScene extends Phaser.Scene {
       if (this.panneau && e.k === 'heal' && Math.hypot(e.x - this.world.player.x, e.y - this.world.player.y) < 8) this.panneau.noterSoin(e.amount);
       this.son.handle(e);
       if (e.k === 'kill' && !this.vitrine) this.astuceAttaque();
+      if (manetteActive() && !this.vitrine) this.vibrerSur(e);
       const M = GAME_DATA.monsters;
       switch (e.k) {
         case 'impact':

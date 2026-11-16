@@ -32,6 +32,15 @@ export function manetteActive(): boolean {
   return dernierUsage > 0 && dernierUsage >= derniereSouris;
 }
 export function brancherJeu(b: BrancheJeu | null) { jeu = b; }
+/** Confort Thor 4A : vibrations (Options › Manette). */
+let vibrations = true;
+export function reglerVibrations(on: boolean) { vibrations = on; }
+/** Fait vibrer la manette (si elle sait : Chrome, « dual-rumble »). Forces de 0 à 1. */
+export function vibrer(fort: number, faible: number, ms: number) {
+  if (!vibrations || controles === 'clavier' || typeof navigator === 'undefined' || !navigator.getGamepads) return;
+  const a = pad()?.vibrationActuator as { playEffect?: (t: string, p: object) => Promise<unknown> } | undefined;
+  a?.playEffect?.('dual-rumble', { duration: ms, strongMagnitude: fort, weakMagnitude: faible })?.catch(() => {});
+}
 export function brancheActuelle() { return jeu; }
 
 /** Démarre la boucle (une fois). */
