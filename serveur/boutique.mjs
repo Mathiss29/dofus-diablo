@@ -8,12 +8,15 @@ const JOUR = 86_400_000;
 /** Date du jour à Paris (AAAA-MM-JJ), comme le jeu. */
 const jourParis = t => new Date(t).toLocaleDateString('sv-SE', { timeZone: 'Europe/Paris' });
 
+/** Fin d'un abonnement à vie (1er janvier 2100). */
+const A_VIE = Date.UTC(2100, 0, 1);
+
 /**
  * @param {{ db: import('node:sqlite').DatabaseSync, connecte: (req: any) => any, lireCorps: (req: any) => Promise<any>,
  *   ogrines: { solde: (c: number) => number, bouger: (c: number, n: number, r: string) => boolean }, maintenant?: () => number,
  *   catalogue?: () => Promise<any> }} o
  */
-export function creerBoutique({ db, connecte, lireCorps, ogrines, maintenant = Date.now, catalogue = () => import(new URL('./partie/sim.mjs', import.meta.url).href) }) {
+export function creerBoutique({ db, connecte, lireCorps, ogrines, maintenant = Date.now, aVie = () => false, catalogue = () => import(new URL('./partie/sim.mjs', import.meta.url).href) }) {
   db.exec(`CREATE TABLE IF NOT EXISTS achats (compte INTEGER NOT NULL REFERENCES comptes(id) ON DELETE CASCADE, article TEXT NOT NULL, prix INTEGER NOT NULL,
       quand INTEGER NOT NULL, PRIMARY KEY (compte, article));
     CREATE TABLE IF NOT EXISTS services (compte INTEGER NOT NULL REFERENCES comptes(id) ON DELETE CASCADE, service TEXT NOT NULL, n INTEGER NOT NULL DEFAULT 0,
@@ -38,7 +41,11 @@ export function creerBoutique({ db, connecte, lireCorps, ogrines, maintenant = D
   };
   const json = (res, code, corps) => { res.writeHead(code, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' }); res.end(JSON.stringify(corps)); };
   /** Abonnement en cours (ou null s'il a pris fin). */
-  const abonnement = compte => { const a = q.abo.get(compte); return a?.palier && a.fin > maintenant() ? { palier: a.palier, fin: a.fin } : null; };
+  // Les admins de Diablofus (rôle ROLES_ADMIN) ont la Légende à vie (Mathis, 2026-11-16)
+  const abonnement = compte => {
+    if (aVie(compte)) return { palier: 'legende', fin: A_VIE, vie: true };
+    const a = q.abo.get(compte); return a?.palier && a.fin > maintenant() ? { palier: a.palier, fin: a.fin } : null;
+  };
   /** Tout ce que le jeu doit savoir du compte (/moi et /boutique). */
   function etat(compte) {
     const a = q.abo.get(compte);
@@ -73,6 +80,7 @@ export function creerBoutique({ db, connecte, lireCorps, ogrines, maintenant = D
   async function abonner(compte, palier) {
     const S = await catalogue(), P = S.BOUTIQUE_OGRINES.abonnement, d = P.paliers[palier];
     if (!d) return { erreur: 'inconnu' };
+    if (aVie(compte)) return { erreur: 'aVie' };
     const t = maintenant(), a = abonnement(compte), duree = P.jours * JOUR, ra = S.rangAbo(a?.palier), r = S.rangAbo(palier);
     if (a && r < ra) return { erreur: 'plusBas' };
     let prix = d.prix, fin = t + duree;
