@@ -438,6 +438,8 @@ export class ChatVue {
   }
 
   /** Un message tapé : commande, ou message dans le canal choisi (bouton à gauche du champ). */
+  /** Écran du bas (« Interfaces Thor : » 4C) : un message tapé en bas part comme s'il était tapé ici. */
+  dire(texte: string) { this.envoyer(texte); }
   private envoyer(brut: string) {
     const v = deplier(brut.trim(), this.poses);
     if (!v) return;
@@ -485,7 +487,7 @@ function texte(t: string): string {
   });
 }
 /** Une ligne du chat : « (Groupe) Lyra : … », « de Lyra : … », « à Brak : … », ou une info. */
-function ligne(m: MessageChat): string {
+export function ligne(m: MessageChat): string {
   if (m.canal === 'infos') return texte(m.texte);
   const nom = (n: string, id = m.id, cl = m.classe) => `<b data-nom="${esc(n)}" data-id="${id ?? ''}"${cl && COULEUR_CLASSE[cl] ? ` style="color:${COULEUR_CLASSE[cl]}"` : ''}>${esc(n)}</b>`;
   if (m.canal === 'prive') return m.vers ? `à ${nom(m.vers, 0, undefined)} : ${texte(m.texte)}` : `de ${nom(m.de)} : ${texte(m.texte)}`;

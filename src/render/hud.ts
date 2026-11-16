@@ -26,6 +26,7 @@ import { QUEST_ICON } from './questView';
 import { MANIFESTE, Son } from './son';
 import type { Reglages } from './ambiance';
 import * as Touches from './touches';
+import { modeConsole } from './console';
 import { famille, secret } from '../sim/carte';
 
 const FONT = 'Lexend, Verdana, sans-serif';
@@ -407,6 +408,13 @@ export class Hud {
   /** Place un module (6A) : position de départ + décalage choisi, gardé dans l'écran. */
   /** Écran du bas relié (« Écran du bas : » 6B) : le cadre du perso et le suivi des quêtes passent en bas, le haut s'allège. */
   basRelie = false;
+  /** Interfaces Thor 1C+1D : barre mini en mode console, qui glisse hors de l'écran après 5 s sans combat (0 = là, 1 = cachée). */
+  private cacheBarre = 0; private combatT = 0;
+  private enCombat(): boolean {
+    const w = this.world, p = w.player;
+    if (p.skill || w.arene) return true;
+    return w.monsters.some(m => m.hp > 0 && m.state !== 'idle' && m.state !== 'return' && m.state !== 'spawn');
+  }
   private place(id: string, x: number, y: number, w: number, h: number): [number, number] {
     if (this.basRelie && (id === 'perso' || id === 'suivi')) { this.modRects.delete(id); return [-9000, -9000]; }
     const W = this.scene.scale.width / this.k, H = this.scene.scale.height / this.k, o = this.reglages?.modules?.[id] ?? [0, 0];
@@ -793,7 +801,10 @@ export class Hud {
     this.scene.tweens.add({ targets: small, alpha: 1, duration: 300 });
     this.scene.tweens.add({ targets: small, alpha: 0, delay: ms, duration: 700 });
   }
+  /** « Interfaces Thor : » 8A : petit texte envoyé à l'écran du bas quand il est relié (vrai = ne pas l'afficher en haut). */
+  versBas: ((t: string, c?: string) => boolean) | null = null;
   toast(text: string, duree = 1600) {
+    if (this.versBas?.(text)) return;
     this.toastText.setText(text).setAlpha(1);
     this.scene.tweens.killTweensOf(this.toastText);
     this.scene.tweens.add({ targets: this.toastText, alpha: 0, delay: duree, duration: 400 });
@@ -812,6 +823,7 @@ export class Hud {
   noResource(res: 'pa' | 'pm') { this.shortOf[res] = 0.35; }
   /** Ligne dans le journal de butin (en bas à droite). */
   loot(text: string, color = '#e8e2d4') {
+    if (this.versBas?.(text, color)) return;
     const t = this.fixed(this.scene.add.text(0, 0, text, { ...STYLE, fontSize: '13px', color }).setOrigin(1, 1), 5);
     this.feed.unshift({ text: t, t: 5 });
     for (const f of this.feed.splice(6)) f.text.destroy();
@@ -1032,6 +1044,7 @@ export class Hud {
     const tgt = world.monsters.find(m => m.id === this.targetId && !m.dead) as Monster | undefined;
     const dlg = world.quetes?.dialogue, port = dlg ? this.portraitPnj?.(dlg.pnj) : null;
     const showT = !!tgt && this.targetT > 0 && !dlg;
+    const tn = modeConsole() ? '17px' : '14px'; if (this.targetName.style.fontSize !== tn) this.targetName.setFontSize(tn);   // Interfaces Thor 5A
     this.targetName.setVisible(showT || !!dlg); this.targetHp.setVisible(showT); this.targetIco.setVisible(showT);
     if (this.pnjImg) this.pnjImg.setVisible(!!port);
     const tx0 = fx + fw + 8, tw = !dlg && tgt && showT && (tgt.affixes.length || tgt.champion) ? 340 : 240;   // élite à affixes : fiche plus large
@@ -1238,14 +1251,27 @@ export class Hud {
     }
 
     // --- Barre du bas : XP, 6 sorts, clic droit, déplacement, potion, Rage ---
-    const slot = 54, gap = 5, n = 6;
+    // Interfaces Thor 1C+1D : en mode console, rangée fine sans cadre (icônes 40 % plus petites) qui se cache hors combat
+    const mini = modeConsole();
+    if (mini) {
+      this.combatT = this.enCombat() ? 5 : Math.max(0, this.combatT - dt);
+      const vise = this.combatT > 0 ? 0 : 1;
+      this.cacheBarre += Phaser.Math.Clamp(vise - this.cacheBarre, -dt * 6, dt * 2.5);
+    } else this.cacheBarre = 0;
+    const slot = mini ? 34 : 54, gap = mini ? 3 : 5, n = 6, hBarre = mini ? slot + 12 : slot + 44;
     const barW = n * slot + (n - 1) * gap, extra = slot + 14 + 10 + slot + gap + 16 + slot + gap + slot + 16 + 64;
-    const totalW = barW + extra + 24, x0 = Math.round(W / 2 - totalW / 2), y0 = H - 12 - (slot + 44);
-    panel(x0, y0, totalW, slot + 44);
+    const totalW = barW + extra + 24, x0 = Math.round(W / 2 - totalW / 2), y0 = H - (mini ? 2 : 12) - hBarre + Math.round(this.cacheBarre * (hBarre + 60));
     const xr = p.level >= cls.maxLevel ? 1 : p.xp / p.xpNeeded;
-    bar(x0 + 12, y0 + 10, totalW - 24, 12, xr, C.xp);
-    this.xpText.setPosition(W / 2, y0 + 16).setText(p.level >= cls.maxLevel ? `NIV. ${p.level} (max)` : `XP ${Math.floor(p.xp)} / ${p.xpNeeded}  ·  NIV. ${p.level}`);
-    const sy0 = y0 + 30 + slot / 2, sy = sy0;
+    if (mini) {
+      if (this.cacheBarre < 0.99) this.rects.push([x0, y0, totalW, hBarre]);
+      bar(x0 + 12, y0 + hBarre - 5, totalW - 24, 3, xr, C.xp);
+      this.xpText.setAlpha(0);
+    } else {
+      panel(x0, y0, totalW, hBarre);
+      bar(x0 + 12, y0 + 10, totalW - 24, 12, xr, C.xp);
+      this.xpText.setAlpha(1).setPosition(W / 2, y0 + 16).setText(p.level >= cls.maxLevel ? `NIV. ${p.level} (max)` : `XP ${Math.floor(p.xp)} / ${p.xpNeeded}  ·  NIV. ${p.level}`);
+    }
+    const sy0 = y0 + (mini ? 4 : 30) + slot / 2, sy = sy0;
     // touches de la barre (Réglages 3A + 3C : celles choisies, écrites selon le clavier ; 5B : clic droit et gauche échangés)
     const droit = R?.deplacement === 'droit';
     if (manetteActive()) {   // manette (maquette « Console : ») : les boutons à la place des touches
@@ -1318,10 +1344,10 @@ export class Hud {
     // Potion (E) : charges, +1 par groupe vaincu
     const po = this.potion, pox = mvx + slot + gap, pcd = p.potionCd / cls.potion.cooldown;
     po.bg.setPosition(pox, sy).setDisplaySize(slot, slot);
-    po.icon!.setPosition(pox, sy).setDisplaySize(30, 30).setAlpha(p.potions > 0 ? 1 : 0.35);
+    po.icon!.setPosition(pox, sy).setDisplaySize(slot * 0.56, slot * 0.56).setAlpha(p.potions > 0 ? 1 : 0.35);
     po.key.setPosition(pox - slot / 2 + 4, sy - slot / 2 + 1);
     po.cost.setPosition(pox + slot / 2 - 3, sy + slot / 2 - 1).setText(String(p.potions)).setColor('#ffffff');
-    if (pcd > 0) horloge(this.gSlots, pox, sy, 23, Math.min(1, pcd));
+    if (pcd > 0) horloge(this.gSlots, pox, sy, slot / 2 - 4, Math.min(1, pcd));
     const bo = this.boisson, bid = p.ceinture, bn = bid ? p.resources[bid] ?? 0 : 0, bfr = bid ? iconFrame(world.opts.items?.resources[bid]?.icon ?? 0) : -1;
     for (const o of [bo.bg, bo.icon, bo.key, bo.n]) o.setVisible(bfr >= 0);
     if (bid && bfr >= 0) {

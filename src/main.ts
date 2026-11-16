@@ -12,6 +12,7 @@ import { prevenirCarteGraphique } from './render/fluidite';
 import { adresseLadder } from './render/ladder';
 import { ecranTelephone, surTelephone } from './render/telephone';
 import { demarrerManette, reglerControles } from './render/manette';
+import { reglerModeConsole } from './render/console';
 import { brancherMiseAJour } from './render/miseAJour';
 import { ecranCompagnon } from './render/compagnonPage';
 import { brancherDiagGpu, uneTexture } from './render/diagGpu';
@@ -37,7 +38,7 @@ function lancer() {
   for (const f of ['400 13px Lexend', '600 13px Lexend', '700 13px Lexend', '13px Rowdies']) document.fonts?.load(f).catch(() => {});
 
   // Manette (maquette « Console : ») : lue dès l'écran d'accueil
-  reglerControles(chargerReglages().controles);
+  reglerControles(chargerReglages().controles); reglerModeConsole(chargerReglages().modeConsole);
   demarrerManette();
 
   // Téléphone et tablette (maquette « Accueil : » 7A) : écran léger, le jeu ne se charge que si on insiste

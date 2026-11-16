@@ -1,6 +1,7 @@
 import { QUALITES, REGLAGES_DEFAUT, sauverReglages, type Reglages } from './ambiance';
 import { reculPetitEcran } from './pixel';
-import { reglerControles, reglerVibrations } from './manette';
+import { reglerModeConsole } from './console';
+import { manetteActive, reglerControles, reglerVibrations } from './manette';
 import * as Touches from './touches';
 import { ICON_CSS, iconHtml, prechargerIcones } from './icons';
 import { MANIFESTE, Son } from './son';
@@ -176,7 +177,7 @@ const TABS: [string, string, string][] = [['tout', 'all', 'Tout'], ['equip', 'eq
   ['ressource', 'resources', 'Ressources'], ['quete', 'key', 'Objets de quête'], ['apparat', 'cosmetics', 'Apparats']];
 const KINDS: [string, string][] = [['', 'Toutes les catégories'], ['arme', 'Armes'], ['amulette', 'Amulettes'], ['anneau', 'Anneaux'],
   ['chapeau', 'Coiffes'], ['cape', 'Capes'], ['ceinture', 'Ceintures'], ['bottes', 'Bottes'], ['bouclier', 'Boucliers'], ['familier', 'Familiers']];
-const SORTS: [string, string][] = [['', 'Aucun tri'], ['niveau', 'Niveau'], ['rarete', 'Rareté'], ['nom', 'Nom']];
+const SORTS: [string, string][] = [['', 'Aucun tri'], ['meilleur', 'Meilleur d\'abord'], ['niveau', 'Niveau'], ['rarete', 'Rareté'], ['nom', 'Nom']];
 const RARITY_ORDER: Record<string, number> = { commun: 0, rare: 1, epique: 2, legendaire: 3, mythique: 4 };
 const INV = 'assets/ui/inv';
 /** Cadenas officiel (icons_assets_1x/lockShadowOutline) posé sur un objet protégé du recyclage. */
@@ -967,6 +968,14 @@ export class Windows {
   private fiche: FichePerso | null = null;
   private kind = '';
   private sort = '';
+  /** Interfaces Thor 3A : Y = cadenas, LT = défaire, sur l'objet du sac visé à la croix. Faux si ce n'est pas un objet du sac. */
+  objetManette(uid: number, a: 'cadenas' | 'defaire'): boolean {
+    const p = this.world.player, it = p.bag.find(b => b.uid === uid);
+    if (!it || this.mode !== 'inv') return false;
+    if (a === 'cadenas') this.world.cadenas(uid);
+    else if (!rangAbo(p.abo) || !this.world.briserObjet(uid)) { this.toastFn?.(rangAbo(p.abo) ? 'Impossible de défaire cet objet' : 'Défaire : chez Kerubim Crépin, au Bastion (partout avec un abonnement)'); return true; }
+    this.changed(); return true;
+  }
   private search = '';
   private rechercheZaap = '';
   /** Image du perso (frame de repos de sa planche). */
@@ -987,6 +996,8 @@ export class Windows {
   /** Menu principal (Échap) : changer de personnage ou se déconnecter (retour à l'accueil, partie sauvegardée). */
   onMenu: ((choix: 'persos' | 'accueil') => void) | null = null;
   onChange: () => void = () => {};
+  /** Petit message du jeu (toast du HUD, ou l'écran du bas). */
+  toastFn: ((t: string) => void) | null = null;
   /** Bestiaire (maquette « Drops » 1A) : monstres vaincus par le compte (lus par la scène) ; partie de test : tout est visible. */
   vaincus: () => Record<string, number> = () => ({});
   toutVoir = false;
@@ -1333,11 +1344,11 @@ export class Windows {
           <div class="list">
             <input placeholder="Rechercher..." value="${this.search.replace(/"/g, '&quot;')}" data-search>
             <div class="row2">
-              <select data-sort>${SORTS.map(([k, v]) => `<option value="${k}" ${this.sort === k ? 'selected' : ''}>${v}</option>`).join('')}</select>
+              <select data-sort>${SORTS.map(([k, v]) => `<option value="${k}" ${(this.sort || (manetteActive() ? 'meilleur' : '')) === k ? 'selected' : ''}>${v}</option>`).join('')}</select>
               <select data-kind>${KINDS.map(([k, v]) => `<option value="${k}" ${this.kind === k ? 'selected' : ''}>${v}</option>`).join('')}</select>
             </div>
             <div class="grid">${html}</div>
-            <div class="foot"><span>Visible(s) : <b>${n}</b> · sac <b>${p.bag.length} / ${p.tailleSac}</b><br><span class="hint">Clic droit : équiper / retirer · Ctrl + clic : cadenas${p.equipment.familier ? ' · Alt + clic : nourrir le familier' : ''}${p.cls.coffre ? ' · Maj + clic : donner un Rare ou un Épique au coffre' : ''}${rangAbo(p.abo) ? ' · Ctrl + Maj + clic : défaire (abonnement)' : ''}</span></span>
+            <div class="foot"><span>Visible(s) : <b>${n}</b> · sac <b>${p.bag.length} / ${p.tailleSac}</b><br><span class="hint">${manetteActive() ? 'Manette : A fiche · X équiper · Y cadenas · LT défaire · B retour</span><span class="hint" hidden>' : ''}Clic droit : équiper / retirer · Ctrl + clic : cadenas${p.equipment.familier ? ' · Alt + clic : nourrir le familier' : ''}${p.cls.coffre ? ' · Maj + clic : donner un Rare ou un Épique au coffre' : ''}${rangAbo(p.abo) ? ' · Ctrl + Maj + clic : défaire (abonnement)' : ''}</span></span>
               <span class="k">${p.kamas.toLocaleString('fr-FR')} <img src="${INV}/kamas.png" alt="" title="Kamas"></span></div>
             <div class="foot"><span>Butin affiché au sol</span>
               <select data-filter style="width:auto">${['Tout', 'Rare et plus', 'Épique et plus'].map((n, i) => `<option value="${i}" ${p.lootFilter === i ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
@@ -2389,7 +2400,8 @@ export class Windows {
         { id: 'manette', titre: 'Manette', opts: [
           { k: 'controles', nom: 'Jouer avec', aide: 'Automatique : le jeu suit ce que tu touches en dernier. Clavier et souris : la manette ne fait plus rien. Manette : la visée reste à la manette même si la souris ou l\'écran tactile bouge.', t: 'select', choix: [['auto', 'Automatique'], ['clavier', 'Clavier et souris'], ['manette', 'Manette']] },
           { k: 'vibrations', nom: 'Vibrations', aide: 'Gros coup reçu, coup critique, butin Légendaire ou mieux, boss qui arrive.', t: 'check' },
-        ], reset: () => { r.controles = 'auto'; r.vibrations = true; },
+          { k: 'modeConsole', nom: 'Mode console', aide: 'Barre de sorts mini qui se cache hors combat, textes plus grands. Automatique : sur un petit écran tenu à la main (AYN Thor…).', t: 'select', choix: [['auto', 'Automatique'], ['oui', 'Oui'], ['non', 'Non']] },
+        ], reset: () => { r.controles = 'auto'; r.vibrations = true; r.modeConsole = 'auto'; },
           html: `<div class="keys">${[['Stick gauche', 'marcher'], ['Stick droit', 'viser (sinon auto-visée) ; pichenette : cible suivante ; dans un menu : curseur'], ['A', 'frapper ; maintenu : parler, ramasser, Zaap… (la bulle dit quoi)'], ['RT', 'sort de la case « Clic D »'], ['X Y B RB', 'sorts 1 à 4'], ['LT / R3', 'sorts 5 / 6'], ['LB', 'déplacement (Bond, Saut…)'],
             ['Croix', '↓ potion (maintenue : roue des consommables) · ↑ boisson · ← coffre · → carte en surimpression'], ['LT maintenue + X Y B A', 'invocations de l\'Osamodas (LT + RB : sort 5)'], ['Start', 'menu (LB / RB : onglet) ; la partie s\'arrête si tu joues seul'], ['Select', 'carte du monde (onglet suivant de l\'écran du bas)'], ['L3', 'marche auto vers la flèche ; maintenu : Havre-Sac'], ['Dans un menu', 'croix : bouton suivant · A : cliquer · X : clic droit · Y : double clic · B : fermer']]
             .map(([k, d]) => `<b>${k}</b><span>${d}</span>`).join('')}</div>` },
@@ -2525,6 +2537,7 @@ export class Windows {
       if (k === 'clavier') Touches.regler(r.clavier);
       if (k === 'controles') reglerControles(r.controles);
       if (k === 'vibrations') reglerVibrations(r.vibrations);
+      if (k === 'modeConsole') reglerModeConsole(r.modeConsole);
       apply(); this.render();
     }));
     w.querySelectorAll<HTMLInputElement>('[data-ck]').forEach(e => e.addEventListener('change', () => {
@@ -3544,6 +3557,11 @@ export class Windows {
       if (this.sort === 'niveau') items.sort((x, y) => D(y).level - D(x).level);
       if (this.sort === 'rarete') items.sort((x, y) => RARITY_ORDER[y.rarity] - RARITY_ORDER[x.rarity]);
       if (this.sort === 'nom') items.sort((x, y) => D(x).name.localeCompare(D(y).name));
+      // Interfaces Thor 3A : « meilleur d'abord » = ce qui t'améliore en tête, puis la note de l'objet (tri par défaut à la manette)
+      if (this.sort === 'meilleur' || (!this.sort && manetteActive())) {
+        const gain = (it: Item) => { const s = p.slotFor(it), c = s ? p.equipment[s] : undefined; return D(it).level <= p.level && (!c || noteObjet(it) > noteObjet(c)) ? 1 : 0; };
+        items.sort((x, y) => gain(y) - gain(x) || noteObjet(y) - noteObjet(x));
+      }
       for (const it of items) {
         const d = D(it), slot = p.slotFor(it), cur = slot ? p.equipment[slot] : undefined;
         const up = d.level <= p.level && (!cur || noteObjet(it) > noteObjet(cur));

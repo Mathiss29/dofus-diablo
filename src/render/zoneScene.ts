@@ -88,16 +88,17 @@ import { appliquerInstantane, lisserMiroir } from '../sim/miroir';
 import { EnLigne, type MessageChat } from './presence';
 import { Compte as CompteEnLigne } from './compte';
 import { PassantsEnLigne } from './passantsEnLigne';
-import { ChatVue } from './chat';
-import { lienObjet, type SorteInfo } from './chatOutils';
+import { ChatVue, ligne as ligneTchat } from './chat';
+import { COULEUR_INFO, lienObjet, type SorteInfo } from './chatOutils';
 import { BullesChat } from './bullesChat';
 import { demandesEnAttente, menuJoueur, montrerInvitation } from './social';
-import { brancherCompagnon, compagnonRelie, ongletBas, tickCompagnon } from './compagnon';
+import { annonceBas, brancherCompagnon, compagnonRelie, ongletBas, tickCompagnon } from './compagnon';
 import { carteBas, depuisPlan, etatBas, quetesBas, sacBas } from './compagnonEtat';
 import { rangAbo } from '../sim/boutiqueOgrines';
 import type { EquipSlot } from '../sim/items';
-import { BTN, brancherJeu, brancheActuelle, manetteActive, reglerControles, reglerVibrations, vibrer, type BrancheJeu, type ImageManette } from './manette';
-import { BOUTONS_JEU, COUCHE_LT, MenuStart, cibleAuto, dirMonde, interactionProche, type Interaction } from './manetteJeu';
+import { BTN, brancherJeu, brancheActuelle, elementManette, focusManette, manetteActive, reglerControles, reglerVibrations, vibrer, type BrancheJeu, type ImageManette } from './manette';
+import { modeConsole, petitEcranConsole, reglerModeConsole, suivreModeConsole, REGLAGE_THOR } from './console';
+import { BOUTONS_JEU, COUCHE_LT, MenuStart, cibleAuto, dirMonde, interactionProche, paquetDense, type Interaction } from './manetteJeu';
 import { A_LONG, cibleDansDirection, decrireInteraction, Pichenette, RoueConso } from './confortManette';
 /** Archimonstres du jeu (carnet des âmes, « Archis : » 8A). */
 const NB_ARCHIS = Object.values(GAME_DATA.monsters).filter(d => d.archiDe).length;
@@ -171,6 +172,7 @@ export class ZoneScene extends Phaser.Scene {
   private manGardee: number | null = null;
   private manTenues = new Map<number, string>();
   private manAim: { x: number; y: number } | null = null;
+  private chatEnLigne = false;
   /** Confort Thor (2026-11-16) : A court = frapper, maintenu = interagir (1D) avec sa bulle (1B) ; cercle de la cible (3A),
    *  pichenette du stick droit (3B), roue des consommables sur ↓ maintenue (7A), marche auto au clic de L3 (6A). */
   private aAppui: { t: number; fait: boolean } | null = null;
@@ -255,6 +257,13 @@ export class ZoneScene extends Phaser.Scene {
   static readonly ZOOM: [number, number] = [0.55, 1.2];   // dézoom limité (Mathis, 2026-11-06 : à 0,45 on voyait trop loin) ; au-delà de 1,2 les planches (SCALE 0,7) sont agrandies donc floues
   /** Réglages du joueur (fenêtre Réglages, touche O) et dernière mise à jour de l'ambiance. */
   private reglages: Reglages = chargerReglages();
+  private presetThorNeuf = false;
+  /** 9A : applique le réglage « Thor » s'il n'a jamais été appliqué et qu'on joue sur un petit écran tenu à la main. */
+  private reglageThor(): boolean {
+    const r = this.reglages;
+    if (r.presetThor || r.modeConsole === 'non' || !petitEcranConsole()) return false;
+    Object.assign(r, REGLAGE_THOR, { presetThor: true }); sauverReglages(r); return true;
+  }
   private ambT = 0;
   private sat?: Phaser.FX.ColorMatrix;
   /** Musique et sons (maquette Son). */
@@ -392,6 +401,8 @@ export class ZoneScene extends Phaser.Scene {
     this.sys.events.on(Phaser.Scenes.Events.ADDED_TO_SCENE, onAdd);
     this.events.once('shutdown', () => this.sys.events.off(Phaser.Scenes.Events.ADDED_TO_SCENE, onAdd));
     this.reglages = chargerReglages(); this.ambT = 0; this.sat = undefined;
+    // Interfaces Thor 9A : au premier lancement sur un petit écran tenu à la main, réglage « Thor » tout fait (une seule fois)
+    if (this.reglageThor()) this.presetThorNeuf = true;
     this.zoom = Phaser.Math.Clamp(this.reglages.zoom, ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]); this.cameras.main.setZoom(this.zoom * densite() * reculPetitEcran());
     // Phaser arrondit chaque coin d'image séparément : avec un défilement entre deux pixels, une image agrandie gagnait ou
     // perdait un pixel et « tremblait » (2026-11-06), puis tout « bavait » en course (2026-11-08). Le défilement dessiné est
@@ -502,6 +513,7 @@ export class ZoneScene extends Phaser.Scene {
     // Bestiaire (maquette « Drops » 1A) : les monstres vaincus du compte ; la partie de test voit tout
     this.windows.vaincus = () => this.bestiaire; this.windows.toutVoir = !!this.test;
     this.windows.onZaap = i => { this.zaapChoix = i; };
+    this.windows.toastFn = t => this.hud.toast(t, 2600);
     this.windows.onOuvrirTresor = () => { this.coffreDemande = true; };   // Enutrof (interface du coffre 2C)
     this.windows.onCarteQuete = () => { if (this.carte?.dispo) this.carte.montrerQuete(); };   // Carnet des Fêlures : voir le chapitre sur la carte
     this.windows.onCarte = m => { if (this.carte?.dispo) this.carte.montrer(m); };   // Métiers UI 8B, 11B : où trouver une ressource
@@ -515,6 +527,7 @@ export class ZoneScene extends Phaser.Scene {
     this.windows.onMenu = c => this.versAccueil(c === 'persos' ? 'persos' : undefined);   // menu principal (Échap)   // rendu en grand (perso_planche : render.cjs échelle 2,2)
     this.windows.reglages = this.reglages;
     this.appliquerReglages();
+    if (this.presetThorNeuf) { this.presetThorNeuf = false; this.time.delayedCall(5000, () => this.hud.toast('Réglage « Thor » appliqué : 60 images/s, particules coupées (Options › Graphismes)')); }
     this.hud.onModules = () => { sauverReglages(this.reglages); this.windows?.refresh(); };
     // idée 1 (2026-11-08) : losange au-dessus des monstres qui comptent pour une quête en cours
     EntityView.deQuete = m => { const Q = this.world.quetes; return !!Q && this.hud.flecheQuete && (Q.estEliteDeQuete(m.id) || Q.pourQuete(m.type, m.x, m.y)); };
@@ -558,7 +571,7 @@ export class ZoneScene extends Phaser.Scene {
     } else EnLigne.arreter();
     // tchat (« Tchat : » 1B) : aussi hors ligne, où il ne montre que le journal de la partie
     if (!this.vitrine) {
-      const enLigne = !!this.perso && persosEnLigne() && !this.test && !this.essai && this.slot >= 0;
+      const enLigne = this.chatEnLigne = !!this.perso && persosEnLigne() && !this.test && !this.essai && this.slot >= 0;
       const ch = this.chat = new ChatVue({ reglages: this.reglages, enLigne, auBastion: () => !!this.world.dansBastion,
         // canaux 4B : « Y aller » = drapeau suivi par la flèche
         allerVers: (x, y, nom) => { void this.carte?.suivrePoint(x, y, nom).then(ok => this.hud.toast(ok ? `La flèche te guide : ${nom}` : 'Pas de carte du monde ici')); } });
@@ -612,6 +625,7 @@ export class ZoneScene extends Phaser.Scene {
       this.bindInput();
       this.brancherManette();
       this.brancherEcranDuBas();
+      this.hud.versBas = (t, c) => annonceBas(t, c);   // « Interfaces Thor : » 8A
       // Confort Thor 5B : console fermée ou appli quittée, le perso est sauvé tout de suite
       const cache = () => { if (document.hidden && !this.vitrine && this.sys.isActive()) this.sauver(); };
       document.addEventListener('visibilitychange', cache);
@@ -1155,7 +1169,7 @@ export class ZoneScene extends Phaser.Scene {
   private castName(id: number, name: string) {
     const v = this.views.get(id); if (!v) return;
     const b = v.sprite, top = b.y - v.look.height * v.look.scale - 14;
-    const t = this.add.text(b.x, top, name, { fontFamily: 'Lexend, Verdana, sans-serif', fontSize: '13px', fontStyle: 'bold',
+    const t = this.add.text(b.x, top, name, { fontFamily: 'Lexend, Verdana, sans-serif', fontSize: modeConsole() ? '17px' : '13px', fontStyle: 'bold',
       color: '#ffd9a0', stroke: '#1a0f0a', strokeThickness: 3 }).setOrigin(0.5, 1).setDepth(1e6);
     this.tweens.add({ targets: t, y: top - 18, alpha: 0, delay: 500, duration: 500, onComplete: () => t.destroy() });
   }
@@ -1171,9 +1185,9 @@ export class ZoneScene extends Phaser.Scene {
   /** Réglages (maquette « Réglages ») qui ne passent pas par l'ambiance ni le son : touches, interface, chiffres, images par seconde. */
   private appliquerReglages() {
     const r = this.reglages;
-    Touches.appliquer(r.touches); Touches.regler(r.clavier); reglerControles(r.controles); reglerVibrations(r.vibrations !== false);
+    Touches.appliquer(r.touches); Touches.regler(r.clavier); reglerControles(r.controles); reglerVibrations(r.vibrations !== false); reglerModeConsole(r.modeConsole);
     this.hud.reglages = r; this.hud.flecheQuete = r.flecheQuete;
-    this.fx.chiffres = r.chiffres; this.fx.tailleChiffres = r.tailleChiffres === 'petite' ? 0.8 : r.tailleChiffres === 'grande' ? 1.3 : 1;
+    this.fx.chiffres = r.chiffres; this.fx.tailleChiffres = (r.tailleChiffres === 'petite' ? 0.8 : r.tailleChiffres === 'grande' ? 1.3 : 1) * (modeConsole() ? 1.3 : 1);   // Interfaces Thor 5A
     EntityView.barresVie = r.barresVie;
     // 7A : échelle de l'interface (caméra de l'interface zoomée depuis le coin haut gauche ; les fenêtres en CSS)
     // Fluidité 3A : résolution du rendu (le canevas est redimensionné, les caméras suivent à l'image suivante)
@@ -1210,6 +1224,8 @@ export class ZoneScene extends Phaser.Scene {
         return sacBas(this.world, new Set(neufs.keys()));
       },
       quetes: () => jeu() ? quetesBas(this.world) : null,
+      // « Interfaces Thor : » 4C+4D : le tchat et le journal de la partie (butin, combats, quêtes)
+      tchat: () => jeu() ? { enLigne: this.chatEnLigne, l: EnLigne.messages.slice(-60).map(m => ({ h: ligneTchat(m), j: m.canal === 'infos', c: m.canal === 'infos' ? COULEUR_INFO[m.sorte ?? 'serveur'] : undefined })) } : null,
       fiche: (uid, porte) => {
         const p = this.world.player, it = porte ? Object.values(p.equipment).find(x => x?.uid === uid) : p.bag.find(x => x.uid === uid);
         return it && this.windows ? this.windows.ficheObjet(it, porte) : '';
@@ -1240,6 +1256,7 @@ export class ZoneScene extends Phaser.Scene {
           const q = depuisPlan(this.world, o.x, o.y);
           if (q) void this.carte?.suivrePoint(q.x, q.y, 'Écran du bas').then(ok => this.hud.toast(ok ? 'La flèche te guide' : 'Pas de carte du monde ici'));
         } else if (o.k === 'zaap') this.zaapChoix = o.i;
+        else if (o.k === 'dire') this.chat?.dire(o.texte.slice(0, 200));
         else if (o.k === 'interagir') { const i = interactionProche(this.world, p); if (i) this.interagir(i); }
         this.windows?.refresh();
       },
@@ -1332,14 +1349,24 @@ export class ZoneScene extends Phaser.Scene {
     }, () => { this.windows?.close(); this.carte?.fermer(); });
     const b: BrancheJeu = {
       interface: () => {
-        if (!this.sys.isActive() || this.vitrine) return document.body;
+        if (!this.sys.isActive() || this.vitrine) return this.windows?.fenetre ?? document.body;
         const ui = (this.dialogueView?.ouvert || this.dialogueView?.menuOuvert ? this.dialogueView.element : null)
           ?? this.windows?.fenetre ?? this.carte?.element ?? null;
         if (!ui && this.menuStart?.ouvert) this.menuStart.fermer(false);   // fenêtre fermée autrement (souris, touche)
         return ui;
       },
       boutonUi: bt => {
-        const m = this.menuStart;
+        const m = this.menuStart, dv = this.dialogueView;
+        // Interfaces Thor 6A : A X Y B choisissent la réponse qui porte leur nom (la croix + A reste possible pour les autres)
+        if (dv?.ouvert && !dv.menuOuvert && !this.windows?.open && (bt === BTN.A || bt === BTN.X || bt === BTN.Y || bt === BTN.B) && !focusManette()) {
+          if (dv.boutonManette(bt)) return true;
+          return bt !== BTN.B;
+        }
+        // Interfaces Thor 3A : dans le sac, Y = cadenas et LT = défaire sur l'objet visé à la croix
+        if ((bt === BTN.Y || bt === BTN.LT) && focusManette()) {
+          const uid = elementManette()?.closest<HTMLElement>('[data-uid]')?.dataset.uid;
+          if (uid && this.windows?.objetManette(+uid, bt === BTN.Y ? 'cadenas' : 'defaire')) return true;
+        }
         if (m?.ouvert && (bt === BTN.LB || bt === BTN.RB)) { m.tourner(bt === BTN.RB ? 1 : -1); return true; }
         if (bt === BTN.START) { if (m?.ouvert) m.fermer(); else this.fermerOuvert(); return true; }
         if (bt === BTN.SELECT) { if (compagnonRelie()) { ongletBas('suivant'); return true; } this.windows?.close(false); this.basculerCarte(); return true; }   // 8A : Select = onglet du bas
@@ -1416,6 +1443,12 @@ export class ZoneScene extends Phaser.Scene {
       this.manCible = cible?.id ?? null;
       if (this.manGardee != null && cible?.id !== this.manGardee) this.manGardee = null;
       if (cible) { input.aim = { x: cible.x, y: cible.y }; input.castOn = input.pressed && input.pressed !== 'attaque' ? cible.id : null; }
+      // Interfaces Thor 10A : un sort de zone vise le paquet le plus dense devant soi
+      const sid = input.pressed && input.pressed !== 'attaque' ? input.pressed : this.aimId, h = sid ? p.spell(sid)?.hit : undefined;
+      const zone = h?.shape === 'point' && h.radius >= 60 ? { portee: h.range, rayon: h.radius } : h?.shape === 'projectile' && (h.explode ?? 0) >= 60 ? { portee: h.range, rayon: h.explode ?? 0 } : null;
+      const paquet = cible && zone ? paquetDense(this.world, p, zone.portee, zone.rayon, bouge ? input.move : null) : null;
+      if (paquet) { input.aim = paquet; input.castOn = null; }
+      else if (cible) { /* cible gardée */ }
       else { const f = bouge ? input.move : { x: Math.cos(p.facing), y: Math.sin(p.facing) }; input.aim = { x: p.x + f.x * 150, y: p.y + f.y * 150 }; }
     }
     if (this.manAttaque) {
@@ -1586,6 +1619,10 @@ export class ZoneScene extends Phaser.Scene {
   update(_: number, deltaMs: number) {
     const t0 = performance.now();
     tickCompagnon(); this.suivreEcranDuBas(); this.confortManette();
+    if (suivreModeConsole() && !this.reglages.presetThor && this.reglageThor()) {   // manette branchée après le lancement
+      this.appliquerReglages(); this.updateAmbiance(true); this.windows?.refresh();
+      this.hud.toast('Réglage « Thor » appliqué : 60 images/s, particules coupées (Options › Graphismes)', 3500);
+    }
     this.updateJeu(deltaMs);
     // Fluidité 5B : images et saccades par zone (pas en vitrine ni sous le rideau d'un voyage)
     if (!this.vitrine && !this.worldView?.presse) ZoneScene.mesure.noter(this.world.area?.name ?? this.world.zone.name, deltaMs);
