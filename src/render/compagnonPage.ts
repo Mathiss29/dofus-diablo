@@ -9,6 +9,8 @@ import type { CarteBas, EtatBas, ObjetBas, QuetesBas, SacBas } from './compagnon
 import { CSS_BAS, MiroirBas } from './miroir';
 import { v } from './assetUrl';
 import { verifierVersion } from './miseAJour';
+import { appliNative } from './manette';
+import { garderEcranAllume } from './console';
 import { ITEMS } from '../sim/data';
 import { RARITY_COLORS, type Item } from '../sim/items';
 
@@ -123,6 +125,16 @@ html,body{margin:0;background:#0d0f14;overscroll-behavior:none}
 #cmp .cbt canvas{width:128px;height:128px;border-radius:50%;background:radial-gradient(circle,#1a2012 0 18%,#12151c 19%);border:1px solid #2a2f3a}
 #cmp .cbt .rd{font-size:11px;color:#8e8a78;text-align:center;margin-top:3px}
 #cmp .rac{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+/* « Confort 2 : » 7A volumes, 2A toujours allumé, 2B plein écran, 6C s'assombrit */
+#cmp .reg{margin-top:10px;display:grid;gap:7px;padding-top:8px;border-top:1px solid #2a2f3a}
+#cmp .reg label{display:grid;grid-template-columns:70px 1fr 40px;align-items:center;gap:8px;font-size:12.5px;color:#cfc8b0}
+#cmp .reg input[type=range]{width:100%;accent-color:#d3f46f;height:22px}
+#cmp .reg output{text-align:right;font-size:12px;color:#8e8a78}
+#cmp .reg .sw{display:flex;gap:6px;flex-wrap:wrap}
+#cmp .reg .sw button{flex:1;min-width:0;padding:7px 4px;font-size:12px}
+#cmp .reg .sw button.on{background:#2b3a14;border-color:#4d5a2c;color:#d3f46f}
+#cmp-sombre{position:fixed;inset:0;z-index:9999;background:#000;opacity:0;pointer-events:none;transition:opacity 1.2s}
+#cmp-sombre.on{opacity:.72;pointer-events:auto}
 #cmp .rac button{display:flex;align-items:center;gap:5px;padding:6px 9px;font-size:12px}
 #cmp .rac img{width:22px;height:22px;object-fit:contain}
 #cmp .grp{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
@@ -143,6 +155,7 @@ html,body{margin:0;background:#0d0f14;overscroll-behavior:none}
 #cmp .fen .fh button{padding:5px 12px}
 #cmp .fen .fc{overflow:auto;padding:2px}
 /* liens (diagnostic) */
+#cmp .btns .appli{display:inline-block;padding:7px 10px;border-radius:8px;background:#2b3a14;border:1px solid #4d5a2c;color:#d3f46f;font-size:12.5px;text-decoration:none}
 #cmp .liens{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
 #cmp .lien{background:#161a22;border:1px solid #2a2f3a;border-radius:10px;padding:6px 8px;font-size:12.5px;line-height:1.3}
 #cmp .lien b{display:flex;align-items:center;gap:6px}
@@ -177,7 +190,7 @@ export function ecranCompagnon() {
       <div class="vue tchat" data-v="tchat"><div class="seg"><button data-t="tchat" class="on">Tchat</button><button data-t="journal">Journal<i></i></button></div><div class="tl"></div>
         <form class="te"><input maxlength="200" placeholder="Écrire aux joueurs…" enterkeyhint="send" autocomplete="off"><button>Envoyer</button></form></div>
       <div class="vue" data-v="liens"><div class="bat"></div><div class="liens">${Object.keys(NOMS).map(k => `<div class="lien" data-l="${k}"><b><i></i>${NOMS[k]}</b><span>jamais</span></div>`).join('')}</div>
-        <div class="btns"><button data-d="ping">Coucou au jeu</button><button data-d="rapport">Copier le rapport</button><button data-d="texture">Essai carrés noirs</button><button data-d="retour">Retour</button></div>
+        <div class="btns"><button data-d="ping">Coucou au jeu</button><button data-d="rapport">Copier le rapport</button><button data-d="texture">Essai carrés noirs</button><button data-d="retour">Retour</button>${appliNative() ? '' : '<a class="appli" href="appli/diablofus-thor.apk" download>Appli Thor (deux écrans)</a>'}</div>
         <div class="journal"></div></div>
       <div class="bilan" hidden><h4></h4><div class="bl"></div><button data-bilan="x">Fermer</button></div>
       <div class="fen" hidden><div class="fh"><span></span><button data-f="x">✕ Fermer</button></div><div class="fc"></div></div>
@@ -273,7 +286,7 @@ export function ecranCompagnon() {
       case 'sac': sac = m.s; if (onglet === 'sac') dessinerSac(); break;
       case 'quetes': quetes = m.q; if (onglet === 'quetes') dessinerQuetes(); break;
       case 'tchat': tchat = m.l; tchatEnLigne = m.enLigne; if (onglet === 'tchat') dessinerTchat(); break;
-      case 'annonce': toast(m.t); journal.push({ h: `${new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}  ${esc(m.t)}${m.uid != null ? boutonsObjet(m.uid) : ''}`, j: true, c: m.c }); if (journal.length > 80) journal.splice(0, journal.length - 80);
+      case 'annonce': reveiller(); toast(m.t); journal.push({ h: `${new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}  ${esc(m.t)}${m.uid != null ? boutonsObjet(m.uid) : ''}`, j: true, c: m.c }); if (journal.length > 80) journal.splice(0, journal.length - 80);
         if (onglet === 'tchat' && vueT === 'journal') dessinerTchat(); else { nonLus++; marquerNonLus(); } break;
       case 'bilan': {   // 3C
         const b = q('.bilan'); b.hidden = false; b.querySelector('h4')!.textContent = m.titre;
@@ -530,7 +543,7 @@ export function ecranCompagnon() {
     const en = !!(relie() && etat?.combat?.en), t = performance.now();
     if (en) combatAuto.finT = t;
     if (en && !combatAuto.on && !combatAuto.refus && !miroir.ouverte && onglet !== 'combat') {
-      combatAuto.on = true; combatAuto.avant = onglet === 'liens' ? 'perso' : onglet; montrerOnglet('combat');
+      combatAuto.on = true; combatAuto.avant = onglet === 'liens' ? 'perso' : onglet; montrerOnglet('combat'); reveiller();
     } else if (!en && t - combatAuto.finT > 5000) {
       combatAuto.refus = false;
       if (combatAuto.on) { combatAuto.on = false; if (onglet === 'combat') montrerOnglet(combatAuto.avant); }
@@ -579,9 +592,61 @@ export function ecranCompagnon() {
     if (b.dataset.rac) { ordre({ k: 'raccourci', id: b.dataset.rac }); toast(b.textContent ?? ''); }
     else ordre({ k: 'allie', id: +b.dataset.allie! });
   });
+  // ---------- « Confort 2 : » 7A volumes, 2A toujours allumé, 2B plein écran, 6C s'assombrit ----------
+  const pref = (k: string, d: boolean) => { try { const x = localStorage.getItem(`diablofus.bas.${k}`); return x == null ? d : x === '1'; } catch { return d; } };
+  const ecrire = (k: string, on: boolean) => { try { localStorage.setItem(`diablofus.bas.${k}`, on ? '1' : '0'); } catch { /* rien */ } };
+  const natif = appliNative();
+  const reg = document.createElement('div'); reg.className = 'reg';
+  reg.innerHTML = `<label class="son">Musique<input type="range" min="0" max="100" data-vol="musique"><output></output></label>
+    <label class="son">Effets<input type="range" min="0" max="100" data-vol="effets"><output></output></label>
+    <div class="sw">${natif ? '' : '<button data-sw="plein">⛶ Plein écran</button>'}<button data-sw="allume">☀ Toujours allumé</button><button data-sw="sombre">🌙 S'assombrit</button><button data-sw="muet" class="son">🔇 Muet</button></div>`;
+  let volTouche = 0, volT = 0;
+  const majReg = (e: EtatBas | null) => {
+    const so = e?.son;
+    reg.querySelectorAll<HTMLElement>('.son').forEach(x => { x.style.display = so ? '' : 'none'; });
+    if (so && performance.now() - volTouche > 1500) for (const k of ['musique', 'effets'] as const) {
+      const i = reg.querySelector<HTMLInputElement>(`[data-vol="${k}"]`)!, n = Math.round(so[k] * 100);
+      if (+i.value !== n) i.value = String(n);
+      i.nextElementSibling!.textContent = `${n} %`;
+    }
+    reg.querySelector('[data-sw="muet"]')?.classList.toggle('on', !!so?.muet);
+    reg.querySelector('[data-sw="plein"]')?.classList.toggle('on', !!document.fullscreenElement);
+    reg.querySelector('[data-sw="allume"]')!.classList.toggle('on', pref('allume', true));
+    reg.querySelector('[data-sw="sombre"]')!.classList.toggle('on', pref('sombre', true));
+  };
+  reg.addEventListener('input', ev => {
+    const i = (ev.target as HTMLElement).closest<HTMLInputElement>('[data-vol]'); if (!i) return;
+    volTouche = performance.now(); i.nextElementSibling!.textContent = `${i.value} %`;
+    clearTimeout(volT); volT = window.setTimeout(() => ordre({ k: 'volume', [i.dataset.vol!]: +i.value / 100 }), 120);
+  });
+  reg.addEventListener('click', ev => {
+    const b = (ev.target as HTMLElement).closest<HTMLElement>('[data-sw]')?.dataset.sw; if (!b) return;
+    if (b === 'muet') { ordre({ k: 'volume', muet: !etat?.son?.muet }); return; }
+    if (b === 'plein') {
+      const on = !document.fullscreenElement; ecrire('plein', on);
+      void (on ? document.documentElement.requestFullscreen?.({ navigationUI: 'hide' }) : document.exitFullscreen?.())?.catch(() => toast('Plein écran refusé par Chrome'));
+    }
+    if (b === 'allume') { const on = !pref('allume', true); ecrire('allume', on); garderEcranAllume(on); toast(on ? 'L\'écran du bas reste allumé' : 'L\'écran du bas peut s\'éteindre'); }
+    if (b === 'sombre') { const on = !pref('sombre', true); ecrire('sombre', on); reveiller(); toast(on ? 'Sans toucher pendant 30 s, l\'écran s\'assombrit' : 'L\'écran ne s\'assombrit plus'); }
+    majReg(relie() ? etat : null);
+  });
+  garderEcranAllume(pref('allume', true));
+  // 2B : plein écran gardé : Chrome le quitte (retour, appli changée) ; le prochain toucher le remet
+  if (!natif) addEventListener('click', () => { if (pref('plein', false) && !document.fullscreenElement) void document.documentElement.requestFullscreen?.({ navigationUI: 'hide' })?.catch(() => {}); }, true);
+  // 6C : 30 s sans toucher, l'écran s'assombrit ; un toucher le rallume (ce toucher-là ne fait rien d'autre)
+  const sombre = document.createElement('div'); sombre.id = 'cmp-sombre'; document.body.appendChild(sombre);
+  let dernierToucher = performance.now();
+  const reveiller = () => { dernierToucher = performance.now(); if (sombre.classList.contains('on')) { sombre.classList.remove('on'); natif?.luminosite?.(-1); } };
+  sombre.addEventListener('pointerdown', ev => { ev.preventDefault(); ev.stopPropagation(); reveiller(); });
+  addEventListener('pointerdown', () => { dernierToucher = performance.now(); }, true);
+  setInterval(() => {
+    if (!pref('sombre', true) || sombre.classList.contains('on') || performance.now() - dernierToucher < 30_000) return;
+    sombre.classList.add('on'); natif?.luminosite?.(0.08);
+  }, 1000);
+
   const dessinerPerso = () => {
     const el = vue('perso'), e = relie() && etat ? etat : null, sv = sauve;
-    if (!e && !sv) { el.innerHTML = '<div class="vide">Aucun perso : lance le jeu en haut et entre en jeu.</div>'; persoCle = ''; return; }
+    if (!e && !sv) { if (persoCle !== 'rien') { persoCle = 'rien'; el.innerHTML = '<div class="vide">Aucun perso : lance le jeu en haut et entre en jeu.</div>'; el.appendChild(reg); } majReg(null); return; }
     const classeId = e?.perso.classeId ?? sv?.classe ?? 'iop';
     const cle = e ? 'direct' : 'sauve';
     if (cle !== persoCle) {
@@ -589,7 +654,9 @@ export function ecranCompagnon() {
       el.innerHTML = `<div class="ph"><img alt=""><div style="flex:1;min-width:0"><div class="nm"></div><small class="cl"></small><div class="bar xp"><div style="background:#d3f46f"></div></div></div><div class="kam"></div></div>
         <div class="pv"></div><div class="ligne"></div><div class="sorts"></div><div class="effets"></div><div class="rac"></div><div class="grp"></div>
         <div class="acts">${e ? '<button data-a="potion" class="pot">Potion</button><button data-a="sorts">Sorts</button><button data-a="car">Caracs</button><button data-a="job">Métiers</button><button data-a="succes">Succès</button>' : ''}</div>`;
+      el.appendChild(reg);
     }
+    majReg(e);
     const im = el.querySelector<HTMLImageElement>('.ph img')!, src = `assets/accueil/c_${classeId}.png`;
     if (!im.src.endsWith(src)) im.src = src;
     if (!e) {

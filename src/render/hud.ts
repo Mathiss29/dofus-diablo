@@ -26,7 +26,7 @@ import { QUEST_ICON } from './questView';
 import { MANIFESTE, Son } from './son';
 import type { Reglages } from './ambiance';
 import * as Touches from './touches';
-import { modeConsole } from './console';
+import { modeConsole, echelleInterface } from './console';
 import { famille, secret } from '../sim/carte';
 
 const FONT = 'Lexend, Verdana, sans-serif';
@@ -400,7 +400,7 @@ export class Hud {
   // calculé une fois par image (draw) : lu des centaines de fois, et densite() relit window.devicePixelRatio
   private kImage = 0;
   private get k() { return this.kImage || this.calcK(); }
-  private calcK() { return Phaser.Math.Clamp(this.reglages?.echelle || 1, 0.8, 1.5) * densite(); }   // × vrais pixels de l'écran
+  private calcK() { return (this.reglages ? echelleInterface(this.reglages) : 1) * densite(); }   // × vrais pixels de l'écran
   /** Rectangle de chaque module déplaçable cette image, et son décalage. */
   private modRects = new Map<string, [number, number, number, number]>();
   private modTxt = new Map<string, Txt>();

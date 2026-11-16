@@ -3,7 +3,7 @@
 import type { World } from '../sim/world';
 import type { Player } from '../sim/player';
 import type { Vec } from '../sim/iso';
-import { BTN } from './manette';
+import { BTN, NOMS_BOUTONS, boutonPhysique } from './manette';
 
 const CASE = 48;
 
@@ -85,10 +85,11 @@ export const COUCHE_LT: Record<number, string> = { [BTN.X]: 'invoc1', [BTN.Y]: '
 
 /** Noms des boutons sur la barre de sorts quand on joue à la manette (cases 0-5 : sorts, 6 : « Clic D », 7 : déplacement, 8-11 : invocations). */
 export function nomCaseManette(i: number, osa: boolean): string {
-  if (i < 6) return ['X', 'Y', 'B', 'RB', osa ? 'LT RB' : 'LT', 'R3'][i];
-  if (i === 6) return 'RT';
-  if (i === 7) return 'LB';
-  return `LT ${['X', 'Y', 'B', 'A'][i - 8] ?? ''}`;
+  const n = (b: number) => NOMS_BOUTONS[boutonPhysique(b)];   // « Confort 2 : » 4B : la barre suit les boutons changés
+  if (i < 6) return [n(BTN.X), n(BTN.Y), n(BTN.B), n(BTN.RB), osa ? `${n(BTN.LT)} ${n(BTN.RB)}` : n(BTN.LT), n(BTN.R3)][i];
+  if (i === 6) return n(BTN.RT);
+  if (i === 7) return n(BTN.LB);
+  return `${n(BTN.LT)} ${[n(BTN.X), n(BTN.Y), n(BTN.B), n(BTN.A)][i - 8] ?? ''}`;
 }
 
 // ---------- Menu Start (4A) : 6 onglets, LB / RB pour passer de l'un à l'autre ----------

@@ -12,6 +12,7 @@ const ADRESSE = 'https://diablofus.com';
 export function surTelephone(): boolean {
   try { if (localStorage.getItem(CLE) || sessionStorage.getItem(CLE)) return false; } catch { /* stockage bloqué */ }
   if (/test|cra|astrub|jeu/.test(location.hash)) return false;
+  if ('DiablofusAppli' in window || /DiablofusAppli/.test(navigator.userAgent)) return false;   // appli Android de la Thor (« Confort 2 : » 1A)
   if (manetteBranchee() || matchMedia('(display-mode: standalone), (display-mode: fullscreen)').matches) return false;
   return matchMedia('(pointer: coarse)').matches && !matchMedia('(any-pointer: fine)').matches;
 }

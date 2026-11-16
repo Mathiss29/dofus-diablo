@@ -1,7 +1,7 @@
 import { QUALITES, REGLAGES_DEFAUT, sauverReglages, type Reglages } from './ambiance';
 import { reculPetitEcran } from './pixel';
 import { reglerModeConsole } from './console';
-import { manetteActive, reglerControles, reglerVibrations } from './manette';
+import { manetteActive, reglerControles, reglerVibrations, capturerBouton, carteDisposition, echangerBouton, NOMS_BOUTONS, BTN } from './manette';
 import * as Touches from './touches';
 import { ICON_CSS, iconHtml, prechargerIcones } from './icons';
 import { MANIFESTE, Son } from './son';
@@ -1254,7 +1254,7 @@ export class Windows {
   toggle(mode: Mode = 'inv') { if (this.win && this.mode === mode) this.close(); else this.show(mode); }
   close(son = true) {
     if (this.win && son) Son.jouer(MANIFESTE.ui.fermer, 'interface', { cle: 'fenetre', ecart: 0.1 });   // 6B
-    this.win?.remove(); this.win = null; this.ajusteur?.disconnect(); this.ajusteur = null; this.tip.style.display = 'none'; this.touchesVue = false; this.touchesEcoute = null;
+    this.win?.remove(); this.win = null; this.ajusteur?.disconnect(); this.ajusteur = null; this.tip.style.display = 'none'; this.touchesVue = false; this.touchesEcoute = null; if (this.boutonEcoute != null) { this.boutonEcoute = null; capturerBouton(null); }
     this.root.style.zIndex = '';
   }
   destroy() { this.root.remove(); window.removeEventListener('keydown', this.captureTouche, true); window.removeEventListener('resize', this.surResize);
@@ -2326,6 +2326,8 @@ export class Windows {
   /** Fenêtre des touches (Réglages 3A) ouverte, action qui attend sa nouvelle touche, message (doublon, touche réservée). */
   private touchesVue = false;
   private touchesEcoute: string | null = null;
+  /** « Confort 2 : » 4B : bouton du jeu en attente d'un bouton de la manette. */
+  private boutonEcoute: number | null = null;
   private touchesMsg = '';
   /** Vrai pendant qu'on choisit une touche : la scène n'y réagit pas. */
   /** Options ouvertes depuis l'écran d'accueil (11A) : les fenêtres passent devant lui jusqu'à leur fermeture. */
@@ -2402,8 +2404,11 @@ export class Windows {
           { k: 'vibrations', nom: 'Vibrations', aide: 'Gros coup reçu, coup critique, butin Légendaire ou mieux, boss qui arrive.', t: 'check' },
           { k: 'aideVisee', nom: 'Aide à la visée', aide: 'Jusqu\'où l\'auto-visée va chercher un monstre : faible 6 cases, normale 10, forte 14.', t: 'select', choix: [['faible', 'Faible'], ['normale', 'Normale'], ['forte', 'Forte']] },
           { k: 'modeConsole', nom: 'Mode console', aide: 'Barre de sorts mini qui se cache hors combat, textes plus grands. Automatique : sur un petit écran tenu à la main (AYN Thor…).', t: 'select', choix: [['auto', 'Automatique'], ['oui', 'Oui'], ['non', 'Non']] },
-        ], reset: () => { r.controles = 'auto'; r.vibrations = true; r.modeConsole = 'auto'; r.aideVisee = 'normale'; },
-          html: `<div class="keys">${[['Stick gauche', 'marcher'], ['Stick droit', 'viser (sinon auto-visée) ; pichenette : cible suivante ; dans un menu : curseur'], ['A', 'frapper ; maintenu : parler, ramasser, Zaap… (la bulle dit quoi)'], ['RT', 'sort de la case « Clic D »'], ['X Y B RB', 'sorts 1 à 4'], ['LT / R3', 'sorts 5 / 6'], ['LB', 'déplacement (Bond, Saut…)'],
+          { k: 'zoneMorte', nom: 'Zone morte des sticks', aide: 'Monte-la si ton perso avance tout seul ou si le curseur glisse (stick qui dérive).', t: 'range', min: 5, max: 50 },
+          { k: 'vitesseCurseur', nom: 'Vitesse du curseur', aide: 'Le curseur du stick droit dans les menus.', t: 'range', min: 50, max: 200 },
+          { k: 'disposition', nom: 'Disposition des boutons', aide: 'Thor : celle de base. Gâchettes = sorts : les sorts 1 à 4 sur RB RT LT LB. Gaucher : tout en miroir (croix et boutons, gâchettes, sticks). Les menus gardent A = cliquer, B = retour.', t: 'select', choix: [['thor', 'Thor'], ['gachettes', 'Gâchettes = sorts'], ['gaucher', 'Gaucher']] },
+        ], reset: () => { r.controles = 'auto'; r.vibrations = true; r.modeConsole = 'auto'; r.aideVisee = 'normale'; r.zoneMorte = 0.25; r.vitesseCurseur = 1; r.disposition = 'thor'; r.boutons = undefined; this.boutonEcoute = null; capturerBouton(null); },
+          html: `${this.boutonsManetteHtml(r)}<div class="obtns"><a class="btn" href="appli/diablofus-thor.apk" download title="Android 10 ou plus : le jeu en haut, l'écran du bas en bas, sans Chrome">Appli Android pour la Thor</a></div><div class="keys">${[['Stick gauche', 'marcher'], ['Stick droit', 'viser (sinon auto-visée) ; pichenette : cible suivante ; dans un menu : curseur'], ['A', 'frapper ; maintenu : parler, ramasser, Zaap… (la bulle dit quoi)'], ['RT', 'sort de la case « Clic D »'], ['X Y B RB', 'sorts 1 à 4'], ['LT / R3', 'sorts 5 / 6'], ['LB', 'déplacement (Bond, Saut…)'],
             ['Croix', '↓ potion (maintenue : roue des consommables) · ↑ boisson · ← coffre · → carte en surimpression'], ['LT maintenue + X Y B A', 'invocations de l\'Osamodas (LT + RB : sort 5)'], ['Start', 'menu (LB / RB : onglet) ; la partie s\'arrête si tu joues seul'], ['Select', 'carte du monde (onglet suivant de l\'écran du bas)'], ['L3', 'marche auto vers la flèche ; maintenu : Havre-Sac'], ['Dans un menu', 'croix : bouton suivant · A : cliquer · X : clic droit · Y : double clic · B : fermer']]
             .map(([k, d]) => `<b>${k}</b><span>${d}</span>`).join('')}</div>` },
         { id: 'modules', titre: 'Modules d\'interface', opts: [
@@ -2432,7 +2437,9 @@ export class Windows {
         { id: 'ecran', titre: 'Écran', opts: [
           { k: 'pleinEcran', nom: 'Mode d\'affichage', aide: 'F11 passe aussi le navigateur en plein écran.', t: 'select', choix: [['fenetre', 'Fenêtré'], ['plein', 'Plein écran']] },
           { k: 'echelle', nom: 'Échelle de l\'interface', t: 'range', min: 80, max: 150 },
-        ], reset: () => { r.echelle = 1; } },
+          { k: 'echelleConsole', nom: 'Échelle en mode console', aide: 'Sur la Thor (mode console), l\'interface prend cette taille ; celle du PC ne change pas.', t: 'range', min: 60, max: 150 },
+          { k: 'toujoursAllume', nom: 'Écran toujours allumé', aide: 'Pendant une partie, l\'écran ne s\'éteint pas tout seul.', t: 'check' },
+        ], reset: () => { r.echelle = 1; r.echelleConsole = 1; r.toujoursAllume = true; } },
         { id: 'graphismes', titre: 'Graphismes', opts: [
           { k: 'qualite', nom: 'Qualité prédéfinie', aide: 'Basse : sans vent, eau animée ni particules, lumières douces, résolution normale, 30 images par seconde. Moyenne : sans particules, 60 images. Haute : tout, sans limite.', t: 'select', choix: [['basse', 'Basse'], ['moyenne', 'Moyenne'], ['haute', 'Haute'], ['perso', 'Personnalisée']] },
           { k: 'resolution', nom: 'Résolution', aide: 'Écran : net, aux vrais pixels de ton écran. Normale : bien plus rapide si Windows est réglé à 125 % ou 150 %, image un peu moins nette.', t: 'select', choix: [['ecran', 'Écran (net)'], ['normale', 'Normale (rapide)']] },
@@ -2539,6 +2546,7 @@ export class Windows {
       if (k === 'controles') reglerControles(r.controles);
       if (k === 'vibrations') reglerVibrations(r.vibrations);
       if (k === 'modeConsole') reglerModeConsole(r.modeConsole);
+      if (k === 'disposition') { r.boutons = undefined; this.boutonEcoute = null; capturerBouton(null); }
       apply(); this.render();
     }));
     w.querySelectorAll<HTMLInputElement>('[data-ck]').forEach(e => e.addEventListener('change', () => {
@@ -2574,6 +2582,18 @@ export class Windows {
       this.render();
     }));
     this.brancherCompte(w);
+    // « Confort 2 : » 4B : clic sur une action, puis un bouton de la manette
+    w.querySelectorAll<HTMLElement>('[data-btnj]').forEach(e => e.addEventListener('click', () => {
+      const i = +e.dataset.btnj!;
+      if (this.boutonEcoute === i) { this.boutonEcoute = null; capturerBouton(null); this.render(); return; }
+      this.boutonEcoute = i;
+      capturerBouton(phys => {
+        r.boutons = echangerBouton(r.boutons ?? carteDisposition(r.disposition), i, phys);
+        this.boutonEcoute = null; sauverReglages(r); this.onReglages(r); this.render();
+      });
+      this.render();
+    }));
+    w.querySelector('[data-btnj-reset]')?.addEventListener('click', () => { r.boutons = undefined; this.boutonEcoute = null; capturerBouton(null); sauverReglages(r); this.onReglages(r); this.render(); });
     w.querySelectorAll<HTMLElement>('[data-tfermer]').forEach(e => e.addEventListener('click', () => { this.touchesVue = false; this.touchesEcoute = null; this.touchesMsg = ''; this.render(); }));
     w.querySelectorAll<HTMLElement>('[data-tk]').forEach(e => e.addEventListener('click', () => { this.touchesEcoute = e.dataset.tk!; this.touchesMsg = ''; this.render(); }));
     w.querySelector('.tw')?.addEventListener('pointerdown', ev => ev.stopPropagation());
@@ -2581,6 +2601,15 @@ export class Windows {
     ch.addEventListener('input', () => { this.optRecherche = ch.value; this.render(); const n = this.win?.querySelector<HTMLInputElement>('[data-cherche]'); n?.focus(); n?.setSelectionRange(n.value.length, n.value.length); });
     ch.addEventListener('keydown', e => e.stopPropagation());
     w.querySelector('[data-accueil]')?.addEventListener('click', () => { this.close(); this.onAccueil?.(); });
+  }
+  /** « Confort 2 : » 4B : les actions du jeu et le bouton de la manette qui les fait. */
+  private boutonsManetteHtml(r: Reglages): string {
+    const c = r.boutons ?? carteDisposition(r.disposition);
+    const actions: [number, string][] = [[BTN.A, 'Frapper (maintenu : interagir)'], [BTN.X, 'Sort 1'], [BTN.Y, 'Sort 2'], [BTN.B, 'Sort 3'], [BTN.RB, 'Sort 4'], [BTN.LT, 'Sort 5 (couche des invocations)'], [BTN.R3, 'Sort 6'],
+      [BTN.RT, 'Case « Clic D »'], [BTN.LB, 'Déplacement'], [BTN.BAS, 'Potion'], [BTN.HAUT, 'Boisson'], [BTN.GAUCHE, 'Coffre'], [BTN.DROITE, 'Carte en surimpression'], [BTN.SELECT, 'Carte du monde'], [BTN.START, 'Menu'], [BTN.L3, 'Marche auto (maintenu : Havre-Sac)']];
+    return `<div class="tg btnj"><h4>Boutons en jeu${r.boutons ? ' (changés)' : ''}</h4>${actions.map(([b, nom]) =>
+      `<div class="tl"><span>${nom}</span><button class="tk ${this.boutonEcoute === b ? 'ecoute' : ''} ${c[b] !== b ? 'perso' : ''}" data-btnj="${b}">${this.boutonEcoute === b ? 'Appuie sur un bouton…' : NOMS_BOUTONS[c[b]]}</button></div>`).join('')}</div>
+      <div class="obtns"><span class="btn" data-btnj-reset>Remettre la disposition</span></div>`;
   }
   /** Fenêtre des touches : la touche pressée devient celle de l'action choisie (écouteur en capture, avant le jeu). */
   private captureTouche = (e: KeyboardEvent) => {

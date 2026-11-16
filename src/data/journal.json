@@ -2257,7 +2257,9 @@
           {"titre": "La manette sans fausse note", "phrase": "A frappe ; maintenu, il parle, ramasse ou prend le Zaap, et une bulle dit quoi.", "details": "Cercle rouge sous la cible, pichenette du stick droit pour en changer, roue des consommables sur ↓ maintenue. L3 : marche auto vers la flèche.", "icone": "arme", "etiquettes": ["Manette", "AYN Thor"]},
           {"titre": "Le mode console de la Thor", "phrase": "Barre de sorts mini qui se cache hors combat, textes plus grands, réglage Thor tout seul.", "details": "Réponses des PNJ sur A, X, Y, B ; sac à la croix (Y cadenas, LT défaire) ; accueil à la manette. Options › Manette › Mode console.", "icone": "arme", "etiquettes": ["AYN Thor", "Manette"]},
           {"titre": "Un onglet Tchat en bas", "phrase": "L'écran du bas reçoit le tchat avec son clavier, et un Journal du butin et des combats.", "details": "Les petits messages (butin, toasts) passent en bas : l'écran du haut reste au jeu. Les sorts de zone visent le plus gros paquet.", "icone": "carte", "etiquettes": ["AYN Thor", "Écran du bas"]},
-          {"titre": "Les deux écrans en combat", "phrase": "En combat, l'écran du bas montre tes PV, la cible, les recharges et un radar des monstres.", "details": "Raccourcis au doigt, Zaap touché sur la carte, trajet de quête dessiné, Équiper depuis le Journal, bilan de donjon. Select + croix : signaux au groupe.", "icone": "carte", "etiquettes": ["AYN Thor", "Écran du bas"]}
+          {"titre": "Les deux écrans en combat", "phrase": "En combat, l'écran du bas montre tes PV, la cible, les recharges et un radar des monstres.", "details": "Raccourcis au doigt, Zaap touché sur la carte, trajet de quête dessiné, Équiper depuis le Journal, bilan de donjon. Select + croix : signaux au groupe.", "icone": "carte", "etiquettes": ["AYN Thor", "Écran du bas"]},
+          {"titre": "Une appli Android pour la Thor", "phrase": "Le jeu en haut, l'écran du bas en bas, sans Chrome : une seule icône, plein écran, toujours allumé.", "details": "Options › Manette › Appli Android pour la Thor. Elle charge le site : le jeu se met à jour tout seul, comme avant.", "icone": "arme", "etiquettes": ["AYN Thor", "Appli Android"]},
+          {"titre": "La manette à ta main", "phrase": "Zone morte des sticks, vitesse du curseur, trois dispositions et chaque bouton changeable.", "details": "Options › Manette. Taille d'interface à part sur la Thor, volumes et écran qui s'assombrit en bas, reprise au même endroit.", "icone": "arme", "etiquettes": ["Manette", "AYN Thor"]}
         ],
         "Corrections": [
           "Console et téléphone : plus de carrés noirs à la place du butin au sol, des récoltes et des icônes des PNJ.",
@@ -2267,7 +2269,8 @@
         "En coulisses": [
           "AYN Thor : page de test de l'écran du bas (diablofus.com/#compagnon), reliée au jeu de l'écran du haut.",
           "Console : le rapport de l'écran du bas note les images refusées par la carte graphique (carrés noirs).",
-          "Manette : vibrations aux moments forts, pause du menu Start en solo, sauvegarde quand l'appli passe en fond."
+          "Manette : vibrations aux moments forts, pause du menu Start en solo, sauvegarde quand l'appli passe en fond.",
+          "Les cartes, monstres et sons déjà chargés restent sur l'appareil : relance rapide, jeu sans réseau."
         ]
       }
     }

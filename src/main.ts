@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { ZoneScene } from './render/zoneScene';
 import { Accueil } from './render/accueil';
+import { lirePersos, prendreSecours } from './render/persos';
 import './render/phaserRapide';
 import { brancherTexturesSures } from './render/texturesSures';
 import { brancherTexturesGrandes } from './render/texturesGrandes';
@@ -12,7 +13,7 @@ import { prevenirCarteGraphique } from './render/fluidite';
 import { adresseLadder } from './render/ladder';
 import { ecranTelephone, surTelephone } from './render/telephone';
 import { demarrerManette, reglerControles } from './render/manette';
-import { reglerModeConsole } from './render/console';
+import { noterReprise, reglerModeConsole, repriseEnAttente } from './render/console';
 import { brancherMiseAJour } from './render/miseAJour';
 import { ecranCompagnon } from './render/compagnonPage';
 import { brancherDiagGpu, uneTexture } from './render/diagGpu';
@@ -70,15 +71,19 @@ function demarrer() {
   const lad = adresseLadder();
   const dev = !lad && /cra|astrub|jeu|test/.test(location.hash);
   if (dev) ZoneScene.clicJouer = 0;   // Arrivée 7A : en mode dév, chrono depuis l'ouverture de la page (console seulement)
-  game.scene.add('zone', ZoneScene, true, dev ? {} : { vitrine: true });
+  // « Confort 2 : » 8A : partie quittée en pleine console et page rechargée depuis : on reprend ce perso directement
+  const reprise = dev || lad ? null : repriseEnAttente();
+  const persoRepris = reprise != null && lirePersos()[reprise] ? reprise : null;
+  if (persoRepris != null) { prendreSecours(); ZoneScene.clicJouer = performance.now(); }
+  game.scene.add('zone', ZoneScene, true, dev ? {} : persoRepris != null ? { slot: persoRepris } : { vitrine: true });
   const zone = () => game.scene.getScene('zone') as ZoneScene;
   const accueil = new Accueil(slot => { accueil.hide(); ZoneScene.clicJouer = performance.now(); zone().scene.restart({ slot }); },
     // Accueil 8B : essayer une classe 60 s dans les Champs d'Astrub, puis retour à la création
     (classe, sexe, apparence) => { accueil.hide(); zone().scene.restart({ classe, zone: 'champs-astrub', essai: sexe, apparence }); });
   accueil.onOptions = () => zone().ouvrirOptions();
-  game.events.on('accueil', (page?: 'creation' | 'persos') => { void Compte.toutEnvoyer(); zone().scene.restart({ vitrine: true }); accueil.show(page ?? 'accueil'); });
+  game.events.on('accueil', (page?: 'creation' | 'persos') => { noterReprise(null); void Compte.toutEnvoyer(); zone().scene.restart({ vitrine: true }); accueil.show(page ?? 'accueil'); });
   // Ladder (maquette « Ladder : » 1C) : diablofus.com/#ladder ouvre le classement, #ladder/Nom la fiche d'un perso
-  if (!dev) { if (lad) accueil.ouvrirLadder(lad.nom); else accueil.show(); }
+  if (!dev) { if (lad) accueil.ouvrirLadder(lad.nom); else if (persoRepris == null) accueil.show(); }
   addEventListener('hashchange', () => { const l = adresseLadder(); if (l && accueil.visible) accueil.ouvrirLadder(l.nom); });
 
   // Accès console / tests automatisés

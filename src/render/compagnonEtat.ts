@@ -24,6 +24,8 @@ export interface EtatBas {
   perso: PersoBas; sorts: SortBas[]; effets: EffetBas[]; inter?: string | null;
   /** « Idées Thor : » 1A+1B : en combat (la vue Combat s'ouvre en bas), la cible et le radar (cases écran autour du perso). */
   combat?: CombatBas; raccourcis?: RaccourciBas[]; groupe?: AllieBas[]; fps?: number;
+  /** « Confort 2 : » 7A : volumes réglables depuis l'écran du bas. */
+  son?: { musique: number; effets: number; muet: boolean };
 }
 export interface CombatBas { en: boolean; cible: { nom: string; niveau: number; pv: number; pvMax: number; rang: number; info: string } | null; radar: [number, number, number][] }
 /** 2A : raccourcis au doigt (id d'une ressource, ou 'havresac', 'zaap'). */
