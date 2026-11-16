@@ -19,7 +19,7 @@ import android.webkit.WebView;
  * besoin d'être mise à jour. Plein écran, écran toujours allumé, manette lue ici et passée aux deux pages.
  */
 public final class Principale extends Activity {
-  static final int VERSION = 2;
+  static final int VERSION = 3;
   /** Mode sûr : après un plantage, on lance le jeu seul (sans l'écran du bas). */
   private boolean sansBas = false;
   private WebView vue;
@@ -40,13 +40,29 @@ public final class Principale extends Activity {
     sansBas = Journal.montrerSiPlantage(this);
     WebView.setWebContentsDebuggingEnabled(true);   // chrome://inspect depuis un PC, pour les rapports de bug
     Plein.appliquer(getWindow());
-    vue = Toile.creer(this, new Pont(this, this, getWindow()), Toile.JEU);
+    vue = nouvelleVue();
     setContentView(vue);
     ecrans = (DisplayManager) getSystemService(DISPLAY_SERVICE);
   }
 
+  private long dernierePerte = 0;
+  private WebView nouvelleVue() { return Toile.creer(this, new Pont(this, this, getWindow()), Toile.JEU, new Perte()); }
+  /** Page du jeu tuée par Android : on en refait une (au lieu de fermer l'appli) ; deux fois en une minute, sans l'écran du bas. */
+  final class Perte implements Toile.SurPerte {
+    @Override public void pagePerdue(WebView w) {
+      long t = android.os.SystemClock.uptimeMillis();
+      if (t - dernierePerte < 60_000 && !sansBas) { sansBas = true; if (bas != null) { bas.fermer(); bas = null; } signaler("Le jeu a manqué de mémoire : l'écran du bas est éteint pour cette fois"); }
+      dernierePerte = t;
+      if (w == vue) {
+        WebView n = nouvelleVue(); vue = n; setContentView(n);
+        try { w.destroy(); } catch (Throwable ignore) { }
+      } else if (bas != null && w == bas.vue) { bas.fermer(); bas = null; main.postDelayed(new Runnable() { @Override public void run() { ouvrirBas(); } }, 1500); }
+    }
+  }
+
   @Override protected void onStart() {
     super.onStart();
+    Journal.marquerLancement(this);   // marqueur posé tant que l'appli est à l'écran (une fermeture brutale le laisse)
     ecrans.registerDisplayListener(suivi, main);
   }
 
@@ -60,6 +76,7 @@ public final class Principale extends Activity {
   @Override protected void onPause() { Manette.lacher(); vue.onPause(); if (bas != null && bas.vue != null) bas.vue.onPause(); super.onPause(); }
 
   @Override protected void onStop() {
+    Journal.marquerSortie(this);
     ecrans.unregisterDisplayListener(suivi);
     if (bas != null) { bas.fermer(); bas = null; }   // appli cachée : l'écran du bas se ferme aussi (batterie)
     super.onStop();
@@ -90,7 +107,7 @@ public final class Principale extends Activity {
       if (d == null || BasActivite.ouverte != null) return;
       if (bas != null) { if (bas.getDisplay().getDisplayId() == d.getDisplayId()) return; bas.fermer(); bas = null; }
       try {
-        bas = new Bas(this, d);
+        bas = new Bas(this, d, new Perte());
         bas.show();
       } catch (Throwable e) {
         signaler("Écran du bas en présentation refusé (" + e.getClass().getSimpleName() + ") : essai en activité");

@@ -13,13 +13,14 @@ final class Bas extends Presentation {
   private final Activity activite;
   WebView vue;
 
-  Bas(Activity activite, Display d) { super(activite, d); this.activite = activite; }
+  private final Toile.SurPerte perte;
+  Bas(Activity activite, Display d, Toile.SurPerte perte) { super(activite, d); this.activite = activite; this.perte = perte; }
 
   @Override protected void onCreate(Bundle b) {
     super.onCreate(b);
     setCancelable(false);
     Plein.appliquer(getWindow());
-    vue = Toile.creer(getContext(), new Pont(getContext(), activite, getWindow()), Toile.BAS);
+    vue = Toile.creer(getContext(), new Pont(getContext(), activite, getWindow()), Toile.BAS, perte);
     setContentView(vue);
   }
 
