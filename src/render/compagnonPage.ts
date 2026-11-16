@@ -116,6 +116,8 @@ html,body{margin:0;background:#0d0f14;overscroll-behavior:none}
 #cmp .lien span{color:#8e8a78;font-size:11.5px}
 #cmp .btns{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:8px}
 #cmp .journal{font:11.5px ui-monospace,Menlo,monospace;color:#9a957f;background:#0a0b0f;border-radius:8px;padding:6px 8px;min-height:50px;white-space:pre-wrap}
+#cmp .ctx{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);z-index:3;font-size:14px!important;padding:11px 18px!important;background:#2b3a14ee!important;color:#d3f46f!important;border-color:#8fae3c!important;box-shadow:0 4px 14px #000a;white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis}
+#cmp .ctx[hidden]{display:none}
 #cmp .toast{position:absolute;left:50%;bottom:62px;transform:translateX(-50%);background:#1d2412f4;border:1px solid #4d5a2c;color:#e8e2d4;border-radius:10px;padding:7px 12px;font-size:13px;z-index:9;pointer-events:none;transition:opacity .3s;max-width:90%}
 `;
 
@@ -140,6 +142,7 @@ export function ecranCompagnon() {
         <div class="btns"><button data-d="ping">Coucou au jeu</button><button data-d="rapport">Copier le rapport</button><button data-d="texture">Essai carrés noirs</button><button data-d="retour">Retour</button></div>
         <div class="journal"></div></div>
       <div class="fen" hidden><div class="fh"><span></span><button data-f="x">✕ Fermer</button></div><div class="fc"></div></div>
+      <button class="ctx" hidden></button>
       <div class="toast" style="opacity:0"></div>
     </div>
     <nav>${ONGLETS.map(([k, n, ic]) => `<button data-o="${k}"><b>${ic}</b>${n}</button>`).join('')}<button data-o="liens" title="Liaison avec le jeu"><i class="pt"></i></button></nav>`;
@@ -511,6 +514,9 @@ export function ecranCompagnon() {
     try { await navigator.clipboard.writeText(txt); noter('Rapport copié : colle-le dans le fil'); } catch { noter('Copie impossible : rapport ci-dessous'); q('.journal').textContent = txt; }
   };
 
+  // Confort Thor 1E : tout près d'un PNJ, d'un Zaap, d'un objet… le bouton apparaît en bas, à toucher au doigt
+  q('.ctx').addEventListener('click', () => { if (relie()) ordre({ k: 'interagir' }); });
+
   // ---------- boucle d'affichage ----------
   let sacLu = false;
   function dessiner() {
@@ -520,6 +526,8 @@ export function ecranCompagnon() {
     ro.hidden = !lectureSeule;
     if (lectureSeule) ro.textContent = sauve ? `Lecture seule : d'après la sauvegarde de ${new Date(sauve.maj).toLocaleTimeString('fr-FR')}. Lance le jeu en haut pour tout piloter.` : 'Lance le jeu sur l\'écran du haut et entre en jeu : cette page le trouve toute seule.';
     if (!ok && miroir.ouverte) { miroir.montrer(null); q('.fen').hidden = true; }
+    const ctx = q<HTMLButtonElement>('.ctx'), inter = ok && !miroir.ouverte && onglet !== 'carte' ? etat?.inter : null;
+    ctx.hidden = !inter; if (inter && ctx.textContent !== inter) ctx.textContent = inter;
     if (onglet === 'perso') dessinerPerso();
     else if (onglet === 'liens') dessinerLiens();
     else if (onglet === 'sac' && (!sacLu || !ok)) { sacLu = true; dessinerSac(); }

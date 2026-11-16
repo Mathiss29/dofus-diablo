@@ -2253,7 +2253,8 @@
       "resume": "L'écran du bas de l'AYN Thor devient un vrai second écran (carte, sac, perso, quêtes), et fini les carrés noirs sur console.",
       "lignes": {
         "Nouveautés": [
-          {"titre": "L'écran du bas de l'AYN Thor", "phrase": "Ouvre diablofus.com/#compagnon en bas : carte, sac, perso et quêtes au doigt.", "details": "Les fenêtres du jeu (caracs, sorts, forgemagie…) s'ouvrent en bas et le haut reste libre. Select change d'onglet.", "icone": "carte", "etiquettes": ["AYN Thor", "Écran du bas"]}
+          {"titre": "L'écran du bas de l'AYN Thor", "phrase": "Ouvre diablofus.com/#compagnon en bas : carte, sac, perso et quêtes au doigt.", "details": "Les fenêtres du jeu (caracs, sorts, forgemagie…) s'ouvrent en bas et le haut reste libre. Select change d'onglet.", "icone": "carte", "etiquettes": ["AYN Thor", "Écran du bas"]},
+          {"titre": "La manette sans fausse note", "phrase": "A frappe ; maintenu, il parle, ramasse ou prend le Zaap, et une bulle dit quoi.", "details": "Cercle rouge sous la cible, pichenette du stick droit pour en changer, roue des consommables sur ↓ maintenue. L3 : marche auto vers la flèche.", "icone": "arme", "etiquettes": ["Manette", "AYN Thor"]}
         ],
         "Corrections": [
           "Console et téléphone : plus de carrés noirs à la place du butin au sol, des récoltes et des icônes des PNJ.",
@@ -2262,7 +2263,8 @@
         ],
         "En coulisses": [
           "AYN Thor : page de test de l'écran du bas (diablofus.com/#compagnon), reliée au jeu de l'écran du haut.",
-          "Console : le rapport de l'écran du bas note les images refusées par la carte graphique (carrés noirs)."
+          "Console : le rapport de l'écran du bas note les images refusées par la carte graphique (carrés noirs).",
+          "Manette : vibrations aux moments forts, pause du menu Start en solo, sauvegarde quand l'appli passe en fond."
         ]
       }
     }
