@@ -4,12 +4,13 @@
 // 3. la sauvegarde du perso (écrite toutes les 5 s par le jeu), 4. le serveur (compte Discord en ligne).
 import { API, Compte } from './compte';
 import { dernier, lirePersos } from './persos';
+import { CLE_UNE_TEXTURE, diagGpu, texteDiag, uneTexture, type DiagGpu } from './diagGpu';
 
 export interface EtatCompagnon { nom: string; classe: string; niveau: number; pv: number; pvMax: number; lieu: string; kamas: number; potions: number }
 export type MsgCompagnon =
   | { k: 'bonjour' } | { k: 'ping'; n: number; t: number } | { k: 'pong'; n: number; t: number }
-  | { k: 'etat'; e: EtatCompagnon | null } | { k: 'action'; a: ActionCompagnon };
-export type ActionCompagnon = 'potion' | 'inv' | 'sorts' | 'car' | 'carte' | 'quetes' | 'fermer';
+  | { k: 'etat'; e: EtatCompagnon | null } | { k: 'diag'; d: DiagGpu } | { k: 'action'; a: ActionCompagnon };
+export type ActionCompagnon = 'potion' | 'inv' | 'sorts' | 'car' | 'carte' | 'quetes' | 'fermer' | 'recharger';
 export type Lien = 'direct' | 'stockage';
 type De = 'jeu' | 'ecran';
 interface Enveloppe { de: De; id: string; m: MsgCompagnon }
@@ -49,7 +50,7 @@ export class Canal {
 
 // ---------- Côté jeu (écran du haut) : muet tant qu'aucun écran du bas ne s'est annoncé ----------
 export interface BrancheCompagnon { etat(): EtatCompagnon | null; action(a: ActionCompagnon): void; annonce(t: string): void }
-let canalJeu: Canal | null = null, branche: BrancheCompagnon | null = null, actifJusque = 0, envoiT = 0;
+let canalJeu: Canal | null = null, branche: BrancheCompagnon | null = null, actifJusque = 0, envoiT = 0, diagT = 0;
 
 /** Appelé à chaque lancement de la scène de jeu : la page n'a qu'un canal, la scène du moment répond. */
 export function brancherCompagnon(b: BrancheCompagnon) {
@@ -75,6 +76,7 @@ export function tickCompagnon() {
   if (!canalJeu || t > actifJusque || t - envoiT < 330) return;
   envoiT = t;
   canalJeu.envoyer({ k: 'etat', e: branche?.etat() ?? null });
+  if (t - diagT > 2000) { diagT = t; canalJeu.envoyer({ k: 'diag', d: diagGpu() }); }
 }
 
 // ---------- Page compagnon (écran du bas) ----------
@@ -120,6 +122,7 @@ export function ecranCompagnon() {
       <button class="large" data-a="ping">Coucou au jeu</button><button class="large" data-a="potion">Potion</button>
       <button data-a="inv">Sac</button><button data-a="sorts">Sorts</button><button data-a="carte">Carte</button><button data-a="quetes">Quêtes</button>
       <button data-a="car">Caracs</button><button data-a="fermer">Fermer</button><button class="large" data-a="rapport">Copier le rapport</button>
+      <button class="large" data-a="texture">Essai carrés noirs</button>
     </div>
     <div class="journal"></div>`;
   const q = <T extends HTMLElement>(sel: string) => r.querySelector(sel) as T;
@@ -138,12 +141,16 @@ export function ecranCompagnon() {
   let etatDirect: { e: EtatCompagnon | null; t: number } | null = null;
   type Secours = { e: Partial<EtatCompagnon>; maj: number } | null;
   let deSauvegarde: Secours = null, deServeur: Secours = null;
-  let premier = true;
+  let premier = true, diag: DiagGpu | null = null;
 
   c.ecoute = (m, par) => {
     vu[par] = performance.now();
     if (premier) { premier = false; noter(`Jeu trouvé (${NOMS[par].toLowerCase()})`); }
     if (m.k === 'etat') etatDirect = { e: m.e, t: performance.now() };
+    else if (m.k === 'diag') {
+      if (diag && m.d.echecs.length > diag.echecs.length) noter(`Jeu : texture refusée par la carte graphique (${m.d.echecs.length})`);
+      diag = m.d;
+    }
     else if (m.k === 'pong') {
       const t0 = pings.get(m.n);
       if (t0 != null) { pings.delete(m.n); dernierPing = `${Math.round(performance.now() - t0)} ms`; noter(`Réponse du jeu en ${dernierPing} (${NOMS[par].toLowerCase()})`); }
@@ -188,10 +195,20 @@ export function ecranCompagnon() {
     if (!a) return;
     if (a === 'ping') { const n = ++nPing; pings.set(n, performance.now()); c.envoyer({ k: 'ping', n, t: Date.now() }); noter('Coucou envoyé'); return; }
     if (a === 'rapport') { void copierRapport(); return; }
+    if (a === 'texture') {
+      // bascule l'essai « une texture à la fois », puis relance le jeu du haut pour qu'il le prenne
+      const oui = !uneTexture();
+      try { if (oui) localStorage.setItem(CLE_UNE_TEXTURE, '1'); else localStorage.removeItem(CLE_UNE_TEXTURE); } catch { /* rien */ }
+      c.envoyer({ k: 'action', a: 'recharger' });
+      noter(oui ? 'Essai carrés noirs : ON, le jeu redémarre' : 'Essai carrés noirs : OFF, le jeu redémarre');
+      majEssai(); return;
+    }
     c.envoyer({ k: 'action', a: a as ActionCompagnon });
     noter(`Bouton ${(e.target as HTMLElement).textContent} envoyé`);
   });
 
+  const majEssai = () => { q('button[data-a="texture"]').textContent = `Essai carrés noirs : ${uneTexture() ? 'ON' : 'OFF'}`; };
+  majEssai();
   const age = (t: number) => { const s = (performance.now() - t) / 1000; return s < 2 ? 'à l\'instant' : s < 60 ? `il y a ${Math.round(s)} s` : `il y a ${Math.round(s / 60)} min`; };
   const dessiner = () => {
     const t = performance.now();
@@ -209,10 +226,10 @@ export function ecranCompagnon() {
     const pv = direct ? direct.pv / Math.max(1, direct.pvMax) : 0;
     (q('.pv div')).style.width = `${Math.round(pv * 100)}%`;
     q('.pv').style.visibility = direct ? 'visible' : 'hidden';
-    q('.src').textContent = direct ? `En direct · PV ${Math.round(direct.pv)} / ${direct.pvMax}${dernierPing ? ` · coucou en ${dernierPing}` : ''}`
+    q('.src').textContent = direct ? `En direct · PV ${Math.round(direct.pv)} / ${direct.pvMax}${dernierPing ? ` · coucou en ${dernierPing}` : ''}${diag?.actif ? ` · GPU ${diag.mo} Mo, ${diag.echecs.length} refus` : ''}`
       : secours ? `D'après ${secours === deServeur ? 'le serveur' : 'la sauvegarde'} (${new Date(secours.maj).toLocaleTimeString('fr-FR')}), lecture seule` : '';
     const relie = t - Math.max(vu.direct, vu.stockage) < 3000 && Math.max(vu.direct, vu.stockage) > 0;
-    r.querySelectorAll<HTMLButtonElement>('button[data-a]').forEach(b => { if (b.dataset.a !== 'rapport') b.disabled = !relie; });
+    r.querySelectorAll<HTMLButtonElement>('button[data-a]').forEach(b => { if (b.dataset.a !== 'rapport' && b.dataset.a !== 'texture') b.disabled = !relie; });
     q('.aide').hidden = relie || t - debut < 4000;
   };
   setInterval(dessiner, 250); dessiner();
@@ -225,6 +242,7 @@ export function ecranCompagnon() {
       `Appli installée : ${matchMedia('(display-mode: standalone)').matches ? 'oui' : 'non (onglet Chrome)'}`,
       ...Object.keys(NOMS).map(k => `${NOMS[k]} : ${vu[k] ? `${t - vu[k] < 5000 ? 'OK' : 'plus de nouvelles'} (${age(vu[k])})` : 'jamais'}${detail[k] ? `, ${detail[k]}` : ''}`),
       `Coucou aller-retour : ${dernierPing || 'pas essayé'}`,
+      ...(diag ? texteDiag(diag) : ['Carte graphique : pas de nouvelles du jeu']),
       navigator.userAgent,
     ].join('\n');
     try { await navigator.clipboard.writeText(txt); noter('Rapport copié : colle-le dans le fil'); } catch { noter('Copie impossible : rapport ci-dessous'); q('.journal').textContent = txt; }

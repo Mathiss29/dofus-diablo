@@ -1178,6 +1178,7 @@ export class ZoneScene extends Phaser.Scene {
           lieu: this.world.area?.name ?? this.world.zone.name, kamas: p.kamas, potions: p.potions };
       },
       action: a => {
+        if (a === 'recharger') { if (!this.vitrine) this.sauver(); location.reload(); return; }
         if (this.vitrine || !this.sys.isActive()) return;
         if (a === 'potion') this.action('potion', true);
         else if (a === 'carte') { this.windows?.close(false); this.basculerCarte(); }

@@ -13,6 +13,7 @@ import { ecranTelephone, surTelephone } from './render/telephone';
 import { demarrerManette, reglerControles } from './render/manette';
 import { brancherMiseAJour } from './render/miseAJour';
 import { ecranCompagnon } from './render/compagnon';
+import { brancherDiagGpu, uneTexture } from './render/diagGpu';
 
 // Compte Discord (maquette « Vrai multi : ») : lit le jeton renvoyé par le serveur (#connexion=…) avant de regarder l'adresse
 Compte.demarrer();
@@ -28,6 +29,9 @@ if (location.hash.startsWith('#compagnon')) ecranCompagnon();
 else lancer();
 
 function lancer() {
+  // Carrés noirs sur console (2026-11-16) : textures refusées par la carte graphique, notées pour le rapport de l'écran du bas
+  brancherDiagGpu();
+
   // Polices de Dofus 3 : chargées tout de suite, les textes de Phaser (dégâts, noms, HUD) les dessinent sur le canevas
   for (const f of ['400 13px Lexend', '600 13px Lexend', '700 13px Lexend', '13px Rowdies']) document.fonts?.load(f).catch(() => {});
 
@@ -47,6 +51,8 @@ function demarrer() {
     // fichiers lourds éventuellement servis par Cloudflare R2 (src/render/assetUrl.ts) : images demandées en CORS
     loader: { crossOrigin: 'anonymous' },
     scale: { mode: Phaser.Scale.RESIZE, width: '100%', height: '100%' },
+    // essai lancé depuis l'écran du bas (carrés noirs sur console) : une texture par lot de dessin
+    ...(uneTexture() ? { render: { maxTextures: 1 } } : {}),
   });
   // Écran aux vrais pixels (maquette « Décors : » 1A) : canevas à la densité de l'écran, avant que Phaser le dimensionne
   reglerDensite(chargerReglages().resolution !== 'normale');   // Fluidité 3A, avant le premier dimensionnement
