@@ -2262,6 +2262,7 @@
           {"titre": "La manette à ta main", "phrase": "Zone morte des sticks, vitesse du curseur, trois dispositions et chaque bouton changeable.", "details": "Options › Manette. Taille d'interface à part sur la Thor, volumes et écran qui s'assombrit en bas, reprise au même endroit.", "icone": "arme", "etiquettes": ["Manette", "AYN Thor"]}
         ],
         "Corrections": [
+          "Thor : les persos, monstres et PNJ prennent 4 fois moins de mémoire, moins de fermetures du jeu.",
           "Changer de zone libère les PNJ de la précédente : le Zaap vers le Bastion ne ferme plus le jeu sur la Thor.",
           "Thor : le menu Start garde ses onglets en haut (le sac ne part plus en bas), Options de nouveau accessibles.",
           "Console et téléphone : plus de carrés noirs à la place du butin au sol, des récoltes et des icônes des PNJ.",
