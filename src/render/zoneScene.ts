@@ -92,6 +92,7 @@ import { ChatVue } from './chat';
 import { lienObjet, type SorteInfo } from './chatOutils';
 import { BullesChat } from './bullesChat';
 import { demandesEnAttente, menuJoueur, montrerInvitation } from './social';
+import { brancherCompagnon, tickCompagnon } from './compagnon';
 import { BTN, brancherJeu, brancheActuelle, manetteActive, reglerControles, type BrancheJeu, type ImageManette } from './manette';
 import { BOUTONS_JEU, COUCHE_LT, MenuStart, cibleAuto, dirMonde, interactionProche } from './manetteJeu';
 /** Archimonstres du jeu (carnet des âmes, « Archis : » 8A). */
@@ -593,6 +594,7 @@ export class ZoneScene extends Phaser.Scene {
       this.cameras.main.centerOn(s.x, s.y - 30); this.snapCam = true;
       this.bindInput();
       this.brancherManette();
+      this.brancherEcranDuBas();
     }
     if (this.perso || this.test) {
       const quitter = () => this.sauver(), cache = () => { if (document.hidden) this.sauver(); };
@@ -1166,6 +1168,26 @@ export class ZoneScene extends Phaser.Scene {
     }
   }
   /** Ferme ce qui est ouvert (fenêtre, carte, menu d'un PNJ, outils F1, menu Start) ; faux s'il n'y avait rien. */
+  /** Écran du bas de l'AYN Thor (« Console : » 9A) : la page diablofus.com/#compagnon lit le perso et ouvre les fenêtres. */
+  private brancherEcranDuBas() {
+    brancherCompagnon({
+      etat: () => {
+        if (this.vitrine || !this.sys.isActive()) return null;
+        const p = this.world.player;
+        return { nom: this.perso?.nom ?? p.cls.name, classe: p.cls.name, niveau: p.level, pv: p.hp, pvMax: p.maxHp,
+          lieu: this.world.area?.name ?? this.world.zone.name, kamas: p.kamas, potions: p.potions };
+      },
+      action: a => {
+        if (this.vitrine || !this.sys.isActive()) return;
+        if (a === 'potion') this.action('potion', true);
+        else if (a === 'carte') { this.windows?.close(false); this.basculerCarte(); }
+        else if (a === 'fermer') this.fermerOuvert();
+        else { if (this.carte?.ouverte) this.carte.fermer(); this.windows?.toggle(a); }
+      },
+      annonce: t => this.hud.toast(t),
+    });
+  }
+
   private fermerOuvert(): boolean {
     this.menuStart?.fermer(false);
     if (!(this.windows?.open || this.carte?.ouverte || this.dialogueView?.menuOuvert || this.panneau?.ouvert)) return false;
@@ -1412,6 +1434,7 @@ export class ZoneScene extends Phaser.Scene {
   }
   update(_: number, deltaMs: number) {
     const t0 = performance.now();
+    tickCompagnon();
     this.updateJeu(deltaMs);
     // Fluidité 5B : images et saccades par zone (pas en vitrine ni sous le rideau d'un voyage)
     if (!this.vitrine && !this.worldView?.presse) ZoneScene.mesure.noter(this.world.area?.name ?? this.world.zone.name, deltaMs);

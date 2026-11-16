@@ -2254,6 +2254,9 @@
       "lignes": {
         "Corrections": [
           "Console et téléphone : plus de carrés noirs à la place du butin au sol, des récoltes et des icônes des PNJ."
+        ],
+        "En coulisses": [
+          "AYN Thor : page de test de l'écran du bas (diablofus.com/#compagnon), reliée au jeu de l'écran du haut."
         ]
       }
     }
