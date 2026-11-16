@@ -19,7 +19,7 @@ import android.webkit.WebView;
  * besoin d'être mise à jour. Plein écran, écran toujours allumé, manette lue ici et passée aux deux pages.
  */
 public final class Principale extends Activity {
-  static final int VERSION = 5;
+  static final int VERSION = 6;
   /** Mode sûr : après un plantage, on lance le jeu seul (sans l'écran du bas). */
   private boolean sansBas = false;
   private WebView vue;
@@ -44,6 +44,7 @@ public final class Principale extends Activity {
     try {
       Journal.evenement(this, "démarrage (appli " + VERSION + ")");
       sansBas = Journal.montrerSiPlantage(this);
+      if (!sansBas) moteurAncien();
       WebView.setWebContentsDebuggingEnabled(true);   // chrome://inspect depuis un PC, pour les rapports de bug
       Journal.evenement(this, "création de la page du jeu");
       vue = nouvelleVue();
@@ -51,6 +52,33 @@ public final class Principale extends Activity {
       Journal.evenement(this, "page du jeu posée");
       Plein.appliquer(getWindow());
     } catch (Throwable e) { erreur("au démarrage", e); }
+  }
+
+  /** Moteur web (Android System WebView) trop vieux : c'est lui qui fait tourner le jeu, ses vieilles versions tiennent mal la
+   *  mémoire de la carte graphique. On propose la mise à jour (une fois par version). */
+  private void moteurAncien() {
+    try {
+      android.content.pm.PackageInfo p = WebView.getCurrentWebViewPackage(); if (p == null || p.versionName == null) return;
+      int v = Integer.parseInt(p.versionName.split("\\.")[0]);
+      android.content.SharedPreferences sp = getSharedPreferences("diablofus", MODE_PRIVATE);
+      if (v >= 120 || sp.getString("moteurVu", "").equals(p.versionName)) return;
+      sp.edit().putString("moteurVu", p.versionName).apply();
+      final String pkg = p.packageName;
+      new android.app.AlertDialog.Builder(this)
+          .setTitle("Moteur web à mettre à jour")
+          .setMessage("Ta Thor fait tourner le jeu avec « Android System WebView » " + p.versionName + ", une version de début 2023. "
+              + "Les versions récentes tiennent bien mieux la mémoire (moins de fermetures en jeu). Mets-la à jour sur le Play Store, puis relance Diablofus.")
+          .setPositiveButton("Ouvrir le Play Store", new PlayStore(pkg))
+          .setNegativeButton("Plus tard", null)
+          .show();
+    } catch (Throwable ignore) { }
+  }
+  private final class PlayStore implements android.content.DialogInterface.OnClickListener {
+    private final String pkg; PlayStore(String pkg) { this.pkg = pkg; }
+    @Override public void onClick(android.content.DialogInterface d, int w) {
+      try { startActivity(new Intent(Intent.ACTION_VIEW, android.net.Uri.parse("market://details?id=" + pkg))); }
+      catch (Throwable e) { try { startActivity(new Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://play.google.com/store/apps/details?id=" + pkg))); } catch (Throwable ignore) { } }
+    }
   }
 
   private void erreur(String quand, Throwable e) {
@@ -82,7 +110,7 @@ public final class Principale extends Activity {
   final class Perte implements Toile.SurPerte {
     @Override public void pagePerdue(WebView w) {
       long t = android.os.SystemClock.uptimeMillis();
-      if (t - dernierePerte < 60_000 && !sansBas) { sansBas = true; if (bas != null) { bas.fermer(); bas = null; } signaler("Le jeu a manqué de mémoire : l'écran du bas est éteint pour cette fois"); }
+      if (t - dernierePerte < 60_000 && !sansBas) { sansBas = true; if (bas != null) { bas.fermer(); bas = null; } signaler("La page du jeu a été fermée deux fois par Android : l'écran du bas est éteint pour cette fois"); }
       dernierePerte = t;
       if (w == vue) {
         WebView n = nouvelleVue(); vue = n; setContentView(n);

@@ -96,7 +96,7 @@ export function demarrerManette() {
 
 /** Appli Android « Diablofus Thor » (« Confort 2 : » 1A) : la manette est lue par l'appli et passée ici
  *  (une WebView ne voit pas toujours la manette, et l'appli la garde même quand on touche l'écran du bas). */
-interface AppliNative { manette?(): string; vibrer?(fort: number, faible: number, ms: number): void; luminosite?(f: number): void; version?(): string }
+interface AppliNative { manette?(): string; vibrer?(fort: number, faible: number, ms: number): void; luminosite?(f: number): void; version?(): string; journal?(): string }
 export function appliNative(): AppliNative | null {
   return typeof window !== 'undefined' ? (window as unknown as { DiablofusAppli?: AppliNative }).DiablofusAppli ?? null : null;
 }

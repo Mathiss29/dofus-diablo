@@ -723,7 +723,8 @@ export function ecranCompagnon() {
     const txt = ['Diablofus, écran du bas', `Écran : ${innerWidth}×${innerHeight} px CSS, densité ${devicePixelRatio}`,
       `Appli installée : ${matchMedia('(display-mode: standalone)').matches ? 'oui' : 'non (onglet Chrome)'}`,
       ...Object.keys(NOMS).map(k => `${NOMS[k]} : ${vu[k] ? `${t - vu[k] < 5000 ? 'OK' : 'plus de nouvelles'} (${age(vu[k])})` : 'jamais'}${detail[k] ? `, ${detail[k]}` : ''}`),
-      `Coucou aller-retour : ${dernierPing || 'pas essayé'}`, ...(diag ? texteDiag(diag) : ['Carte graphique : pas de nouvelles du jeu']), navigator.userAgent].join('\n');
+      `Coucou aller-retour : ${dernierPing || 'pas essayé'}`, ...(diag ? texteDiag(diag) : ['Carte graphique : pas de nouvelles du jeu']), navigator.userAgent,
+      ...(natif?.journal ? ['', 'Journal de l\'appli Thor :', natif.journal()] : [])].join('\n');
     try { await navigator.clipboard.writeText(txt); noter('Rapport copié : colle-le dans le fil'); } catch { noter('Copie impossible : rapport ci-dessous'); q('.journal').textContent = txt; }
   };
 
