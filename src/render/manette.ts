@@ -219,6 +219,8 @@ function accueilBouton(zone: HTMLElement, b: number): boolean {
     l[(i + (b === BTN.RB ? 1 : -1) + l.length) % l.length].click();
     focus = null; return true;
   }
+  // « Idées Thor : » 7A : A sans bouton visé, sur la page d'accueil = Jouer (le dernier perso)
+  if (b === BTN.A && !focusManette() && zone.querySelector('.nav[data-nav="accueil"].on')) { const j = zone.querySelector<HTMLElement>('[data-jouer]'); if (j) { j.click(); return true; } }
   if (b === BTN.START) { const j = zone.querySelector<HTMLElement>('[data-jouer],[data-go="jouer"]'); if (j) { j.click(); return true; } return false; }
   const a = document.activeElement;
   if (b === BTN.B && (a instanceof HTMLInputElement || a instanceof HTMLTextAreaElement) && zone.contains(a)) { a.blur(); return true; }

@@ -7,6 +7,19 @@ import type { Interaction } from './manetteJeu';
 import { ITEMS } from '../sim/data';
 import { sorteConso } from '../sim/consommables';
 import { iconHtml } from './icons';
+import { STAT_NAMES, type Stat } from '../sim/items';
+
+/** « Idées Thor : » 3A : ce que l'objet au sol gagne ou perd face à celui qu'on porte (3 plus grands écarts), ou null. */
+export function comparerAuSol(w: World, uid: number): string | null {
+  const d = w.drops.find(x => x.uid === uid), it = d?.item, p = w.player;
+  if (!it || !ITEMS.equipment[it.id]) return null;
+  const slot = p.slotFor(it), cur = slot ? p.equipment[slot] : undefined;
+  if (!cur) return slot ? 'Emplacement vide : à porter !' : null;
+  const cles = new Set([...Object.keys(it.stats), ...Object.keys(cur.stats)]) as Set<Stat>;
+  const ecarts = [...cles].map(k => [k, Math.round((it.stats[k] ?? 0) - (cur.stats[k] ?? 0))] as const).filter(([, v]) => v);
+  ecarts.sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
+  return ecarts.length ? ecarts.slice(0, 3).map(([k, v]) => `${v > 0 ? '▲ +' : '▼ '}${v} ${STAT_NAMES[k] ?? k}`).join('   ') : 'Comme ce que tu portes';
+}
 
 const CASE = 48;
 /** Appui sur A à partir duquel il interagit au lieu de frapper (1D). */

@@ -14,12 +14,13 @@ export type ActionCompagnon = 'potion' | 'inv' | 'sorts' | 'car' | 'carte' | 'qu
 /** Ordres de l'écran du bas vers le jeu. */
 export type OrdreBas =
   | { k: 'equiper'; uid: number } | { k: 'retirer'; slot: string } | { k: 'cadenas'; uid: number } | { k: 'defaire'; uid: number }
-  | { k: 'fiche'; uid: number; porte: boolean } | { k: 'fleche'; x: number; y: number } | { k: 'zaap'; i: number } | { k: 'evt'; e: EvtBas } | { k: 'interagir' } | { k: 'dire'; texte: string };
+  | { k: 'fiche'; uid: number; porte: boolean } | { k: 'fleche'; x: number; y: number } | { k: 'zaap'; i: number } | { k: 'evt'; e: EvtBas } | { k: 'interagir' } | { k: 'dire'; texte: string }
+  | { k: 'raccourci'; id: string } | { k: 'allie'; id: number };
 export type MsgCompagnon =
   | { k: 'bonjour'; neuf?: boolean } | { k: 'ping'; n: number; t: number } | { k: 'pong'; n: number; t: number }
   | { k: 'etat'; e: EtatBas | null } | { k: 'carte'; c: CarteBas | null } | { k: 'sac'; s: SacBas | null } | { k: 'quetes'; q: QuetesBas | null }
   | { k: 'fiche'; uid: number; html: string } | { k: 'fenetre'; f: FenetreBas | null } | { k: 'styles'; css: string } | { k: 'onglet'; o: OngletBas | 'suivant' }
-  | { k: 'tchat'; l: LigneTchat[]; enLigne: boolean } | { k: 'annonce'; t: string; c?: string } | { k: 'diag'; d: DiagGpu } | { k: 'action'; a: ActionCompagnon } | { k: 'ordre'; o: OrdreBas };
+  | { k: 'tchat'; l: LigneTchat[]; enLigne: boolean } | { k: 'annonce'; t: string; c?: string; uid?: number } | { k: 'bilan'; titre: string; lignes: string[] } | { k: 'diag'; d: DiagGpu } | { k: 'action'; a: ActionCompagnon } | { k: 'ordre'; o: OrdreBas };
 export type Lien = 'direct' | 'stockage';
 type De = 'jeu' | 'ecran';
 interface Enveloppe { de: De; id: string; m: MsgCompagnon }
@@ -84,7 +85,9 @@ export const compagnonRelie = () => !!canalJeu && performance.now() < actifJusqu
 /** Change l'onglet de l'écran du bas (Select, I, M…). */
 export function ongletBas(o: OngletBas | 'suivant') { if (compagnonRelie()) canalJeu!.envoyer({ k: 'onglet', o }); }
 /** 8A : petit texte (toast, ligne de butin) montré en bas plutôt qu'en haut ; faux si l'écran du bas n'est pas là. */
-export function annonceBas(t: string, c?: string): boolean { if (!compagnonRelie()) return false; canalJeu!.envoyer({ k: 'annonce', t, c }); return true; }
+export function annonceBas(t: string, c?: string, uid?: number): boolean { if (!compagnonRelie()) return false; canalJeu!.envoyer({ k: 'annonce', t, c, uid }); return true; }
+/** « Idées Thor : » 3C : bilan de fin de donjon, montré en bas. */
+export function bilanBas(titre: string, lignes: string[]) { if (compagnonRelie()) canalJeu!.envoyer({ k: 'bilan', titre, lignes }); }
 
 /** Appelé à chaque lancement de la scène de jeu : la page n'a qu'un canal, la scène du moment répond. */
 export function brancherCompagnon(b: BrancheCompagnon) {

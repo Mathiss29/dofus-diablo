@@ -156,6 +156,7 @@ const CSS = `
 #acc .cls{all:unset;cursor:pointer;display:grid;justify-items:center;gap:calc(.1*var(--u));font-size:calc(.6*var(--u));font-weight:800;color:#d9d4bd;width:calc(4.3*var(--u));padding:calc(.2*var(--u)) 0 calc(.3*var(--u));border-radius:calc(.4*var(--u));position:relative}
 #acc .cls img{height:calc(3.2*var(--u));filter:grayscale(.85) brightness(.75)}
 #acc .cls.play img{filter:none}
+html.console #acc .side .play::after{content:" (A)";font-size:.7em;opacity:.75}
 #acc .cls.on{background:#2a2c1f;box-shadow:inset 0 calc(-.25*var(--u)) 0 var(--lime)}
 #acc .cls.on img{filter:none}
 #acc .cls.dim{opacity:.3}
