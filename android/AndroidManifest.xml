@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Appli « Diablofus Thor » (maquette « Confort 2 : » 1A) : le jeu en haut, l'écran du bas sur le second écran. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.ombrelune.diablofus"
+    android:versionCode="1"
+    android:versionName="1.0">
+  <uses-sdk android:minSdkVersion="29" android:targetSdkVersion="34" />
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+  <uses-permission android:name="android.permission.VIBRATE" />
+  <uses-feature android:name="android.hardware.gamepad" android:required="false" />
+  <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+  <application
+      android:label="Diablofus"
+      android:icon="@mipmap/ic_launcher"
+      android:theme="@style/Theme"
+      android:hardwareAccelerated="true"
+      android:isGame="true"
+      android:appCategory="game"
+      android:usesCleartextTraffic="false">
+    <activity
+        android:name=".Principale"
+        android:exported="true"
+        android:launchMode="singleTask"
+        android:screenOrientation="sensorLandscape"
+        android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboard|keyboardHidden|navigation|uiMode|density">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+        <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+      </intent-filter>
+    </activity>
+    <!-- Secours : écran du bas lancé comme une activité sur le second écran (quand il n'accepte pas de « présentation »). -->
+    <activity
+        android:name=".BasActivite"
+        android:exported="false"
+        android:resizeableActivity="true"
+        android:launchMode="singleInstance"
+        android:taskAffinity="com.ombrelune.diablofus.bas"
+        android:excludeFromRecents="true"
+        android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboard|keyboardHidden|navigation|uiMode|density" />
+  </application>
+</manifest>

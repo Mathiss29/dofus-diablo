@@ -96,8 +96,8 @@ import { annonceBas, bilanBas, brancherCompagnon, compagnonRelie, ongletBas, tic
 import { carteBas, combatBas, depuisPlan, etatBas, groupeBas, quetesBas, raccourcisBas, sacBas } from './compagnonEtat';
 import { rangAbo } from '../sim/boutiqueOgrines';
 import type { EquipSlot } from '../sim/items';
-import { BTN, brancherJeu, brancheActuelle, elementManette, focusManette, manetteActive, reglerControles, reglerVibrations, vibrer, type BrancheJeu, type ImageManette } from './manette';
-import { modeConsole, petitEcranConsole, reglerModeConsole, suivreModeConsole, REGLAGE_THOR } from './console';
+import { BTN, brancherJeu, brancheActuelle, elementManette, focusManette, manetteActive, reglerControles, reglerVibrations, reglerSticks, reglerBoutons, appliNative, vibrer, type BrancheJeu, type ImageManette } from './manette';
+import { modeConsole, petitEcranConsole, reglerModeConsole, suivreModeConsole, REGLAGE_THOR, echelleInterface, garderEcranAllume, noterReprise } from './console';
 import { BOUTONS_JEU, COUCHE_LT, MenuStart, cibleAuto, dirMonde, interactionProche, paquetDense, type Interaction } from './manetteJeu';
 import { comparerAuSol, A_LONG, cibleDansDirection, decrireInteraction, Pichenette, RoueConso } from './confortManette';
 /** Archimonstres du jeu (carnet des âmes, « Archis : » 8A). */
@@ -287,6 +287,7 @@ export class ZoneScene extends Phaser.Scene {
   private arrivee?: [string, number];
   private transit: Transit = {};
   init(data: { zone?: string; classe?: string; slot?: number; vitrine?: boolean; arrivee?: [string, number]; essai?: 'm' | 'f'; apparence?: Apparence; par?: Arrivee } & Transit) {
+    this.repriseVue = false; this.debutScene = performance.now();
     this.attaqueSouris = false;   // touche tenue pendant un voyage : son relâchement n'arrive plus à cette scène
     this.depart = false; this.rideau = null; this.arriveePar = data?.par ?? null;
     this.essai = data?.essai ? { sexe: data.essai, t: 0, averti: false } : null;
@@ -598,7 +599,7 @@ export class ZoneScene extends Phaser.Scene {
       this.hoverId = id;
       if (!id) { this.windows?.hideTip(); return; }
       const r = this.game.canvas.getBoundingClientRect();
-      const k = Phaser.Math.Clamp(this.reglages.echelle || 1, 0.8, 1.5);   // l'interface est à l'échelle choisie (Réglages 7A)
+      const k = echelleInterface(this.reglages);   // l'interface est à l'échelle choisie (Réglages 7A ; « Confort 2 : » 5A en mode console)
       this.windows?.showHtmlTip(spellTipHtml(this.world.player, id), r.left + x * k, r.top + y * k);
     };
     this.hud.onSlotClick = id => { this.windows?.hideTip(); if (this.world.player.cls.spells[id]) this.windows?.ouvrirSort(id); };
@@ -636,9 +637,13 @@ export class ZoneScene extends Phaser.Scene {
       this.brancherEcranDuBas();
       this.hud.versBas = (t, c, uid) => annonceBas(t, c, uid);   // « Interfaces Thor : » 8A
       // Confort Thor 5B : console fermée ou appli quittée, le perso est sauvé tout de suite
-      const cache = () => { if (document.hidden && !this.vitrine && this.sys.isActive()) this.sauver(); };
+      const cache = () => {
+        if (!document.hidden || this.vitrine || !this.sys.isActive()) return;
+        this.sauver();
+        if (this.perso && this.slot >= 0 && !this.test && (modeConsole() || appliNative())) noterReprise(this.slot);   // « Confort 2 : » 8A
+      };
       document.addEventListener('visibilitychange', cache);
-      this.events.once('shutdown', () => { document.removeEventListener('visibilitychange', cache); this.roue.fermer(); });
+      this.events.once('shutdown', () => { document.removeEventListener('visibilitychange', cache); this.roue.fermer(); garderEcranAllume(false); });
     }
     if (this.perso || this.test) {
       const quitter = () => this.sauver(), cache = () => { if (document.hidden) this.sauver(); };
@@ -729,6 +734,9 @@ export class ZoneScene extends Phaser.Scene {
     document.body.appendChild(b); this.boutonEncore = b;
     window.setTimeout(() => { if (this.boutonEncore === b) this.encoreArene(false); }, 9500);
   }
+  private consoleAvant?: boolean;
+  private repriseVue = false;
+  private debutScene = 0;
   private sauver = () => {
     if (this.miroir) return;   // coop, chez l'invité : le monde est celui de l'hôte, rien à garder
     if (this.test && this.world) {
@@ -774,7 +782,7 @@ export class ZoneScene extends Phaser.Scene {
     Coop.mondeGroupe(this.zoneId, { jeton: j, emplacement: this.slot }, seul);
   }
   /** Retour à l'écran d'accueil (main.ts relance la partie en vitrine). */
-  private versAccueil(page?: 'persos') { this.sauver(); this.game.events.emit('accueil', page); }
+  private versAccueil(page?: 'persos') { noterReprise(null); this.sauver(); this.game.events.emit('accueil', page); }
 
   /** Partie de test : relance la partie depuis un perso de test écrit d'avance (classe, zone ou état tout prêt). */
   /** Coop, chez l'invité : la partie est celle de l'hôte (ou du serveur), les outils de test n'y ont pas prise. */
@@ -1201,7 +1209,9 @@ export class ZoneScene extends Phaser.Scene {
     // 7A : échelle de l'interface (caméra de l'interface zoomée depuis le coin haut gauche ; les fenêtres en CSS)
     // Fluidité 3A : résolution du rendu (le canevas est redimensionné, les caméras suivent à l'image suivante)
     if (densitePleine() !== (r.resolution !== 'normale')) { reglerDensite(r.resolution !== 'normale'); this.game.scale.refresh(); }
-    const k = Phaser.Math.Clamp(r.echelle || 1, 0.8, 1.5), ui = this.cameras.getCamera('ui');
+    const k = echelleInterface(r), ui = this.cameras.getCamera('ui');
+    garderEcranAllume(!this.vitrine && r.toujoursAllume !== false);   // « Confort 2 : » 2A
+    reglerSticks(r.zoneMorte, r.vitesseCurseur); reglerBoutons(r.disposition, r.boutons);   // 4A + 4B
     ui?.setOrigin(0, 0).setZoom(k * densite());   // × vrais pixels de l'écran (pixel.ts)
     document.documentElement.style.setProperty('--echelle', String(k));
     // 7C : images par seconde (0 = sans limite)
@@ -1222,7 +1232,8 @@ export class ZoneScene extends Phaser.Scene {
         if (!jeu()) return null;
         const i = interactionProche(this.world, this.world.player), d = i ? decrireInteraction(this.world, i) : null;   // 1E : bouton en bas
         return { ...etatBas(this.world, this.perso?.nom ?? this.world.player.cls.name, this.perso?.sexe ?? 'm'), inter: d?.texte ?? null,
-          combat: combatBas(this.world, this.manCible ?? this.hud.cibleId), raccourcis: raccourcisBas(this.world), groupe: groupeBas(this.world), fps: Math.round(this.game.loop.actualFps) };
+          combat: combatBas(this.world, this.manCible ?? this.hud.cibleId), raccourcis: raccourcisBas(this.world), groupe: groupeBas(this.world), fps: Math.round(this.game.loop.actualFps),
+          son: { musique: this.reglages.volMusique, effets: this.reglages.volEffets, muet: this.reglages.muet } };
       },
       carte: () => jeu() ? carteBas(this.world, k => interactionProche(this.world, this.world.player)?.k === k) : null,
       sac: () => {
@@ -1277,6 +1288,13 @@ export class ZoneScene extends Phaser.Scene {
           else if (q) this.hud.toast(`${q.nom ?? 'Allié'} : ${Math.ceil(q.hp)} / ${q.maxHp} PV`);
         }
         else if (o.k === 'dire') this.chat?.dire(o.texte.slice(0, 200));
+        else if (o.k === 'volume') {   // « Confort 2 : » 7A
+          const r = this.reglages, k = (x: number) => Math.max(0, Math.min(1, x));
+          if (typeof o.musique === 'number') r.volMusique = k(o.musique);
+          if (typeof o.effets === 'number') { r.volEffets = k(o.effets); r.volMonstres = k(o.effets * 0.7); }
+          if (typeof o.muet === 'boolean') r.muet = o.muet;
+          sauverReglages(r); this.appliquerSon();
+        }
         else if (o.k === 'interagir') { const i = interactionProche(this.world, p); if (i) this.interagir(i); }
         this.windows?.refresh();
       },
@@ -1690,7 +1708,10 @@ export class ZoneScene extends Phaser.Scene {
   update(_: number, deltaMs: number) {
     const t0 = performance.now();
     tickCompagnon(); this.suivreEcranDuBas(); this.confortManette(); this.suivreIdeesThor();
-    if (suivreModeConsole() && !this.reglages.presetThor && this.reglageThor()) {   // manette branchée après le lancement
+    if (!this.vitrine && !this.repriseVue && performance.now() - this.debutScene > 20_000 && !document.hidden) { this.repriseVue = true; noterReprise(null); }   // 8A : la partie a bien repris
+    const enConsole = suivreModeConsole();
+    if (enConsole !== this.consoleAvant) { const premier = this.consoleAvant === undefined; this.consoleAvant = enConsole; if (!premier) this.appliquerReglages(); }   // 5A : l'échelle console suit
+    if (enConsole && !this.reglages.presetThor && this.reglageThor()) {   // manette branchée après le lancement
       this.appliquerReglages(); this.updateAmbiance(true); this.windows?.refresh();
       this.hud.toast('Réglage « Thor » appliqué : 60 images/s, particules coupées (Options › Graphismes)', 3500);
     }

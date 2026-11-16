@@ -4,7 +4,12 @@
 
 /** Boutons de la disposition standard, nommés par leur place (Xbox : A en bas, B à droite, X à gauche, Y en haut). */
 export const BTN = { A: 0, B: 1, X: 2, Y: 3, LB: 4, RB: 5, LT: 6, RT: 7, SELECT: 8, START: 9, L3: 10, R3: 11, HAUT: 12, BAS: 13, GAUCHE: 14, DROITE: 15 } as const;
-const NB = 17, MORT = 0.25;
+const NB = 17;
+/** « Confort 2 : » 4A : zone morte des sticks et vitesse du curseur des menus (Options › Manette). */
+let mort = 0.25, vitesseCurseur = 1;
+export function reglerSticks(zoneMorte: number | undefined, vitesse: number | undefined) {
+  mort = Math.max(0.05, Math.min(0.5, zoneMorte ?? 0.25)); vitesseCurseur = Math.max(0.3, Math.min(3, vitesse ?? 1));
+}
 
 export interface Vec2 { x: number; y: number }
 /** Ce que le jeu reçoit à chaque image (boutons appuyés ou relâchés depuis l'image d'avant, sticks). */
@@ -19,7 +24,7 @@ export interface BrancheJeu {
 }
 
 let jeu: BrancheJeu | null = null;
-let avant: boolean[] = new Array(NB).fill(false);
+let avant: boolean[] = new Array(NB).fill(false), avantJeu: boolean[] = new Array(NB).fill(false);
 let dernierUsage = 0, derniereSouris = 0;
 let lancee = false, enJeu = false;
 let controles: 'auto' | 'clavier' | 'manette' = 'auto';
@@ -38,14 +43,50 @@ export function reglerVibrations(on: boolean) { vibrations = on; }
 /** Fait vibrer la manette (si elle sait : Chrome, « dual-rumble »). Forces de 0 à 1. */
 export function vibrer(fort: number, faible: number, ms: number) {
   if (!vibrations || controles === 'clavier' || typeof navigator === 'undefined' || !navigator.getGamepads) return;
+  const nat = appliNative();
+  if (nat?.vibrer) { try { nat.vibrer(fort, faible, ms); } catch { /* vieille appli */ } return; }
   const a = pad()?.vibrationActuator as { playEffect?: (t: string, p: object) => Promise<unknown> } | undefined;
   a?.playEffect?.('dual-rumble', { duration: ms, strongMagnitude: fort, weakMagnitude: faible })?.catch(() => {});
 }
 export function brancheActuelle() { return jeu; }
 
+// ---------- « Confort 2 : » 4B : dispositions toutes faites et boutons changés (en jeu seulement : les menus gardent A = cliquer, B = retour) ----------
+/** carte[bouton du jeu] = bouton de la manette qui le déclenche. */
+const IDENTITE = Array.from({ length: NB }, (_, i) => i);
+export type Disposition = 'thor' | 'gachettes' | 'gaucher';
+export function carteDisposition(d: Disposition | undefined): number[] {
+  const c = [...IDENTITE];
+  if (d === 'gachettes') {   // sorts 1 à 4 sur RB RT LT LB ; déplacement, case Clic D et sort 5 passent sur B X Y
+    const p: [number, number][] = [[BTN.X, BTN.RB], [BTN.Y, BTN.RT], [BTN.B, BTN.LT], [BTN.RB, BTN.LB], [BTN.LB, BTN.B], [BTN.RT, BTN.X], [BTN.LT, BTN.Y]];
+    for (const [jeu, phys] of p) c[jeu] = phys;
+  } else if (d === 'gaucher') {   // tout en miroir : boutons de face <-> croix, gâchettes et sticks inversés
+    const p: [number, number][] = [[BTN.A, BTN.BAS], [BTN.BAS, BTN.A], [BTN.B, BTN.GAUCHE], [BTN.GAUCHE, BTN.B], [BTN.X, BTN.DROITE], [BTN.DROITE, BTN.X], [BTN.Y, BTN.HAUT], [BTN.HAUT, BTN.Y],
+      [BTN.LB, BTN.RB], [BTN.RB, BTN.LB], [BTN.LT, BTN.RT], [BTN.RT, BTN.LT], [BTN.L3, BTN.R3], [BTN.R3, BTN.L3]];
+    for (const [jeu, phys] of p) c[jeu] = phys;
+  }
+  return c;
+}
+let carte = [...IDENTITE], sticksInverses = false;
+export function reglerBoutons(d: Disposition | undefined, perso: number[] | undefined) {
+  carte = perso && perso.length === NB && new Set(perso).size === NB && perso.every(x => x >= 0 && x < NB) ? [...perso] : carteDisposition(d);
+  sticksInverses = d === 'gaucher';
+}
+/** Bouton de la manette qui fait cette action du jeu (pour écrire « X », « RB »… sur la barre de sorts). */
+export function boutonPhysique(b: number): number { return carte[b] ?? b; }
+/** Change un bouton : l'action `jeu` passe sur le bouton `phys`, l'action qui l'avait prend l'ancien bouton (échange). */
+export function echangerBouton(c: number[], jeu: number, phys: number): number[] {
+  const n = [...c], autre = n.indexOf(phys);
+  if (autre >= 0) n[autre] = n[jeu];
+  n[jeu] = phys; return n;
+}
+/** Capture du prochain bouton appuyé (fenêtre « Changer un bouton ») : il ne part ni au jeu ni à l'interface. */
+let capture: ((b: number) => void) | null = null;
+export function capturerBouton(cb: ((b: number) => void) | null) { capture = cb; }
+export const NOMS_BOUTONS = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Select', 'Start', 'L3', 'R3', '↑', '↓', '←', '→', 'Accueil'];
+
 /** Démarre la boucle (une fois). */
 export function demarrerManette() {
-  if (lancee || typeof window === 'undefined' || !navigator.getGamepads) return;
+  if (lancee || typeof window === 'undefined' || (!navigator.getGamepads && !appliNative())) return;
   lancee = true;
   addEventListener('mousemove', e => { if (controles !== 'manette' && e.isTrusted && (Math.abs(e.movementX) + Math.abs(e.movementY) > 2)) { derniereSouris = performance.now(); cacherCurseur(); } }, { passive: true });
   addEventListener('gamepadconnected', e => console.info('[manette]', (e as GamepadEvent).gamepad.id, (e as GamepadEvent).gamepad.mapping || 'disposition inconnue'));
@@ -53,15 +94,31 @@ export function demarrerManette() {
   requestAnimationFrame(boucle);
 }
 
+/** Appli Android « Diablofus Thor » (« Confort 2 : » 1A) : la manette est lue par l'appli et passée ici
+ *  (une WebView ne voit pas toujours la manette, et l'appli la garde même quand on touche l'écran du bas). */
+interface AppliNative { manette?(): string; vibrer?(fort: number, faible: number, ms: number): void; luminosite?(f: number): void; version?(): string }
+export function appliNative(): AppliNative | null {
+  return typeof window !== 'undefined' ? (window as unknown as { DiablofusAppli?: AppliNative }).DiablofusAppli ?? null : null;
+}
+function padNatif(): Gamepad | null {
+  const a = appliNative(); if (!a?.manette) return null;
+  try {
+    const j = JSON.parse(a.manette()) as { c?: boolean; b?: number[]; a?: number[]; t?: number };
+    if (!j.c || !j.b) return null;
+    return { id: 'Diablofus Thor', index: 0, connected: true, mapping: 'standard', timestamp: j.t ?? performance.now(), axes: j.a ?? [0, 0, 0, 0],
+      buttons: j.b.map(v => ({ pressed: v > 0.5, touched: v > 0, value: v })), vibrationActuator: null, hapticActuators: [] } as unknown as Gamepad;
+  } catch { return null; }
+}
 function pad(): Gamepad | null {
+  const n = padNatif(); if (n) return n;
   let meilleur: Gamepad | null = null;
   for (const g of navigator.getGamepads()) if (g?.connected && (!meilleur || g.timestamp > meilleur.timestamp)) meilleur = g;
   return meilleur;
 }
 function stick(x: number, y: number): Vec2 {
   const n = Math.hypot(x, y);
-  if (n < MORT) return { x: 0, y: 0 };
-  const k = Math.min(1, (n - MORT) / (1 - MORT)) / n;
+  if (n < mort) return { x: 0, y: 0 };
+  const k = Math.min(1, (n - mort) / (1 - mort)) / n;
   return { x: x * k, y: y * k };
 }
 
@@ -75,11 +132,18 @@ function lire() {
   for (let i = 0; i < NB; i++) { if (tenu[i] && !avant[i]) appuyes.push(i); else if (!tenu[i] && avant[i]) relaches.push(i); }
   avant = tenu;
   if (appuyes.length || gauche.x || gauche.y || droite.x || droite.y) dernierUsage = performance.now();
+  if (capture) { if (appuyes.length) { const cb = capture; capture = null; cb(appuyes[0]); } return; }
   const img: ImageManette = { appuyes, relaches, tenu: b => tenu[b], gauche, droite };
   const zone = zoneUi();
+  if (!zone) {   // en jeu : la disposition choisie (4B)
+    const tj = carte.map(p => tenu[p]), aj: number[] = [], rj: number[] = [];
+    for (let i = 0; i < NB; i++) { if (tj[i] && !avantJeu[i]) aj.push(i); else if (!tj[i] && avantJeu[i]) rj.push(i); }
+    Object.assign(img, { appuyes: aj, relaches: rj, tenu: (b: number) => tj[b], gauche: sticksInverses ? droite : gauche, droite: sticksInverses ? gauche : droite });
+    avantJeu = tj;
+  } else avantJeu = carte.map(p => tenu[p]);
   if (zone) {
     // on quitte le jeu pour l'interface : le jeu relâche tout ce qui était tenu (attaque, sort en visée)
-    if (enJeu) { enJeu = false; jeu?.image({ appuyes: [], relaches: tenu.flatMap((x, i) => x ? [i] : []), tenu: () => false, gauche: { x: 0, y: 0 }, droite: { x: 0, y: 0 } }); }
+    if (enJeu) { enJeu = false; jeu?.image({ appuyes: [], relaches: carte.flatMap((p, i) => tenu[p] ? [i] : []), tenu: () => false, gauche: { x: 0, y: 0 }, droite: { x: 0, y: 0 } }); }
     ui(zone, img);
   } else {
     if (!enJeu) { enJeu = true; img.appuyes = []; }   // un bouton appuyé dans un menu (B pour fermer…) ne part pas en jeu
@@ -130,7 +194,7 @@ function ui(zone: HTMLElement, m: ImageManette) {
   const r = m.droite;
   if (r.x || r.y) {
     if (!modeCurseur) { modeCurseur = true; if (focus) { const q = focus.getBoundingClientRect(); cx = q.left + q.width / 2; cy = q.top + q.height / 2; } }
-    const v = 1100 * Math.hypot(r.x, r.y);
+    const v = 1100 * vitesseCurseur * Math.hypot(r.x, r.y);
     cx = Math.max(0, Math.min(innerWidth - 1, cx + r.x * v * dt)); cy = Math.max(0, Math.min(innerHeight - 1, cy + r.y * v * dt));
     survoler(document.elementFromPoint(cx, cy) as HTMLElement | null);
   }
