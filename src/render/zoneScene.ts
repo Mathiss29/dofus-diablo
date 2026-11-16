@@ -92,7 +92,10 @@ import { ChatVue } from './chat';
 import { lienObjet, type SorteInfo } from './chatOutils';
 import { BullesChat } from './bullesChat';
 import { demandesEnAttente, menuJoueur, montrerInvitation } from './social';
-import { brancherCompagnon, tickCompagnon } from './compagnon';
+import { brancherCompagnon, compagnonRelie, ongletBas, tickCompagnon } from './compagnon';
+import { carteBas, depuisPlan, etatBas, quetesBas, sacBas } from './compagnonEtat';
+import { rangAbo } from '../sim/boutiqueOgrines';
+import type { EquipSlot } from '../sim/items';
 import { BTN, brancherJeu, brancheActuelle, manetteActive, reglerControles, type BrancheJeu, type ImageManette } from './manette';
 import { BOUTONS_JEU, COUCHE_LT, MenuStart, cibleAuto, dirMonde, interactionProche } from './manetteJeu';
 /** Archimonstres du jeu (carnet des âmes, « Archis : » 8A). */
@@ -1170,23 +1173,64 @@ export class ZoneScene extends Phaser.Scene {
   /** Ferme ce qui est ouvert (fenêtre, carte, menu d'un PNJ, outils F1, menu Start) ; faux s'il n'y avait rien. */
   /** Écran du bas de l'AYN Thor (« Console : » 9A) : la page diablofus.com/#compagnon lit le perso et ouvre les fenêtres. */
   private brancherEcranDuBas() {
+    const neufs = new Map<number, number>();   // butin récent (4C) : objets apparus depuis que l'écran du bas regarde, 3 min
+    let connus: Set<number> | null = null;
+    const jeu = () => !this.vitrine && this.sys.isActive();
     brancherCompagnon({
-      etat: () => {
-        if (this.vitrine || !this.sys.isActive()) return null;
-        const p = this.world.player;
-        return { nom: this.perso?.nom ?? p.cls.name, classe: p.cls.name, niveau: p.level, pv: p.hp, pvMax: p.maxHp,
-          lieu: this.world.area?.name ?? this.world.zone.name, kamas: p.kamas, potions: p.potions };
+      etat: () => jeu() ? etatBas(this.world, this.perso?.nom ?? this.world.player.cls.name, this.perso?.sexe ?? 'm') : null,
+      carte: () => jeu() ? carteBas(this.world, k => interactionProche(this.world, this.world.player)?.k === k) : null,
+      sac: () => {
+        if (!jeu()) return null;
+        const t = this.world.time, uids = this.world.player.bag.map(it => it.uid);
+        if (connus) for (const u of uids) if (!connus.has(u)) neufs.set(u, t);
+        connus = new Set(uids);
+        for (const [u, t0] of neufs) if (t - t0 > 180) neufs.delete(u);
+        return sacBas(this.world, new Set(neufs.keys()));
+      },
+      quetes: () => jeu() ? quetesBas(this.world) : null,
+      fiche: (uid, porte) => {
+        const p = this.world.player, it = porte ? Object.values(p.equipment).find(x => x?.uid === uid) : p.bag.find(x => x.uid === uid);
+        return it && this.windows ? this.windows.ficheObjet(it, porte) : '';
+      },
+      // fenêtres montrées en bas : toutes, sauf celles qui ont leur onglet (sac, quêtes) et celles qui restent en haut
+      fenetre: () => {
+        const w = this.windows, m = w?.ouverte;
+        return w?.fenetre && m && !['inv', 'quetes', 'menu', 'opt', 'guide'].includes(m) ? { el: w.fenetre, mode: m } : null;
       },
       action: a => {
         if (a === 'recharger') { if (!this.vitrine) this.sauver(); location.reload(); return; }
-        if (this.vitrine || !this.sys.isActive()) return;
+        if (!jeu()) return;
         if (a === 'potion') this.action('potion', true);
-        else if (a === 'carte') { this.windows?.close(false); this.basculerCarte(); }
+        else if (a === 'carte') ongletBas('carte');
+        else if (a === 'inv') ongletBas('sac');
+        else if (a === 'quetes') ongletBas('quetes');
         else if (a === 'fermer') this.fermerOuvert();
         else { if (this.carte?.ouverte) this.carte.fermer(); this.windows?.toggle(a); }
       },
+      ordre: o => {
+        if (!jeu()) return;
+        const p = this.world.player;
+        if (o.k === 'equiper') { if (!p.equip(o.uid)) this.hud.toast('Impossible d\'équiper cet objet'); }
+        else if (o.k === 'retirer') p.unequip(o.slot as EquipSlot);
+        else if (o.k === 'cadenas') this.world.cadenas(o.uid);
+        else if (o.k === 'defaire') { if (!rangAbo(p.abo) || !this.world.briserObjet(o.uid)) this.hud.toast('Impossible de défaire cet objet'); }
+        else if (o.k === 'fleche') {
+          const q = depuisPlan(this.world, o.x, o.y);
+          if (q) void this.carte?.suivrePoint(q.x, q.y, 'Écran du bas').then(ok => this.hud.toast(ok ? 'La flèche te guide' : 'Pas de carte du monde ici'));
+        } else if (o.k === 'zaap') this.zaapChoix = o.i;
+        this.windows?.refresh();
+      },
       annonce: t => this.hud.toast(t),
     });
+  }
+  /** Écran du bas relié : le sac, les quêtes et la carte s'ouvrent en bas (leur onglet), le haut s'allège (6B). */
+  private suivreEcranDuBas() {
+    const relie = compagnonRelie() && !this.vitrine;
+    this.hud.basRelie = relie;
+    if (!relie) return;
+    const m = this.windows?.ouverte;
+    if (m === 'inv' || m === 'quetes') { this.windows!.close(false); ongletBas(m === 'inv' ? 'sac' : 'quetes'); }
+    if (this.carte?.ouverte) { this.carte.fermer(true); ongletBas('carte'); }
   }
 
   private fermerOuvert(): boolean {
@@ -1215,7 +1259,7 @@ export class ZoneScene extends Phaser.Scene {
         const m = this.menuStart;
         if (m?.ouvert && (bt === BTN.LB || bt === BTN.RB)) { m.tourner(bt === BTN.RB ? 1 : -1); return true; }
         if (bt === BTN.START) { if (m?.ouvert) m.fermer(); else this.fermerOuvert(); return true; }
-        if (bt === BTN.SELECT) { this.windows?.close(false); this.basculerCarte(); return true; }
+        if (bt === BTN.SELECT) { if (compagnonRelie()) { ongletBas('suivant'); return true; } this.windows?.close(false); this.basculerCarte(); return true; }   // 8A : Select = onglet du bas
         return false;
       },
       retour: () => {
@@ -1236,6 +1280,7 @@ export class ZoneScene extends Phaser.Scene {
       if (osa && m.tenu(BTN.LT) && COUCHE_LT[bt]) { this.manTenues.set(bt, COUCHE_LT[bt]); this.action(COUCHE_LT[bt], true); continue; }
       if (bt === BTN.LT && osa) continue;   // Osamodas : LT ne sert que de couche
       if (bt === BTN.A) { this.boutonA(); continue; }
+      if (bt === BTN.SELECT && compagnonRelie()) { ongletBas('suivant'); continue; }   // « Écran du bas : » 8A
       const a = BOUTONS_JEU[bt];
       if (a) { this.manTenues.set(bt, a); this.action(a, true); }
     }
@@ -1435,7 +1480,7 @@ export class ZoneScene extends Phaser.Scene {
   }
   update(_: number, deltaMs: number) {
     const t0 = performance.now();
-    tickCompagnon();
+    tickCompagnon(); this.suivreEcranDuBas();
     this.updateJeu(deltaMs);
     // Fluidité 5B : images et saccades par zone (pas en vitrine ni sous le rideau d'un voyage)
     if (!this.vitrine && !this.worldView?.presse) ZoneScene.mesure.noter(this.world.area?.name ?? this.world.zone.name, deltaMs);

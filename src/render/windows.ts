@@ -3632,8 +3632,15 @@ export class Windows {
   // --- Fiche d'objet au survol : jets, rareté, panoplie, comparaison avec l'objet porté ---
   private showTip(it: Item, ev: MouseEvent, worn: boolean) {
     this.tipItem = it;
+    const html = this.ficheObjet(it, worn);
+    if (!html) return;
+    this.tip.innerHTML = html;
+    this.tip.style.display = 'block'; this.moveTip(ev);
+  }
+  /** Fiche d'un objet (infobulle du sac) en HTML ; aussi montrée sur l'écran du bas (onglet Sac). */
+  ficheObjet(it: Item, worn: boolean): string {
     const p = this.world.player, d = ITEMS.equipment[it.id];
-    if (!d) return;
+    if (!d) return '';
     const slot = p.slotFor(it), cur = !worn && slot ? p.equipment[slot] : undefined;
     // Forgemagie v2 (1A+1B) : exo et over marqués, jet officiel au bout de la ligne
     const fm = d.familier ? null : etatFM(d, it);
@@ -3686,11 +3693,10 @@ export class Windows {
         ${bonusFamilierHtml(d.familier, n)}
         <div class="hint">Il gagne de l'XP quand tu chasses, et quand tu le nourris (Alt + clic sur un objet ou une ressource du sac).</div>`;
     } else if (p.equipment.familier && !worn) fam = `<div class="hint">Alt + clic : le donner à manger au familier (+${FAMILIER_XP.objet(d.level, it.rarity)} XP)</div>`;
-    this.tip.innerHTML = `<h4 style="color:${RARITY_COLORS[it.rarity]}">${d.name}</h4>
+    return `<h4 style="color:${RARITY_COLORS[it.rarity]}">${d.name}</h4>
       <div class="sub">${d.familier ? 'Familier' : `${RARITY_NAMES[it.rarity]} · ${d.weapon?.type ?? SLOT_NAMES[(slot ?? 'amulette') as EquipSlot]}`} · niveau ${d.level}</div>
       ${weapon}${stats}${travail}${fmPied}${fam}${leg}${neuf}${set}${it.signe ? `<div class="sig">Signé par ${it.signe.replace(/[&<>"]/g, '')}</div>` : ''}${lvl}${cmp}${sourcesHtml(it.id, 3)}
       <div class="hint">${worn ? 'Clic droit : retirer' : it.cadenas ? 'Sous cadenas : jamais défait · Ctrl + clic : l\'ôter' : `Clic droit : équiper · Ctrl + clic : cadenas (défait chez Kerubim : runes${this.world.opts.hdv ? '' : ` + ${kamasDefaire(d, it).toLocaleString('fr-FR')} kamas`})`}</div>`;
-    this.tip.style.display = 'block'; this.moveTip(ev);
   }
   private moveTip(ev: MouseEvent) {
     const t = this.tip, w = t.offsetWidth, h = t.offsetHeight;
