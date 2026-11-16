@@ -12,6 +12,7 @@ import { adresseLadder } from './render/ladder';
 import { ecranTelephone, surTelephone } from './render/telephone';
 import { demarrerManette, reglerControles } from './render/manette';
 import { brancherMiseAJour } from './render/miseAJour';
+import { ecranCompagnon } from './render/compagnon';
 
 // Compte Discord (maquette « Vrai multi : ») : lit le jeton renvoyé par le serveur (#connexion=…) avant de regarder l'adresse
 Compte.demarrer();
@@ -22,15 +23,21 @@ brancherMiseAJour();
 // Site installable comme application (bouton « Installer le jeu » de l'accueil)
 preparerInstallation();
 
-// Polices de Dofus 3 : chargées tout de suite, les textes de Phaser (dégâts, noms, HUD) les dessinent sur le canevas
-for (const f of ['400 13px Lexend', '600 13px Lexend', '700 13px Lexend', '13px Rowdies']) document.fonts?.load(f).catch(() => {});
+// Écran du bas de l'AYN Thor (maquette « Console : » 9A) : diablofus.com/#compagnon, sans le jeu
+if (location.hash.startsWith('#compagnon')) ecranCompagnon();
+else lancer();
 
-// Manette (maquette « Console : ») : lue dès l'écran d'accueil
-reglerControles(chargerReglages().controles);
-demarrerManette();
+function lancer() {
+  // Polices de Dofus 3 : chargées tout de suite, les textes de Phaser (dégâts, noms, HUD) les dessinent sur le canevas
+  for (const f of ['400 13px Lexend', '600 13px Lexend', '700 13px Lexend', '13px Rowdies']) document.fonts?.load(f).catch(() => {});
 
-// Téléphone et tablette (maquette « Accueil : » 7A) : écran léger, le jeu ne se charge que si on insiste
-if (surTelephone()) ecranTelephone(demarrer); else demarrer();
+  // Manette (maquette « Console : ») : lue dès l'écran d'accueil
+  reglerControles(chargerReglages().controles);
+  demarrerManette();
+
+  // Téléphone et tablette (maquette « Accueil : » 7A) : écran léger, le jeu ne se charge que si on insiste
+  if (surTelephone()) ecranTelephone(demarrer); else demarrer();
+}
 
 function demarrer() {
   const game = new Phaser.Game({

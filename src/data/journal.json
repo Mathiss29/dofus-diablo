@@ -2254,7 +2254,10 @@
       "lignes": {
         "Corrections": [
           "Console et téléphone : plus de carrés noirs à la place du butin au sol, des récoltes et des icônes des PNJ.",
-        "Classement : les persos qui montent vite (Mycs, niveau 91) n'en sortent plus par erreur, et y reviennent."
+          "Classement : les persos qui montent vite (Mycs, niveau 91) n'en sortent plus par erreur, et y reviennent."
+        ],
+        "En coulisses": [
+          "AYN Thor : page de test de l'écran du bas (diablofus.com/#compagnon), reliée au jeu de l'écran du haut."
         ]
       }
     }
