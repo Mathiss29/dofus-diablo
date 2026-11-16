@@ -6,7 +6,8 @@
 
 Usage : python icones_ajout.py <item_assets_2x.bundle> <iconId> [iconId ...]
         python icones_ajout.py <item_assets_2x.bundle>            refait seulement la planche et les fichiers (même ordre des cases)
-La planche grandit d'une rangée quand elle est pleine (20 icônes par rangée). Les icônes déjà présentes sont ignorées.
+La planche grandit d'une rangée quand elle est pleine (64 icônes par rangée : 4096 px de large, et jamais plus de 4096 px de haut,
+sinon les téléphones et consoles Android l'affichent en carrés noirs, AYN Thor 2026-11-16). Les icônes déjà présentes sont ignorées.
 Le paquet est dans Dofus_Data/StreamingAssets/Content/Picto/Items (copie dans cache-dofus/astrub/item_assets_2x.bundle) ;
 ses icônes font 128 px (celles d'item_assets_1x, 64 px, sont trop petites pour les fenêtres).
 Les planches sont toujours refaites depuis les icônes d'origine (jamais réencodées par-dessus l'ancienne image, qui se dégraderait).
@@ -34,6 +35,7 @@ n = len(d['icons'])
 for i in voulues:
     if i in trouvees: d['icons'][i] = n; n += 1
 rows = max(d['rows'], math.ceil(n / cols))
+assert max(cols, rows) * C <= 4096, 'planche trop grande pour les GPU mobiles (4096 px) : passer à une 2e planche'
 
 def case(im, c):
     im = im.copy(); im.thumbnail((c, c), Image.LANCZOS); return im

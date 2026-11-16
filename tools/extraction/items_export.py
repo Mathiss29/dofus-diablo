@@ -142,7 +142,7 @@ for i in sorted(used_icons):
     src = os.path.join(icons, f'{i}.png')
     if os.path.exists(src): cells.append((i, src))
     else: miss += 1
-cols = 20; rows = (len(cells) + cols - 1) // cols
+cols = 64; rows = (len(cells) + cols - 1) // cols
 sheet = Image.new('RGBA', (cols * CHD, rows * CHD))
 frames = {}
 for n, (i, src) in enumerate(cells):

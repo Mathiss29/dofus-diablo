@@ -2246,6 +2246,16 @@
           "Serveur : un monde du continent prend 4 fois moins de mémoire, et les parties tournent sur 2 cœurs."
         ]
       }
+    },
+    {
+      "date": "2026-11-16",
+      "titre": "Le butin s'affiche sur console",
+      "resume": "Les objets au sol, les récoltes et les icônes des PNJ ne tombent plus en carrés noirs sur les consoles et téléphones Android.",
+      "lignes": {
+        "Corrections": [
+          "Console et téléphone : plus de carrés noirs à la place du butin au sol, des récoltes et des icônes des PNJ."
+        ]
+      }
     }
   ]
 }
