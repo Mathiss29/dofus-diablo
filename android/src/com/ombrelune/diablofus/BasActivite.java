@@ -15,7 +15,7 @@ public final class BasActivite extends Activity {
     super.onCreate(b);
     ouverte = this;
     Plein.appliquer(getWindow());
-    vue = Toile.creer(this, new Pont(this, this, getWindow()), Toile.BAS);
+    vue = Toile.creer(this, new Pont(this, this, getWindow()), Toile.BAS, null);
     setContentView(vue);
   }
 

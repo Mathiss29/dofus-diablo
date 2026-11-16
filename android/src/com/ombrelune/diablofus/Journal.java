@@ -21,6 +21,22 @@ final class Journal {
   private Journal() {}
 
   private static File fichier(Context c) { return new File(c.getFilesDir(), "plantage.txt"); }
+  private static File marqueur(Context c) { return new File(c.getFilesDir(), "en-cours.txt"); }
+  private static File evts(Context c) { return new File(c.getFilesDir(), "evenements.txt"); }
+
+  /** Ce qui s'est passé pendant la partie (page chargée, erreurs de la page, page tuée par Android) : 40 dernières lignes. */
+  static synchronized void evenement(Context c, String t) {
+    try {
+      File f = evts(c);
+      java.util.List<String> l = f.exists() ? new java.util.ArrayList<>(Files.readAllLines(f.toPath(), StandardCharsets.UTF_8)) : new java.util.ArrayList<String>();
+      l.add(new java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.FRANCE).format(new java.util.Date()) + "  " + t.replace('\n', ' '));
+      while (l.size() > 40) l.remove(0);
+      Files.write(f.toPath(), l, StandardCharsets.UTF_8);
+    } catch (Throwable ignore) { /* rien */ }
+  }
+  /** Lancement : un marqueur reste tant que l'appli n'est pas quittée proprement (une fermeture brutale le laisse). */
+  static void marquerLancement(Context c) { try { new FileOutputStream(marqueur(c)).close(); } catch (Throwable ignore) { } }
+  static void marquerSortie(Context c) { marqueur(c).delete(); }
 
   static void brancher(final Context c) {
     final Thread.UncaughtExceptionHandler avant = Thread.getDefaultUncaughtExceptionHandler();
@@ -49,15 +65,20 @@ final class Journal {
 
   /** Vrai s'il y a eu un plantage depuis le dernier lancement (et le montre). */
   static boolean montrerSiPlantage(final Activity a) {
-    File f = fichier(a);
-    if (!f.exists()) return false;
-    String t;
-    try { t = new String(Files.readAllBytes(f.toPath()), StandardCharsets.UTF_8); } catch (Throwable e) { t = String.valueOf(e); }
-    f.delete();
-    if (t.length() > 6000) t = t.substring(0, 6000);
-    final String texte = t;
+    File f = fichier(a), m = marqueur(a), ev = evts(a);
+    boolean trace = f.exists(), brutal = m.exists();
+    if (!trace && !brutal) { ev.delete(); return false; }
+    StringBuilder t = new StringBuilder();
+    t.append("Diablofus Thor ").append(Principale.VERSION).append(" · Android ").append(android.os.Build.VERSION.RELEASE).append(" · ").append(android.os.Build.MODEL);
+    try { android.content.pm.PackageInfo w = android.webkit.WebView.getCurrentWebViewPackage(); if (w != null) t.append(" · WebView ").append(w.versionName); } catch (Throwable ignore) { }
+    t.append('\n');
+    if (!trace) t.append("Fermeture sans erreur Java (page tuée par Android, mémoire ?)\n");
+    try { if (trace) t.append(new String(Files.readAllBytes(f.toPath()), StandardCharsets.UTF_8)); } catch (Throwable e) { t.append(e); }
+    try { if (ev.exists()) t.append("\nDernières nouvelles :\n").append(new String(Files.readAllBytes(ev.toPath()), StandardCharsets.UTF_8)); } catch (Throwable ignore) { }
+    f.delete(); m.delete(); ev.delete();
+    String texte = t.length() > 8000 ? t.substring(t.length() - 8000) : t.toString();
     new AlertDialog.Builder(a)
-        .setTitle("Diablofus a planté au dernier lancement")
+        .setTitle("Diablofus s'est fermé au dernier lancement")
         .setMessage("Copie ce rapport et colle-le dans le fil. Cette fois, l'écran du bas reste éteint.\n\n" + texte)
         .setPositiveButton("Copier", new Copier(a, texte))
         .setNegativeButton("Fermer", null)
