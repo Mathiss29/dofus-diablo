@@ -41,6 +41,17 @@ import { EntityView } from './entityView';
 import * as Touches from './touches';
 import { Attente, PersoVivant } from './persoVivant';
 import { textureAffichee } from './texturesSures';
+
+/** Zone dont les planches de PNJ, d'habitants et de coffres sont en mémoire. */
+let zonePlanches: string | null = null;
+/** Changement de zone : les planches des PNJ, habitants et coffres de l'ancienne zone sont rendues à la carte graphique.
+ *  Elles restaient pour toujours (Incarnam puis le Bastion : 230 Mo de trop, la Thor fermait la page en arrivant par le Zaap).
+ *  Celles de la nouvelle zone sont rechargées juste après par preload() ; les coffres se rechargent à la demande. */
+function oublierPlanchesZone(scene: Phaser.Scene, zone: string) {
+  if (zonePlanches !== null && zonePlanches !== zone)
+    for (const k of scene.textures.getTextureKeys()) if (/^(pnj_|hab_|coffre_)/.test(k) && !textureAffichee(scene.game, k)) scene.textures.remove(k);
+  zonePlanches = zone;
+}
 import { Assemblage, LANCE_EN_MAIN, apparenceValide, fiches, objetsPortes, type Apparence } from './squelette';
 import { SpellFx } from './spellFx';
 import { FX } from './fx';
@@ -321,6 +332,7 @@ export class ZoneScene extends Phaser.Scene {
 
   preload() {
     Chargement.montrer(this.arriveePar);
+    oublierPlanchesZone(this, this.zoneId);
     this.load.off('progress', Chargement.progres).off('progress', Chargement.fichiers).on('progress', Chargement.fichiers);   // le chargeur survit aux relances de la scène
     Hud.preload(this);
     // Icônes des objets officiels : une seule planche
