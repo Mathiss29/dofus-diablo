@@ -2253,7 +2253,8 @@
       "resume": "Les objets au sol, les récoltes et les icônes des PNJ ne tombent plus en carrés noirs sur les consoles et téléphones Android.",
       "lignes": {
         "Corrections": [
-          "Console et téléphone : plus de carrés noirs à la place du butin au sol, des récoltes et des icônes des PNJ."
+          "Console et téléphone : plus de carrés noirs à la place du butin au sol, des récoltes et des icônes des PNJ.",
+        "Classement : les persos qui montent vite (Mycs, niveau 91) n'en sortent plus par erreur, et y reviennent."
         ]
       }
     }

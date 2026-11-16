@@ -9,7 +9,7 @@ import { createHash } from 'node:crypto';
 import { DatabaseSync } from 'node:sqlite';
 import WebSocket from 'ws';
 import { creerServeur } from './index.mjs';
-import { creerComptes } from './comptes.mjs';
+import { REGLES_DOUTEUX, creerComptes } from './comptes.mjs';
 import { creerClassement } from './classement.mjs';
 import { chargerSim, Partie, PARTIE } from './partie.mjs';
 
@@ -57,7 +57,12 @@ test('2C : une sauvegarde trafiquée du solo est gardée, mais le perso sort du 
   const cl = creerClassement({ comptes, auto: false });
   assert.deepEqual(cl.calculer().listes.niveau, ['1-0'], 'Brak sort du Ladder');
   cl.fermer();
+  // un perso écarté par des règles plus anciennes revient au Ladder au redémarrage
+  comptes.db.prepare('UPDATE douteux SET regles = ?').run(REGLES_DOUTEUX - 1);
   await fin();
+  const apres = creerComptes({ dossier, env: {}, origines: new Set() });
+  assert.equal(apres.douteux(2, 0), null, 'Brak est rendu au Ladder');
+  apres.fermer();
 });
 
 test('8B : le dernier joueur parti, le monde du groupe garde son état et repart quand quelqu’un revient', async () => {
