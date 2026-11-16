@@ -19,6 +19,9 @@ import android.webkit.WebView;
  * besoin d'être mise à jour. Plein écran, écran toujours allumé, manette lue ici et passée aux deux pages.
  */
 public final class Principale extends Activity {
+  static final int VERSION = 2;
+  /** Mode sûr : après un plantage, on lance le jeu seul (sans l'écran du bas). */
+  private boolean sansBas = false;
   private WebView vue;
   private Bas bas;
   private DisplayManager ecrans;
@@ -33,6 +36,8 @@ public final class Principale extends Activity {
 
   @Override protected void onCreate(Bundle b) {
     super.onCreate(b);
+    Journal.brancher(this);
+    sansBas = Journal.montrerSiPlantage(this);
     WebView.setWebContentsDebuggingEnabled(true);   // chrome://inspect depuis un PC, pour les rapports de bug
     Plein.appliquer(getWindow());
     vue = Toile.creer(this, new Pont(this, this, getWindow()), Toile.JEU);
@@ -43,10 +48,14 @@ public final class Principale extends Activity {
   @Override protected void onStart() {
     super.onStart();
     ecrans.registerDisplayListener(suivi, main);
-    ouvrirBas();
   }
 
-  @Override protected void onResume() { super.onResume(); vue.onResume(); vue.resumeTimers(); Plein.appliquer(getWindow()); if (bas != null && bas.vue != null) bas.vue.onResume(); }
+  @Override protected void onResume() {
+    super.onResume(); vue.onResume(); vue.resumeTimers(); Plein.appliquer(getWindow());
+    if (bas != null && bas.vue != null) bas.vue.onResume();
+    // l'écran du bas s'ouvre quand la fenêtre du jeu est posée (avant : au démarrage, refusé par Android = plantage)
+    main.postDelayed(new Runnable() { @Override public void run() { ouvrirBas(); } }, 600);
+  }
 
   @Override protected void onPause() { Manette.lacher(); vue.onPause(); if (bas != null && bas.vue != null) bas.vue.onPause(); super.onPause(); }
 
@@ -75,20 +84,26 @@ public final class Principale extends Activity {
   }
 
   private void ouvrirBas() {
-    Display d = secondEcran();
-    if (d == null || BasActivite.ouverte != null) return;
-    if (bas != null) { if (bas.getDisplay().getDisplayId() == d.getDisplayId()) return; bas.fermer(); bas = null; }
+    if (sansBas || isFinishing() || isDestroyed()) return;
     try {
-      bas = new Bas(this, d);
-      bas.show();
-    } catch (WindowManager.InvalidDisplayException | IllegalStateException | SecurityException e) {
-      bas = null;
-      try {   // secours : une activité lancée sur le second écran
-        ActivityOptions o = ActivityOptions.makeBasic().setLaunchDisplayId(d.getDisplayId());
-        startActivity(new Intent(this, BasActivite.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK), o.toBundle());
-      } catch (Exception e2) { /* un seul écran utilisable : le jeu seul */ }
-    }
+      Display d = secondEcran();
+      if (d == null || BasActivite.ouverte != null) return;
+      if (bas != null) { if (bas.getDisplay().getDisplayId() == d.getDisplayId()) return; bas.fermer(); bas = null; }
+      try {
+        bas = new Bas(this, d);
+        bas.show();
+      } catch (Throwable e) {
+        signaler("Écran du bas en présentation refusé (" + e.getClass().getSimpleName() + ") : essai en activité");
+        if (bas != null) { try { bas.fermer(); } catch (Throwable ignore) { } bas = null; }
+        try {   // secours : une activité lancée sur le second écran
+          ActivityOptions o = ActivityOptions.makeBasic().setLaunchDisplayId(d.getDisplayId());
+          startActivity(new Intent(this, BasActivite.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK), o.toBundle());
+        } catch (Throwable e2) { signaler("Écran du bas indisponible : " + e2.getMessage()); }   // un seul écran utilisable : le jeu seul
+      }
+    } catch (Throwable e) { signaler("Écran du bas indisponible : " + e.getMessage()); sansBas = true; }
   }
+
+  private void signaler(String t) { android.widget.Toast.makeText(this, t, android.widget.Toast.LENGTH_LONG).show(); }
 
   @Override public boolean dispatchKeyEvent(KeyEvent e) {
     if (Manette.cle(e)) return true;

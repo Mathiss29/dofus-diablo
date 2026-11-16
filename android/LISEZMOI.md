@@ -9,6 +9,8 @@ Maquette « Confort 2 : » 1A (2026-11-16). Une petite appli qui ouvre **le jeu 
 - la manette est lue par l'appli (`Manette.java`) et passée aux pages par `window.DiablofusAppli.manette()` : toucher
   l'écran du bas ne coupe jamais la manette du jeu (`src/render/manette.ts`, `padNatif`) ;
 - `DiablofusAppli.vibrer(fort, faible, ms)` : vibreur de la console ; `luminosite(f)` : l'écran du bas qui s'assombrit ;
+- plantage : la trace est gardée (`Journal.java`) et montrée au lancement suivant avec un bouton Copier ; ce lancement-là
+  se fait sans l'écran du bas (mode sûr). L'écran du bas s'ouvre une fois la fenêtre du jeu posée (`onResume`).
 - retour Android = Échap dans la page ; liens hors du jeu (sauf Discord pour la connexion) = navigateur.
 
 Téléchargement : https://diablofus.com/appli/diablofus-thor.apk (Options › Manette, ou l'onglet liaison de l'écran du bas).
