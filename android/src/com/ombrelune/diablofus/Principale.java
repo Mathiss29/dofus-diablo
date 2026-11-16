@@ -91,6 +91,21 @@ public final class Principale extends Activity {
     }
   }
 
+  private long dernierePerte = 0;
+  private WebView nouvelleVue() { return Toile.creer(this, new Pont(this, this, getWindow()), Toile.JEU, new Perte()); }
+  /** Page du jeu tuée par Android : on en refait une (au lieu de fermer l'appli) ; deux fois en une minute, sans l'écran du bas. */
+  final class Perte implements Toile.SurPerte {
+    @Override public void pagePerdue(WebView w) {
+      long t = android.os.SystemClock.uptimeMillis();
+      if (t - dernierePerte < 60_000 && !sansBas) { sansBas = true; if (bas != null) { bas.fermer(); bas = null; } signaler("Le jeu a manqué de mémoire : l'écran du bas est éteint pour cette fois"); }
+      dernierePerte = t;
+      if (w == vue) {
+        WebView n = nouvelleVue(); vue = n; setContentView(n);
+        try { w.destroy(); } catch (Throwable ignore) { }
+      } else if (bas != null && w == bas.vue) { bas.fermer(); bas = null; main.postDelayed(new Runnable() { @Override public void run() { ouvrirBas(); } }, 1500); }
+    }
+  }
+
   @Override protected void onStart() {
     super.onStart();
     Journal.marquerLancement(this);   // marqueur posé tant que l'appli est à l'écran (une fermeture brutale le laisse)
