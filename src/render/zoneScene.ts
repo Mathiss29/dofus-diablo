@@ -67,7 +67,7 @@ import { inviterDiscord } from './inviteDiscord';
 import { Parcours } from './parcours';
 import { MesureFluidite } from './fluidite';
 import { spellTipHtml } from './spellTip';
-import { LEGENDARY, RARITY_COLORS, RARITY_NAMES, STAT_NAMES, rollItem, type Stat } from '../sim/items';
+import { LEGENDARY, RARITIES, RARITY_COLORS, RARITY_NAMES, STAT_NAMES, rollItem, type Item, type Stat } from '../sim/items';
 import { POUVOIR_PAR_ID, V03_PUBLIC, V04_PUBLIC } from '../sim/pouvoirs';
 import { lieuxDeZone } from '../sim/passants';
 import { PC_PAR_ID } from '../sim/pouvoirsClasse';
@@ -92,14 +92,14 @@ import { ChatVue, ligne as ligneTchat } from './chat';
 import { COULEUR_INFO, lienObjet, type SorteInfo } from './chatOutils';
 import { BullesChat } from './bullesChat';
 import { demandesEnAttente, menuJoueur, montrerInvitation } from './social';
-import { annonceBas, brancherCompagnon, compagnonRelie, ongletBas, tickCompagnon } from './compagnon';
-import { carteBas, depuisPlan, etatBas, quetesBas, sacBas } from './compagnonEtat';
+import { annonceBas, bilanBas, brancherCompagnon, compagnonRelie, ongletBas, tickCompagnon } from './compagnon';
+import { carteBas, combatBas, depuisPlan, etatBas, groupeBas, quetesBas, raccourcisBas, sacBas } from './compagnonEtat';
 import { rangAbo } from '../sim/boutiqueOgrines';
 import type { EquipSlot } from '../sim/items';
 import { BTN, brancherJeu, brancheActuelle, elementManette, focusManette, manetteActive, reglerControles, reglerVibrations, vibrer, type BrancheJeu, type ImageManette } from './manette';
 import { modeConsole, petitEcranConsole, reglerModeConsole, suivreModeConsole, REGLAGE_THOR } from './console';
 import { BOUTONS_JEU, COUCHE_LT, MenuStart, cibleAuto, dirMonde, interactionProche, paquetDense, type Interaction } from './manetteJeu';
-import { A_LONG, cibleDansDirection, decrireInteraction, Pichenette, RoueConso } from './confortManette';
+import { comparerAuSol, A_LONG, cibleDansDirection, decrireInteraction, Pichenette, RoueConso } from './confortManette';
 /** Archimonstres du jeu (carnet des âmes, « Archis : » 8A). */
 const NB_ARCHIS = Object.values(GAME_DATA.monsters).filter(d => d.archiDe).length;
 
@@ -117,6 +117,10 @@ const CURSEUR_PORTE = `url("${v(`${ASSETS}/ui/curseur_porte.png`)}") 1 1, pointe
  *  à pas fixe, et dessine son état. Toute la logique de jeu est dans World (src/sim). */
 /** 0.6 (25B) : ornement du succès « Maître de la tranche » : le porter allume son aura dorée. */
 const AURA_MAITRE = 900;
+
+/** « Idées Thor : » 5B : Select maintenu + croix. */
+const AIDE_VISEE = { faible: 0.6, normale: 1, forte: 1.4 } as const;
+const SIGNAUX: Record<number, string> = { [BTN.HAUT]: 'Ici !', [BTN.DROITE]: 'On y va !', [BTN.BAS]: 'Aide !', [BTN.GAUCHE]: 'Attends !' };
 
 export class ZoneScene extends Phaser.Scene {
   private zoneId = 'incarnam';
@@ -183,6 +187,11 @@ export class ZoneScene extends Phaser.Scene {
   private basAppui: number | null = null;
   private l3Appui: number | null = null;
   private marcheAuto = false;
+  // « Idées Thor : » 3C bilan du donjon ; 5A allié visé depuis l'écran du bas ; 4A Zaap choisi de loin ; 5B Select maintenu = signaux
+  private bilan: { objets: Item[]; kamas: number; kills: number; envoye: boolean } | null = null;
+  private allieVise: { id: number; jusque: number } | null = null;
+  private zaapApres: { i: number; jusque: number } | null = null;
+  private selAppui: { signal: boolean } | null = null;
   private manCible: number | null = null;
   private ramasseT = new Map<number, number>();
   private vibreT = 0;
@@ -625,7 +634,7 @@ export class ZoneScene extends Phaser.Scene {
       this.bindInput();
       this.brancherManette();
       this.brancherEcranDuBas();
-      this.hud.versBas = (t, c) => annonceBas(t, c);   // « Interfaces Thor : » 8A
+      this.hud.versBas = (t, c, uid) => annonceBas(t, c, uid);   // « Interfaces Thor : » 8A
       // Confort Thor 5B : console fermée ou appli quittée, le perso est sauvé tout de suite
       const cache = () => { if (document.hidden && !this.vitrine && this.sys.isActive()) this.sauver(); };
       document.addEventListener('visibilitychange', cache);
@@ -1212,7 +1221,8 @@ export class ZoneScene extends Phaser.Scene {
       etat: () => {
         if (!jeu()) return null;
         const i = interactionProche(this.world, this.world.player), d = i ? decrireInteraction(this.world, i) : null;   // 1E : bouton en bas
-        return { ...etatBas(this.world, this.perso?.nom ?? this.world.player.cls.name, this.perso?.sexe ?? 'm'), inter: d?.texte ?? null };
+        return { ...etatBas(this.world, this.perso?.nom ?? this.world.player.cls.name, this.perso?.sexe ?? 'm'), inter: d?.texte ?? null,
+          combat: combatBas(this.world, this.manCible ?? this.hud.cibleId), raccourcis: raccourcisBas(this.world), groupe: groupeBas(this.world), fps: Math.round(this.game.loop.actualFps) };
       },
       carte: () => jeu() ? carteBas(this.world, k => interactionProche(this.world, this.world.player)?.k === k) : null,
       sac: () => {
@@ -1255,7 +1265,17 @@ export class ZoneScene extends Phaser.Scene {
         else if (o.k === 'fleche') {
           const q = depuisPlan(this.world, o.x, o.y);
           if (q) void this.carte?.suivrePoint(q.x, q.y, 'Écran du bas').then(ok => this.hud.toast(ok ? 'La flèche te guide' : 'Pas de carte du monde ici'));
-        } else if (o.k === 'zaap') this.zaapChoix = o.i;
+        } else if (o.k === 'zaap') this.allerAuZaap(o.i);   // 4A : de loin, on marche jusqu'au Zaap le plus proche, puis le voyage
+        else if (o.k === 'raccourci') {   // 2A
+          if (o.id === 'havresac') this.havreSacDemande = true;
+          else if (o.id === 'zaap') this.allerAuZaap(-1);
+          else if (o.id === p.ceinture) this.boisson = true;
+          else this.consommer(o.id);
+        } else if (o.k === 'allie') {   // 5A : les sorts de l'Eniripsa partent sur ce joueur pendant 6 s
+          const q = this.world.players.find(x => x.id === o.id);
+          if (q && p.cls.eniripsa) { this.allieVise = { id: o.id, jusque: this.world.time + 6 }; this.hud.toast(`Tes sorts visent ${q.nom ?? 'ton allié'}`); }
+          else if (q) this.hud.toast(`${q.nom ?? 'Allié'} : ${Math.ceil(q.hp)} / ${q.maxHp} PV`);
+        }
         else if (o.k === 'dire') this.chat?.dire(o.texte.slice(0, 200));
         else if (o.k === 'interagir') { const i = interactionProche(this.world, p); if (i) this.interagir(i); }
         this.windows?.refresh();
@@ -1275,10 +1295,11 @@ export class ZoneScene extends Phaser.Scene {
     // 1B : bulle au-dessus de ce que A maintenu va prendre (rien en combat : A frappe)
     const d = i ? decrireInteraction(this.world, i) : null, k = densite() / this.cameras.main.zoom;
     if (d) {
-      const b = this.bulleA ??= (() => { const o = this.add.text(0, 0, '', { fontFamily: 'Lexend, sans-serif', fontSize: '15px', fontStyle: 'bold', color: '#f4efe0', backgroundColor: '#0b0910e6', padding: { x: 9, y: 5 } })
+      const b = this.bulleA ??= (() => { const o = this.add.text(0, 0, '', { fontFamily: 'Lexend, sans-serif', fontSize: '15px', fontStyle: 'bold', color: '#f4efe0', backgroundColor: '#0b0910e6', padding: { x: 9, y: 5 }, align: 'center' })
         .setOrigin(0.5, 1).setDepth(1e6 + 1); this.cameras.getCamera('mini')?.ignore(o); this.events.once('shutdown', () => { o.destroy(); this.bulleA = null; }); return o; })();
       const s = ISO.toScreen(d.x, d.y);
-      b.setText(`Maintiens A · ${d.texte}`).setPosition(s.x, s.y - 90).setScale(k).setVisible(true);
+      const cmp = i?.k === 'drop' ? comparerAuSol(this.world, i.id) : null;   // « Idées Thor : » 3A
+      b.setText(cmp ? `Maintiens A · ${d.texte}\n${cmp}` : `Maintiens A · ${d.texte}`).setPosition(s.x, s.y - 90).setScale(k).setVisible(true);
       if (prog > 0) { g.fillStyle(0xd3f46f, 1); g.fillRect(b.x - b.displayWidth / 2, b.y + 1 * k, b.displayWidth * prog, 4 * k); }
     } else this.bulleA?.setVisible(false);
     // 3A : cercle rouge sous la cible de l'auto-visée
@@ -1293,6 +1314,33 @@ export class ZoneScene extends Phaser.Scene {
     if (this.basAppui != null && !this.roue.ouverte && t - this.basAppui >= 0.35 && actif) this.roue.ouvrir(p);
     if (this.roue.ouverte) { if (!actif) this.roue.fermer(); else this.roue.viser(this.manG); }
     if (this.l3Appui != null && this.l3Appui >= 0 && t - this.l3Appui >= 0.6) { this.l3Appui = -1; this.marcheAuto = false; this.havreSacDemande = true; }
+  }
+  /** « Idées Thor : » 4A : Zaap touché sur la carte du bas. Près d'un Zaap : le voyage ; sinon on marche jusqu'au plus proche,
+   *  puis on part vers celui choisi (i = -1 : seulement ouvrir la liste en arrivant). */
+  private allerAuZaap(i: number) {
+    const w = this.world, p = w.player;
+    if (w.zaapProche() || this.windows?.ouverte === 'zaap') { if (i >= 0) this.zaapChoix = i; else this.zaapClick = w.zaapProche()?.name ?? null; return; }
+    const l = w.zaapsIci(); if (!l.length) { this.hud.toast('Pas de Zaap dans cette zone'); return; }
+    const z = l.reduce((a, b) => Math.hypot(b.x - p.x, b.y - p.y) < Math.hypot(a.x - p.x, a.y - p.y) ? b : a);
+    this.zaapClick = z.name; this.zaapApres = i >= 0 ? { i, jusque: w.time + 90 } : null;
+    this.hud.toast(`En route vers le Zaap ${z.name}${i >= 0 ? ', puis le voyage' : ''}`);
+  }
+  /** Chaque image : le voyage qui attend l'arrivée au Zaap (4A), le bilan du donjon (3C). */
+  private suivreIdeesThor() {
+    const w = this.world, za = this.zaapApres;
+    if (za && (w.zaapProche() || this.windows?.ouverte === 'zaap')) { this.zaapChoix = za.i; this.zaapApres = null; }
+    else if (za && w.time > za.jusque) this.zaapApres = null;
+    if (this.allieVise && w.time > this.allieVise.jusque) this.allieVise = null;
+    const ar = w.arene;
+    if (!ar) { this.bilan = null; return; }
+    if (ar.demarre && !ar.fini && !this.bilan) this.bilan = { objets: [], kamas: 0, kills: w.kills, envoye: false };
+    const b = this.bilan;
+    if (b && ar.fini && !b.envoye) {
+      b.envoye = true;
+      const meilleur = b.objets.slice().sort((x, y) => RARITIES.indexOf(y.rarity) - RARITIES.indexOf(x.rarity))[0], dm = meilleur && ITEMS.equipment[meilleur.id];
+      bilanBas(`${w.lieu ?? w.zone.name} : terminé`, [`Temps : ${chrono(ar.chrono)}`, `Monstres vaincus : ${w.kills - b.kills}`, `Objets : ${b.objets.length}${b.kamas ? ` · ${b.kamas.toLocaleString('fr-FR')} kamas` : ''}`,
+        ...(dm ? [`Meilleur : ${dm.name} (${RARITY_NAMES[meilleur.rarity]})`] : [])]);
+    }
   }
   /** 7A : boire, manger, lire ce que la roue a choisi (comme le clic droit du sac). */
   private consommer(id: string) {
@@ -1316,7 +1364,10 @@ export class ZoneScene extends Phaser.Scene {
   }
   /** 4A : vibrer aux moments forts (gros coup reçu, boss, butin Légendaire ou mieux, coup critique). */
   private vibrerSur(e: SimEvent) {
-    if (e.k === 'grosCoup') vibrer(0.9, 0.5, 220);
+    if (e.k === 'grosCoup') {   // « Idées Thor : » 8A : le moteur du côté du coup (gauche = fort, droite = léger) vibre plus
+      const sx = ISO.toScreen(e.dx ?? 0, e.dy ?? 0).x;
+      if (sx < -20) vibrer(1, 0.25, 220); else if (sx > 20) vibrer(0.3, 1, 220); else vibrer(0.9, 0.5, 220);
+    }
     else if (e.k === 'bossIntro') vibrer(1, 1, 600);
     else if (e.k === 'loot' && (e.item.rarity === 'legendaire' || e.item.rarity === 'mythique')) vibrer(0.6, 1, 400);
     else if (e.k === 'hit' && e.target === 'monster' && e.crit) { const t = performance.now(); if (t - this.vibreT > 250) { this.vibreT = t; vibrer(0.15, 0.45, 70); } }
@@ -1392,11 +1443,17 @@ export class ZoneScene extends Phaser.Scene {
       if (bt === BTN.A) { this.aAppui = { t: performance.now() / 1000, fait: false }; this.manAttaque = true; this.pressed = 'attaque'; continue; }   // 1D : frappe tout de suite
       if (bt === BTN.BAS) { this.basAppui = performance.now() / 1000; continue; }   // 7A : court = potion, maintenu = roue
       if (bt === BTN.L3) { this.l3Appui = performance.now() / 1000; continue; }   // 6A : court = marche auto, maintenu = Havre-Sac
-      if (bt === BTN.SELECT && compagnonRelie()) { ongletBas('suivant'); continue; }   // « Écran du bas : » 8A
+      if (bt === BTN.SELECT) { this.selAppui = { signal: false }; continue; }   // court : onglet du bas ou carte ; tenu + croix : signal (5B)
+      if (this.selAppui && m.tenu(BTN.SELECT) && SIGNAUX[bt]) { this.selAppui.signal = true; this.signal(SIGNAUX[bt]); continue; }
       const a = BOUTONS_JEU[bt];
       if (a) { this.manTenues.set(bt, a); this.action(a, true); }
     }
     for (const bt of m.relaches) {
+      if (bt === BTN.SELECT && this.selAppui) {
+        const s = this.selAppui; this.selAppui = null;
+        if (!s.signal) { if (compagnonRelie()) ongletBas('suivant'); else { this.action('carte', true); this.action('carte', false); } }   // « Écran du bas : » 8A
+        continue;
+      }
       if (bt === BTN.A) { this.aAppui = null; this.manAttaque = false; if (this.manRecolte) { this.manRecolte = false; this.recolteMaintenu = false; } }
       if (bt === BTN.BAS && this.basAppui != null) {
         this.basAppui = null;
@@ -1406,6 +1463,17 @@ export class ZoneScene extends Phaser.Scene {
       const a = this.manTenues.get(bt);
       if (a) { this.manTenues.delete(bt); if (a === 'CLICD') this.up('CLICD'); else this.action(a, false); }
     }
+  }
+  /** « Idées Thor : » 5B : signal au groupe (Select maintenu + croix) : bulle au-dessus du perso, et ligne au canal Groupe en ligne. */
+  private signal(texte: string) {
+    vibrer(0.2, 0.3, 60);
+    if (this.chatEnLigne && this.chat) this.chat.dire(`/g ${texte}`);
+    else this.hud.toast(`Signal : ${texte}`);
+    const p = this.world.player, s = ISO.toScreen(p.x, p.y), k = densite() / this.cameras.main.zoom;
+    const t = this.add.text(s.x, s.y - 120, texte, { fontFamily: 'Lexend, sans-serif', fontSize: '17px', fontStyle: 'bold', color: '#ffe27a', backgroundColor: '#0b0910e6', padding: { x: 9, y: 5 } })
+      .setOrigin(0.5, 1).setDepth(1e6 + 2).setScale(k);
+    this.cameras.getCamera('mini')?.ignore(t);
+    this.tweens.add({ targets: t, y: s.y - 150, alpha: 0, delay: 1400, duration: 600, onComplete: () => t.destroy() });
   }
   /** A maintenu (1D) : ce qu'il prendrait. Rien tant qu'un monstre est à 4 cases : en combat, A ne fait que frapper. */
   private interactionA(): Interaction | null {
@@ -1439,7 +1507,7 @@ export class ZoneScene extends Phaser.Scene {
     let cible = null;
     if ((r.x || r.y) && this.pich.tenu(t)) { const d = dirMonde(r); input.aim = { x: p.x + d.x * 240, y: p.y + d.y * 240 }; input.castOn = null; this.manCible = null; }
     else {
-      cible = cibleAuto(this.world, p, this.manGardee, bouge ? input.move : null);
+      cible = cibleAuto(this.world, p, this.manGardee, bouge ? input.move : null, AIDE_VISEE[this.reglages.aideVisee ?? 'normale']);
       this.manCible = cible?.id ?? null;
       if (this.manGardee != null && cible?.id !== this.manGardee) this.manGardee = null;
       if (cible) { input.aim = { x: cible.x, y: cible.y }; input.castOn = input.pressed && input.pressed !== 'attaque' ? cible.id : null; }
@@ -1581,6 +1649,9 @@ export class ZoneScene extends Phaser.Scene {
     if (!held && this.clickMode === 'ground' && this.clickDest) { input.dest = aim; }
     this.clickDest = held && this.clickMode === 'ground';
     if (manetteActive()) this.appliquerManette(input); else this.manAim = null;
+    // « Idées Thor : » 5A : allié touché sur l'écran du bas, les sorts de l'Eniripsa partent sur lui
+    const av = this.allieVise && input.pressed && input.pressed !== 'attaque' && moi.cls.eniripsa ? this.world.players.find(o => o.id === this.allieVise!.id && !o.dead) : null;
+    if (av) { input.castOn = null; input.aim = { x: av.x, y: av.y }; }
     this.pressed = null; this.potion = false; this.boisson = false;
     // curseur : une épée sur un monstre
     const surPnj = this.questView?.pnjUnder(ptr, this.cameras.main) ?? null;
@@ -1618,7 +1689,7 @@ export class ZoneScene extends Phaser.Scene {
   }
   update(_: number, deltaMs: number) {
     const t0 = performance.now();
-    tickCompagnon(); this.suivreEcranDuBas(); this.confortManette();
+    tickCompagnon(); this.suivreEcranDuBas(); this.confortManette(); this.suivreIdeesThor();
     if (suivreModeConsole() && !this.reglages.presetThor && this.reglageThor()) {   // manette branchée après le lancement
       this.appliquerReglages(); this.updateAmbiance(true); this.windows?.refresh();
       this.hud.toast('Réglage « Thor » appliqué : 60 images/s, particules coupées (Options › Graphismes)', 3500);
@@ -1915,11 +1986,12 @@ export class ZoneScene extends Phaser.Scene {
           break;
         case 'loot': {
           const d = ITEMS.equipment[e.item.id];
-          this.hud.loot(`${d?.name ?? 'Objet'}  ·  ${RARITY_NAMES[e.item.rarity]}`, RARITY_COLORS[e.item.rarity]);
+          this.hud.loot(`${d?.name ?? 'Objet'}  ·  ${RARITY_NAMES[e.item.rarity]}`, RARITY_COLORS[e.item.rarity], e.item.uid);
+          this.bilan?.objets.push(e.item);   // « Idées Thor : » 3C
           this.windows?.refresh();
           break;
         }
-        case 'lootKamas': this.hud.loot(`+${e.n} kamas`, '#f2d36b'); this.windows?.refresh(); break;
+        case 'lootKamas': this.hud.loot(`+${e.n} kamas`, '#f2d36b'); if (this.bilan) this.bilan.kamas += e.n; this.windows?.refresh(); break;
         case 'bagFull': this.hud.toast('Sac plein : défais des objets chez Kerubim Crépin, au Bastion des Douze'); break;
         case 'monsterCast': this.castName(e.id, e.name); break;
         case 'itemDrop': if (this.reglages.alerteButin !== false && (e.rarity === 'epique' || e.rarity === 'legendaire' || e.rarity === 'mythique')) this.chime(e.rarity === 'mythique' && !this.world.player.v03 ? 'legendaire' : e.rarity); break;   // 14C : son du Mythique en 0.3

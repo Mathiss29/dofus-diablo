@@ -802,7 +802,9 @@ export class Hud {
     this.scene.tweens.add({ targets: small, alpha: 0, delay: ms, duration: 700 });
   }
   /** « Interfaces Thor : » 8A : petit texte envoyé à l'écran du bas quand il est relié (vrai = ne pas l'afficher en haut). */
-  versBas: ((t: string, c?: string) => boolean) | null = null;
+  versBas: ((t: string, c?: string, uid?: number) => boolean) | null = null;
+  /** Monstre ciblé ces 5 dernières secondes (cadre de la cible), pour l'écran du bas. */
+  get cibleId(): number | null { return this.targetT > 0 ? this.targetId : null; }
   toast(text: string, duree = 1600) {
     if (this.versBas?.(text)) return;
     this.toastText.setText(text).setAlpha(1);
@@ -822,8 +824,8 @@ export class Hud {
   /** Sort lancé sans assez de PA (ou de PM) : la barre clignote en rouge. */
   noResource(res: 'pa' | 'pm') { this.shortOf[res] = 0.35; }
   /** Ligne dans le journal de butin (en bas à droite). */
-  loot(text: string, color = '#e8e2d4') {
-    if (this.versBas?.(text, color)) return;
+  loot(text: string, color = '#e8e2d4', uid?: number) {
+    if (this.versBas?.(text, color, uid)) return;
     const t = this.fixed(this.scene.add.text(0, 0, text, { ...STYLE, fontSize: '13px', color }).setOrigin(1, 1), 5);
     this.feed.unshift({ text: t, t: 5 });
     for (const f of this.feed.splice(6)) f.text.destroy();

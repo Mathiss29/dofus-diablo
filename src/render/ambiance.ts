@@ -96,6 +96,8 @@ export interface Reglages {
   modeConsole: 'auto' | 'oui' | 'non';
   /** 9A : réglage « Thor » déjà appliqué une fois (on ne l'impose plus ensuite). */
   presetThor?: boolean;
+  /** « Idées Thor : » 6A : portée de l'auto-visée à la manette. */
+  aideVisee?: 'faible' | 'normale' | 'forte';
 }
 /** 7B : ce que règle chaque qualité prédéfinie. */
 export const QUALITES: Record<'basse' | 'moyenne' | 'haute', Partial<Reglages>> = {
@@ -106,7 +108,7 @@ export const QUALITES: Record<'basse' | 'moyenne' | 'haute', Partial<Reglages>> 
 export const REGLAGES_DEFAUT: Reglages = { heure: 'auto', lumieres: 1, saturation: 1, chaleur: 0, zoom: 0.8, volume: 1, volMusique: 0.5, volEffets: 0.7, volMonstres: 0.5, volAmbiance: 0.6, volInterface: 0.7, musiqueBoss: true, muet: false, vent: true, eau: true, particules: true, transparence: true, lancer: 'relache', approche: false, flecheQuete: true,
   touches: {}, clavier: 'auto', chiffres: true, tailleChiffres: 'normale', dps: false, barresVie: 'blesses', zoomMolette: true, deplacement: 'gauche',
   verrou: true, modules: {}, coords: true, recoltesMini: true, echelle: 1, qualite: 'haute', fps: 0, compteurFps: false, alerteButin: true, pulsePv: true, resolution: 'ecran',
-  chatOnglets: ONGLETS_DEFAUT, chatTaille: [360, 170], chatHeure: true, chatFond: 0.82, chatTexte: 1, chatEffacement: '20', chatTout: true, chatBastion: true, controles: 'auto', vibrations: true, modeConsole: 'auto' };
+  chatOnglets: ONGLETS_DEFAUT, chatTaille: [360, 170], chatHeure: true, chatFond: 0.82, chatTexte: 1, chatEffacement: '20', chatTout: true, chatBastion: true, controles: 'auto', vibrations: true, modeConsole: 'auto', aideVisee: 'normale' };
 const CLE = 'diablofus.reglages';
 
 export function chargerReglages(): Reglages {

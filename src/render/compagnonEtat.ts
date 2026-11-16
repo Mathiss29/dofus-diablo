@@ -7,6 +7,8 @@ import { ISO } from '../sim/iso';
 import { GAME_DATA, ITEMS } from '../sim/data';
 import { effetsActifs } from '../sim/effets';
 import { rangAbo } from '../sim/boutiqueOgrines';
+import { nomAffixe } from '../sim/elites';
+import type { Monster } from '../sim/monster';
 
 const CASE = 48;
 
@@ -18,7 +20,48 @@ export interface PersoBas {
 export interface SortBas { icone: number; nom: string; t: number; frac: number; charges: number | null }
 export interface EffetBas { nom: string; t: number; sorte: 'sort' | 'monstre' | 'objet' }
 /** inter : ce que A maintenu prendrait (« Parler à Ganymède »), montré en bouton sur l'écran du bas (Confort Thor 1E). */
-export interface EtatBas { perso: PersoBas; sorts: SortBas[]; effets: EffetBas[]; inter?: string | null }
+export interface EtatBas {
+  perso: PersoBas; sorts: SortBas[]; effets: EffetBas[]; inter?: string | null;
+  /** « Idées Thor : » 1A+1B : en combat (la vue Combat s'ouvre en bas), la cible et le radar (cases écran autour du perso). */
+  combat?: CombatBas; raccourcis?: RaccourciBas[]; groupe?: AllieBas[]; fps?: number;
+}
+export interface CombatBas { en: boolean; cible: { nom: string; niveau: number; pv: number; pvMax: number; rang: number; info: string } | null; radar: [number, number, number][] }
+/** 2A : raccourcis au doigt (id d'une ressource, ou 'havresac', 'zaap'). */
+export interface RaccourciBas { id: string; nom: string; icone: number; n: number }
+/** 5A : portraits du groupe (toucher = l'Eniripsa vise ce joueur). */
+export interface AllieBas { id: number; nom: string; classe: string; niveau: number; pv: number; pvMax: number }
+
+/** En combat : un monstre réveillé à moins de 20 cases, un sort en cours, ou une arène. */
+export function enCombat(w: World): boolean {
+  const p = w.player;
+  if (p.skill || (w.arene && !w.arene.fini && w.arene.demarre)) return true;
+  return w.monsters.some(m => !m.dead && m.state !== 'idle' && m.state !== 'return' && m.state !== 'spawn' && Math.hypot(m.x - p.x, m.y - p.y) < CASE * 20);
+}
+export function combatBas(w: World, cibleId: number | null): CombatBas {
+  const p = w.player, radar: CombatBas['radar'] = [];
+  for (const m of w.monsters) {
+    if (m.dead || Math.abs(m.x - p.x) > CASE * 14 || Math.abs(m.y - p.y) > CASE * 14) continue;
+    const s = ISO.toScreen(m.x - p.x, m.y - p.y);
+    radar.push([Math.round(s.x / CASE * 10) / 10, Math.round(s.y / CASE * 10) / 10, m.def.boss ? 2 : m.def.elite ? 1 : 0]);
+  }
+  const m = cibleId != null ? w.monsters.find(x => x.id === cibleId && !x.dead) as Monster | undefined : undefined;
+  const cible = m ? { nom: m.def.name, niveau: w.monsterLevel(m), pv: Math.max(0, Math.ceil(m.hp)), pvMax: m.maxHp, rang: m.def.boss ? 2 : m.def.elite ? 1 : 0,
+    info: [...(m.champion ? ['Champion'] : []), ...m.affixes.map(nomAffixe)].join(', ') } : null;
+  return { en: enCombat(w), cible, radar };
+}
+export function groupeBas(w: World): AllieBas[] {
+  return w.players.filter(o => o !== w.player).map(o => ({ id: o.id, nom: o.nom ?? '', classe: o.cls.name, niveau: o.level, pv: Math.max(0, Math.ceil(o.hp)), pvMax: o.maxHp }));
+}
+/** 2A : Potions de Rappel (et autres ressources de rappel), la boisson de la ceinture, le Havre-Sac, le Zaap le plus proche. */
+export function raccourcisBas(w: World): RaccourciBas[] {
+  const p = w.player, l: RaccourciBas[] = [];
+  for (const [id, n] of Object.entries(p.resources)) { const r = ITEMS.resources[id]; if (r?.rappel && n) l.push({ id, nom: r.name, icone: r.icon ?? 0, n }); }
+  const b = p.ceinture, rb = b ? ITEMS.resources[b] : undefined;
+  if (b && rb) l.push({ id: b, nom: rb.name, icone: rb.icon ?? 0, n: p.resources[b] ?? 0 });
+  l.push({ id: 'havresac', nom: 'Havre-Sac', icone: -1, n: 0 });
+  if (w.zone.open && w.zaapsIci().length) l.push({ id: 'zaap', nom: 'Zaap le plus proche', icone: -2, n: 0 });
+  return l.slice(0, 6);
+}
 
 /** Carte : en pixels du plan du monde (carte_fondu.webp) quand le monde a une carte, sinon en cases autour du perso (radar). */
 export interface CarteBas {
@@ -33,6 +76,8 @@ export interface CarteBas {
   surZaap: boolean;
   /** Pixels du plan par case (pour le rayon du radar et le zoom de départ). */
   pxCase: number;
+  /** « Idées Thor : » 4B : trajet de la quête suivie (du perso au but), en pixels du plan. */
+  trajet?: [number, number][];
 }
 
 export interface ObjetBas { uid: number; icone: number; rar: string; nom: string; niv: number; slot: string | null; cadenas: boolean; mieux: boolean; trop: boolean; neuf: boolean }
@@ -94,8 +139,10 @@ export function carteBas(w: World, voisins: (cle: string) => boolean): CarteBas 
     const i = p.zaaps.findIndex(o => o.zone === w.opts.zone && o.name === z.name), [x, y] = plan(z.x, z.y);
     zaaps.push({ i, nom: GAME_DATA.zones[w.opts.zone ?? '']?.open?.checkpoints?.find(c => c.name === z.name)?.name ?? z.name, x, y });
   }
+  const it = plan ? Q?.itineraire() : null;
+  const trajet: [number, number][] | undefined = it ? [[mx, my], ...it.pts.map(q => pt(q.x, q.y))] : undefined;
   const c = w.worldGrid?.world.carte;
-  return { monde: plan ? w.zone.open!.world : null, moi: { x: mx, y: my, dir: (() => { const d = ISO.toScreen(Math.cos(p.facing), Math.sin(p.facing)); return Math.round(Math.atan2(d.y, d.x) * 100) / 100; })() }, monstres, allies, butin, but,
+  return { trajet, monde: plan ? w.zone.open!.world : null, moi: { x: mx, y: my, dir: (() => { const d = ISO.toScreen(Math.cos(p.facing), Math.sin(p.facing)); return Math.round(Math.atan2(d.y, d.x) * 100) / 100; })() }, monstres, allies, butin, but,
     zaaps, surZaap: !!w.zaapProche() || voisins('zaap'), pxCase: plan && c ? Math.max(2, Math.round(CASE / 2 * c.k * 10) / 10) : 1 };
 }
 

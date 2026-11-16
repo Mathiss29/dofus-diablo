@@ -1793,7 +1793,7 @@ export class Player extends Entity {
     // 3A (maquette « Danger ») : un gros coup secoue l'écran, fige l'action et rougit les bords
     const G = DANGER.grosCoup, gros = dmg >= this.maxHp * G.part;
     world.emit(gros ? { k: 'impact', hitstop: G.fige, shake: G.secousse, big: true } : { k: 'impact', hitstop: 0.04, shake: 0.006, big: false });
-    if (gros) world.emit({ k: 'grosCoup' });
+    if (gros) world.emit({ k: 'grosCoup', dx: Math.round(fromX - this.x), dy: Math.round(fromY - this.y) });
     this.addRage(this.cls.rage.perHurt, world);
     if (this.oug) coupRecuOuginak(this, dmg, world, !(loin ?? Math.hypot(fromX - this.x, fromY - this.y) > CASE * 1.6));   // 3B : gros coups encaissés = Rage ; Aboiement
     this.passifsDofus(fromX, fromY, loin, world);

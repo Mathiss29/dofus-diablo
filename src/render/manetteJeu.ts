@@ -14,15 +14,16 @@ export function dirMonde(v: { x: number; y: number }): Vec {
 }
 
 /** Auto-visée : le monstre vivant le plus proche, en préférant celui qui est devant le perso (cible gardée d'abord). */
-export function cibleAuto(w: World, p: Player, gardee: number | null, devant: Vec | null) {
+/** force (« Idées Thor : » 6A, Options › Manette › Aide à la visée) : 0,6 faible, 1 normale, 1,4 forte (portée de l'auto-visée). */
+export function cibleAuto(w: World, p: Player, gardee: number | null, devant: Vec | null, force = 1) {
   const vivants = w.monsters.filter(m => !m.dead);
   const g = gardee != null ? vivants.find(m => m.id === gardee) : undefined;
-  if (g && Math.hypot(g.x - p.x, g.y - p.y) < CASE * 16) return g;
+  if (g && Math.hypot(g.x - p.x, g.y - p.y) < CASE * 16 * force) return g;
   const fx = devant?.x ?? Math.cos(p.facing), fy = devant?.y ?? Math.sin(p.facing);
   let best: (typeof vivants)[number] | null = null, bs = Infinity;
   for (const m of vivants) {
     const dx = m.x - p.x, dy = m.y - p.y, d = Math.hypot(dx, dy);
-    if (d > CASE * 10) continue;
+    if (d > CASE * 10 * force) continue;
     const cos = d ? (dx * fx + dy * fy) / d : 1;
     const s = d * (1.6 - cos * 0.6);   // devant : compte jusqu'à 1,6 fois plus près qu'un monstre derrière
     if (s < bs) { bs = s; best = m; }

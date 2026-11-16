@@ -111,6 +111,31 @@ html,body{margin:0;background:#0d0f14;overscroll-behavior:none}
 #cmp .te input{flex:1;min-width:0;font:500 14px Lexend,sans-serif;color:#e8e2d4;background:#161a22;border:1px solid #2a2f3a;border-radius:9px;padding:8px 10px}
 #cmp .te[hidden]{display:none}
 #cmp .seg button i{font-style:normal;color:#ffd24d;margin-left:4px}
+/* « Idées Thor » : vue combat (1A+1B), raccourcis (2A), groupe (5A), bilan (3C) */
+#cmp .vue.combat{padding:6px 9px}
+#cmp .cbt{display:grid;grid-template-columns:minmax(0,1fr) 128px;gap:8px}
+#cmp .cbt .bar{height:22px;margin-top:0}#cmp .cbt .bar span{line-height:22px;font-size:13px}
+#cmp .cbt .ligne{margin-top:6px}
+#cmp .cbt .ci2{margin-top:7px;background:#161a22;border:1px solid #6b2a30;border-radius:9px;padding:6px 8px}
+#cmp .cbt .ci2 b{font-size:14px}#cmp .cbt .ci2 small{display:block;color:#b9b29c;font-size:11.5px}
+#cmp .cbt .ci2.r1{border-color:#c99a1f}#cmp .cbt .ci2.r2{border-color:#c04dff}
+#cmp .cbt .ci2 .bar{height:9px;margin-top:5px}
+#cmp .cbt canvas{width:128px;height:128px;border-radius:50%;background:radial-gradient(circle,#1a2012 0 18%,#12151c 19%);border:1px solid #2a2f3a}
+#cmp .cbt .rd{font-size:11px;color:#8e8a78;text-align:center;margin-top:3px}
+#cmp .rac{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+#cmp .rac button{display:flex;align-items:center;gap:5px;padding:6px 9px;font-size:12px}
+#cmp .rac img{width:22px;height:22px;object-fit:contain}
+#cmp .grp{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+#cmp .grp button{flex:1;min-width:110px;text-align:left;padding:5px 8px;font-size:12px}
+#cmp .grp button small{display:block;color:#b9b29c;font-size:11px}
+#cmp .grp .bar{height:6px;margin-top:3px}
+#cmp .tl p .ob2{margin-left:6px;padding:2px 7px;font-size:11px;border-radius:7px}
+#cmp .bilan{position:absolute;inset:10px;z-index:8;background:#14181ff6;border:1px solid #c99a1f;border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;box-shadow:0 8px 30px #000c}
+#cmp .bilan[hidden]{display:none}
+#cmp .bilan h4{margin:0 0 4px;font:400 17px Rowdies,Lexend,sans-serif;color:#ffd27a}
+#cmp .bilan p{margin:0;font-size:13.5px}
+#cmp .bilan button{margin-top:auto}
+#cmp .bat{margin-bottom:8px;font-size:12.5px;color:#cfc8b0}
 /* fenêtre du jeu reçue */
 #cmp .fen{position:absolute;inset:0;z-index:4;background:#0d0f14;display:grid;grid-template-rows:38px minmax(0,1fr)}
 #cmp .fen[hidden]{display:none}
@@ -147,12 +172,14 @@ export function ecranCompagnon() {
       <div class="vue sac" data-v="sac"><div class="gauche"><div class="seg"><button data-s="sac" class="on">Sac</button><button data-s="porte">Porté</button></div><div class="grille"></div></div>
         <div class="droite"><div class="fi"><div class="vide" style="margin-top:30px">Touche un objet</div></div><div class="fb"></div></div></div>
       <div class="vue" data-v="perso"></div>
+      <div class="vue combat" data-v="combat"></div>
       <div class="vue" data-v="quetes"></div>
       <div class="vue tchat" data-v="tchat"><div class="seg"><button data-t="tchat" class="on">Tchat</button><button data-t="journal">Journal<i></i></button></div><div class="tl"></div>
         <form class="te"><input maxlength="200" placeholder="Écrire aux joueurs…" enterkeyhint="send" autocomplete="off"><button>Envoyer</button></form></div>
-      <div class="vue" data-v="liens"><div class="liens">${Object.keys(NOMS).map(k => `<div class="lien" data-l="${k}"><b><i></i>${NOMS[k]}</b><span>jamais</span></div>`).join('')}</div>
+      <div class="vue" data-v="liens"><div class="bat"></div><div class="liens">${Object.keys(NOMS).map(k => `<div class="lien" data-l="${k}"><b><i></i>${NOMS[k]}</b><span>jamais</span></div>`).join('')}</div>
         <div class="btns"><button data-d="ping">Coucou au jeu</button><button data-d="rapport">Copier le rapport</button><button data-d="texture">Essai carrés noirs</button><button data-d="retour">Retour</button></div>
         <div class="journal"></div></div>
+      <div class="bilan" hidden><h4></h4><div class="bl"></div><button data-bilan="x">Fermer</button></div>
       <div class="fen" hidden><div class="fh"><span></span><button data-f="x">✕ Fermer</button></div><div class="fc"></div></div>
       <button class="ctx" hidden></button>
       <div class="toast" style="opacity:0"></div>
@@ -182,17 +209,19 @@ export function ecranCompagnon() {
   if (!ONGLETS.some(o => o[0] === onglet)) onglet = 'perso';
   const montrerOnglet = (o: string) => {
     onglet = o;
-    if (o !== 'liens') try { localStorage.setItem(CLE_ONGLET, o); } catch { /* rien */ }
+    if (o !== 'liens' && o !== 'combat') try { localStorage.setItem(CLE_ONGLET, o); } catch { /* rien */ }
     r.querySelectorAll<HTMLElement>('.vue').forEach(el => el.classList.toggle('on', el.dataset.v === o));
     r.querySelectorAll<HTMLElement>('nav button').forEach(b => b.classList.toggle('on', b.dataset.o === o));
     if (o === 'carte') { centrerSiBesoin(); dessinerCarte(); }
     else if (o === 'sac') dessinerSac();
     else if (o === 'quetes') dessinerQuetes();
     else if (o === 'tchat') dessinerTchat();
+    else if (o === 'combat') dessinerCombat();
     dessiner();
   };
   q('nav').addEventListener('click', e => {
     const o = (e.target as HTMLElement).closest('button')?.dataset.o; if (!o) return;
+    if (combatAuto.on) { combatAuto.refus = true; combatAuto.on = false; }   // un onglet touché en combat : la vue Combat attend la fin du combat
     if (o === 'liens' && onglet === 'liens') montrerOnglet(ONGLETS[0][0]); else montrerOnglet(o);
     if (!miroir.ouverte) return;
     action('fermer');   // un onglet touché ferme la fenêtre du jeu reçue
@@ -217,6 +246,15 @@ export function ecranCompagnon() {
     if (bas) tl.scrollTop = tl.scrollHeight;
     const f = q<HTMLFormElement>('.vue.tchat .te'); f.hidden = vueT !== 'tchat' || !tchatEnLigne || !relie();
   };
+  // « Idées Thor : » 3B : chaque objet ramassé du Journal a ses boutons
+  function boutonsObjet(uid: number) { return `<button class="ob2" data-jo="equiper" data-uid="${uid}">Équiper</button><button class="ob2" data-jo="cadenas" data-uid="${uid}">Cadenas</button>`; }
+  q('.vue.tchat .tl').addEventListener('click', e => {
+    const b = (e.target as HTMLElement).closest<HTMLElement>('button[data-jo]'); if (!b) return;
+    if (!relie()) { toast('Lecture seule : lance le jeu en haut'); return; }
+    const uid = +b.dataset.uid!;
+    if (b.dataset.jo === 'equiper') { ordre({ k: 'equiper', uid }); toast('Équipé'); } else { ordre({ k: 'cadenas', uid }); toast('Cadenas posé ou retiré'); }
+  });
+  q('.bilan [data-bilan="x"]').addEventListener('click', () => { q('.bilan').hidden = true; });
   q('.vue.tchat .seg').addEventListener('click', e => { const t = (e.target as HTMLElement).closest('button')?.dataset.t; if (t === 'tchat' || t === 'journal') { vueT = t; dessinerTchat(); } });
   q('.vue.tchat .te').addEventListener('submit', e => {
     e.preventDefault();
@@ -235,8 +273,14 @@ export function ecranCompagnon() {
       case 'sac': sac = m.s; if (onglet === 'sac') dessinerSac(); break;
       case 'quetes': quetes = m.q; if (onglet === 'quetes') dessinerQuetes(); break;
       case 'tchat': tchat = m.l; tchatEnLigne = m.enLigne; if (onglet === 'tchat') dessinerTchat(); break;
-      case 'annonce': toast(m.t); journal.push({ h: `${new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}  ${esc(m.t)}`, j: true, c: m.c }); if (journal.length > 80) journal.splice(0, journal.length - 80);
+      case 'annonce': toast(m.t); journal.push({ h: `${new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}  ${esc(m.t)}${m.uid != null ? boutonsObjet(m.uid) : ''}`, j: true, c: m.c }); if (journal.length > 80) journal.splice(0, journal.length - 80);
         if (onglet === 'tchat' && vueT === 'journal') dessinerTchat(); else { nonLus++; marquerNonLus(); } break;
+      case 'bilan': {   // 3C
+        const b = q('.bilan'); b.hidden = false; b.querySelector('h4')!.textContent = m.titre;
+        b.querySelector('.bl')!.innerHTML = m.lignes.map(l => `<p>${esc(l)}</p>`).join('');
+        journal.push({ h: `<b>${esc(m.titre)}</b> · ${m.lignes.map(esc).join(' · ')}`, j: true, c: '#ffd27a' });
+        break;
+      }
       case 'styles': stJeu.textContent = m.css; stylesRecus = true; break;
       case 'fiche': if (m.uid === choisi?.uid) { ficheHtml = m.html; dessinerFiche(); } break;
       case 'fenetre': {
@@ -330,6 +374,11 @@ export function ecranCompagnon() {
     const rond = (x: number, y: number, rr: number, f: string, bord = '#000') => { const [a, b] = versEcran(x, y); g.beginPath(); g.arc(a, b, rr, 0, Math.PI * 2); g.fillStyle = f; g.fill(); g.strokeStyle = bord; g.lineWidth = 1.5; g.stroke(); };
     const losange = (x: number, y: number, rr: number, f: string, bord = '#000') => { const [a, b] = versEcran(x, y); g.beginPath(); g.moveTo(a, b - rr); g.lineTo(a + rr, b); g.lineTo(a, b + rr); g.lineTo(a - rr, b); g.closePath(); g.fillStyle = f; g.fill(); g.strokeStyle = bord; g.lineWidth = 1.5; g.stroke(); };
     const texte = (x: number, y: number, t: string, col = '#fff') => { const [a, b] = versEcran(x, y); g.font = '600 11px Lexend,sans-serif'; g.textAlign = 'center'; g.lineWidth = 3; g.strokeStyle = '#000c'; g.strokeText(t, a, b - 10); g.fillStyle = col; g.fillText(t, a, b - 10); };
+    if (carte.trajet && carte.trajet.length > 1) {   // « Idées Thor : » 4B : trajet de la quête suivie
+      g.save(); g.setLineDash([7, 5]); g.lineWidth = 3; g.strokeStyle = '#ffd24dcc'; g.beginPath();
+      carte.trajet.forEach(([x, y], i) => { const [a, b] = versEcran(x, y); if (i) g.lineTo(a, b); else g.moveTo(a, b); });
+      g.stroke(); g.restore();
+    }
     for (const z of carte.zaaps) { losange(z.x, z.y, carte.surZaap && z.i >= 0 ? 9 : 7, z.i >= 0 ? '#5fd7ff' : '#55606a', carte.surZaap && z.i >= 0 ? '#fff' : '#000'); if (carte.surZaap && z.i >= 0) texte(z.x, z.y, z.nom, '#bdf0ff'); }
     for (const [x, y, rar] of carte.butin) losange(x, y, 4, RARITY_COLORS[rar as keyof typeof RARITY_COLORS] ?? '#fff');
     for (const [x, y, t] of carte.monstres) rond(x, y, t === 2 ? 7 : t === 1 ? 5 : 3.5, t === 2 ? '#c04dff' : t === 1 ? '#ff9a3c' : '#ff4d4d');
@@ -340,7 +389,7 @@ export function ecranCompagnon() {
       g.save(); g.translate(a, b); g.rotate(d); g.beginPath(); g.moveTo(11, 0); g.lineTo(-7, -7); g.lineTo(-3, 0); g.lineTo(-7, 7); g.closePath();
       g.fillStyle = '#fff'; g.fill(); g.strokeStyle = '#000'; g.lineWidth = 2; g.stroke(); g.restore();
     }
-    ci.textContent = carte.surZaap ? 'Sur un Zaap : touche une destination bleue pour voyager.' : carte.monde ? 'Touche la carte : la flèche te guide jusque-là.' : 'Radar (pas de carte ici)';
+    ci.textContent = carte.surZaap ? 'Sur un Zaap : touche une destination bleue pour voyager.' : carte.monde ? 'Touche la carte : la flèche te guide. Un Zaap bleu : tu y voyages.' : 'Radar (pas de carte ici)';
   };
   { // gestes : un doigt = déplacer, deux = zoomer, toucher = flèche ou Zaap
     const doigts = new Map<number, { x: number; y: number }>();
@@ -390,13 +439,13 @@ export function ecranCompagnon() {
   const toucherCarte = (sx: number, sy: number) => {
     if (!carte) return;
     if (!relie()) { toast('Lecture seule : lance le jeu en haut'); return; }
-    // Zaap (3D) : sur un Zaap, toucher une destination découverte = voyage
-    if (carte.surZaap) {
+    // Zaap (3D) : toucher une destination découverte = voyage ; de loin (« Idées Thor : » 4A), le perso va d'abord au Zaap le plus proche
+    {
       let best: CarteBas['zaaps'][number] | null = null, bd = 26;
       for (const z of carte.zaaps) { const [a, b] = versEcran(z.x, z.y), d = Math.hypot(a - sx, b - sy); if (d < bd) { bd = d; best = z; } }
       if (best) {
         if (best.i < 0) toast(`${best.nom} : pas encore découvert`);
-        else { ordre({ k: 'zaap', i: best.i }); toast(`Voyage vers ${best.nom}`); }
+        else { ordre({ k: 'zaap', i: best.i }); toast(carte.surZaap ? `Voyage vers ${best.nom}` : `Zaap le plus proche, puis ${best.nom}`); }
         return;
       }
     }
@@ -475,6 +524,61 @@ export function ecranCompagnon() {
   });
   const barre = (v: number, max: number, col: string, txt: string, extra = '') => `<div class="bar"><div style="width:${Math.round(100 * Math.min(1, v / Math.max(1, max)))}%;background:${col}"></div>${extra}<span>${txt}</span></div>`;
   let persoCle = '';
+  // « Idées Thor : » 1A+1B : vue Combat, ouverte toute seule au premier coup, refermée 5 s après le combat
+  const combatAuto = { on: false, avant: 'perso', finT: 0, refus: false };
+  const suivreCombat = () => {
+    const en = !!(relie() && etat?.combat?.en), t = performance.now();
+    if (en) combatAuto.finT = t;
+    if (en && !combatAuto.on && !combatAuto.refus && !miroir.ouverte && onglet !== 'combat') {
+      combatAuto.on = true; combatAuto.avant = onglet === 'liens' ? 'perso' : onglet; montrerOnglet('combat');
+    } else if (!en && t - combatAuto.finT > 5000) {
+      combatAuto.refus = false;
+      if (combatAuto.on) { combatAuto.on = false; if (onglet === 'combat') montrerOnglet(combatAuto.avant); }
+    }
+  };
+  let combatCle = '';
+  const htmlRaccourcis = (e: EtatBas) => (e.raccourcis ?? []).map(r => `<button data-rac="${esc(r.id)}">${r.icone >= 0 ? `<img src="${icone(r.icone)}" alt="">` : `<b>${r.icone === -1 ? '🎒' : '🌀'}</b>`}${esc(r.nom)}${r.n ? ` (${r.n})` : ''}</button>`).join('');
+  const htmlGroupe = (e: EtatBas) => (e.groupe ?? []).map(a => `<button data-allie="${a.id}">${esc(a.nom)}<small>${esc(a.classe)} niv. ${a.niveau}</small>${barre(a.pv, a.pvMax, '#3fae4a', '')}</button>`).join('');
+  const dessinerCombat = () => {
+    const el = vue('combat'), e = relie() && etat ? etat : null, c = e?.combat;
+    if (!e || !c) { el.innerHTML = '<div class="vide">La vue Combat s\'ouvre toute seule au premier coup.</div>'; combatCle = ''; return; }
+    if (combatCle !== 'ok') {
+      combatCle = 'ok';
+      el.innerHTML = `<div class="cbt"><div><div class="pv"></div><div class="ligne"></div><div class="ci2"></div></div><div><canvas width="256" height="256"></canvas><div class="rd"></div></div></div>
+        <div class="sorts"></div><div class="rac"></div><div class="grp"></div>`;
+    }
+    const p = e.perso;
+    el.querySelector('.pv')!.innerHTML = barre(p.pv, p.pvMax, 'linear-gradient(#ff6a5a,#c8332a)', `PV ${p.pv} / ${p.pvMax}${p.bouclier ? `  +${p.bouclier}` : ''}`);
+    el.querySelector('.ligne')!.innerHTML = barre(p.pa, p.paMax, '#2f8fd8', `PA ${p.pa}`) + barre(p.pm, p.pmMax, '#3fae4a', `PM ${p.pm}`)
+      + (p.jauge ? barre(p.jauge.v, p.jauge.max, '#e0702a', `${p.jauge.nom} ${p.jauge.v}`) : `<div class="bar"><span>Potions ${p.potions}</span></div>`);
+    const ci = el.querySelector<HTMLElement>('.ci2')!, cb = c.cible;
+    ci.className = `ci2${cb ? ` r${cb.rang}` : ''}`;
+    ci.innerHTML = cb ? `<b>${esc(cb.nom)}</b><small>${cb.rang === 2 ? 'Boss · ' : cb.rang === 1 ? 'Élite · ' : ''}niv. ${cb.niveau}${cb.info ? ` · ${esc(cb.info)}` : ''} · ${cb.pv} / ${cb.pvMax} PV</small>${barre(cb.pv, cb.pvMax, '#e8665a', '')}`
+      : '<small>Pas de cible : vise un monstre (auto-visée ou stick droit).</small>';
+    el.querySelector('.sorts')!.innerHTML = e.sorts.map(s => `<div class="so"><img src="assets/ui/sorts/sort_${s.icone}.png" alt="">${s.t > 0 ? `<div class="cd" style="height:${Math.round(s.frac * 100)}%"></div><b>${s.t >= 1 ? Math.ceil(s.t) : s.t.toFixed(1).replace('.', ',')}</b>` : ''}${s.charges != null ? `<i>${s.charges}</i>` : ''}</div>`).join('');
+    const rh = htmlRaccourcis(e), gh = htmlGroupe(e), rac = el.querySelector<HTMLElement>('.rac')!, grp = el.querySelector<HTMLElement>('.grp')!;
+    if (rac.dataset.h !== rh) { rac.dataset.h = rh; rac.innerHTML = rh; }
+    if (grp.dataset.h !== gh) { grp.dataset.h = gh; grp.innerHTML = gh; }
+    // 1B : radar, 14 cases autour (rouge : monstre, orange : élite, violet : boss)
+    const cv2 = el.querySelector('canvas')!, g = cv2.getContext('2d')!, R = 128, k = R / 15;
+    g.clearRect(0, 0, 256, 256);
+    g.strokeStyle = '#2a3a2a'; g.lineWidth = 1; for (const rr of [5, 10]) { g.beginPath(); g.arc(R, R, rr * k, 0, Math.PI * 2); g.stroke(); }
+    let n = 0, el2 = 0;
+    for (const [x, y, t] of c.radar) {
+      const a = R + x * k, b = R + y * k; if (Math.hypot(a - R, b - R) > R - 4) continue;
+      n++; if (t) el2++;
+      g.beginPath(); g.arc(a, b, t === 2 ? 9 : t === 1 ? 7 : 5, 0, Math.PI * 2); g.fillStyle = t === 2 ? '#c04dff' : t === 1 ? '#ff9a3c' : '#ff4d4d'; g.fill();
+    }
+    g.beginPath(); g.arc(R, R, 6, 0, Math.PI * 2); g.fillStyle = '#fff'; g.fill();
+    el.querySelector('.rd')!.textContent = n ? `${n} monstre${n > 1 ? 's' : ''} autour${el2 ? `, ${el2} élite${el2 > 1 ? 's' : ''} ou boss` : ''}` : 'Personne autour';
+  };
+  // 2A raccourcis, 5A groupe : dans la vue Combat et dans Perso
+  r.addEventListener('click', e => {
+    const b = (e.target as HTMLElement).closest<HTMLElement>('button[data-rac],button[data-allie]'); if (!b) return;
+    if (!relie()) { toast('Lecture seule : lance le jeu en haut'); return; }
+    if (b.dataset.rac) { ordre({ k: 'raccourci', id: b.dataset.rac }); toast(b.textContent ?? ''); }
+    else ordre({ k: 'allie', id: +b.dataset.allie! });
+  });
   const dessinerPerso = () => {
     const el = vue('perso'), e = relie() && etat ? etat : null, sv = sauve;
     if (!e && !sv) { el.innerHTML = '<div class="vide">Aucun perso : lance le jeu en haut et entre en jeu.</div>'; persoCle = ''; return; }
@@ -483,7 +587,7 @@ export function ecranCompagnon() {
     if (cle !== persoCle) {
       persoCle = cle;
       el.innerHTML = `<div class="ph"><img alt=""><div style="flex:1;min-width:0"><div class="nm"></div><small class="cl"></small><div class="bar xp"><div style="background:#d3f46f"></div></div></div><div class="kam"></div></div>
-        <div class="pv"></div><div class="ligne"></div><div class="sorts"></div><div class="effets"></div>
+        <div class="pv"></div><div class="ligne"></div><div class="sorts"></div><div class="effets"></div><div class="rac"></div><div class="grp"></div>
         <div class="acts">${e ? '<button data-a="potion" class="pot">Potion</button><button data-a="sorts">Sorts</button><button data-a="car">Caracs</button><button data-a="job">Métiers</button><button data-a="succes">Succès</button>' : ''}</div>`;
     }
     const im = el.querySelector<HTMLImageElement>('.ph img')!, src = `assets/accueil/c_${classeId}.png`;
@@ -508,6 +612,9 @@ export function ecranCompagnon() {
     el.querySelector('.sorts')!.innerHTML = e.sorts.map(s => `<div class="so"><img src="assets/ui/sorts/sort_${s.icone}.png" alt="">${s.t > 0 ? `<div class="cd" style="height:${Math.round(s.frac * 100)}%"></div><b>${s.t >= 1 ? Math.ceil(s.t) : s.t.toFixed(1).replace('.', ',')}</b>` : ''}${s.charges != null ? `<i>${s.charges}</i>` : ''}</div>`).join('');
     el.querySelector('.effets')!.innerHTML = e.effets.map(f => `<span class="ef ${f.sorte}">${esc(f.nom)}${f.t >= 0 ? ` ${f.t} s` : ''}</span>`).join('') || '<span style="color:#55606a;font-size:12px">Aucun effet actif</span>';
     const pot = el.querySelector<HTMLButtonElement>('.pot'); if (pot) { pot.textContent = `Potion (${p.potions})`; pot.disabled = !p.potions; }
+    const rh = htmlRaccourcis(e), gh = htmlGroupe(e), rac = el.querySelector<HTMLElement>('.rac'), grp = el.querySelector<HTMLElement>('.grp');
+    if (rac && rac.dataset.h !== rh) { rac.dataset.h = rh; rac.innerHTML = rh; }
+    if (grp && grp.dataset.h !== gh) { grp.dataset.h = gh; grp.innerHTML = gh; }
   };
 
   // ---------- Quêtes + groupe (6A+6B) ----------
@@ -567,6 +674,8 @@ export function ecranCompagnon() {
     if (!ok && miroir.ouverte) { miroir.montrer(null); q('.fen').hidden = true; }
     const ctx = q<HTMLButtonElement>('.ctx'), inter = ok && !miroir.ouverte && onglet !== 'carte' && onglet !== 'tchat' ? etat?.inter : null;
     ctx.hidden = !inter; if (inter && ctx.textContent !== inter) ctx.textContent = inter;
+    suivreCombat();
+    if (onglet === 'combat') dessinerCombat();
     if (onglet === 'perso') dessinerPerso();
     else if (onglet === 'liens') dessinerLiens();
     else if (onglet === 'sac' && (!sacLu || !ok)) { sacLu = true; dessinerSac(); }
@@ -576,5 +685,14 @@ export function ecranCompagnon() {
     if (etat && t - etatT > 3000) etat = null;
   }
   setInterval(dessiner, 250);
+  // « Idées Thor : » 8B : batterie de la console (c'est le même appareil) et images par seconde du jeu, en haut du diagnostic
+  type Batterie = { level: number; charging: boolean };
+  let bat: Batterie | null = null;
+  (navigator as unknown as { getBattery?: () => Promise<Batterie> }).getBattery?.().then(b => { bat = b; }).catch(() => {});
+  setInterval(() => {
+    const el = q('.vue[data-v="liens"] .bat'); if (onglet !== 'liens') return;
+    const fps = relie() && etat?.fps ? `${etat.fps} images/s` : 'jeu non relié';
+    el.textContent = `${bat ? `Batterie ${Math.round(bat.level * 100)} %${bat.charging ? ' (en charge)' : ''}` : 'Batterie : inconnue'} · ${fps}`;
+  }, 1000);
   montrerOnglet(onglet);
 }
