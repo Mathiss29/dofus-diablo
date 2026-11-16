@@ -10,7 +10,7 @@ const CLE_JETON = 'diablofus.jeton', CLE_MODE = 'diablofus.mode';
 const ECART = 30_000;
 
 /** Boutique Ogrines du compte (serveur/boutique.mjs) : articles achetés, apparats du mois, potions, abonnement. */
-export interface EtatBoutique { solde: number; achats: string[]; apparats: string[]; services: Record<string, number>; abonnement: { palier: Palier; fin: number } | null; essai: boolean }
+export interface EtatBoutique { solde: number; achats: string[]; apparats: string[]; services: Record<string, number>; abonnement: { palier: Palier; fin: number; vie?: boolean } | null; essai: boolean }
 export interface InfosCompte { nom: string; avatar: string | null; testeur: boolean; admin: boolean; importe: boolean }
 type Etat = 'hors' | 'chargement' | 'connecte' | 'erreur';
 const ERREURS: Record<string, string> = {
@@ -27,7 +27,7 @@ const ERREURS_CODE: Record<string, string> = {
 
 const ERREURS_BOUTIQUE: Record<string, string> = {
   solde: 'Pas assez d\'Ogrines.', deja: 'Déjà sur ton compte.', pasEnVente: 'Cet article n\'est pas en vente aujourd\'hui.',
-  prix: 'Le prix vient de changer (nouvelle semaine) : regarde-le à nouveau.', plusBas: 'Ton abonnement en cours est plus haut : attends sa fin.',
+  prix: 'Le prix vient de changer (nouvelle semaine) : regarde-le à nouveau.', plusBas: 'Ton abonnement en cours est plus haut : attends sa fin.', aVie: 'Tu as déjà la Légende à vie.',
   actif: 'Tu as déjà un abonnement en cours.', palier: 'Réservé aux abonnés Héros et Légende.', catalogue: 'La boutique se met à jour, réessaie dans un instant.',
   aucun: 'Tu n\'as plus cette potion.',
 };

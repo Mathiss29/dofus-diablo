@@ -80,8 +80,19 @@ test('robot Discord : signature vérifiée, /code et /ogrines réservés aux adm
   await fin();
 });
 
+test('boutique : les admins ont la Légende à vie', async t => {
+  const { base, auth, fin } = await serveur();
+  t.after(fin);
+  const moi = await (await fetch(`${base}/moi`, { headers: auth })).json();
+  assert.equal(moi.boutique.abonnement.palier, 'legende');
+  assert.equal(moi.boutique.abonnement.vie, true);
+  assert.ok(moi.boutique.abonnement.fin > Date.UTC(2099, 0, 1));
+  const r = await (await fetch(`${base}/boutique/abonnement`, { method: 'POST', headers: auth, body: JSON.stringify({ palier: 'legende' }) })).json();
+  assert.equal(r.erreur, 'aVie');
+});
+
 test('boutique : achat au prix du serveur, une fois ; abonnement, essai, apparat du mois', async t => {
-  const { base, auth, comptes, fin } = await serveur();
+  const { base, auth, comptes, fin } = await serveur(false);
   t.after(fin);
   const S = await import('./partie/sim.mjs');
   const post = (p, corps = {}) => fetch(`${base}${p}`, { method: 'POST', headers: auth, body: JSON.stringify(corps) });

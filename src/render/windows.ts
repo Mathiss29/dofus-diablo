@@ -1089,7 +1089,7 @@ export class Windows {
           <div class="bk-promo-p"><s>${ap.prix}</s><span class="bk-r">-${Math.round(BOUTIQUE_OGRINES.semaine.promo * 100)} %</span>${og(prix)}</div></div>
         <div class="bk-t">Mises en avant</div><div class="bk-grille">${vit.avant.slice(1).map(vignette).join('')}</div>
         ${fetes.length ? `<div class="bk-t">Fête en cours · en vente jusqu'à la fin de la fête</div><div class="bk-grille">${fetes.slice(0, 8).map(vignette).join('')}</div>` : ''}
-        <div class="bk-bandeau" data-bko="abonnements"><b>${abo ? `Abonnement ${P.paliers[abo.palier].nom}` : 'Abonnements'}</b><span>${abo ? `en cours jusqu'au ${finAbo}` : `Aventurier, Héros, Légende : XP, butin, confort et style pour 30 jours${enLigne && !B?.essai ? ` · ${P.essai.jours} jours offerts pour essayer` : ''}`}</span><i>Voir ›</i></div>
+        <div class="bk-bandeau" data-bko="abonnements"><b>${abo ? `Abonnement ${P.paliers[abo.palier].nom}` : 'Abonnements'}</b><span>${abo ? abo.vie ? 'à vie' : `en cours jusqu'au ${finAbo}` : `Aventurier, Héros, Légende : XP, butin, confort et style pour 30 jours${enLigne && !B?.essai ? ` · ${P.essai.jours} jours offerts pour essayer` : ''}`}</span><i>Voir ›</i></div>
         ${solde < 300 ? comment : ''}`;
     } else if (bq.onglet === 'abonnements') {
       // 8A : trois colonnes ; 16D essai ; 17B apparat du mois

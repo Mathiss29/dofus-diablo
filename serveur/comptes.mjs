@@ -68,6 +68,7 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
   db.prepare('DELETE FROM douteux WHERE regles < ?').run(REGLES_DOUTEUX);
   const q = {
     compteDiscord: db.prepare('SELECT * FROM comptes WHERE discord = ?'),
+    compteId: db.prepare('SELECT * FROM comptes WHERE id = ?'),
     nouveau: db.prepare('INSERT INTO comptes (discord, nom, avatar, roles, cree, vu) VALUES (?, ?, ?, ?, ?, ?)'),
     majCompte: db.prepare('UPDATE comptes SET nom = ?, avatar = ?, roles = ?, vu = ? WHERE id = ?'),
     jeton: db.prepare('INSERT INTO jetons (empreinte, compte, cree, expire) VALUES (?, ?, ?, ?)'),
@@ -216,7 +217,7 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
   // Ogrines et codes cadeaux (« Apparats : » 10-12) : serveur/ogrines.mjs
   const ogrines = creerOgrines({ db, connecte, admin: c => vue(c).admin, lireCorps, env, maintenant, adminDiscord: roles => roles.some(r => admins.has(r)), evenements: codesEvenements() });
   // Boutique Ogrines et abonnements (« Apparats : » 9, 13-17) : serveur/boutique.mjs
-  const boutique = creerBoutique({ db, connecte, lireCorps, ogrines, maintenant, ...(catalogue ? { catalogue } : {}) });
+  const boutique = creerBoutique({ db, connecte, lireCorps, ogrines, maintenant, aVie: id => { const c = q.compteId.get(id); return !!c && vue(c).admin; }, ...(catalogue ? { catalogue } : {}) });
   // Hôtel de Vente (« HDV : ») : serveur/hdv.mjs ; 5D : annonces en plus selon le palier d'abonnement
   const RANGS = { aventurier: 1, heros: 2, legende: 3 };
   const hdv = creerHdv({ db, connecte, lireCorps, dossier, env, maintenant, ...(catalogue ? { catalogue } : {}), rangAbo: c => RANGS[boutique.abonnement(c)?.palier] ?? 0,
