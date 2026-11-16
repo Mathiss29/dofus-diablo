@@ -26,6 +26,8 @@ export const COMPTES = {
   /** Copies de la base gardées (une par nuit). */
   copies: 14,
 };
+/** Version des règles de src/sim/verifSauvegarde.ts (VERIF.regles) : la table douteux est vidée des lignes plus anciennes au démarrage. */
+export const REGLES_DOUTEUX = 2;
 const DISCORD = 'https://discord.com';
 
 /** Empreinte d'un jeton : la base ne garde jamais le jeton lui-même. */
@@ -61,6 +63,9 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
     CREATE TABLE IF NOT EXISTS parcours (jour TEXT NOT NULL, etape TEXT NOT NULL, n INTEGER NOT NULL, PRIMARY KEY (jour, etape));
     CREATE TABLE IF NOT EXISTS arrivees (jour TEXT NOT NULL, tranche TEXT NOT NULL, n INTEGER NOT NULL, ms INTEGER NOT NULL, PRIMARY KEY (jour, tranche));
     CREATE TABLE IF NOT EXISTS fluidite (jour TEXT NOT NULL, zone TEXT NOT NULL, envois INTEGER NOT NULL, images INTEGER NOT NULL, ms INTEGER NOT NULL, saccades INTEGER NOT NULL, PRIMARY KEY (jour, zone));`);
+  // « En ligne : » 2C : les persos mis à l'écart par d'anciennes règles (src/sim/verifSauvegarde.ts, VERIF.regles) reviennent au Ladder
+  try { db.exec('ALTER TABLE douteux ADD COLUMN regles INTEGER NOT NULL DEFAULT 1'); } catch { /* colonne déjà là */ }
+  db.prepare('DELETE FROM douteux WHERE regles < ?').run(REGLES_DOUTEUX);
   const q = {
     compteDiscord: db.prepare('SELECT * FROM comptes WHERE discord = ?'),
     nouveau: db.prepare('INSERT INTO comptes (discord, nom, avatar, roles, cree, vu) VALUES (?, ?, ?, ?, ?, ?)'),
@@ -73,7 +78,7 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
     perso: db.prepare('SELECT maj FROM persos WHERE compte = ? AND emplacement = ?'),
     ecrire: db.prepare('INSERT INTO persos (compte, emplacement, donnees, maj) VALUES (?, ?, ?, ?) ON CONFLICT (compte, emplacement) DO UPDATE SET donnees = excluded.donnees, maj = excluded.maj'),
     effacer: db.prepare('DELETE FROM persos WHERE compte = ? AND emplacement = ?'),
-    douter: db.prepare('INSERT INTO douteux (compte, emplacement, raison, quand) VALUES (?, ?, ?, ?) ON CONFLICT (compte, emplacement) DO NOTHING'),
+    douter: db.prepare(`INSERT INTO douteux (compte, emplacement, raison, quand, regles) VALUES (?, ?, ?, ?, ${REGLES_DOUTEUX}) ON CONFLICT (compte, emplacement) DO NOTHING`),
     blanchir: db.prepare('DELETE FROM douteux WHERE compte = ? AND emplacement = ?'),
     douteux: db.prepare('SELECT raison, quand FROM douteux WHERE compte = ? AND emplacement = ?'),
     coffres: db.prepare('SELECT sorte, donnees FROM coffres WHERE compte = ?'),

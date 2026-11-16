@@ -171,7 +171,7 @@ Rien à régler sur le VPS.
 - 3D : près du boss du monde, le monde du groupe envoie vers le combat commun du créneau (`boss:zone:créneau`, 16 joueurs au plus) ; le boss fini, chacun rentre dans le monde de son groupe.
 - 7B : avec `FILS=n`, chaque partie tourne dans un des n fils (`fil.mjs`) ; le fil principal garde connexions, salons et base, et relaie. Les gestes de l'HDV passent par des gestes nommés (`opHdv` dans `src/sim/hdv.ts`).
 - 8C : un monde jette ses analyses de cartes après avoir posé les groupes (environ 20 Mo par monde du continent au lieu de 80).
-- 2C : chaque sauvegarde envoyée par le jeu (solo) est comparée à la précédente (`src/sim/verifSauvegarde.ts`). Douteuse, elle est gardée, mais le perso entre dans la table `douteux` et sort du Ladder. Pour le blanchir : `DELETE FROM douteux WHERE compte = ? AND emplacement = ?`.
+- 2C : chaque sauvegarde envoyée par le jeu (solo) est comparée à la précédente (`src/sim/verifSauvegarde.ts`). Douteuse, elle est gardée, mais le perso entre dans la table `douteux` et sort du Ladder. Pour le blanchir : `DELETE FROM douteux WHERE compte = ? AND emplacement = ?`. Quand les règles changent, monter `VERIF.regles` et `REGLES_DOUTEUX` (comptes.mjs) : les persos écartés avant reviennent au Ladder.
 
 ## Classement (Ladder, maquette « Ladder : »)
 
