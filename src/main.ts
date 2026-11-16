@@ -3,6 +3,7 @@ import { ZoneScene } from './render/zoneScene';
 import { Accueil } from './render/accueil';
 import './render/phaserRapide';
 import { brancherTexturesSures } from './render/texturesSures';
+import { brancherTexturesGrandes } from './render/texturesGrandes';
 import { preparerInstallation } from './render/installation';
 import { Compte } from './render/compte';
 import { brancherDensite, reglerDensite } from './render/pixel';
@@ -59,6 +60,8 @@ function demarrer() {
   brancherDensite(game);
   brancherTexturesSures(game);   // plus de jeu figé sur une texture détruite encore affichée (rapport du 2026-11-13)
   game.events.once(Phaser.Core.Events.READY, () => prevenirCarteGraphique(game));   // Fluidité 4A
+  // Carrés noirs sur console (2026-11-16) : planches plus grandes que ce que le GPU accepte, recopiées en pages
+  game.events.once(Phaser.Core.Events.READY, () => brancherTexturesGrandes(game));
 
   // Mode dév (#cra, #astrub, #jeu) : directement en jeu, sans perso ni sauvegarde. #test : partie de test (perso à part, outils sur F1). Sinon : écran d'accueil (17A),
   // avec la partie en vitrine derrière ; « Jouer » relance la scène avec le perso choisi.
