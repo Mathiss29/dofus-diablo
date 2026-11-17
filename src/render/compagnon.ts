@@ -1,3 +1,4 @@
+import { appliNative } from './manette';
 // Écran du bas de l'AYN Thor (« Écran du bas : » 1A 2A+2B 3A-3D 4A-4C 5A+5B 6A+6B 7A 8A 9B, 2026-11-16) : la page
 // diablofus.com/#compagnon, ouverte dans Chrome sur l'écran du bas pendant que le jeu tourne en haut, montre la carte, le sac,
 // le perso et les quêtes, et reçoit les fenêtres du jeu. Les deux pages se parlent par le lien direct (BroadcastChannel) et,
@@ -100,6 +101,10 @@ export function accueilBas(a: AccueilBas | null) {
   ouvrirCanal();
   if (compagnonRelie() || a === null) canalJeu!.envoyer({ k: 'accueil', a });
 }
+/** Combien de temps l'écran du bas reste « relié » sans nouvelles. Dans l'appli Thor, l'écran du bas est toujours là :
+ *  un « bonjour » en retard (Android ralentit parfois ses minuteries) faisait revenir toute l'interface en haut
+ *  puis repartir en bas (vidéo de Mathis, 2026-11-17). */
+const garde = () => appliNative() ? 30000 : 6000;
 function ouvrirCanal() {
   if (canalJeu) return;
   const c = canalJeu = new Canal('jeu');
@@ -107,10 +112,11 @@ function ouvrirCanal() {
   const st = document.createElement('style'); st.textContent = CSS_JEU; document.head.appendChild(st);
   c.ecoute = (m, par) => {
     const t = performance.now();
+    if (m.k !== 'bonjour' && t < actifJusque) actifJusque = Math.max(actifJusque, t + garde());   // tout message du bas prouve qu'il est là
     if (m.k === 'bonjour') {
       if (t > actifJusque) { branche?.annonce(`Écran du bas relié (${par === 'direct' ? 'lien direct' : 'par le stockage'})`); toutRenvoyer = true; }
       if (m.neuf) toutRenvoyer = true;
-      actifJusque = t + 6000; envoiT = 0;
+      actifJusque = t + garde(); envoiT = 0;
       c.envoyer({ k: 'bonjour' });
     } else if (m.k === 'ping') {
       c.envoyer({ k: 'pong', n: m.n, t: m.t });

@@ -7,7 +7,7 @@ import { BENEDICTIONS } from '../sim/magasin';
 import { apercuSort } from '../sim/apercu';
 import { dossier, v } from './assetUrl';
 import Phaser from 'phaser';
-import { calerCamera, densite, densitePleine, reglerDensite, reculPetitEcran } from './pixel';
+import { calerCamera, densite, densitePleine, reglerDensite, reculCamera } from './pixel';
 import { rareteApparat } from '../sim/apparats';
 import { FAMILIERS_SOURCES } from '../sim/menagerie';
 import { styleDef } from '../sim/style';
@@ -438,7 +438,7 @@ export class ZoneScene extends Phaser.Scene {
     this.reglages = chargerReglages(); this.ambT = 0; this.sat = undefined;
     // Interfaces Thor 9A : au premier lancement sur un petit écran tenu à la main, réglage « Thor » tout fait (une seule fois)
     if (this.reglageThor()) this.presetThorNeuf = true;
-    this.zoom = Phaser.Math.Clamp(this.reglages.zoom, ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]); this.cameras.main.setZoom(this.zoom * densite() * reculPetitEcran());
+    this.zoom = Phaser.Math.Clamp(this.reglages.zoom, ZoneScene.ZOOM[0], ZoneScene.ZOOM[1]); this.cameras.main.setZoom(this.zoom * densite() * reculCamera());
     // Phaser arrondit chaque coin d'image séparément : avec un défilement entre deux pixels, une image agrandie gagnait ou
     // perdait un pixel et « tremblait » (2026-11-06), puis tout « bavait » en course (2026-11-08). Le défilement dessiné est
     // donc calé sur un pixel entier de l'écran (pixel.ts) ; l'arrondi des coins (remis par startFollow) devient alors sans effet de bord.
@@ -2669,7 +2669,7 @@ export class ZoneScene extends Phaser.Scene {
     const cam = this.cameras.main;
     // 7A : pendant un combat de boss, la caméra recule un peu pour voir ses zones
     const bossEnCombat = w.monsters.some(m => m.def.boss && !m.dead && m.state !== 'idle' && m.state !== 'return' && Math.hypot(m.x - w.player.x, m.y - w.player.y) < 900);
-    const zoomVise = this.zoom * densite() * reculPetitEcran() * (bossEnCombat ? DANGER.camera.recul : 1);
+    const zoomVise = this.zoom * densite() * reculCamera() * (bossEnCombat ? DANGER.camera.recul : 1);
     if (Math.abs(cam.zoom - zoomVise) > 0.001) cam.setZoom(cam.zoom + (zoomVise - cam.zoom) * (bossEnCombat ? 0.04 : 0.2));
     this.updateAmbiance();
     this.son.update(!!wg?.mapAt(w.player.x, w.player.y)?.inside);
