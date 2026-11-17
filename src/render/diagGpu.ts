@@ -63,6 +63,20 @@ function recompter() {
   let o = 0;
   for (const v of poids.values()) o += v;
   d.textures = poids.size; d.mo = Math.round(o / 1048576); d.moMax = Math.max(d.moMax, d.mo);
+  if (d.mo >= noteMo + 64) noterMemoire('monte');
+}
+
+/** Dernier poids noté dans le journal de l'appli Thor. */
+let noteMo = 0;
+/** Note la mémoire (textures + JavaScript) dans le journal de l'appli Thor : l'appli garde les erreurs de la console,
+ *  qui survivent à la page tuée par Android (plantage au Zaap Incarnam → Bastion, 2026-11-17). Une ligne par zone
+ *  et une à chaque tranche de 64 Mo de textures en plus. */
+export function noterMemoire(etape: string) {
+  if (!d.actif) return;
+  noteMo = d.mo;
+  const m = (performance as Performance & { memory?: { usedJSHeapSize: number; jsHeapSizeLimit: number } }).memory;
+  const js = m ? `, JS ${Math.round(m.usedJSHeapSize / 1048576)}/${Math.round(m.jsHeapSizeLimit / 1048576)} Mo` : '';
+  console.error(`[mémoire] ${etape} : textures ${d.mo} Mo (${d.textures})${js}`);
 }
 
 /** Lignes lisibles pour le rapport. */
