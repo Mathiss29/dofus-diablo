@@ -376,7 +376,6 @@
    "zone": "bastion",
    "carte": "marche",
    "case": 2576,
-   "apres": "astrub",
    "titre": "Alchimiste",
    "phrase": "Ah, un volontaire ! Je veux dire : un client. Cette potion te ramène au Zaap. Dans 97 % des cas, en un seul morceau.",
    "services": [
@@ -419,7 +418,6 @@
    "zone": "bastion",
    "carte": "marche",
    "case": 2588,
-   "apres": "astrub",
    "titre": "Clés de donjon",
    "phrase": "Tu veux une clé ? Montre tes bras. Hmm. Ça ira. Les monstres te trouveront appétissant, c'est déjà ça.",
    "services": [

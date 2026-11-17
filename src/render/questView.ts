@@ -9,6 +9,7 @@ import { PNJ_LOOKS, type PnjLook } from './looks';
 import { EntityView } from './entityView';
 import { ICON_SHEET, iconFrame } from './icons';
 import { ITEMS } from '../sim/data';
+import { MARCHE } from '../sim/magasin';
 
 const SP = 'assets/sprites', QI = 'assets/ui/quetes';
 /** Animations « fun » des PNJ : une toutes les FUN_PAUSE secondes environ (tirage au poids officiel). */
@@ -19,6 +20,8 @@ export const QUEST_ICON: Record<QueteType, [string, string]> = {
   secondaire: ['quest', 'questObjective'], prime: ['questRepeatable', 'questRepeatableObjective'], evenement: ['questEvent', 'questObjective'],
   campagne: ['questPrincipale', 'questPrincipaleObjective'],   // campagne : l'icône dorée officielle des quêtes principales
 };
+/** Hauteur de l'enseigne au-dessus du bout de porte (pixels à l'écran), au niveau du haut de l'arche. */
+const ENSEIGNE_Y = 150;
 const STYLE = { fontFamily: 'Lexend, Verdana, sans-serif' };
 
 interface PnjSprite {
@@ -36,6 +39,8 @@ export class QuestView {
   }
 
   private pnjs: PnjSprite[] = [];
+  /** Enseignes des portes du Bastion vers les marchands (nom du lieu + qui vend dedans). */
+  private enseignes: { titre: Phaser.GameObjects.Text; sous: Phaser.GameObjects.Text; tag: string }[] = [];
   /** PNJ survolé (contour doré, 8A). */
   survole: string | null = null;
   private glow: { id: string; fx: Phaser.FX.Glow } | null = null;
@@ -73,6 +78,18 @@ export class QuestView {
       const shadow = scene.add.image(0, 0, EntityView.ombre(scene)).setDisplaySize(w, w * 0.45).setAlpha(0.28);
       this.pnjs.push({ id: p.id, img, name, icon, shadow, x: p.x, y: p.y, tag: p.tag, h: Math.min(h, 230), L, key,
         prochainFun: world.time + Phaser.Math.FloatBetween(1, FUN_PAUSE[1]), iconY: 0 });
+    }
+    // Enseignes au-dessus des portes du Bastion qui mènent à des marchands (Marché couvert) : sans elles, on ne devine pas
+    // que Goultard, Otomaï, Mère Bouillotte et Tissebelle vendent dans le bâtiment (retour Mathis 2026-11-17)
+    if (world.dansBastion) for (const po of world.portes) {
+      const [dehors, dedans] = po.ends;   // (au Bastion, toutes les cartes sont « dedans » : on regarde qui vend derrière la porte)
+      if (dehors.tag === dedans.tag) continue;
+      const noms = MARCHE.filter(id => id !== 'responsable').map(id => q.pnjs.find(p => p.id === id && p.tag === dedans.tag)?.def.nom).filter((n): n is string => !!n);
+      if (!noms.length) continue;
+      const s = ISO.toScreen(dehors.x, dehors.y);
+      const titre = scene.add.text(s.x, s.y - ENSEIGNE_Y, po.nom, { ...STYLE, fontSize: '16px', fontStyle: 'bold', color: '#f2d36b', stroke: '#14130f', strokeThickness: 4 }).setOrigin(0.5, 1).setDepth(1e6 - 3);
+      const sous = scene.add.text(s.x, s.y - ENSEIGNE_Y + 2, noms.join(' · '), { ...STYLE, fontSize: '12px', fontStyle: 'bold', color: '#f1ecd8', stroke: '#14130f', strokeThickness: 3 }).setOrigin(0.5, 0).setDepth(1e6 - 3);
+      this.enseignes.push({ titre, sous, tag: dehors.tag });
     }
     // Calage au pixel près APRÈS le suivi de la caméra (qui bouge le défilement juste avant le rendu)
     scene.cameras.main.on(Phaser.Cameras.Scene2D.Events.FOLLOW_UPDATE, () => this.caler());
@@ -126,6 +143,7 @@ export class QuestView {
       const fx = n?.img.preFX?.addGlow(0xf2d36b, 3, 0, false, 0.1, 10);
       this.glow = n && fx ? { id: n.id, fx } : null;
     }
+    for (const e of this.enseignes) { const on = !this.wv || this.wv.isReady(e.tag); e.titre.setVisible(on); e.sous.setVisible(on); }
     for (const p of this.pnjs) {
       const on = !this.wv || this.wv.isReady(p.tag);
       const s = ISO.toScreen(p.x, p.y);

@@ -30,9 +30,9 @@ describe('Havre-Sac (maquette Hub : 1A 2A+2C 3A 4A 7A 8A 9A)', () => {
     expect(w.dansHavreSac).toBe(true);
     expect(w.walkable(w.player.x, w.player.y)).toBe(true);
   });
-  it('les PNJ de service vivent au Bastion (Ville 5A) ; Kerubim dès le début, Otomaï et Goultard emménagent après la première visite d\'Astrub (3A)', () => {
+  it('les PNJ de service vivent au Bastion (Ville 5A) ; Kerubim et les marchands dès le début, l\'Assistante d\'Otomaï emménage après la première visite d\'Astrub (3A)', () => {
     const ids = (w: World) => w.quetes!.pnjs.map(p => p.id).sort();
-    expect(ids(monde('bastion'))).toEqual(['bouillotte', 'crieur', 'forgemage', 'garde_bonta', 'garde_brakmar', 'garde_frigost', 'garde_pandala', 'garde_zaap1', 'garde_zaap2', 'gardien_arene', 'gardienne_arene', 'gawdien', 'kerubim', 'responsable', 'tissebelle']);   // Kerubim dès Incarnam (retour joueur 2026-11-15)
+    expect(ids(monde('bastion'))).toEqual(['bouillotte', 'crieur', 'forgemage', 'garde_bonta', 'garde_brakmar', 'garde_frigost', 'garde_pandala', 'garde_zaap1', 'garde_zaap2', 'gardien_arene', 'gardienne_arene', 'gawdien', 'goultard', 'kerubim', 'otomai', 'responsable', 'tissebelle']);   // Kerubim dès Incarnam (retour joueur 2026-11-15), les marchands aussi (Mathis 2026-11-17)
     expect(ids(monde('bastion', { zonesVues: ['incarnam', 'astrub'] }))).toEqual(['assistante_otomai', 'bouillotte', 'crieur', 'forgemage', 'garde_bonta', 'garde_brakmar', 'garde_frigost', 'garde_pandala', 'garde_zaap1', 'garde_zaap2', 'gardien_arene', 'gardienne_arene', 'gawdien', 'goultard', 'kerubim', 'otomai', 'responsable', 'tissebelle']);
     // Magasin 8A : plus de guichet de Kerubim au Havre-Sac (on défait seulement au Bastion)
     expect(ids(monde('havresac', { zonesVues: ['astrub'] }))).toEqual([]);
@@ -41,7 +41,7 @@ describe('Havre-Sac (maquette Hub : 1A 2A+2C 3A 4A 7A 8A 9A)', () => {
     for (const a of l) for (const b of l) if (a !== b) expect(Math.hypot(a.x - b.x, a.y - b.y)).toBeGreaterThan(60);
     // première visite d'Astrub : l'annonce
     const a = monde('astrub', { zonesVues: ['incarnam'] });
-    expect(a.drainEvents().find(e => e.k === 'emmenage')).toMatchObject({ noms: ['Otomaï', 'Goultard', 'Assistante d\'Otomaï'] });
+    expect(a.drainEvents().find(e => e.k === 'emmenage')).toMatchObject({ noms: ['Assistante d\'Otomaï'] });
     expect(a.player.zonesVues).toEqual(['incarnam', 'astrub']);
   });
   it('chaque service ouvre la bonne boutique (4A) : clés chez Goultard, potions chez Otomaï, plats chez Mère Bouillotte', () => {
