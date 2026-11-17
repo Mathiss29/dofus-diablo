@@ -52,6 +52,10 @@ T.destroy = function (this: typeof T) {
         else { (o as unknown as { setVisible?(v: boolean): void }).setVisible?.(false); signaler(this.key, 'un objet'); }
       }
     }
+    // les animations faites sur cette texture gardent ses Frames détruites : la rejouer plantait (« reading 'sourceSize' »,
+    // chargement bloqué à 70 % en revenant à Incarnam, 2026-11-17). On les retire : elles sont refaites avec la texture rechargée.
+    const am = g.anims as unknown as { anims: { entries: Record<string, { frames: { textureKey: string }[] }> }; remove(k: string): void };
+    for (const [k, an] of Object.entries(am.anims.entries)) if (an.frames.some(f => f.textureKey === this.key)) am.remove(k);
   }
   detruire.call(this);
 };
