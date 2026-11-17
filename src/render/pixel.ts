@@ -61,9 +61,10 @@ export function reculPetitEcran(): number {
   return Math.min(1, Math.max(0.55, window.innerHeight / 720));
 }
 /** Recul de la caméra du jeu sur petit écran : plus doux que celui des fenêtres (Mathis, 2026-11-17 : « hyper dézoomé »
- *  sur la Thor avec la hauteur/720 complète). Racine carrée : 480 px → 0,82 au lieu de 0,67. */
+ *  avec la hauteur/720 complète, 0,67 sur la Thor, puis « un peu trop zoomé » avec la racine carrée, 0,82).
+ *  Puissance 0,75 : 480 px → 0,74, entre les deux. */
 export function reculCamera(): number {
-  return Math.min(1, Math.max(0.75, Math.sqrt(reculPetitEcran())));
+  return Math.min(1, Math.max(0.7, Math.pow(reculPetitEcran(), 0.75)));
 }
 export function densite(): number {
   if (!pleine) return 1;
