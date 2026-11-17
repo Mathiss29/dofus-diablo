@@ -1,3 +1,4 @@
+import { noterMemoire } from './diagGpu';
 import { PORTABLE, TROPHEES } from '../sim/dofus';
 import { infoAutel } from '../sim/autels';
 import { regions } from '../sim/renommee';
@@ -333,6 +334,7 @@ export class ZoneScene extends Phaser.Scene {
   preload() {
     Chargement.montrer(this.arriveePar);
     oublierPlanchesZone(this, this.zoneId);
+    noterMemoire(`zone ${this.zoneId}`);
     this.load.off('progress', Chargement.progres).off('progress', Chargement.fichiers).on('progress', Chargement.fichiers);   // le chargeur survit aux relances de la scène
     Hud.preload(this);
     // Icônes des objets officiels : une seule planche
@@ -2229,6 +2231,7 @@ export class ZoneScene extends Phaser.Scene {
     if (r.ecran) Chargement.monde(etat.p);
     if ((!etat.ok || r.t < (r.min ?? 0)) && r.t < ZoneScene.RIDEAU_MAX) return;
     if (r.ecran) Chargement.cacher();
+    noterMemoire(`arrivée ${this.zoneId}`);
     this.cameras.main.fadeIn(r.ecran ? 400 : 300, 0, 0, 0);
     // 5A : l'interface (HUD, bandeau, mini-carte) apparaît sous le même fondu que le monde, jamais sur un écran vide
     if (r.arrivee) this.cameras.getCamera('ui')?.fadeIn(400, 0, 0, 0);

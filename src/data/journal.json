@@ -2273,6 +2273,7 @@
           "Appli Thor : elle propose de mettre à jour le moteur web d'Android quand il est trop ancien."
         ],
         "En coulisses": [
+          "Thor : le rapport de l'écran du bas note la mémoire du jeu à chaque zone, pour trouver les plantages.",
           "AYN Thor : page de test de l'écran du bas (diablofus.com/#compagnon), reliée au jeu de l'écran du haut.",
           "Console : le rapport de l'écran du bas note les images refusées par la carte graphique (carrés noirs).",
           "Manette : vibrations aux moments forts, pause du menu Start en solo, sauvegarde quand l'appli passe en fond.",
