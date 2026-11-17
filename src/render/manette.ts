@@ -185,8 +185,8 @@ function ui(zone: HTMLElement, m: ImageManette) {
   let dir = m.tenu(BTN.HAUT) ? 'h' : m.tenu(BTN.BAS) ? 'b' : m.tenu(BTN.GAUCHE) ? 'g' : m.tenu(BTN.DROITE) ? 'd' : '';
   if (!dir && Math.hypot(m.gauche.x, m.gauche.y) > 0.6) dir = Math.abs(m.gauche.x) > Math.abs(m.gauche.y) ? (m.gauche.x > 0 ? 'd' : 'g') : (m.gauche.y > 0 ? 'b' : 'h');
   if (!dir) repDir = '';
-  else if (dir !== repDir) { repDir = dir; repT = t + 380; deplacerFocus(zone, dir); }
-  else if (t >= repT) { repT = t + 110; deplacerFocus(zone, dir); }
+  else if (dir !== repDir) { repDir = dir; repT = t + 380; if (duJeu || !versAccueil(zone, { dir })) deplacerFocus(zone, dir); }
+  else if (t >= repT) { repT = t + 110; if (duJeu || !versAccueil(zone, { dir })) deplacerFocus(zone, dir); }
   // gâchettes : faire défiler la partie qui défile sous le focus ou le curseur
   const defil = (m.tenu(BTN.RT) ? 1 : 0) - (m.tenu(BTN.LT) ? 1 : 0);
   if (defil) defiler(zone, defil * 900 * dt);
@@ -276,7 +276,16 @@ function activer(type: 'click' | 'contextmenu' | 'dblclick') {
   else envoyer(e, 'click');
 }
 /** Interfaces Thor 7A : à l'accueil, LB / RB changent d'onglet, Start lance « Jouer », B quitte la case du nom. */
+/** « Accueil Thor : » 2A 4A : la page Thor de l'accueil reçoit d'abord la croix et les boutons ; vrai si elle s'en est servie. */
+function versAccueil(zone: HTMLElement, detail: { b?: string; dir?: string }): boolean {
+  if (zone.id !== 'acc') return false;
+  const ev = new CustomEvent('acc-manette', { detail, cancelable: true });
+  zone.dispatchEvent(ev);
+  return ev.defaultPrevented;
+}
+const NOMS_ACC: Record<number, string> = { [BTN.A]: 'A', [BTN.B]: 'B', [BTN.X]: 'X', [BTN.Y]: 'Y', [BTN.START]: 'START' };
 function accueilBouton(zone: HTMLElement, b: number): boolean {
+  if (NOMS_ACC[b] && versAccueil(zone, { b: NOMS_ACC[b] })) { focus = null; return true; }
   if (b === BTN.LB || b === BTN.RB) {
     const l = Array.from(zone.querySelectorAll<HTMLElement>('.nav[data-nav]')); if (!l.length) return false;
     const i = l.findIndex(e => e.classList.contains('on'));

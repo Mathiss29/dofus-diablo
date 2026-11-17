@@ -22,6 +22,10 @@ import { Parcours } from './parcours';
 import { heureParis } from './heure';
 import { BOSS_MONDE, VIVANT, candidatsInvasion, heureTexte, invasionDe, rendezVous } from '../sim/mondeVivant';
 import { htmlPalettes, brancherPalettes, type CtxPalettes } from './palettesUi';
+import { PALETTES_PERSO, paletteOuverte } from '../sim/palettes';
+import { modeConsole } from './console';
+import { accueilBas } from './compagnon';
+import { CSS_THOR, nomAuHasard, type AccueilBas } from './accueilThor';
 import { nbEmplacements, NB_SECOURS, dernier, dureeTexte, exporter, importer, lireCimetiere, lireCoffre, lirePersos, sauverCoffre, lireSecours, nomValide, persosEnLigne, prendreSecours, restaurerSecours, sauverPerso, supprimerPerso, type Perso } from './persos';
 
 /** Écrans hors du jeu (maquette unique, choix 17A à 23A, 19B, 22D, 30E) : accueil avec Incarnam en direct derrière,
@@ -400,6 +404,11 @@ export class Accueil {
   private crea = { cle: 'iop', sexe: 'm' as 'm' | 'f', pose: 'repos', nom: '', hardcore: false, tuto: true, filtre: 'Toutes', err: '',
     /** Apparence (maquette Apparence 1A 2A 2C) : tête dans l'ordre officiel, couleurs (null = officielles de la classe). */
     tete: 0, couleurs: null as number[] | null };
+  /** Accueil Thor (3A, 4A) : étape de la création (1 classe, 2 apparence, 3 nom) et ligne de l'apparence visée. */
+  private etape = 1;
+  private ligneApp = 0;
+  /** Mode console au dernier rendu (la page Thor ou celle du PC). */
+  private thor = false;
   /** Fiches des persos dessinés en direct (corps, têtes, couleurs officielles), lues une fois. */
   private fiches: Record<string, FichePerso> | null = null;
   /** « Mes personnages » : emplacement choisi, et suppression en attente de confirmation. */
@@ -421,7 +430,7 @@ export class Accueil {
   onOptions: (() => void) | null = null;
   constructor(private onJouer: (slot: number) => void, private onEssayer?: (classe: string, sexe: 'm' | 'f', apparence?: Apparence) => void) {
     if (!document.getElementById('acc-css')) {
-      const st = document.createElement('style'); st.id = 'acc-css'; st.textContent = CSS + ICON_CSS.replace('.ic{', '#acc .ic{') + LADDER_CSS; document.head.appendChild(st);
+      const st = document.createElement('style'); st.id = 'acc-css'; st.textContent = CSS + ICON_CSS.replace('.ic{', '#acc .ic{') + LADDER_CSS + CSS_THOR; document.head.appendChild(st);
     }
     this.root = document.createElement('div'); this.root.id = 'acc'; this.root.hidden = true;
     // les clics sur ces écrans ne vont pas au jeu derrière
@@ -436,6 +445,8 @@ export class Accueil {
       Son.jouer(f, 'interface', { cle: 'clic', ecart: 0.05 });
     }, true);
     document.body.appendChild(this.root);
+    // Accueil Thor : la manette passe d'abord ici (croix, A, B, X, Start), la page Thor dit si elle s'en sert
+    this.root.addEventListener('acc-manette', e => { const d = (e as CustomEvent<{ b?: string; dir?: string }>).detail; if (this.thor && this.manetteThor(d)) e.preventDefault(); });
     // le bouton « Installer le jeu » apparaît dès que le navigateur le permet
     surChangement(() => { if (!this.root.hidden && this.page === 'accueil') this.render(); });
     let last = 0, f = 0;
@@ -444,7 +455,7 @@ export class Accueil {
       if (t - last < 40) return;   // 25 images par seconde, comme les animations de Dofus
       last = t; f++;
       // bandeau du monde vivant (écran d'accueil v2 3A) : le compte à rebours suit l'heure de Paris
-      if (t - this.vivantT > 1000) { this.vivantT = t; const el = this.root.hidden ? null : this.root.querySelector<HTMLElement>('[data-vivant]'); if (el) { const h = this.vivantHtml(!nouveauVenu()); if (h !== el.innerHTML) el.innerHTML = h; } }
+      if (t - this.vivantT > 1000) { this.vivantT = t; if (!this.root.hidden) { if (modeConsole() !== this.thor) this.render(); else this.envoyerBas(); } const el = this.root.hidden ? null : this.root.querySelector<HTMLElement>('[data-vivant]'); if (el) { const h = this.vivantHtml(el.dataset.vivant === 'court' ? false : !nouveauVenu()); if (h !== el.innerHTML) el.innerHTML = h; } }
       // diaporama : capture suivante toutes les 4 s, sauf sous la souris ou fenêtre ouverte (« Diapo : » 7B)
       if (t - this.diapoT > 4000) { this.diapoT = t; if (!this.root.hidden && !this.modal && !this.root.querySelector('.diapo:hover') && this.root.querySelector('.diapo')) this.montrerDiapo(this.diapoI + 1); }
       this.root.querySelectorAll<HTMLCanvasElement>('canvas.vivant').forEach(cv => this.socle(cv, f));
@@ -542,11 +553,12 @@ export class Accueil {
     for (const u of urls) { const im = new Image(); im.src = u; }
   }
   private jouer(slot: number) { prendreSecours(); this.onJouer(slot); }
-  hide() { this.root.hidden = true; this.root.innerHTML = ''; }
+  hide() { this.root.hidden = true; this.root.innerHTML = ''; accueilBas(null); }
   destroy() { cancelAnimationFrame(this.anim); this.root.remove(); }
 
   private go(page: Page) {
     if (page !== 'creation' && this.retouche) { this.retouche = null; Object.assign(this.crea, { nom: '', tete: 0, couleurs: null }); }
+    if (page === 'creation' && this.page !== 'creation') { this.etape = 1; this.ligneApp = 0; }
     this.page = page; this.confirmer = -1; this.crea.err = ''; this.modal = null;
     // parcours des nouveaux venus (idée C) : seulement tant qu'on n'a aucun perso
     if (nouveauVenu() && (page === 'accueil' || page === 'creation')) Parcours.noter(page);
@@ -576,10 +588,17 @@ export class Accueil {
   }
 
   private render() {
-    const html = this.page === 'accueil' ? this.pageAccueil() : this.page === 'creation' ? this.pageCreation() : this.page === 'bestiaire' ? this.pageBestiaire() : this.page === 'journal' ? this.pageJournal() : this.page === 'ladder' ? '<div class="ladp"><div class="lad" data-ladder></div></div>' : this.pagePersos();
+    const thor = this.thor = modeConsole();
+    this.root.classList.toggle('thor', thor);
+    // Accueil Thor : pages refaites pour l'écran de la console (création hors potion, accueil, persos) ; les autres gardent celles du PC, mises à l'échelle
+    const pageThor = !thor ? null : this.page === 'creation' && !this.retouche ? this.pageCreationThor() : this.page === 'accueil' ? this.pageAccueilThor() : this.page === 'persos' ? this.pagePersosThor() : null;
+    const html = pageThor ?? (this.page === 'accueil' ? this.pageAccueil() : this.page === 'creation' ? this.pageCreation() : this.page === 'bestiaire' ? this.pageBestiaire() : this.page === 'journal' ? this.pageJournal() : this.page === 'ladder' ? '<div class="ladp"><div class="lad" data-ladder></div></div>' : this.pagePersos());
     if (!this.modal) this.modalLarge = false;
     const m = this.modal ? `<div class="modal" data-fermer><div class="card${this.modalLarge ? ' large' : ''}">${this.modal}<button type="button" class="x" data-fermer aria-label="Fermer">✕</button></div></div>` : '';
-    this.root.innerHTML = `<div class="page">${html}${this.side()}${m}<div class="toast" style="opacity:0"></div></div>`;
+    this.root.innerHTML = thor
+      ? `<div class="page"><div class="pg${pageThor ? '' : ' pc'}" data-p="${this.page}">${html}</div>${this.side()}${this.aideThor()}${m}<div class="toast" style="opacity:0"></div></div>`
+      : `<div class="page">${html}${this.side()}${m}<div class="toast" style="opacity:0"></div></div>`;
+    this.envoyerBas();
     this.bind();
     this.portraits();
     this.dessinerLadder();
@@ -611,9 +630,189 @@ export class Accueil {
   private side(): string {
     const NAV: [string, string, string][] = [['accueil', 'assets/ui/menu/home.png', 'Accueil'], ['persos', 'assets/ui/menu/character.png', 'Personnages'],
       ['creation', img('h_80.png'), 'Classes'], ['bestiaire', 'assets/ui/menu/bestiary.png', 'Bestiaire'], ['journal', 'assets/ui/menu/calendar.png', 'Journal'], ['ladder', 'assets/ui/menu/ladder.png', 'Ladder'], ['options', 'assets/ui/menu/options.png', 'Options']];
-    return `<nav class="side"><img class="logo" src="${v('assets/logo/embleme.webp')}" alt="" aria-hidden="true">${NAV.map(([k, ic, l]) =>
+    return `<nav class="side"><img class="logo" src="${v('assets/logo/embleme.webp')}" alt="" aria-hidden="true"><em class="kthor">LB</em>${NAV.map(([k, ic, l]) =>
       `<button type="button" class="nav${k === this.page ? ' on' : ''}" data-nav="${k}" style="position:relative"><img src="${ic}" alt="">${l}${k === 'journal' && carnetNonLu() ? '<span class="pastille">nouveau</span>' : ''}</button>`).join('')}
-      <button type="button" class="play" data-jouer>Jouer</button><div class="ver">VERSION ${VERSION}</div></nav>`;
+      <em class="kthor">RB</em><button type="button" class="play" data-jouer>Jouer</button><div class="ver">VERSION ${VERSION}</div></nav>`;
+  }
+
+  // --- Accueil Thor (« Accueil Thor : 1A 2A 3A 4A 5A 6A 7A+7B 8A ») : pages refaites pour l'écran de la console --------------
+  /** 8A : barre d'aide des boutons, selon la page et l'étape. */
+  private aideThor(): string {
+    const b = (k: string, t: string, cl = 'l') => `<span><em class="${cl}">${k}</em>${t}</span>`;
+    let l: string[];
+    if (this.page === 'creation' && !this.retouche) {
+      const e = JOUABLES.has(this.crea.cle) ? this.etape : 1;
+      l = e === 1 ? [b('◀ ▶', 'Classe'), b('A', 'Choisir', 'ea'), b('B', 'Accueil', 'eb'), b('LB RB', 'Pages')]
+        : e === 2 ? [b('▲ ▼', 'Ligne'), b('◀ ▶', 'Changer'), b('A', 'Suivant', 'ea'), b('B', 'Classe', 'eb')]
+        : [b('A', 'Valider', 'ea'), b('X', 'Nom au hasard', 'ex'), b('Start', 'Créer'), b('B', 'Apparence', 'eb')];
+    } else if (this.page === 'accueil') l = [b('A', 'Continuer', 'ea'), b('LB RB', 'Pages'), b('Start', 'Jouer')];
+    else if (this.page === 'persos') l = [b('✚', 'Viser'), b('A', 'Choisir', 'ea'), b('Start', 'Jouer'), b('LB RB', 'Pages')];
+    else l = [b('✚', 'Viser'), b('LT RT', 'Défiler'), b('A', 'Ouvrir', 'ea'), b('LB RB', 'Pages')];
+    return `<div class="aideT">${l.join('')}</div>`;
+  }
+  /** Manette sur les pages Thor : vrai si la page s'en sert (la croix et les boutons ne vont alors pas au focus). */
+  private manetteThor(d: { b?: string; dir?: string }): boolean {
+    if (this.page !== 'creation' || this.retouche || this.modal) return false;
+    const jouable = JOUABLES.has(this.crea.cle), e = jouable ? this.etape : 1;
+    if (e === 1) {
+      if (d.dir === 'g' || d.dir === 'd') { this.tournerClasse(d.dir === 'd' ? 1 : -1); return true; }
+      if (d.dir) return true;
+      if (d.b === 'A') { if (jouable) { this.etape = 2; this.render(); } else this.toast(plusTard(this.crea.cle)); return true; }
+      if (d.b === 'B') { this.go('accueil'); return true; }
+      return false;
+    }
+    if (e === 2) {
+      if (d.dir === 'h' || d.dir === 'b') { this.ligneApp = (this.ligneApp + (d.dir === 'b' ? 1 : -1) + 4) % 4; this.render(); return true; }
+      if (d.dir === 'g' || d.dir === 'd') { this.changerApp(d.dir === 'd' ? 1 : -1); return true; }
+      if (d.b === 'A') { this.etape = 3; this.render(); return true; }
+      if (d.b === 'B') { this.etape = 1; this.render(); return true; }
+      return false;
+    }
+    if (d.b === 'X') { this.nomHasard(); return true; }
+    if (d.b === 'START') { this.creer(); return true; }
+    if (d.b === 'B') {
+      const a = document.activeElement;
+      if (a instanceof HTMLInputElement && this.root.contains(a)) return false;   // B quitte d'abord la case du nom
+      this.etape = 2; this.render(); return true;
+    }
+    return false;
+  }
+  private nomHasard() {
+    const pris = new Set(lirePersos().map(p => p?.nom.toLowerCase()));
+    let n = nomAuHasard();
+    for (let i = 0; i < 20 && (!nomValide(n) || pris.has(n.toLowerCase())); i++) n = nomAuHasard();
+    this.crea.nom = n; this.crea.err = ''; this.render();
+  }
+  private choisirClasse(cle: string) {
+    if (this.crea.cle !== cle) { this.crea.tete = 0; this.crea.couleurs = null; this.palI = 0; }
+    this.crea.cle = cle; this.crea.err = ''; this.render();
+  }
+  private tournerClasse(k: number) {
+    const i = CLASSES.findIndex(c => c.cle === this.crea.cle), n = CLASSES.length;
+    this.choisirClasse(CLASSES[(i + k + n) % n].cle);
+  }
+  /** Palette choisie à la ligne « Palette » (0 = couleurs officielles). */
+  private palI = 0;
+  /** Palettes que ce compte peut poser (4A) : officielles, palettes ouvertes, puis « Mes palettes ». */
+  private palettesThor(): { nom: string; poser: (peau: number) => number[] | null; apercu: number[] }[] {
+    const ctx = this.ctxPalettes(), co = ctx.coffre(), dofus = [...ctx.dofus()], off = this.fiches?.[`${this.crea.cle}_${this.crea.sexe}`];
+    const l: { nom: string; poser: (peau: number) => number[] | null; apercu: number[] }[] = [{ nom: 'Officielles', poser: () => null, apercu: off ? apparenceValide(off, { tete: 0 }).couleurs.slice(1) : [] }];
+    for (const f of PALETTES_PERSO.familles) for (const p of f.palettes) if (paletteOuverte(p, co, dofus)) l.push({ nom: p.nom, poser: peau => [peau, ...p.c], apercu: p.c });
+    (co.mesPalettes ?? []).forEach((m, i) => l.push({ nom: `Ma palette ${i + 1}`, poser: () => [...m], apercu: m.slice(1) }));
+    return l;
+  }
+  /** 4A : ◀ ▶ change la valeur de la ligne visée de l'apparence. */
+  private changerApp(k: number) {
+    const s = this.crea, c = classe(s.cle), fiche = this.fiches?.[`${c.cle}_${s.sexe}`];
+    if (this.ligneApp === 0) { s.sexe = s.sexe === 'm' ? 'f' : 'm'; s.tete = 0; s.couleurs = null; this.palI = 0; }
+    else if (this.ligneApp === 1) { const i = POSES.findIndex(p => p[0] === s.pose); s.pose = POSES[(i + k + POSES.length) % POSES.length][0]; }
+    else if (this.ligneApp === 2) { const n = fiche?.tetes.length ?? 0; if (n) s.tete = ((this.appCrea()?.tete ?? 0) + k + n) % n; }
+    else {
+      const l = this.palettesThor(), n = l.length;
+      this.palI = (this.palI + k + n) % n;
+      s.couleurs = l[this.palI].poser(this.appCrea()?.couleurs[0] ?? 0);
+    }
+    this.render();
+  }
+  /** 2A 3A 4A 5A : création en trois étapes, une classe à la fois. */
+  private pageCreationThor(): string {
+    const s = this.crea, c = classe(s.cle), jouable = JOUABLES.has(c.cle);
+    const e = jouable ? this.etape : 1, app = jouable ? this.appCrea() : null, fiche = this.fiches?.[`${c.cle}_${s.sexe}`];
+    const roles = Object.entries(c.roles).slice(0, 3);
+    const libre = lirePersos().findIndex(p => !p);
+    const perso = jouable && app ? this.canevas(`${c.cle}_${s.sexe}`, app, ANIM_POSE[s.pose], e > 1 ? 'left:calc(32% - 80px)' : '', c.nom)
+      : `<img class="teteGrande" src="${tete(c, s.sexe)}" alt=""${e > 1 ? ' style="left:32%"' : ''}>`;
+    const etapes = ['Classe', 'Apparence', 'Nom'].map((t, i) => i + 1 === e ? `<b>${i + 1} ${t}</b>` : `<span>${i + 1} ${t}</span>`).join('');
+    let corps = '';
+    if (e === 1) {
+      corps = `<div class="info"><h2>${esc(c.nom)}</h2><span class="role">${esc(c.titre)}${c.cle === DEBUTANT ? ' · pour débuter' : ''}</span>
+        <p>${esc(c.desc)}</p>
+        ${roles.map(([n, val]) => `<div class="jauge"><span>${n}</span><div class="bar"><i style="width:${Math.min(100, val / 12 * 100)}%"></i></div></div>`).join('')}
+        <div class="jauge"><span>Difficulté</span><span class="dots">${'●'.repeat(c.complexite)}<i>${'●'.repeat(5 - c.complexite)}</i></span></div>
+        ${jouable ? `<button type="button" class="lbtn" data-etape="2" style="justify-self:start;margin-top:4px;font-size:16px;padding:6px 20px">Choisir</button>` : `<span class="bientot">${plusTard(c.cle)}</span>`}</div>
+        <button type="button" class="fle" data-fle="-1" style="left:calc(50% - 118px)" aria-label="Classe précédente">‹</button>
+        <button type="button" class="fle" data-fle="1" style="left:calc(50% + 100px)" aria-label="Classe suivante">›</button>
+        <div class="carr">${CLASSES.map(k => `<button type="button" data-tcls="${k.cle}" class="${k.cle === c.cle ? 'on' : ''}${JOUABLES.has(k.cle) ? '' : ' dim'}" aria-label="${esc(k.nom)}"><img src="${tete(k, s.sexe)}" alt=""></button>`).join('')}</div>`;
+    } else if (e === 2) {
+      const pal = this.palettesThor()[this.palI] ?? this.palettesThor()[0], cour = app?.couleurs ?? [];
+      const n = fiche?.tetes.length ?? 0, ti = app?.tete ?? 0;
+      const ligne = (i: number, nom: string, val: string) => `<div class="l${this.ligneApp === i ? ' cur' : ''}" data-appl="${i}"><span>${nom}</span><span class="v">
+        <button type="button" class="mini" data-appv="${i},-1" aria-label="Précédent">◀</button>${val}<button type="button" class="mini" data-appv="${i},1" aria-label="Suivant">▶</button></span></div>`;
+      corps = `<div class="info" style="width:260px"><h2 style="font-size:40px">${esc(c.nom)}</h2><span class="role">${esc(c.titre)}</span></div>
+        <div class="app">
+          ${ligne(0, 'Sexe', s.sexe === 'm' ? 'Homme' : 'Femme')}
+          ${ligne(1, 'Pose', POSES.find(p => p[0] === s.pose)?.[1] ?? '')}
+          ${ligne(2, 'Tête', n ? `<span style="display:flex;align-items:center;gap:8px"><span class="tetev" style="background-image:url(${v(`${DOSSIER}/tetes_${c.cle}_${s.sexe}.webp`)});background-size:${n * 100}% 100%;background-position:${n > 1 ? (ti / (n - 1)) * 100 : 0}% 0"></span>${ti + 1} / ${n}</span>` : '…')}
+          ${ligne(3, 'Palette', `<span style="display:grid;justify-items:center;gap:3px"><span class="sw">${(this.palI ? pal.apercu : cour.slice(1)).slice(0, 5).map(x => `<u style="background:${hexa(x)}"></u>`).join('')}</span><span class="nomPal">${esc(pal.nom)}</span></span>`)}
+          <div style="display:flex;gap:8px;justify-content:space-between"><button type="button" class="dbtn" data-etape="1" style="font-size:14px;padding:6px 12px">‹ Classe</button>
+            <button type="button" class="lbtn" data-etape="3" style="font-size:16px;padding:6px 18px">Suivant ›</button></div>
+        </div>`;
+    } else {
+      corps = `<div class="info" style="width:260px"><h2 style="font-size:40px">${esc(c.nom)}</h2><span class="role">${esc(c.titre)}</span></div>
+        <div class="nomF">
+          <div class="lab">Nom du personnage</div>
+          <input class="field" data-nom maxlength="16" spellcheck="false" autocomplete="off" enterkeyhint="done" value="${esc(s.nom)}" placeholder="3 à 16 lettres">
+          <div class="ligne"><button type="button" class="dbtn" data-nomhasard>Nom au hasard (X)</button></div>
+          <div class="err">${esc(s.err)}</div>
+          <label class="check"><input type="checkbox" data-hc ${s.hardcore ? 'checked' : ''}><span>Mode Hardcore <span class="hc">(mort définitive)</span></span></label>
+          <label class="check"><input type="checkbox" data-tuto ${s.tuto ? 'checked' : ''}><span>Faire le tutoriel <span style="opacity:.7">(Temple Céleste)</span></span></label>
+          <button type="button" class="lbtn" data-creer ${libre >= 0 ? '' : 'aria-disabled="true"'}>${libre >= 0 ? 'Créer et jouer' : 'Emplacements pleins'}</button>
+          <div class="ligne"><button type="button" class="dbtn" data-etape="2">‹ Apparence</button>${this.onEssayer ? '<button type="button" class="dbtn" data-essayer>Essayer 60 s</button>' : ''}</div>
+        </div>`;
+    }
+    return `<div class="tc"><div class="fond" style="background-image:url(${img(DIEUX.has(c.cle) ? `dieu_${c.cle}.jpg` : 'login.jpg')})"></div><div class="voile"></div>
+      <div class="etapes">${etapes}</div>
+      <img src="assets/ui/socle.png" alt="" class="socleT"${e > 1 ? ' style="left:32%"' : ''}>${perso}${corps}</div>`;
+  }
+  /** 7B : l'accueil allégé, pour reprendre sa partie. */
+  private pageAccueilThor(): string {
+    const l = lirePersos(), d = dernier(), p = d != null ? l[d] : null;
+    let bas = `<div class="actT" style="margin-top:auto"><button type="button" class="lbtn" data-go="creation">Nouvelle partie</button><button type="button" class="dbtn" data-go="persos">Mes personnages</button></div>`;
+    if (p) {
+      const c = classe(p.classe), niv = p.etat?.level ?? 1, base = GAME_DATA.classes[p.classe]?.xpBase ?? 0;
+      const xp = base ? Math.max(0, Math.min(1, (p.etat?.xp ?? 0) / (base * niv))) : 0;
+      bas = `<div class="carteT"><img class="tete" src="${tete(c, p.sexe)}" alt=""><div class="nom">${esc(p.nom)}<em>${c.nom} niv. ${niv}${p.hardcore ? ' · Hardcore' : ''}</em></div>
+        <div class="xp"><i style="width:${(xp * 100).toFixed(1)}%"></i></div><div class="det">${esc(p.lieu)} · joué ${ilYa(p.maj)}</div>
+        <div class="actT" style="grid-column:1/-1;margin-top:6px"><button type="button" class="lbtn" data-continuer>Continuer</button>
+          <button type="button" class="dbtn" data-go="persos">Mes persos</button><button type="button" class="dbtn" data-go="creation">Nouvelle partie</button></div></div>`;
+    }
+    return `<div class="ta"><div class="voile"></div><div class="col">
+      <img class="logoT" src="${v('assets/logo/logo.webp')}" alt="Diablofus : Les Douze Enfers">
+      <div data-vivant="court">${this.vivantHtml(false)}</div>
+      ${TEXTE.nouveau && !p ? `<div class="nouvT"><span>Nouveau</span>${esc(TEXTE.nouveau)}</div>` : ''}
+      ${bas}</div></div>`;
+  }
+  /** 7A : Mes personnages à la taille de la console. */
+  private pagePersosThor(): string {
+    const l = lirePersos(), p = l[this.choix], c = p && classe(p.classe);
+    const fond = c && DIEUX.has(c.cle) ? `dieu_${c.cle}.jpg` : 'login.jpg';
+    const slots = l.map((q, i) => {
+      if (!q) return `<button type="button" class="slot vide" data-slot="${i}"><span class="plus">+</span><span><b style="color:#c9c4ab">Nouveau personnage</b><span class="tiny">Emplacement libre</span></span></button>`;
+      const k = classe(q.classe);
+      return `<button type="button" class="slot${i === this.choix ? ' on' : ''}" data-slot="${i}"><img src="${tete(k, q.sexe)}" alt="">
+        <span><b>${esc(q.nom)}</b><span style="font-weight:800">${k.nom} · niveau ${q.etat?.level ?? 1}${q.hardcore ? ' · <span class="hc">Hardcore</span>' : ''}</span>
+        <span class="tiny" style="display:block">${esc(q.lieu)} · ${dureeTexte(q.temps)} de jeu</span></span></button>`;
+    }).join('');
+    const choix = p && c ? `<div class="ttl">${esc(p.nom)}</div><div class="sous">${c.nom} · niveau ${p.etat?.level ?? 1}${p.hardcore ? ' · <span class="hc">Hardcore</span>' : ''}</div>
+      <img src="assets/ui/socle.png" alt="" class="socleT">
+      ${this.fiches?.[`${c.cle}_${p.sexe}`] ? this.canevas(`${c.cle}_${p.sexe}`, apparenceValide(this.fiches[`${c.cle}_${p.sexe}`], p.apparence), ANIM_POSE.repos, '', p.nom, objetsPortes(p.etat?.equipment, p.etat?.apparat))
+        : `<img class="teteGrande" src="${tete(c, p.sexe)}" alt="" style="position:absolute;left:50%;top:120px;width:110px;transform:translateX(-50%)">`}
+      <div class="actT"><button type="button" class="dbtn rouge" data-suppr="${this.choix}">${this.confirmer === this.choix ? 'Vraiment supprimer ?' : 'Supprimer'}</button>
+        <button type="button" class="lbtn" data-jouer-slot="${this.choix}">Jouer</button></div>`
+      : `<div class="ttl" style="top:150px">Aucun personnage</div><div class="actT" style="bottom:150px"><button type="button" class="lbtn" data-go="creation">Créer un personnage</button></div>`;
+    return `<div class="ta"><div class="cover" style="background-image:url(${img(fond)});filter:saturate(.9) brightness(.6)"></div><div class="voile"></div>
+      <div class="slotsT">${slots}${this.blocCompte()}</div><div class="choixT">${choix}</div></div>`;
+  }
+  /** 6A : la fiche de la classe en cours de création, pour l'écran du bas (sinon la page ouverte). */
+  private envoyerBas() {
+    if (this.root.hidden) { accueilBas(null); return; }
+    let cl: AccueilBas['classe'] = null;
+    if (this.page === 'creation') {
+      const c = classe(this.crea.cle), ok = !!GAME_DATA.classes[c.cle];
+      cl = { nom: c.nom, titre: c.titre, desc: c.desc, roles: Object.entries(c.roles).slice(0, 3), complexite: c.complexite, jouable: JOUABLES.has(c.cle), note: JOUABLES.has(c.cle) ? '' : plusTard(c.cle),
+        sorts: ok ? this.premiersSorts(c.cle).map(([sp, n]) => ({ nom: sp.name, icone: sp.icon, niveau: n, texte: this.texteMaison(c.cle, sp) })) : [] };
+    }
+    accueilBas({ page: this.page, etape: this.etape, classe: cl });
   }
 
   // --- Accueil (17A ; écran d'accueil v2, « Accueil : 1A 2A 3A+3B 4A 5A 6A 7A 8A 9A 10A+10B ») ---------------------------
@@ -1062,6 +1261,13 @@ export class Accueil {
     r.querySelector<HTMLInputElement>('[data-tuto]')?.addEventListener('change', e => { this.crea.tuto = (e.target as HTMLInputElement).checked; });
     r.querySelector<HTMLInputElement>('[data-hc]')?.addEventListener('change', e => { this.crea.hardcore = (e.target as HTMLInputElement).checked; this.render(); });   // les palettes suivent le coffre (normal ou Hardcore)
     on('[data-creer]', () => this.creer());
+    // Accueil Thor : étapes, classe suivante, ligne et valeur de l'apparence, nom au hasard (au doigt aussi)
+    on('[data-etape]', e => { this.etape = +e.dataset.etape!; this.render(); });
+    on('[data-fle]', e => this.tournerClasse(+e.dataset.fle!));
+    on('[data-tcls]', e => this.choisirClasse(e.dataset.tcls!));
+    on('[data-appl]', e => { if (this.ligneApp !== +e.dataset.appl!) { this.ligneApp = +e.dataset.appl!; this.render(); } });
+    r.querySelectorAll<HTMLElement>('[data-appv]').forEach(e => e.addEventListener('click', ev => { ev.stopPropagation(); const [l, k] = e.dataset.appv!.split(','); this.ligneApp = +l; this.changerApp(+k); }));
+    on('[data-nomhasard]', () => this.nomHasard());
     on('[data-essayer]', () => this.onEssayer?.(this.crea.cle, this.crea.sexe, this.appCrea() ?? undefined));
     // Accueil 8A : survol d'un premier sort = le perso du socle attaque, et le texte officiel du sort s'affiche
     r.querySelectorAll<HTMLElement>('[data-sort]').forEach(e => {
