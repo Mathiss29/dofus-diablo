@@ -110,19 +110,23 @@ export class MenuStart {
   ouvert = false;
   private i = 0;
   private el: HTMLDivElement | null = null;
-  constructor(private ouvrir: (o: OngletStart) => void, private fermerTout: () => void) {}
+  /** dispo : un onglet sans contenu ici (pas de carte du monde au Bastion, dans un intérieur…) est sauté, sinon le menu se fermait. */
+  constructor(private ouvrir: (o: OngletStart) => void, private fermerTout: () => void, private dispo: (o: OngletStart) => boolean = () => true) {}
   get onglet(): OngletStart { return ONGLETS[this.i].id; }
-  montrer() { this.ouvert = true; this.ouvrir(this.onglet); this.dessiner(); }
+  montrer() { if (!this.dispo(this.onglet)) this.i = 0; this.ouvert = true; this.ouvrir(this.onglet); this.dessiner(); }
   fermer(toutFermer = true) {
     if (!this.ouvert) return;
     this.ouvert = false; this.el?.remove(); this.el = null;
     if (toutFermer) this.fermerTout();
   }
-  tourner(d: number) { this.i = (this.i + d + ONGLETS.length) % ONGLETS.length; this.ouvrir(this.onglet); this.dessiner(); }
+  tourner(d: number) {
+    for (let n = 0; n < ONGLETS.length; n++) { this.i = (this.i + d + ONGLETS.length) % ONGLETS.length; if (this.dispo(this.onglet)) break; }
+    this.ouvrir(this.onglet); this.dessiner();
+  }
   private dessiner() {
     if (!document.getElementById('menu-start-css')) { const s = document.createElement('style'); s.id = 'menu-start-css'; s.textContent = CSS; document.head.appendChild(s); }
     if (!this.el) { this.el = document.createElement('div'); this.el.id = 'menu-start'; document.body.appendChild(this.el); }
-    this.el.innerHTML = `<em>LB</em>${ONGLETS.map((o, j) => `<span class="${j === this.i ? 'on' : ''}">${o.nom}</span>`).join('')}<em>RB</em>`
+    this.el.innerHTML = `<em>LB</em>${ONGLETS.map((o, j) => !this.dispo(o.id) ? '' : `<span class="${j === this.i ? 'on' : ''}">${o.nom}</span>`).join('')}<em>RB</em>`
       + `<span class="aide">A choisir · B fermer · stick droit : curseur</span>`;
   }
 }

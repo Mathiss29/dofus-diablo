@@ -1429,7 +1429,7 @@ export class ZoneScene extends Phaser.Scene {
       if (o === 'carte') { this.windows?.close(false); if (!this.carte?.ouverte) this.basculerCarte(); return; }
       if (this.carte?.ouverte) this.carte.fermer();
       if (this.windows?.ouverte !== o) this.windows?.toggle(o);
-    }, () => { this.windows?.close(); this.carte?.fermer(); });
+    }, () => { this.windows?.close(); this.carte?.fermer(); }, o => o !== 'carte' || !!this.carte?.dispo);
     const b: BrancheJeu = {
       interface: () => {
         if (!this.sys.isActive() || this.vitrine) return this.windows?.fenetre ?? document.body;
