@@ -2262,7 +2262,8 @@
           {"titre": "La manette à ta main", "phrase": "Zone morte des sticks, vitesse du curseur, trois dispositions et chaque bouton changeable.", "details": "Options › Manette. Taille d'interface à part sur la Thor, volumes et écran qui s'assombrit en bas, reprise au même endroit.", "icone": "arme", "etiquettes": ["Manette", "AYN Thor"]}
         ],
         "Corrections": [
-          "Thor : caméra moins reculée, on voit son perso et les monstres plus gros.",
+          "Thor : moins d'à-coups en combat, chaque planche n'est plus envoyée deux fois à la carte graphique.",
+          "Thor : caméra un peu moins proche, entre l'ancien recul et le précédent réglage.",
           "Thor : l'interface ne saute plus de l'écran du bas à celui du haut quand le lien tarde.",
           "Thor : décor et effets à moitié taille, le jeu prend deux fois moins de mémoire (Incarnam 782 → 381 Mo).",
           "Thor : le décor de la zone quittée est libéré et les effets de sorts pèsent moitié moins (Bastion : −30 %).",

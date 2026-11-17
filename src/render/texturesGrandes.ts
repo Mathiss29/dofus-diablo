@@ -125,6 +125,38 @@ function decouper(T: Phaser.Textures.TextureManager, cle: string, max: number) {
   console.info(`[GPU] planche « ${cle} » (${s.width}×${s.height}) recopiée sur ${nb} pages de ${max} px au plus`);
 }
 
+/** Lag sur la Thor (2026-11-17, profil en combat) : chaque planche à alléger était d'abord envoyée entière à la carte
+ *  graphique par Phaser, puis recopiée à moitié et envoyée une 2e fois (14 % + 7 % du temps en combat, aux premiers
+ *  sorts et monstres). Ici, la page est réduite AVANT son premier envoi, avec les mêmes règles qu'alleger() : l'image
+ *  garde ses coordonnées d'origine (largeur de la source inchangée), seule la page envoyée est à moitié. */
+let sansImages = 0;
+function allegerAvantEnvoi(T: Phaser.Textures.TextureManager, max: number) {
+  const proto = Phaser.Textures.TextureSource.prototype as unknown as { init(g: Phaser.Game): void; __leger?: boolean };
+  if (proto.__leger) return;
+  proto.__leger = true;
+  const addImage = T.addImage;
+  T.addImage = function (this: Phaser.Textures.TextureManager, ...a: Parameters<typeof addImage>) { sansImages++; try { return addImage.apply(this, a); } finally { sansImages--; } } as typeof addImage;
+  const init = proto.init;
+  proto.init = function (this: Phaser.Textures.TextureSource, g: Phaser.Game) {
+    try {
+      const t = this.texture, im = this.image as CanvasImageSource, w = this.width, h = this.height;
+      if (t && T.get(t.key) !== t && aAlleger(t.key) && (modeConsole() || appliNative() || /[?&]leger\b/.test(location.search))
+        && (im instanceof HTMLImageElement || (typeof ImageBitmap !== 'undefined' && im instanceof ImageBitmap))
+        && w * h > PETITE && Math.ceil(w / 2) <= max && Math.ceil(h / 2) <= max && (!sansImages || DECOR.test(t.key))) {
+        const cv = document.createElement('canvas');
+        cv.width = Math.ceil(w / 2); cv.height = Math.ceil(h / 2);
+        const ctx = cv.getContext('2d');
+        if (ctx) {
+          ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high'; ctx.drawImage(im, 0, 0, cv.width, cv.height);
+          this.image = cv as unknown as HTMLImageElement;
+          (t.customData as { leger?: boolean }).leger = true;
+        }
+      }
+    } catch { /* on garde la page entière */ }
+    init.call(this, g);
+  };
+}
+
 /** À appeler une fois le jeu prêt (main.ts) : surveille chaque texture ajoutée. */
 export function brancherTexturesGrandes(game: Phaser.Game) {
   const r = game.renderer as Phaser.Renderer.WebGL.WebGLRenderer;
@@ -132,6 +164,7 @@ export function brancherTexturesGrandes(game: Phaser.Game) {
   const essai = /gpumax=(\d+)/.exec(location.hash);   // essai sur PC : diablofus.com/#jeu-gpumax=4096
   const max = Math.min(r.getMaxTextureSize() || 16384, essai ? +essai[1] : Infinity);
   const T = game.textures;
+  allegerAvantEnvoi(T, max);
   const ajout = (cle: string) => { if (!alleger(T, cle, max) && max < 16384) decouper(T, cle, max); };
   for (const cle of T.getTextureKeys()) ajout(cle);
   T.on(Phaser.Textures.Events.ADD, ajout);
