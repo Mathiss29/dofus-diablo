@@ -32,7 +32,7 @@ export function ranger(cases: { w: number; h: number }[], max: number, largeur: 
 
 /** Planches de personnages (monstres, classes, PNJ, habitants, coffres) : allégées sur console et dans l'appli. */
 const LEGERES = new Set(Object.values(LOOKS).map(l => l.atlas));
-const aAlleger = (cle: string) => LEGERES.has(cle) || /^(pnj_|hab_|coffre_)/.test(cle);
+const aAlleger = (cle: string) => LEGERES.has(cle) || /^(pnj_|hab_|coffre_|fx_)/.test(cle);
 /** Plus petite page allégée (en pixels) : en dessous, le gain ne vaut pas la copie. */
 const PETITE = 1024 * 1024;
 

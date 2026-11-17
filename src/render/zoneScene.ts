@@ -1,4 +1,5 @@
 import { noterMemoire } from './diagGpu';
+import * as Masques from './masques';
 import { PORTABLE, TROPHEES } from '../sim/dofus';
 import { infoAutel } from '../sim/autels';
 import { regions } from '../sim/renommee';
@@ -49,8 +50,18 @@ let zonePlanches: string | null = null;
  *  Elles restaient pour toujours (Incarnam puis le Bastion : 230 Mo de trop, la Thor fermait la page en arrivant par le Zaap).
  *  Celles de la nouvelle zone sont rechargées juste après par preload() ; les coffres se rechargent à la demande. */
 function oublierPlanchesZone(scene: Phaser.Scene, zone: string) {
-  if (zonePlanches !== null && zonePlanches !== zone)
-    for (const k of scene.textures.getTextureKeys()) if (/^(pnj_|hab_|coffre_)/.test(k) && !textureAffichee(scene.game, k)) scene.textures.remove(k);
+  if (zonePlanches !== null && zonePlanches !== zone) {
+    // le décor du monde quitté (sols, planches, calques « <monde>_… ») restait aussi : Incarnam gardait 267 Mo au Bastion (2026-11-17)
+    const avant = GAME_DATA.zones[zonePlanches]?.open?.world, apres = GAME_DATA.zones[zone]?.open?.world;
+    const monde = avant && avant !== apres ? `${avant}_` : null;
+    for (const k of scene.textures.getTextureKeys()) {
+      const decor = !!monde && k.startsWith(monde);
+      if (!decor && !/^(pnj_|hab_|coffre_)/.test(k)) continue;
+      if (textureAffichee(scene.game, k)) continue;
+      scene.textures.remove(k);
+      if (decor) Masques.oublier(k);
+    }
+  }
   zonePlanches = zone;
 }
 import { Assemblage, LANCE_EN_MAIN, apparenceValide, fiches, objetsPortes, type Apparence } from './squelette';
@@ -109,7 +120,7 @@ import { carteBas, combatBas, depuisPlan, etatBas, groupeBas, quetesBas, raccour
 import { rangAbo } from '../sim/boutiqueOgrines';
 import type { EquipSlot } from '../sim/items';
 import { BTN, brancherJeu, brancheActuelle, elementManette, focusManette, manetteActive, reglerControles, reglerVibrations, reglerSticks, reglerBoutons, appliNative, vibrer, type BrancheJeu, type ImageManette } from './manette';
-import { modeConsole, petitEcranConsole, reglerModeConsole, suivreModeConsole, REGLAGE_THOR, echelleInterface, garderEcranAllume, noterReprise } from './console';
+import { modeConsole, petitEcranConsole, reglerModeConsole, suivreModeConsole, REGLAGE_THOR, REGLAGE_THOR_V2, echelleInterface, garderEcranAllume, noterReprise } from './console';
 import { BOUTONS_JEU, COUCHE_LT, MenuStart, cibleAuto, dirMonde, interactionProche, paquetDense, type Interaction } from './manetteJeu';
 import { comparerAuSol, A_LONG, cibleDansDirection, decrireInteraction, Pichenette, RoueConso } from './confortManette';
 /** Archimonstres du jeu (carnet des âmes, « Archis : » 8A). */
@@ -282,8 +293,8 @@ export class ZoneScene extends Phaser.Scene {
   /** 9A : applique le réglage « Thor » s'il n'a jamais été appliqué et qu'on joue sur un petit écran tenu à la main. */
   private reglageThor(): boolean {
     const r = this.reglages;
-    if (r.presetThor || r.modeConsole === 'non' || !petitEcranConsole()) return false;
-    Object.assign(r, REGLAGE_THOR, { presetThor: true }); sauverReglages(r); return true;
+    if ((r.presetThor && r.presetThor2) || r.modeConsole === 'non' || !petitEcranConsole()) return false;
+    Object.assign(r, r.presetThor ? REGLAGE_THOR_V2 : REGLAGE_THOR, { presetThor: true, presetThor2: true }); sauverReglages(r); return true;
   }
   private ambT = 0;
   private sat?: Phaser.FX.ColorMatrix;
@@ -551,7 +562,7 @@ export class ZoneScene extends Phaser.Scene {
     this.windows.onMenu = c => this.versAccueil(c === 'persos' ? 'persos' : undefined);   // menu principal (Échap)   // rendu en grand (perso_planche : render.cjs échelle 2,2)
     this.windows.reglages = this.reglages;
     this.appliquerReglages();
-    if (this.presetThorNeuf) { this.presetThorNeuf = false; this.time.delayedCall(5000, () => this.hud.toast('Réglage « Thor » appliqué : 60 images/s, particules coupées (Options › Graphismes)')); }
+    if (this.presetThorNeuf) { this.presetThorNeuf = false; this.time.delayedCall(5000, () => this.hud.toast('Réglage « Thor » appliqué : résolution Normale, 60 images/s, particules coupées (Options › Graphismes)')); }
     this.hud.onModules = () => { sauverReglages(this.reglages); this.windows?.refresh(); };
     // idée 1 (2026-11-08) : losange au-dessus des monstres qui comptent pour une quête en cours
     EntityView.deQuete = m => { const Q = this.world.quetes; return !!Q && this.hud.flecheQuete && (Q.estEliteDeQuete(m.id) || Q.pourQuete(m.type, m.x, m.y)); };
@@ -1725,9 +1736,9 @@ export class ZoneScene extends Phaser.Scene {
     if (!this.vitrine && !this.repriseVue && performance.now() - this.debutScene > 20_000 && !document.hidden) { this.repriseVue = true; noterReprise(null); }   // 8A : la partie a bien repris
     const enConsole = suivreModeConsole();
     if (enConsole !== this.consoleAvant) { const premier = this.consoleAvant === undefined; this.consoleAvant = enConsole; if (!premier) this.appliquerReglages(); }   // 5A : l'échelle console suit
-    if (enConsole && !this.reglages.presetThor && this.reglageThor()) {   // manette branchée après le lancement
+    if (enConsole && !(this.reglages.presetThor && this.reglages.presetThor2) && this.reglageThor()) {   // manette branchée après le lancement
       this.appliquerReglages(); this.updateAmbiance(true); this.windows?.refresh();
-      this.hud.toast('Réglage « Thor » appliqué : 60 images/s, particules coupées (Options › Graphismes)', 3500);
+      this.hud.toast('Réglage « Thor » appliqué : résolution Normale, 60 images/s, particules coupées (Options › Graphismes)', 3500);
     }
     this.updateJeu(deltaMs);
     // Fluidité 5B : images et saccades par zone (pas en vitrine ni sous le rideau d'un voyage)

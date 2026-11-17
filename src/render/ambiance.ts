@@ -96,6 +96,8 @@ export interface Reglages {
   modeConsole: 'auto' | 'oui' | 'non';
   /** 9A : réglage « Thor » déjà appliqué une fois (on ne l'impose plus ensuite). */
   presetThor?: boolean;
+  /** Réglage « Thor » version 2 (résolution Normale) déjà appliqué. */
+  presetThor2?: boolean;
   /** « Idées Thor : » 6A : portée de l'auto-visée à la manette. */
   aideVisee?: 'faible' | 'normale' | 'forte';
   /** « Confort 2 : » 4A : zone morte des sticks (0,05 à 0,5) et vitesse du curseur des menus (0,5 à 2). */

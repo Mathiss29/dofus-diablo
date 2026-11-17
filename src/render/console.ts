@@ -30,7 +30,10 @@ export function suivreModeConsole(): boolean {
 }
 
 /** 9A : réglage « Thor » tout fait (60 images/s, particules coupées, ombres et lueurs allégées), appliqué une fois. */
-export const REGLAGE_THOR = { fps: 60, particules: false, lumieres: 0.8, vent: true, eau: true, qualite: 'perso' as const };
+export const REGLAGE_THOR = { fps: 60, particules: false, lumieres: 0.8, vent: true, eau: true, qualite: 'perso' as const, resolution: 'normale' as const };
+/** Version 2 du réglage « Thor » (2026-11-17) : résolution Normale (854×480 au lieu de 1708×960, 4 fois moins de pixels à dessiner,
+ *  moins de mémoire), aussi pour ceux qui avaient déjà la version 1. */
+export const REGLAGE_THOR_V2 = { resolution: 'normale' as const };
 
 /** « Confort 2 : » 5A : l'interface a sa propre échelle en mode console (celle du PC ne bouge pas). */
 export function echelleInterface(r: { echelle: number; echelleConsole?: number }): number {
