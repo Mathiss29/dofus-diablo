@@ -140,7 +140,8 @@ export class Transparence {
     if (t.width < w || t.height < h) { t.width = Math.max(t.width, w); t.height = Math.max(t.height, h); }
     const ctx = t.getContext('2d', { willReadFrequently: true })!;
     ctx.clearRect(0, 0, w, h); ctx.imageSmoothingEnabled = true;
-    ctx.drawImage(fr.source.image as CanvasImageSource, fr.cutX, fr.cutY, fr.cutWidth, fr.cutHeight, 0, 0, fr.cutWidth / P, fr.cutHeight / P);
+    const im = fr.source.image as HTMLCanvasElement, k = im.width / fr.source.width || 1;   // planche allégée (Thor) : image à moitié taille
+    ctx.drawImage(im, fr.cutX * k, fr.cutY * k, fr.cutWidth * k, fr.cutHeight * k, 0, 0, fr.cutWidth / P, fr.cutHeight / P);
     const d = ctx.getImageData(0, 0, w, h).data, a = new Uint8Array(w * h);
     for (let i = 0; i < a.length; i++) a[i] = d[i * 4 + 3];
     m = { w, h, a }; this.masques.set(fr, m);

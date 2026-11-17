@@ -32,9 +32,11 @@ export function ranger(cases: { w: number; h: number }[], max: number, largeur: 
 
 /** Planches de personnages (monstres, classes, PNJ, habitants, coffres) : allégées sur console et dans l'appli. */
 const LEGERES = new Set(Object.values(LOOKS).map(l => l.atlas));
-const aAlleger = (cle: string) => LEGERES.has(cle) || /^(pnj_|hab_|coffre_|fx_)/.test(cle);
+const aAlleger = (cle: string) => LEGERES.has(cle) || /^(pnj_|hab_|coffre_|fx_)/.test(cle) || DECOR.test(cle);
+/** Décor du monde (planches « <monde>_decor_… », sols et calques « <monde>_sol_… ») : la moitié de la mémoire restante sur la Thor (2026-11-17). */
+const DECOR = /^[a-z0-9-]+_(decor|sol|fond|bord)_/;
 /** Plus petite page allégée (en pixels) : en dessous, le gain ne vaut pas la copie. */
-const PETITE = 1024 * 1024;
+const PETITE = 512 * 512;
 
 /** Mémoire sur la Thor (2026-11-16, la page fermée par Android au Bastion : 666 Mo d'images) : sur console et dans
  *  l'appli, chaque planche de personnage est gardée à moitié de sa taille (4 fois moins de mémoire). Les images gardent
@@ -49,7 +51,7 @@ export function alleger(T: Phaser.Textures.TextureManager, cle: string, max: num
   if (!srcs.length || srcs.every(s => s.width * s.height <= PETITE)) return false;
   if (!srcs.every(s => s.image instanceof HTMLImageElement || (typeof ImageBitmap !== 'undefined' && s.image instanceof ImageBitmap))) return false;
   const noms = t.getFrameNames().filter(n => n !== '__BASE');
-  if (!noms.length) return false;
+  if (!noms.length && !DECOR.test(cle)) return false;   // image seule : seulement les sols et calques du décor
   const dims = srcs.map(s => [s.width, s.height] as const);
   if (dims.some(([w, h]) => Math.ceil(w / 2) > max || Math.ceil(h / 2) > max)) return false;   // encore trop grande : découpée plus bas
   const pages = srcs.map(s => {
