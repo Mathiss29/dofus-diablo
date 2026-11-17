@@ -2288,6 +2288,30 @@
           "Les cartes, monstres et sons déjà chargés restent sur l'appareil : relance rapide, jeu sans réseau."
         ]
       }
+    },
+    {
+      "date": "2026-11-17",
+      "titre": "Le Marché couvert a son enseigne",
+      "resume": "Une enseigne montre où vendent Goultard, Otomaï, Mère Bouillotte et Tissebelle, présents dès le début.",
+      "capture": "assets/journal/2026-11-17.webp",
+      "legende": "Le Marché couvert du Bastion des Douze, 17 novembre 2026.",
+      "lignes": {
+        "Le monde": [
+          {
+            "titre": "Enseigne du Marché couvert",
+            "phrase": "Au Bastion, une enseigne au-dessus de la porte du Marché couvert dit qui vend dedans.",
+            "details": "Goultard (clés de donjon), Otomaï, Mère Bouillotte et Tissebelle sont dans le bâtiment, juste derrière Kerubim.",
+            "icone": "cle",
+            "etiquettes": [
+              "Bastion des Douze",
+              "Marché couvert"
+            ]
+          }
+        ],
+        "Corrections": [
+          "Goultard et Otomaï tiennent leur stand au Marché couvert dès le début, plus besoin d'avoir vu Astrub."
+        ]
+      }
     }
   ]
 }
