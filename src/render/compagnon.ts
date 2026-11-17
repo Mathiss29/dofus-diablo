@@ -6,6 +6,7 @@
 import { diagGpu, type DiagGpu } from './diagGpu';
 import type { CarteBas, EtatBas, QuetesBas, SacBas } from './compagnonEtat';
 import { CSS_JEU, MiroirJeu, stylesDuJeu, type EvtBas, type FenetreBas } from './miroir';
+import type { AccueilBas } from './accueilThor';
 
 export type OngletBas = 'carte' | 'sac' | 'perso' | 'quetes' | 'tchat';
 /** Une ligne du tchat ou du journal (« Interfaces Thor : » 4C+4D) : html déjà mis en forme par chat.ts ; journal = ligne du jeu (butin, combat…). */
@@ -20,7 +21,7 @@ export type MsgCompagnon =
   | { k: 'bonjour'; neuf?: boolean } | { k: 'ping'; n: number; t: number } | { k: 'pong'; n: number; t: number }
   | { k: 'etat'; e: EtatBas | null } | { k: 'carte'; c: CarteBas | null } | { k: 'sac'; s: SacBas | null } | { k: 'quetes'; q: QuetesBas | null }
   | { k: 'fiche'; uid: number; html: string } | { k: 'fenetre'; f: FenetreBas | null } | { k: 'styles'; css: string } | { k: 'onglet'; o: OngletBas | 'suivant' }
-  | { k: 'tchat'; l: LigneTchat[]; enLigne: boolean } | { k: 'annonce'; t: string; c?: string; uid?: number } | { k: 'bilan'; titre: string; lignes: string[] } | { k: 'diag'; d: DiagGpu } | { k: 'action'; a: ActionCompagnon } | { k: 'ordre'; o: OrdreBas };
+  | { k: 'tchat'; l: LigneTchat[]; enLigne: boolean } | { k: 'annonce'; t: string; c?: string; uid?: number } | { k: 'bilan'; titre: string; lignes: string[] } | { k: 'diag'; d: DiagGpu } | { k: 'action'; a: ActionCompagnon } | { k: 'ordre'; o: OrdreBas } | { k: 'accueil'; a: AccueilBas | null };
 export type Lien = 'direct' | 'stockage';
 type De = 'jeu' | 'ecran';
 interface Enveloppe { de: De; id: string; m: MsgCompagnon }
@@ -92,6 +93,14 @@ export function bilanBas(titre: string, lignes: string[]) { if (compagnonRelie()
 /** Appelé à chaque lancement de la scène de jeu : la page n'a qu'un canal, la scène du moment répond. */
 export function brancherCompagnon(b: BrancheCompagnon) {
   branche = b; toutRenvoyer = true;
+  ouvrirCanal();
+}
+/** « Accueil Thor : » 6A : l'accueil dit à l'écran du bas ce qu'il montre (fiche de la classe en création) ; null = plus à l'accueil. */
+export function accueilBas(a: AccueilBas | null) {
+  ouvrirCanal();
+  if (compagnonRelie() || a === null) canalJeu!.envoyer({ k: 'accueil', a });
+}
+function ouvrirCanal() {
   if (canalJeu) return;
   const c = canalJeu = new Canal('jeu');
   miroir = new MiroirJeu(f => c.envoyer({ k: 'fenetre', f }));

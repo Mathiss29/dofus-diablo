@@ -5,6 +5,7 @@ import { API, Compte } from './compte';
 import { dernier, lirePersos, type Perso } from './persos';
 import { CLE_UNE_TEXTURE, texteDiag, uneTexture, type DiagGpu } from './diagGpu';
 import { Canal, type ActionCompagnon, type LigneTchat, type OngletBas, type OrdreBas } from './compagnon';
+import type { AccueilBas } from './accueilThor';
 import type { CarteBas, EtatBas, ObjetBas, QuetesBas, SacBas } from './compagnonEtat';
 import { CSS_BAS, MiroirBas } from './miroir';
 import { v } from './assetUrl';
@@ -40,6 +41,19 @@ html,body{margin:0;background:#0d0f14;overscroll-behavior:none}
 #cmp nav .pt.ok{background:#7fd04b;box-shadow:0 0 8px #7fd04b}#cmp nav .pt.lent{background:#ffc14d}
 #cmp .ro{position:absolute;left:8px;right:8px;top:6px;z-index:3;background:#1d1a10ee;border:1px solid #5a5236;border-radius:9px;padding:6px 9px;font-size:12px;color:#cfc8b0;pointer-events:none}
 #cmp .ro[hidden]{display:none}
+#cmp .accb{position:absolute;inset:0;z-index:4;background:#14161e;overflow:auto;padding:12px 14px;box-sizing:border-box;display:grid;gap:9px;align-content:start}
+#cmp .accb[hidden]{display:none}
+#cmp .accb h4{margin:0;font:400 28px Rowdies,Lexend,sans-serif;color:#d3f46f;line-height:1}
+#cmp .accb .ti{font-weight:700;color:#ffc14d;font-size:14px}
+#cmp .accb .de{font-size:13px;line-height:1.45;color:#cfc8b0;margin:0}
+#cmp .accb .j{display:grid;grid-template-columns:110px 1fr;gap:8px;align-items:center;font-size:13px;font-weight:600;color:#cfc8b0}
+#cmp .accb .j i{height:8px;border-radius:4px;background:#2a2f3a;display:block;position:relative;overflow:hidden}
+#cmp .accb .j i::before{content:"";position:absolute;inset:0;width:var(--v);background:#d3f46f}
+#cmp .accb .ss{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+#cmp .accb .ss div{background:#1f232e;border:1px solid #343a4a;border-radius:9px;padding:7px 8px;font-size:12px;line-height:1.35;color:#cfc8b0;display:grid;grid-template-columns:30px 1fr;gap:2px 7px;align-items:start}
+#cmp .accb .ss img{width:30px;height:30px;border-radius:6px;grid-row:span 2}
+#cmp .accb .ss b{color:#ffc14d;font-weight:600;font-size:13px}
+#cmp .accb .note{font:400 18px Rowdies,Lexend,sans-serif;color:#e0925a}
 #cmp .vide{color:#8e8a78;text-align:center;margin-top:60px;line-height:1.5}
 /* carte */
 #cmp .vue.carte{padding:0;overflow:hidden;touch-action:none;background:#0a0c10}
@@ -180,6 +194,7 @@ export function ecranCompagnon() {
   const r = document.createElement('div'); r.id = 'cmp'; document.body.appendChild(r);
   r.innerHTML = `<div class="vues">
       <div class="ro" hidden></div>
+      <div class="accb" hidden></div>
       <div class="vue carte" data-v="carte"><div class="plan"><img alt=""></div><canvas></canvas>
         <div class="cb"><button data-c="moi" title="Sur moi">◎</button><button data-c="plus">＋</button><button data-c="moins">－</button></div><div class="ci"></div></div>
       <div class="vue sac" data-v="sac"><div class="gauche"><div class="seg"><button data-s="sac" class="on">Sac</button><button data-s="porte">Porté</button></div><div class="grille"></div></div>
@@ -282,6 +297,7 @@ export function ecranCompagnon() {
     if (!enJeu) { enJeu = true; noter(`Jeu trouvé (${NOMS[par].toLowerCase()})`); }
     switch (m.k) {
       case 'etat': etat = m.e; etatT = t; break;
+      case 'accueil': accueil = m.a; accueilT = t; dessinerAccueil(); break;
       case 'carte': carte = m.c; if (onglet === 'carte') dessinerCarte(); break;
       case 'sac': sac = m.s; if (onglet === 'sac') dessinerSac(); break;
       case 'quetes': quetes = m.q; if (onglet === 'quetes') dessinerQuetes(); break;
@@ -731,11 +747,26 @@ export function ecranCompagnon() {
   // Confort Thor 1E : tout près d'un PNJ, d'un Zaap, d'un objet… le bouton apparaît en bas, à toucher au doigt
   q('.ctx').addEventListener('click', () => { if (relie()) ordre({ k: 'interagir' }); });
 
+  // ---------- « Accueil Thor : » 6A : à l'accueil, la fiche de la classe en création ----------
+  let accueil: AccueilBas | null = null, accueilT = 0, accueilVu = '';
+  const dessinerAccueil = () => {
+    const el = q('.accb'), a = accueil && performance.now() - accueilT < 3500 ? accueil : null, cl = a?.classe ?? null;
+    el.hidden = !cl;
+    const k = cl ? JSON.stringify(cl) : '';
+    if (!cl || k === accueilVu) return;
+    accueilVu = k;
+    el.innerHTML = `<h4>${esc(cl.nom)}</h4><div class="ti">${esc(cl.titre)}</div><p class="de">${esc(cl.desc)}</p>
+      ${cl.roles.map(([n, v]) => `<div class="j"><span>${esc(n)}</span><i style="--v:${Math.min(100, v / 12 * 100)}%"></i></div>`).join('')}
+      <div class="j"><span>Difficulté</span><span style="color:#d3f46f">${'●'.repeat(cl.complexite)}<span style="color:#55553f">${'●'.repeat(5 - cl.complexite)}</span></span></div>
+      ${cl.jouable ? `<div class="ti" style="margin-top:4px">Premiers sorts</div><div class="ss">${cl.sorts.map(sp => `<div><img src="assets/ui/sorts/sort_${sp.icone}.png" alt=""><b>${esc(sp.nom)} <small style="color:#8e8a78;font-weight:500">niv. ${sp.niveau}</small></b><span>${esc(sp.texte)}</span></div>`).join('')}</div>` : `<div class="note">${esc(cl.note)}</div>`}`;
+  };
+
   // ---------- boucle d'affichage ----------
   let sacLu = false;
   function dessiner() {
     const t = performance.now(), ok = relie(), pt = q('nav .pt');
     pt.className = `pt${ok ? ' ok' : enJeu ? ' lent' : ''}`;
+    dessinerAccueil();
     const ro = q('.ro'), lectureSeule = !ok && t - debut > 4000 && onglet !== 'liens';
     ro.hidden = !lectureSeule;
     if (lectureSeule) ro.textContent = sauve ? `Lecture seule : d'après la sauvegarde de ${new Date(sauve.maj).toLocaleTimeString('fr-FR')}. Lance le jeu en haut pour tout piloter.` : 'Lance le jeu sur l\'écran du haut et entre en jeu : cette page le trouve toute seule.';
