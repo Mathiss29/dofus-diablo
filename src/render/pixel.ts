@@ -48,10 +48,12 @@ export function auPixel(cam: Phaser.Cameras.Scene2D.Camera, x: number, y: number
  * au lieu d'être agrandi (donc flouté) par le navigateur. Plafonnée à 2 pour la carte graphique.
  * Les caméras du jeu et de l'interface sont zoomées d'autant : tout garde la même taille à l'écran.
  */
-let pleine = true;
-/** Réglage « Résolution » (Fluidité 3A) : false = un pixel du jeu par pixel CSS, plus rapide. */
-export function reglerDensite(ecran: boolean) { pleine = ecran; }
-export function densitePleine() { return pleine; }
+export type Resolution = 'ecran' | 'moyenne' | 'normale';
+let mode: Resolution = 'ecran';
+/** Réglage « Résolution » (Fluidité 3A) : 'normale' = un pixel du jeu par pixel CSS, plus rapide ; 'moyenne' = une fois et demie
+ *  (Thor, 2026-11-25 : en Normale, 854×480 étirés sur un écran 1080p, Mathis trouvait le jeu flou). */
+export function reglerDensite(m: Resolution) { mode = m; }
+export function modeDensite(): Resolution { return mode; }
 /**
  * Petit écran (AYN Thor : Chrome donne au jeu ~850×480 px CSS, maquette « Console : ») : la caméra du jeu est réglée en pixels CSS,
  * donc on y voyait 5 fois moins de terrain qu'en 1080p. Sous 720 px de haut, on recule la caméra d'autant (jamais sous 0,55).
@@ -67,9 +69,9 @@ export function reculCamera(): number {
   return Math.min(1, Math.max(0.7, Math.pow(reculPetitEcran(), 0.75)));
 }
 export function densite(): number {
-  if (!pleine) return 1;
+  if (mode === 'normale') return 1;
   const d = typeof window === 'undefined' ? 1 : window.devicePixelRatio || 1;
-  return Math.min(2, Math.max(1, d));
+  return Math.min(mode === 'moyenne' ? 1.5 : 2, Math.max(1, d));
 }
 
 /** Branche la densité sur le jeu : le canevas suit la taille de son parent multipliée par `densite()`

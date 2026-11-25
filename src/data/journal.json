@@ -2343,6 +2343,7 @@
           }
         ],
         "Corrections": [
+          "Thor : image plus nette, nouvelle résolution Équilibrée entre Écran et Normale (Options, Graphismes).",
           "Perso en carré noir : un fichier du perso raté au chargement est redemandé au lieu de tout casser.",
           "Thor : le perso ne devient plus un carré noir dans l'appli au moteur Firefox.",
           "Thor : moins de saccades en arrivant dans une zone (textures espacées, perso plus léger).",

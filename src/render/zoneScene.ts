@@ -7,7 +7,7 @@ import { BENEDICTIONS } from '../sim/magasin';
 import { apercuSort } from '../sim/apercu';
 import { dossier, v } from './assetUrl';
 import Phaser from 'phaser';
-import { calerCamera, densite, densitePleine, reglerDensite, reculCamera } from './pixel';
+import { calerCamera, densite, modeDensite, reglerDensite, reculCamera } from './pixel';
 import { rareteApparat } from '../sim/apparats';
 import { FAMILIERS_SOURCES } from '../sim/menagerie';
 import { styleDef } from '../sim/style';
@@ -120,7 +120,7 @@ import { carteBas, combatBas, depuisPlan, etatBas, groupeBas, quetesBas, raccour
 import { rangAbo } from '../sim/boutiqueOgrines';
 import type { EquipSlot } from '../sim/items';
 import { BTN, brancherJeu, brancheActuelle, elementManette, focusManette, manetteActive, reglerControles, reglerVibrations, reglerSticks, reglerBoutons, appliNative, vibrer, type BrancheJeu, type ImageManette } from './manette';
-import { modeConsole, petitEcranConsole, reglerModeConsole, suivreModeConsole, REGLAGE_THOR, REGLAGE_THOR_V2, echelleInterface, garderEcranAllume, noterReprise } from './console';
+import { modeConsole, petitEcranConsole, reglerModeConsole, suivreModeConsole, REGLAGE_THOR, REGLAGE_THOR_V2, REGLAGE_THOR_V3, echelleInterface, garderEcranAllume, noterReprise } from './console';
 import { BOUTONS_JEU, COUCHE_LT, MenuStart, cibleAuto, dirMonde, interactionProche, paquetDense, type Interaction } from './manetteJeu';
 import { comparerAuSol, A_LONG, cibleDansDirection, decrireInteraction, Pichenette, RoueConso } from './confortManette';
 /** Archimonstres du jeu (carnet des âmes, « Archis : » 8A). */
@@ -293,8 +293,9 @@ export class ZoneScene extends Phaser.Scene {
   /** 9A : applique le réglage « Thor » s'il n'a jamais été appliqué et qu'on joue sur un petit écran tenu à la main. */
   private reglageThor(): boolean {
     const r = this.reglages;
-    if ((r.presetThor && r.presetThor2) || r.modeConsole === 'non' || !petitEcranConsole()) return false;
-    Object.assign(r, r.presetThor ? REGLAGE_THOR_V2 : REGLAGE_THOR, { presetThor: true, presetThor2: true }); sauverReglages(r); return true;
+    if ((r.presetThor && r.presetThor2 && r.presetThor3) || r.modeConsole === 'non' || !petitEcranConsole()) return false;
+    if (!(r.presetThor && r.presetThor2)) Object.assign(r, r.presetThor ? REGLAGE_THOR_V2 : REGLAGE_THOR);
+    Object.assign(r, REGLAGE_THOR_V3, { presetThor: true, presetThor2: true, presetThor3: true }); sauverReglages(r); return true;
   }
   private ambT = 0;
   private sat?: Phaser.FX.ColorMatrix;
@@ -566,7 +567,7 @@ export class ZoneScene extends Phaser.Scene {
     this.windows.onMenu = c => this.versAccueil(c === 'persos' ? 'persos' : undefined);   // menu principal (Échap)   // rendu en grand (perso_planche : render.cjs échelle 2,2)
     this.windows.reglages = this.reglages;
     this.appliquerReglages();
-    if (this.presetThorNeuf) { this.presetThorNeuf = false; this.time.delayedCall(5000, () => this.hud.toast('Réglage « Thor » appliqué : résolution Normale, 60 images/s, particules coupées (Options › Graphismes)')); }
+    if (this.presetThorNeuf) { this.presetThorNeuf = false; this.time.delayedCall(5000, () => this.hud.toast('Réglage « Thor » appliqué : résolution Équilibrée, 60 images/s, particules coupées (Options › Graphismes)')); }
     this.hud.onModules = () => { sauverReglages(this.reglages); this.windows?.refresh(); };
     // idée 1 (2026-11-08) : losange au-dessus des monstres qui comptent pour une quête en cours
     EntityView.deQuete = m => { const Q = this.world.quetes; return !!Q && this.hud.flecheQuete && (Q.estEliteDeQuete(m.id) || Q.pourQuete(m.type, m.x, m.y)); };
@@ -1250,7 +1251,7 @@ export class ZoneScene extends Phaser.Scene {
     EntityView.barresVie = r.barresVie;
     // 7A : échelle de l'interface (caméra de l'interface zoomée depuis le coin haut gauche ; les fenêtres en CSS)
     // Fluidité 3A : résolution du rendu (le canevas est redimensionné, les caméras suivent à l'image suivante)
-    if (densitePleine() !== (r.resolution !== 'normale')) { reglerDensite(r.resolution !== 'normale'); this.game.scale.refresh(); }
+    if (modeDensite() !== r.resolution) { reglerDensite(r.resolution); this.game.scale.refresh(); this.time.delayedCall(400, () => this.game.scale.refresh()); }   // (2e passe : à la création de la scène, la première ne prenait pas)
     const k = echelleInterface(r), ui = this.cameras.getCamera('ui');
     garderEcranAllume(!this.vitrine && r.toujoursAllume !== false);   // « Confort 2 : » 2A
     reglerSticks(r.zoneMorte, r.vitesseCurseur); reglerBoutons(r.disposition, r.boutons);   // 4A + 4B
@@ -1758,7 +1759,7 @@ export class ZoneScene extends Phaser.Scene {
     if (enConsole !== this.consoleAvant) { const premier = this.consoleAvant === undefined; this.consoleAvant = enConsole; if (!premier) this.appliquerReglages(); }   // 5A : l'échelle console suit
     if (enConsole && !(this.reglages.presetThor && this.reglages.presetThor2) && this.reglageThor()) {   // manette branchée après le lancement
       this.appliquerReglages(); this.updateAmbiance(true); this.windows?.refresh();
-      this.hud.toast('Réglage « Thor » appliqué : résolution Normale, 60 images/s, particules coupées (Options › Graphismes)', 3500);
+      this.hud.toast('Réglage « Thor » appliqué : résolution Équilibrée, 60 images/s, particules coupées (Options › Graphismes)', 3500);
     }
     this.updateJeu(deltaMs);
     // Fluidité 5B : images et saccades par zone (pas en vitrine ni sous le rideau d'un voyage)
