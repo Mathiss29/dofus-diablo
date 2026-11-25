@@ -1,0 +1,13 @@
+{
+  "manifest_version": 2,
+  "name": "Pont Diablofus",
+  "version": "1.0",
+  "description": "window.DiablofusAppli dans les pages du jeu : manette, vibreur, luminosité, journal de l'appli.",
+  "browser_specific_settings": { "gecko": { "id": "pont@diablofus.com" } },
+  "content_scripts": [{
+    "matches": ["https://diablofus.com/*", "https://*.diablofus.com/*"],
+    "js": ["pont.js"],
+    "run_at": "document_start"
+  }],
+  "permissions": ["nativeMessaging", "nativeMessagingFromContent", "geckoViewAddons"]
+}

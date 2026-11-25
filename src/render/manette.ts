@@ -42,9 +42,10 @@ let vibrations = true;
 export function reglerVibrations(on: boolean) { vibrations = on; }
 /** Fait vibrer la manette (si elle sait : Chrome, « dual-rumble »). Forces de 0 à 1. */
 export function vibrer(fort: number, faible: number, ms: number) {
-  if (!vibrations || controles === 'clavier' || typeof navigator === 'undefined' || !navigator.getGamepads) return;
+  if (!vibrations || controles === 'clavier' || typeof navigator === 'undefined') return;
   const nat = appliNative();
   if (nat?.vibrer) { try { nat.vibrer(fort, faible, ms); } catch { /* vieille appli */ } return; }
+  if (!navigator.getGamepads) return;
   const a = pad()?.vibrationActuator as { playEffect?: (t: string, p: object) => Promise<unknown> } | undefined;
   a?.playEffect?.('dual-rumble', { duration: ms, strongMagnitude: fort, weakMagnitude: faible })?.catch(() => {});
 }
@@ -96,7 +97,8 @@ export function demarrerManette() {
 
 /** Appli Android « Diablofus Thor » (« Confort 2 : » 1A) : la manette est lue par l'appli et passée ici
  *  (une WebView ne voit pas toujours la manette, et l'appli la garde même quand on touche l'écran du bas). */
-interface AppliNative { manette?(): string; vibrer?(fort: number, faible: number, ms: number): void; luminosite?(f: number): void; version?(): string; journal?(): string }
+/** moteur() : 'gecko' dans l'appli « Diablofus Gecko » (android-gecko/, moteur de Firefox embarqué) ; absent dans l'appli WebView. */
+interface AppliNative { moteur?(): string; manette?(): string; vibrer?(fort: number, faible: number, ms: number): void; luminosite?(f: number): void; version?(): string; journal?(): string }
 export function appliNative(): AppliNative | null {
   return typeof window !== 'undefined' ? (window as unknown as { DiablofusAppli?: AppliNative }).DiablofusAppli ?? null : null;
 }
@@ -112,6 +114,7 @@ function padNatif(): Gamepad | null {
 function pad(): Gamepad | null {
   const n = padNatif(); if (n) return n;
   let meilleur: Gamepad | null = null;
+  if (!navigator.getGamepads) return null;
   for (const g of navigator.getGamepads()) if (g?.connected && (!meilleur || g.timestamp > meilleur.timestamp)) meilleur = g;
   return meilleur;
 }

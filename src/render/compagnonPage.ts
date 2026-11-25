@@ -205,7 +205,7 @@ export function ecranCompagnon() {
       <div class="vue tchat" data-v="tchat"><div class="seg"><button data-t="tchat" class="on">Tchat</button><button data-t="journal">Journal<i></i></button></div><div class="tl"></div>
         <form class="te"><input maxlength="200" placeholder="Écrire aux joueurs…" enterkeyhint="send" autocomplete="off"><button>Envoyer</button></form></div>
       <div class="vue" data-v="liens"><div class="bat"></div><div class="liens">${Object.keys(NOMS).map(k => `<div class="lien" data-l="${k}"><b><i></i>${NOMS[k]}</b><span>jamais</span></div>`).join('')}</div>
-        <div class="btns"><button data-d="ping">Coucou au jeu</button><button data-d="rapport">Copier le rapport</button><button data-d="texture">Essai carrés noirs</button><button data-d="retour">Retour</button>${appliNative() ? '' : '<a class="appli" href="appli/diablofus-thor.apk" download>Appli Thor (deux écrans)</a>'}</div>
+        <div class="btns"><button data-d="ping">Coucou au jeu</button><button data-d="rapport">Copier le rapport</button><button data-d="texture">Essai carrés noirs</button><button data-d="retour">Retour</button>${appliNative() ? '' : '<a class="appli" href="appli/diablofus-thor.apk" download>Appli Thor (deux écrans)</a>'}${appliNative()?.moteur ? '' : '<a class="appli" href="https://assets.diablofus.com/appli/diablofus-gecko.apk" download>Appli Thor, moteur Firefox</a>'}</div>
         <div class="journal"></div></div>
       <div class="bilan" hidden><h4></h4><div class="bl"></div><button data-bilan="x">Fermer</button></div>
       <div class="fen" hidden><div class="fh"><span></span><button data-f="x">✕ Fermer</button></div><div class="fc"></div></div>

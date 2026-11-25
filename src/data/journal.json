@@ -2312,6 +2312,30 @@
           "Goultard et Otomaï tiennent leur stand au Marché couvert dès le début, plus besoin d'avoir vu Astrub."
         ]
       }
+    },
+    {
+      "date": "2026-11-25",
+      "titre": "La Thor a son propre moteur",
+      "resume": "Nouvelle appli Thor avec le moteur de Firefox intégré : le jeu ne dépend plus du vieux WebView de la console.",
+      "capture": "assets/journal/2026-11-25.webp",
+      "legende": "Incarnam à la taille de l'écran du haut de la Thor, 25 novembre 2026.",
+      "lignes": {
+        "Nouveautés": [
+          {
+            "titre": "Appli Thor, moteur Firefox",
+            "phrase": "Une 2e appli pour la Thor embarque le moteur de Firefox, plus récent que celui de la console.",
+            "details": "Elle garde les deux écrans, la manette et le vibreur. Si Android ferme la page, l'appli la relance au lieu de se fermer.",
+            "icone": "options",
+            "etiquettes": [
+              "AYN Thor",
+              "Options › Manette"
+            ]
+          }
+        ],
+        "Corrections": [
+          "Manette : le vibreur de l'appli marche même si le navigateur ne connaît pas les manettes."
+        ]
+      }
     }
   ]
 }

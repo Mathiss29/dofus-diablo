@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Appli « Diablofus Thor » avec son propre moteur (GeckoView) : le jeu en haut, l'écran du bas sur le second écran. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+  <uses-permission android:name="android.permission.VIBRATE" />
+  <uses-feature android:name="android.hardware.gamepad" android:required="false" />
+  <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+  <application
+      android:label="Diablofus Gecko"
+      android:icon="@mipmap/ic_launcher"
+      android:theme="@style/Theme"
+      android:hardwareAccelerated="true"
+      android:largeHeap="true"
+      android:isGame="true"
+      android:appCategory="game"
+      android:usesCleartextTraffic="false">
+    <activity
+        android:name=".Principale"
+        android:exported="true"
+        android:launchMode="singleTask"
+        android:screenOrientation="sensorLandscape"
+        android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboard|keyboardHidden|navigation|uiMode|density">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+        <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+      </intent-filter>
+    </activity>
+    <activity
+        android:name=".BasActivite"
+        android:exported="false"
+        android:resizeableActivity="true"
+        android:launchMode="singleInstance"
+        android:taskAffinity="com.ombrelune.diablofus.gecko.bas"
+        android:excludeFromRecents="true"
+        android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboard|keyboardHidden|navigation|uiMode|density" />
+  </application>
+</manifest>
