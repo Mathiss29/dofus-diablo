@@ -65,6 +65,8 @@ export class WorldView {
   private couronne: WorldMapEntry[] = [];
   /** Rideau baissé (arrivée par une porte, un Zaap, après une mort) : on pose le décor plus vite, l'écran est noir. */
   presse = false;
+  private dernierTour = 0;
+  private aEnvoye = false;
   /** Ambiance (render/ambiance.ts) : teinte des cartes et force des lumières, appliquées aux objets posés et à venir. */
   private tint = 0xffffff;
   private lum = 1;
@@ -200,7 +202,11 @@ export class WorldView {
    *  décharge celles qui sont loin des deux. Vérifié quand le joueur change de carte, et 4 fois par seconde pour le zoom. */
   update(px: number, py: number) {
     this.drawSky();
-    this.upload();
+    // Souffle (Thor, 2026-11-25) : si l'image qui a suivi un envoi de texture a traîné (plus de 24 ms), on saute un tour.
+    // Avant, une texture partait à chaque image tant qu'il en restait : 16 à 25 images/s pendant toute l'arrivée dans une zone.
+    const tour = performance.now(), lent = this.aEnvoye && tour - this.dernierTour > 24;
+    this.dernierTour = tour; this.aEnvoye = false;
+    if (this.presse || !lent) this.upload();
     if (this.presse) this.upload();   // écran noir : deux textures par image, et plus de temps pour le décor
     this.pump(this.presse ? 14 : BUDGET_MS);
     this.cull();
@@ -358,7 +364,7 @@ export class WorldView {
     if (!u) return;
     const s = this.slots.get(u.m.tag)!;
     if (s.state !== 'loading') return;   // le joueur est reparti entre-temps
-    u.add();
+    u.add(); this.aEnvoye = true;
     if (this.texturesReady(u.m)) this.build(u.m);
   }
   private texturesReady(m: WorldMapEntry) {

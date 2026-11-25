@@ -2343,6 +2343,7 @@
           }
         ],
         "Corrections": [
+          "Thor : moins de saccades en arrivant dans une zone (textures espacées, perso plus léger).",
           "Thor : les Options ne restent plus invisibles après une fenêtre ouverte sur l'écran du bas.",
           "Thor : fenêtres du bas lisibles (loupe), tous les menus dans l'onglet Perso, sorts à poser au toucher.",
           "Appli Thor moteur Firefox : listes des Options et couleurs du perso s'ouvrent de nouveau.",

@@ -1,14 +1,19 @@
 import Phaser from 'phaser';
 import { Assemblage } from './squelette';
+import { modeConsole } from './console';
 
 /** Le perso du joueur dessiné en direct (maquette Apparence 3A) : chaque image de ses animations est dessinée par
  *  l'Assemblage (squelette + corps + tête + couleurs) la première fois qu'elle sert, puis rangée dans des pages
  *  de 2048 px (textures Phaser). Les images ont la même cellule, le même pied et la même échelle que les anciennes
  *  planches (perso_planche.py : boîte -260,-1000,260,120 à l'échelle 0,7), donc EntityView les affiche pareil. */
+/** 2 sur PC ; 1 sur console (Thor, 2026-11-25) : l'écran fait 480 px de haut, et chaque image du perso coûtait 4 fois
+ *  plus de dessin et d'envoi à la carte graphique pour un détail qu'on ne voit pas. */
+function finesse(): number { try { return modeConsole() ? 1 : 2; } catch { return 2; } }
+
 export class PersoVivant {
   /** Finesse : les images sont faites RESOLUTION fois plus grandes que les anciennes planches, et le sprite est réduit
    *  d'autant (la caméra agrandit le jeu : en 1x, le perso était flou et ses bords en escalier). */
-  static readonly RESOLUTION = 2;
+  static readonly RESOLUTION = finesse();
   static readonly ECHELLE = 0.7 * PersoVivant.RESOLUTION;
   static readonly CELLULE: [number, number] = [364 * PersoVivant.RESOLUTION, 784 * PersoVivant.RESOLUTION];
   static readonly PIED: [number, number] = [182 * PersoVivant.RESOLUTION, 700 * PersoVivant.RESOLUTION];
