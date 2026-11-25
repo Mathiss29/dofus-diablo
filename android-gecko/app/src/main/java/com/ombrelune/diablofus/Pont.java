@@ -100,7 +100,7 @@ final class Pont {
         for (ActivityManager.RunningAppProcessInfo i : am.getRunningAppProcesses()) {
           String n = i.processName; int k = n.indexOf(':');
           String court = k >= 0 ? n.substring(k + 1) : "appli";
-          if (court.startsWith("tab")) pages++;
+          if (court.contains("tab")) pages++;
           p.append(p.length() > 0 ? ", " : "").append(court);
         }
         t.append(" · processus : ").append(p).append(" (").append(pages).append(" pour les pages)");
