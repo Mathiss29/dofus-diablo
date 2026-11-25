@@ -34,6 +34,9 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
+      # Le paquet du site vient d'être envoyé : GitHub met parfois un instant à le lister, et la publication échouait
+      # alors avec « No artifacts named "github-pages" » (6 fois le 2026-11-25). On attend un peu avant de publier.
+      - run: sleep 30
       - id: deploy
         uses: actions/deploy-pages@v4
 
