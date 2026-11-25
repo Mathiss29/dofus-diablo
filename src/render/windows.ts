@@ -14,7 +14,10 @@ import { ouTrouver, rareteApparat } from '../sim/apparats';
 import { FAMILIERS_SOURCES, ouTrouverFamilier, sourceFamilier } from '../sim/menagerie';
 import { REGLAGES_BUTIN } from '../sim/butin';
 import { REGLES_BETES, invocationsMaxDe } from '../sim/bete';
-import { nomOrne, placesTenues, prixPlaceTenue, STYLE, type SorteStyle, type StyleDef } from '../sim/style';
+import { nomOrne, placesTenues, prixPlaceTenue, STYLE, TITRES_IDLUS, type SorteStyle, type StyleDef } from '../sim/style';
+/** Ce que donne un palier de Vétéran d'Idlus (message du code cadeau). */
+const nomsIdlus = (palier: number, adieu: boolean) => [...(palier >= 1 ? [`titre « ${TITRES_IDLUS.veteran} »`] : []), ...(palier >= 2 ? ['ornement « Feuille d\'Idlus »'] : []),
+  ...(palier >= 3 ? ['auréole « Émeraude d\'Idlus »'] : []), ...(adieu ? [`titre « ${TITRES_IDLUS.adieu} »`] : [])];
 import { themeChoisi, themesEnJeu, themesPossedes } from '../sim/havresac';
 import { v } from './assetUrl';
 import { MEUBLES, raresDuTheme, meubleDeRecette } from '../sim/meubles';
@@ -2346,7 +2349,7 @@ export class Windows {
     const ok = Compte.enLigne, adm = ok && !!Compte.infos?.admin;
     return `<div class="cpt"><div class="og"><b>${ok ? Compte.ogrines.toLocaleString('fr-FR') : '—'}</b><span>Ogrines</span></div>
       ${ok ? '' : '<p>Connecte-toi avec Discord à l\'accueil (mode « En ligne ») pour recevoir des Ogrines et utiliser un code.</p>'}
-      <div class="cl"><input type="text" data-code placeholder="DIABLO-XXXX-XXXX" maxlength="32" ${ok ? '' : 'disabled'} aria-label="Code cadeau"><span class="btn" data-cbtn="utiliser">Utiliser le code</span></div>
+      <div class="cl"><input type="text" data-code placeholder="DIABLO-XXXX-XXXX ou IDLUS-…" maxlength="32" ${ok ? '' : 'disabled'} aria-label="Code cadeau"><span class="btn" data-cbtn="utiliser">Utiliser le code</span></div>
       ${this.codeMsg ? `<div class="cm">${e(this.codeMsg)}</div>` : ''}
       ${adm ? `<details class="adm"><summary>Créer un code (admin)</summary>
         <div class="cl"><input type="number" data-cc="ogrines" min="0" max="100000" value="500" title="Ogrines"><input type="number" data-cc="max" min="1" value="1" title="Utilisations"><input type="number" data-cc="jours" min="1" value="7" title="Jours"></div>
@@ -2365,6 +2368,8 @@ export class Windows {
         if (APPARATS.objets[id]) { this.world.ajouterApparat(id); noms.push(APPARATS.objets[id].name ?? id); }
         else if (ITEMS.equipment[id] || ITEMS.resources?.[id]) { this.world.donnerObjet(id); noms.push(nomObjet(id)); }
       }
+      // Vétéran d'Idlus : titre, ornement, auréole selon le palier (world.recevoirIdlus)
+      if (r.idlus) { this.world.recevoirIdlus(r.idlus.palier, r.idlus.adieu); noms.push(...nomsIdlus(r.idlus.palier, r.idlus.adieu)); }
       this.codeMsg = `Code utilisé : ${r.ogrines ? `+${r.ogrines} Ogrines` : ''}${r.ogrines && noms.length ? ', ' : ''}${noms.join(', ')}.`;
       Son.jouer(MANIFESTE.ui.ok, 'interface');
       this.render();
@@ -3158,7 +3163,7 @@ export class Windows {
       const ic = iconHtml(ITEMS.resources[PEPITE]?.icon ?? 0), nomP = p.nom || 'Ton nom';
       const pastille = (d: StyleDef, sorte: SorteStyle) => sorte === 'ornements' ? `<span style="color:${d.couleur};font-weight:700;min-width:48px">${escB(nomOrne('', d.id).trim())}</span>`
         : `<span style="display:inline-block;width:44px;height:22px;border-radius:50%;background:radial-gradient(${d.c2}, ${d.c} 55%, transparent 72%);box-shadow:0 0 10px ${d.c}"></span>`;
-      const section = (sorte: SorteStyle, titre: string, aide: string) => `<div class="ent">${titre} <span class="hint">· ${aide}</span></div>${STYLE[sorte].filter(d => (!d.ogrines && !d.abo) || W.aLeStyle(sorte, d.id)).map(d => {
+      const section = (sorte: SorteStyle, titre: string, aide: string) => `<div class="ent">${titre} <span class="hint">· ${aide}</span></div>${STYLE[sorte].filter(d => (!d.ogrines && !d.abo && !d.idlus) || W.aLeStyle(sorte, d.id)).map(d => {
         const a = W.aLeStyle(sorte, d.id), porte = p.style[sorte] === d.id;
         const fin = porte ? `<span class="btn" data-sret="${sorte}">Retirer</span>` : a ? `<span class="btn" data-sporte="${sorte}|${d.id}">Porter</span>` : prix(d.prix, PEPITE, `data-sachat="${sorte}|${d.id}"`);
         const texte = sorte === 'ornements' ? `<span style="color:${d.couleur}">${escB(nomOrne(nomP, d.id))}</span>` : escB(d.texte ?? '');

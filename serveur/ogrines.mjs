@@ -15,6 +15,7 @@ export const OGRINES = {
 };
 const LETTRES = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';   // sans 0/O ni 1/I
 export const nouveauCode = () => `DIABLO-${[0, 1].map(() => Array.from(randomBytes(4), b => LETTRES[b % LETTRES.length]).join('')).join('-')}`;
+import { estCodeIdlus } from './idlus.mjs';
 const normal = c => String(c ?? '').trim().toUpperCase().replace(/\s+/g, '');
 const objetsValides = l => Array.isArray(l) ? l.filter(x => typeof x === 'string' && /^\d{1,7}$/.test(x)).slice(0, OGRINES.maxObjets) : [];
 
@@ -70,11 +71,22 @@ export function creerOgrines({ db, connecte, admin, lireCorps, env = process.env
   for (const e of evenements) if (e?.code && !q.code.get(normal(e.code))) creerCode({ ...e, par: 'Diablofus' });
   /** 11A : un joueur entre un code. Rend { ogrines, objets, solde } ou { erreur }. */
   const essais = new Map();
-  function utiliser(compte, brut) {
+  /** Compte un essai de code ; rend { erreur: 'essais' } au-delà de la limite de l'heure, sinon null. */
+  function essai(compte) {
     const h = Math.floor(maintenant() / 3600e3), k = `${compte}|${h}`, e = essais.get(k) ?? 0;
     if (e >= OGRINES.essais) return { erreur: 'essais' };
     if (essais.size > 50_000) essais.clear();
     essais.set(k, e + 1);
+    return null;
+  }
+  // Codes de Vétéran d'Idlus (serveur/idlus.mjs, branché après coup par comptes.mjs) : même champ « Code cadeau »
+  let idlus = null;
+  async function utiliserTout(compte, brut) {
+    if (idlus && estCodeIdlus(brut)) return essai(compte) ?? await idlus.utiliser(compte, brut);
+    return utiliser(compte, brut);
+  }
+  function utiliser(compte, brut) {
+    const refus = essai(compte); if (refus) return refus;
     const c = q.code.get(normal(brut));
     if (!c) return { erreur: 'inconnu' };
     if (c.expire <= maintenant()) return { erreur: 'expire' };
@@ -139,7 +151,7 @@ export function creerOgrines({ db, connecte, admin, lireCorps, env = process.env
     try {
       if (m === 'GET' && p === '/ogrines') return json(res, 200, { solde: solde(c.id) }), true;
       if (m === 'POST' && p === '/codes/utiliser') {
-        const b = await lireCorps(req), r = utiliser(c.id, b.code);
+        const b = await lireCorps(req), r = await utiliserTout(c.id, b.code);
         return json(res, r.erreur ? (r.erreur === 'essais' ? 429 : 400) : 200, r), true;
       }
       if (p === '/codes') {
@@ -153,7 +165,7 @@ export function creerOgrines({ db, connecte, admin, lireCorps, env = process.env
     }
   }
   /** Commandes Discord à enregistrer (tools/discord/discord_bot.mjs, action « commandes »). */
-  return { route, solde, bouger, creerCode, utiliser, discordPret: !!cle };
+  return { route, solde, bouger, creerCode, utiliser, utiliserTout, brancherIdlus: x => { idlus = x; }, discordPret: !!cle };
 }
 
 /** Les commandes /code et /ogrines du robot (enregistrées par tools/discord/discord_bot.mjs, action « commandes »). */

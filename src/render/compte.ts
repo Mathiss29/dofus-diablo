@@ -23,6 +23,9 @@ const ERREURS: Record<string, string> = {
 const ERREURS_CODE: Record<string, string> = {
   inconnu: 'Ce code n\'existe pas.', expire: 'Ce code a expiré.', deja: 'Tu as déjà utilisé ce code sur ce compte.',
   epuise: 'Ce code a déjà servi autant de fois que prévu.', essais: 'Trop d\'essais : réessaie dans une heure.',
+  // Codes de Vétéran d'Idlus (serveur/idlus.mjs)
+  idlusPris: 'Ce code Idlus est déjà lié à un autre compte Diablofus.', idlusAutre: 'Ton compte a déjà un autre code Idlus.',
+  idlusHorsLigne: 'Le serveur d\'Idlus ne répond pas : réessaie dans un moment.', idlusRien: 'Rien de nouveau : monte de palier dans Idlus, puis entre de nouveau ton code.',
 };
 
 const ERREURS_BOUTIQUE: Record<string, string> = {
@@ -43,6 +46,8 @@ class CompteEnLigne {
   /** Ogrines du compte (« Apparats : » 10A : seulement par codes cadeaux et événements, jamais vendues). */
   ogrines = 0;
   boutique: EtatBoutique | null = null;
+  /** Vétéran d'Idlus du compte (serveur/idlus.mjs) : palier 1-3 et Défi d'adieu, ou null. */
+  idlus: { palier: number; adieu: boolean } | null = null;
   /** Palier d'abonnement en cours (null sans abonnement ou hors ligne). */
   get palier(): Palier | null { const a = this.boutique?.abonnement; return this.enLigne && a && a.fin > Date.now() ? a.palier : null; }
   private ecouteurs = new Set<() => void>();
@@ -87,8 +92,8 @@ class CompteEnLigne {
     try {
       const r = await this.api('/moi');
       if (!r.ok) throw new Error(String(r.status));
-      const d = await r.json() as { compte: InfosCompte; persos: ({ perso: Perso } | null)[]; coffres: Record<string, unknown>; ogrines?: number; boutique?: EtatBoutique };
-      this.infos = d.compte; this.ogrines = d.ogrines ?? 0; this.boutique = d.boutique ?? null;
+      const d = await r.json() as { compte: InfosCompte; persos: ({ perso: Perso } | null)[]; coffres: Record<string, unknown>; ogrines?: number; boutique?: EtatBoutique; idlus?: { palier: number; adieu: boolean } | null };
+      this.infos = d.compte; this.ogrines = d.ogrines ?? 0; this.boutique = d.boutique ?? null; this.idlus = d.idlus ?? null;
       const l = Array.from({ length: EMPLACEMENTS_MAX }, (_, i) => d.persos[i]?.perso ?? null);
       remplacerPersosEnLigne(l);
       l.forEach((p, i) => this.envoye.set(`p${i}`, JSON.stringify(p)));
@@ -125,14 +130,15 @@ class CompteEnLigne {
   }
 
   /** 11A : entre un code cadeau. Rend les objets à remettre au perso, ou un message d'erreur. */
-  async utiliserCode(code: string): Promise<{ ogrines: number; objets: string[] } | { erreur: string }> {
+  async utiliserCode(code: string): Promise<{ ogrines: number; objets: string[]; idlus?: { palier: number; adieu: boolean } } | { erreur: string }> {
     if (!this.enLigne) return { erreur: 'Les codes cadeaux vont sur ton compte : connecte-toi avec Discord et passe en mode « En ligne ».' };
     const r = await this.api('/codes/utiliser', { method: 'POST', body: JSON.stringify({ code: code.trim() }) }).catch(() => null);
     if (!r) return { erreur: 'Le serveur ne répond pas.' };
-    const d = await r.json().catch(() => ({})) as { erreur?: string; ogrines?: number; objets?: string[]; solde?: number };
+    const d = await r.json().catch(() => ({})) as { erreur?: string; ogrines?: number; objets?: string[]; solde?: number; idlus?: { palier: number; adieu: boolean } };
     if (d.erreur || !r.ok) return { erreur: ERREURS_CODE[d.erreur ?? ''] ?? 'Ce code ne marche pas.' };
+    if (d.idlus) this.idlus = d.idlus;
     this.ogrines = d.solde ?? this.ogrines + (d.ogrines ?? 0); this.changer();
-    return { ogrines: d.ogrines ?? 0, objets: d.objets ?? [] };
+    return { ogrines: d.ogrines ?? 0, objets: d.objets ?? [], ...(d.idlus ? { idlus: d.idlus } : {}) };
   }
   /** Boutique (9, 16, 17B) : achat, abonnement, essai, apparat du mois, potion utilisée. Rend l'erreur ou null. */
   async boutiqueAppel(chemin: 'acheter' | 'abonnement' | 'essai' | 'mois' | 'service', corps: Record<string, unknown> = {}): Promise<{ erreur: string } | { apparat?: string }> {

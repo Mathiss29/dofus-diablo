@@ -10,6 +10,7 @@ import { join } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import { creerOgrines } from './ogrines.mjs';
 import { creerBoutique } from './boutique.mjs';
+import { creerIdlus } from './idlus.mjs';
 import { creerHdv } from './hdv.mjs';
 
 /** Codes cadeaux d'événement (serveur/codes-evenements.json), créés au démarrage s'ils n'existent pas. */
@@ -42,7 +43,7 @@ export const TRANCHES_ARRIVEE = [[2, '<2 s'], [4, '2-4 s'], [6, '4-6 s'], [10, '
 /**
  * @param {{ dossier: string, env?: Record<string,string|undefined>, origines: Set<string>, fetch?: typeof fetch, maintenant?: () => number }} o
  */
-export function creerComptes({ dossier, env = process.env, origines, fetch: f = fetch, maintenant = Date.now, catalogue }) {
+export function creerComptes({ dossier, env = process.env, origines, fetch: f = fetch, maintenant = Date.now, catalogue, idlusFetch }) {
   mkdirSync(dossier, { recursive: true });
   const db = new DatabaseSync(join(dossier, 'diablofus.db'));
   db.exec(`PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON;
@@ -217,6 +218,9 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
   // Ogrines et codes cadeaux (« Apparats : » 10-12) : serveur/ogrines.mjs
   const ogrines = creerOgrines({ db, connecte, admin: c => vue(c).admin, lireCorps, env, maintenant, adminDiscord: roles => roles.some(r => admins.has(r)), evenements: codesEvenements() });
   // Boutique Ogrines et abonnements (« Apparats : » 9, 13-17) : serveur/boutique.mjs
+  // Passage de relais d'Idlus (2026-11-25) : codes de Vétéran entrés dans le champ Code cadeau
+  const idlus = creerIdlus({ db, ogrines, maintenant, ...(idlusFetch ? { fetch: idlusFetch } : {}), env });
+  ogrines.brancherIdlus(idlus);
   const boutique = creerBoutique({ db, connecte, lireCorps, ogrines, maintenant, aVie: id => { const c = q.compteId.get(id); return !!c && vue(c).admin; }, ...(catalogue ? { catalogue } : {}) });
   // Hôtel de Vente (« HDV : ») : serveur/hdv.mjs ; 5D : annonces en plus selon le palier d'abonnement
   const RANGS = { aventurier: 1, heros: 2, legende: 3 };
@@ -291,7 +295,7 @@ export function creerComptes({ dossier, env = process.env, origines, fetch: f = 
         for (const r of q.persos.all(c.id)) if (r.emplacement < COMPTES.emplacements) persos[r.emplacement] = { perso: JSON.parse(r.donnees), maj: r.maj };
         const coffres = {};
         for (const r of q.coffres.all(c.id)) coffres[r.sorte] = JSON.parse(r.donnees);
-        return json(res, 200, { compte: vue(c), persos, coffres, ogrines: ogrines.solde(c.id), boutique: boutique.etat(c.id) }), true;
+        return json(res, 200, { compte: vue(c), persos, coffres, ogrines: ogrines.solde(c.id), boutique: boutique.etat(c.id), idlus: idlus.etat(c.id) }), true;
       }
       // coffre partagé du compte (0.3, 12A+12D) : un pour les persos normaux, un pour les Hardcore
       if (p.startsWith('/coffres/')) {

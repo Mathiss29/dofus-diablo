@@ -10,7 +10,8 @@
   { "id": "sang", "nom": "Sang", "texte": "Un halo rouge qui bat comme un cœur.", "c": "#c8323a", "c2": "#ff8a8a", "prix": 400 },
   {"id": "arcane", "nom": "Arcane", "texte": "Des runes bleues tournent lentement sous tes pieds.", "c": "#4a8cff", "c2": "#b8e0ff", "prix": 0, "ogrines": 500},
   {"id": "aurore", "nom": "Aurore", "texte": "Un halo rose et or, comme un lever de soleil.", "c": "#ff7ab8", "c2": "#ffe0a0", "prix": 0, "ogrines": 500},
-  {"id": "heros", "nom": "Héros", "texte": "Le cercle violet des abonnés Héros.", "c": "#9a5cff", "c2": "#e6d0ff", "prix": 0, "abo": "heros"}
+  {"id": "heros", "nom": "Héros", "texte": "Le cercle violet des abonnés Héros.", "c": "#9a5cff", "c2": "#e6d0ff", "prix": 0, "abo": "heros"},
+  {"id": "idlus", "nom": "Émeraude d'Idlus", "texte": "L'anneau émeraude des Vétérans d'Idlus (palier Or).", "c": "#5fae3c", "c2": "#e2f5ae", "prix": 0, "idlus": true}
  ],
  "zaaps": [
   { "id": "flammes", "nom": "Flammes", "texte": "Tu pars et arrives dans un tourbillon de flammes.", "c": "#f08a2c", "c2": "#ffe08a", "prix": 200 },
@@ -29,6 +30,7 @@
   { "id": "crane", "nom": "Crâne", "avant": "☠ ", "apres": "", "couleur": "#d0d0d0", "prix": 200 },
   {"id": "dragon", "nom": "Dragon", "avant": "🜂 ", "apres": " 🜂", "couleur": "#ff7a4a", "prix": 0, "ogrines": 300},
   {"id": "lune", "nom": "Lune", "avant": "☾ ", "apres": " ☽", "couleur": "#d8d0ff", "prix": 0, "ogrines": 300},
-  {"id": "aventurier", "nom": "Aventurier", "avant": "◆ ", "apres": " ◆", "couleur": "#7cc7ff", "prix": 0, "abo": "aventurier"}
+  {"id": "aventurier", "nom": "Aventurier", "avant": "◆ ", "apres": " ◆", "couleur": "#7cc7ff", "prix": 0, "abo": "aventurier"},
+  {"id": "idlus", "nom": "Feuille d'Idlus", "avant": "❦ ", "apres": " ❦", "couleur": "#8fdc6a", "prix": 0, "idlus": true}
  ]
 }
