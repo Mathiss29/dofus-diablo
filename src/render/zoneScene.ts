@@ -396,7 +396,10 @@ export class ZoneScene extends Phaser.Scene {
     // coiffe, cape et bouclier portés (et leur apparat) dessinés dès le départ, d'après la sauvegarde (Apparence 4A+4B+5A)
     const e0 = this.perso?.etat, obj0 = [...objetsPortes(e0?.equipment, e0?.apparat), ...(GAME_DATA.classes[this.classId]?.lance ? [LANCE_EN_MAIN] : [])];
     this.apparenceCle = this.cleApparence(obj0);
-    const pret = Assemblage.creer(this.clePerso, this.perso?.apparence ?? this.apparenceEssai, obj0).then(a => { this.assemblage = a; }, () => {
+    // un objet porté dont le dessin ne vient pas ne doit pas faire tomber tout le perso : second essai sans les objets
+    const app0 = this.perso?.apparence ?? this.apparenceEssai;
+    const pret = Assemblage.creer(this.clePerso, app0, obj0).catch(e => { console.error('[perso] assemblage raté, essai sans les objets portés :', String(e)); this.apparenceCle = this.cleApparence([]); return Assemblage.creer(this.clePerso, app0, []); }).then(a => { this.assemblage = a; }, e => {
+      console.error('[perso] assemblage impossible, planche de secours :', String(e));
       const L = this.look;
       if (!this.textures.exists(L.atlas)) this.load.multiatlas(L.atlas, v(`${ASSETS}/sprites/${L.atlas}.json`), dossier(`${ASSETS}/sprites/`));
     });
