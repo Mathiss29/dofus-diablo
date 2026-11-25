@@ -1,8 +1,9 @@
 import { QUALITES, REGLAGES_DEFAUT, sauverReglages, type Reglages } from './ambiance';
+import { ALLEGEMENTS } from './allege';
 import { reculPetitEcran } from './pixel';
-import { reglerModeConsole } from './console';
+import { modeConsole, reglerModeConsole } from './console';
 import { brancherPoseAuToucher, CSS_POSE } from './poseAuToucher';
-import { manetteActive, reglerControles, reglerVibrations, capturerBouton, carteDisposition, echangerBouton, NOMS_BOUTONS, BTN } from './manette';
+import { appliNative, manetteActive, reglerControles, reglerVibrations, capturerBouton, carteDisposition, echangerBouton, NOMS_BOUTONS, BTN } from './manette';
 import * as Touches from './touches';
 import { ICON_CSS, iconHtml, prechargerIcones } from './icons';
 import { MANIFESTE, Son } from './son';
@@ -2464,6 +2465,11 @@ export class Windows {
           { k: 'transparence', nom: 'Voir à travers le décor', aide: 'Le décor devant ton perso s\'efface, les monstres cachés ont une silhouette rouge.', t: 'check' },
           { k: 'particules', nom: 'Particules (spores, braises…)', t: 'check' },
         ] },
+        // « Fluidité Thor : » 1B : chaque allègement du mode console a sa case (on coupe, on regarde le compteur)
+        ...(modeConsole() ? [{ id: 'allegements', titre: 'Allègements du mode console', opts: [
+          ...ALLEGEMENTS.map(([k, nom, aide]) => ({ k, nom, aide, t: 'check' as const })),
+          ...(appliNative()?.frequence ? [{ k: 'hzEcran', nom: 'Fréquence de l\'écran', aide: 'La plus haute : 120 images par seconde sur la Thor quand le jeu les tient. 60 Hz : rythme régulier, batterie ménagée.', t: 'select' as const, choix: [['max', 'La plus haute'], ['60', '60 Hz']] as [string, string][] }] : []),
+        ], reset: () => { for (const [k] of ALLEGEMENTS) r[k] = true; r.hzEcran = 'max'; } }] : []),
       ] },
       { nom: 'Son', desc: `Ces options règlent la musique et les sons du jeu. ${T('muet')} coupe ou remet tout le son.`, secs: [
         { id: 'son', titre: 'Général', opts: [

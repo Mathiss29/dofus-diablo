@@ -225,6 +225,14 @@ export function ecranCompagnon() {
   let etat: EtatBas | null = null, etatT = 0, carte: CarteBas | null = null, sac: SacBas | null = null, quetes: QuetesBas | null = null;
   let modeFen = '';
   let stylesRecus = false, diag: DiagGpu | null = null, enJeu = false;
+  // « Fluidité Thor : » 1A : les lignes de mesure du jeu, et l'essai de gêne entre les deux écrans
+  let mesure: string[] = [], gene = '', geneT = 0;
+  const essaiGene = () => {
+    const t = performance.now();
+    if (!relie() || (geneT && t - geneT < 60_000)) return;
+    geneT = t; c.envoyer({ k: 'gene' });
+    setTimeout(() => { const fin = performance.now() + 200; while (performance.now() < fin) { /* occupé exprès */ } }, 300);
+  };
   const lignes: string[] = [];
   const noter = (t: string) => { lignes.unshift(`${new Date().toLocaleTimeString('fr-FR')}  ${t}`); lignes.length = Math.min(lignes.length, 8); q('.journal').textContent = lignes.join('\n'); };
   let toastT = 0;
@@ -241,6 +249,7 @@ export function ecranCompagnon() {
     if (o !== 'liens' && o !== 'combat') try { localStorage.setItem(CLE_ONGLET, o); } catch { /* rien */ }
     r.querySelectorAll<HTMLElement>('.vue').forEach(el => el.classList.toggle('on', el.dataset.v === o));
     r.querySelectorAll<HTMLElement>('nav button').forEach(b => b.classList.toggle('on', b.dataset.o === o));
+    if (o === 'liens') essaiGene();
     if (o === 'carte') { centrerSiBesoin(); dessinerCarte(); }
     else if (o === 'sac') dessinerSac();
     else if (o === 'quetes') dessinerQuetes();
@@ -331,7 +340,14 @@ export function ecranCompagnon() {
       }
       case 'diag':
         if (diag && m.d.echecs.length > diag.echecs.length) noter(`Jeu : texture refusée par la carte graphique (${m.d.echecs.length})`);
-        diag = m.d; break;
+        diag = m.d; if (m.m) mesure = m.m; break;
+      case 'gene':
+        if (m.max != null) {
+          const base = m.base ?? 0, genes = m.max >= 170 && m.max > base + 120;
+          gene = `Essai de gêne : écran du bas occupé 200 ms, le jeu a attendu au plus ${m.max} ms entre deux images (${base} ms juste avant) : ${genes ? 'les deux écrans se gênent, même processus' : m.max > base + 40 ? 'une petite gêne' : 'les deux écrans ne se gênent pas'}`;
+          noter(gene); if (natif) console.error(`[mesure] ${gene}`);   // dans l'appli : la ligne reste aussi dans son journal
+        }
+        break;
       case 'pong': {
         const t0 = pings.get(m.n);
         if (t0 != null) { pings.delete(m.n); dernierPing = `${Math.round(t - t0)} ms`; noter(`Réponse du jeu en ${dernierPing}`); }
@@ -747,7 +763,8 @@ export function ecranCompagnon() {
     const txt = ['Diablofus, écran du bas', `Écran : ${innerWidth}×${innerHeight} px CSS, densité ${devicePixelRatio}`,
       `Appli installée : ${appliNative() ? `appli Thor${appliNative()?.moteur?.() === 'gecko' ? ' (moteur Firefox)' : ' (WebView)'}` : matchMedia('(display-mode: standalone)').matches ? 'oui' : 'non (onglet du navigateur)'}`,
       ...Object.keys(NOMS).map(k => `${NOMS[k]} : ${vu[k] ? `${t - vu[k] < 5000 ? 'OK' : 'plus de nouvelles'} (${age(vu[k])})` : 'jamais'}${detail[k] ? `, ${detail[k]}` : ''}`),
-      `Coucou aller-retour : ${dernierPing || 'pas essayé'}`, ...(diag ? texteDiag(diag) : ['Carte graphique : pas de nouvelles du jeu']), navigator.userAgent,
+      `Coucou aller-retour : ${dernierPing || 'pas essayé'}`, ...(diag ? texteDiag(diag) : ['Carte graphique : pas de nouvelles du jeu']),
+      ...mesure, gene || 'Essai de gêne : pas encore fait (rouvre cet onglet, jeu relié)', ...(natif?.ecran ? [`Appli : ${natif.ecran()}`] : []), navigator.userAgent,
       ...(natif?.journal ? ['', 'Journal de l\'appli Thor :', natif.journal()] : [])].join('\n');
     try { await navigator.clipboard.writeText(txt); noter('Rapport copié : colle-le dans le fil'); } catch { noter('Copie impossible : rapport ci-dessous'); q('.journal').textContent = txt; }
   };

@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { Mesure } from './render/mesureImages';
 import { ZoneScene } from './render/zoneScene';
 import { Accueil } from './render/accueil';
 import { lirePersos, prendreSecours } from './render/persos';
@@ -55,8 +56,13 @@ function demarrer() {
     loader: { crossOrigin: 'anonymous' },
     scale: { mode: Phaser.Scale.RESIZE, width: '100%', height: '100%' },
     // essai lancé depuis l'écran du bas (carrés noirs sur console) : une texture par lot de dessin
-    ...(uneTexture() ? { render: { maxTextures: 1 } } : {}),
+    // carte graphique rapide demandée (portable à deux cartes, console) ; « Fluidité Thor : » 7B
+    render: { powerPreference: 'high-performance', ...(uneTexture() ? { maxTextures: 1 } : {}) },
   });
+  // « Fluidité Thor : » 1A : la mesure intégrée chronomètre chaque image, du début du pas à la fin du dessin
+  game.events.on(Phaser.Core.Events.PRE_STEP, () => Mesure.ouvrir());
+  game.events.on(Phaser.Core.Events.PRE_RENDER, () => Mesure.debut('dessin'));
+  game.events.on(Phaser.Core.Events.POST_RENDER, () => { Mesure.fin('dessin'); Mesure.fermer(); });
   // Écran aux vrais pixels (maquette « Décors : » 1A) : canevas à la densité de l'écran, avant que Phaser le dimensionne
   reglerDensite(chargerReglages().resolution);   // Fluidité 3A, avant le premier dimensionnement
   brancherDensite(game);

@@ -13,6 +13,10 @@ Android la tue, l'appli la relance au lieu de se fermer.
 - `window.DiablofusAppli` : GeckoView n'a pas d'`addJavascriptInterface`. Une extension intégrée (`assets/pont/`) pose
   l'objet dans la page ; l'appli lui pousse l'état de la manette à chaque mouvement (`Moteur.manette()`), et la page le lit
   sans attendre (`manette()`), comme avant. `moteur()` vaut `'gecko'`. Les erreurs de la page vont dans le journal.
+- Appli 4 (« Fluidité Thor : », 2026-11-25) : réglages du moteur posés au lancement (`Moteur.reglages()` : assez de
+  processus pour que le jeu et l'écran du bas aient chacun le leur, horloge des pages non arrondie), pas d'attente du
+  double toucher, priorité au processus du jeu, fréquence de l'écran du haut choisie par le jeu
+  (`DiablofusAppli.frequence(hz)`, 0 = la plus haute), et `DiablofusAppli.ecran()` pour le rapport (fréquences, processus).
 - Sons sans toucher l'écran : l'appli accorde la lecture automatique (`Page.Permissions`).
 - Charger une sauvegarde : le sélecteur de fichiers d'Android (`Principale.choisirFichier`).
 

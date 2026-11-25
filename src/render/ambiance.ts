@@ -99,6 +99,11 @@ export interface Reglages {
   /** Réglage « Thor » version 2 (résolution Normale) déjà appliqué. */
   presetThor2?: boolean;
   presetThor3?: boolean;
+  presetThor4?: boolean;
+  /** « Fluidité Thor : » 1B : les allègements du mode console, un par un (allege.ts). */
+  algPerso: boolean; algPrepa: boolean; algSil: boolean; algHalos: boolean; algLien: boolean;
+  /** 5B+5D : fréquence demandée à l'écran par l'appli Thor ('max' : la plus haute, 120 Hz sur la Thor ; '60' : rythme régulier, batterie ménagée). */
+  hzEcran: 'max' | '60';
   /** « Idées Thor : » 6A : portée de l'auto-visée à la manette. */
   aideVisee?: 'faible' | 'normale' | 'forte';
   /** « Confort 2 : » 4A : zone morte des sticks (0,05 à 0,5) et vitesse du curseur des menus (0,5 à 2). */
@@ -121,7 +126,8 @@ export const QUALITES: Record<'basse' | 'moyenne' | 'haute', Partial<Reglages>> 
 export const REGLAGES_DEFAUT: Reglages = { heure: 'auto', lumieres: 1, saturation: 1, chaleur: 0, zoom: 0.8, volume: 1, volMusique: 0.5, volEffets: 0.7, volMonstres: 0.5, volAmbiance: 0.6, volInterface: 0.7, musiqueBoss: true, muet: false, vent: true, eau: true, particules: true, transparence: true, lancer: 'relache', approche: false, flecheQuete: true,
   touches: {}, clavier: 'auto', chiffres: true, tailleChiffres: 'normale', dps: false, barresVie: 'blesses', zoomMolette: true, deplacement: 'gauche',
   verrou: true, modules: {}, coords: true, recoltesMini: true, echelle: 1, qualite: 'haute', fps: 0, compteurFps: false, alerteButin: true, pulsePv: true, resolution: 'ecran',
-  chatOnglets: ONGLETS_DEFAUT, chatTaille: [360, 170], chatHeure: true, chatFond: 0.82, chatTexte: 1, chatEffacement: '20', chatTout: true, chatBastion: true, controles: 'auto', vibrations: true, modeConsole: 'auto', aideVisee: 'normale', zoneMorte: 0.25, vitesseCurseur: 1, disposition: 'thor', echelleConsole: 1, toujoursAllume: true };
+  chatOnglets: ONGLETS_DEFAUT, chatTaille: [360, 170], chatHeure: true, chatFond: 0.82, chatTexte: 1, chatEffacement: '20', chatTout: true, chatBastion: true, controles: 'auto', vibrations: true, modeConsole: 'auto', aideVisee: 'normale', zoneMorte: 0.25, vitesseCurseur: 1, disposition: 'thor', echelleConsole: 1, toujoursAllume: true,
+  algPerso: true, algPrepa: true, algSil: true, algHalos: true, algLien: true, hzEcran: 'max' };
 const CLE = 'diablofus.reglages';
 
 export function chargerReglages(): Reglages {

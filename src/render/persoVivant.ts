@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
 import { Assemblage } from './squelette';
+import { allege, finessePerso } from './allege';
+import { Mesure } from './mesureImages';
 
 /** Le perso du joueur dessiné en direct (maquette Apparence 3A) : chaque image de ses animations est dessinée par
  *  l'Assemblage (squelette + corps + tête + couleurs) la première fois qu'elle sert, puis rangée dans des pages
@@ -7,8 +9,10 @@ import { Assemblage } from './squelette';
  *  planches (perso_planche.py : boîte -260,-1000,260,120 à l'échelle 0,7), donc EntityView les affiche pareil. */
 export class PersoVivant {
   /** Finesse : les images sont faites RESOLUTION fois plus grandes que les anciennes planches, et le sprite est réduit
-   *  d'autant (la caméra agrandit le jeu : en 1x, le perso était flou et ses bords en escalier). */
-  static readonly RESOLUTION = 2;
+   *  d'autant (la caméra agrandit le jeu : en 1x, le perso était flou et ses bords en escalier).
+   *  « Fluidité Thor : » 2A : 1 en mode console (petit écran : une image du perso y est affichée à peu près à sa taille,
+   *  et chaque image coûte 4 fois moins à dessiner). */
+  static readonly RESOLUTION: number = finessePerso();
   static readonly ECHELLE = 0.7 * PersoVivant.RESOLUTION;
   static readonly CELLULE: [number, number] = [364 * PersoVivant.RESOLUTION, 784 * PersoVivant.RESOLUTION];
   static readonly PIED: [number, number] = [182 * PersoVivant.RESOLUTION, 700 * PersoVivant.RESOLUTION];
@@ -23,12 +27,14 @@ export class PersoVivant {
   private faites = new Map<string, [string, string]>();
   private file: [string, number][] = [];
   private readonly id = PersoVivant.n++;
+  private tour = 0; private aFaire = 0; private debutPrepa = 0;
   readonly compte: Record<string, number>;
 
   constructor(private scene: Phaser.Scene, readonly a: Assemblage) {
     this.compte = a.compte;
     // À dessiner d'avance, dans les moments calmes : repos et course (8 directions), coup de poing, coup reçu
     for (const k of Object.keys(this.compte)) if (/^Anim(StatiqueExplo0|Course|Arme0|Hit)_/.test(k)) this.attendre(k);
+    this.aFaire = this.file.length; this.debutPrepa = performance.now();
   }
 
   /** Met toutes les images d'une animation dans la file des images à dessiner d'avance. */
@@ -48,6 +54,7 @@ export class PersoVivant {
     if (p && p.x + w > P) { p.x = 0; p.y += p.h; p.h = 0; }
     if (!p || p.y + h > P) {
       const tex = this.scene.textures.createCanvas(`vivant_${this.id}_${this.pages.length}`, P, P)!;
+      Mesure.note('page du perso créée');
       p = { tex, x: 0, y: 0, h: 0, sale: false };
       this.pages.push(p);
     }
@@ -118,15 +125,28 @@ export class PersoVivant {
   }
 
   /** À appeler une fois par image du jeu : dessine d'avance pendant `ms` millisecondes au plus,
-   *  puis envoie à la carte graphique les pages modifiées. */
-  maj(ms = 3) {
-    const fin = performance.now() + ms;
-    while (this.file.length && performance.now() < fin) {
-      const [a, i] = this.file.shift()!;
-      if (!this.faites.has(`${a}_${i}`)) this.dessiner(a, i);
+   *  puis envoie à la carte graphique les pages modifiées.
+   *  « Fluidité Thor : » 2B, en mode console : une seule image du perso toutes les 4 images du jeu, et aucune pendant un
+   *  combat (`calme` faux). Une image demandée par le jeu (image()) est toujours dessinée tout de suite. */
+  maj(ms = 3, calme = true) {
+    this.tour++;
+    if (this.file.length) {
+      const doux = allege('algPrepa');
+      if (!doux || (calme && this.tour % 4 === 0)) {
+        const fin = performance.now() + (doux ? 0 : ms);
+        let n = 0;
+        do {
+          const [a, i] = this.file.shift()!;
+          if (!this.faites.has(`${a}_${i}`)) { this.dessiner(a, i); n++; }
+        } while (this.file.length && performance.now() < fin);
+        if (n) Mesure.note(`${n} image${n > 1 ? 's' : ''} du perso`);
+        if (!this.file.length) Mesure.faits['Perso préparé'] = `${this.aFaire} images en ${Math.round((performance.now() - this.debutPrepa) / 1000)} s (finesse ${PersoVivant.RESOLUTION})`;
+      }
     }
     for (const p of this.pages) if (p.sale) { p.tex.refresh(); p.sale = false; }
   }
+  /** Images encore à préparer (rapport). */
+  get reste() { return this.file.length; }
 
   destroy() { for (const p of this.pages) p.tex.destroy(); this.pages = []; this.faites.clear(); }
 }
