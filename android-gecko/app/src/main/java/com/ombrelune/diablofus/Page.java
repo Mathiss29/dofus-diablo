@@ -147,7 +147,8 @@ final class Page {
     }
   }
 
-  private final class Invites implements GeckoSession.PromptDelegate {
+  private final class Invites extends Invites0 {
+    Invites() { super(ctx); }
     @Override public GeckoResult<PromptResponse> onFilePrompt(GeckoSession s, FilePrompt p) {
       return fichiers != null ? fichiers.choisir(p) : GeckoResult.fromValue(p.dismiss());
     }
