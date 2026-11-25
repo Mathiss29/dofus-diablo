@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
 import * as Masques from './masques';
+import { allege } from './allege';
+import { Mesure } from './mesureImages';
 
 /** Voir son perso (et les monstres) derrière les bâtiments et le décor (demande de Mathis, 2026-11-06, rendu de Sanstour).
  *  Le décor de la carte est fait de grandes images triées en profondeur : une image passe « devant » un perso quand
@@ -231,14 +233,31 @@ export class Transparence {
     this.masquants = this.masquants.filter(im => im.active);
     const on = vus.length > 0 && this.masquants.length > 0;
     this.calque.setVisible(on);
-    if (!on) return;
+    if (!on) { this.signature.length = 0; return; }
     // l'écran : position et taille des textures, en suivant le zoom de la caméra
+    // « Fluidité Thor : » 3B, en mode console : textures à moitié taille (4 fois moins de pixels, contour un peu plus doux)
+    const leger = allege('algSil'), f = leger ? 0.5 : 1;
     const cam = this.scene.cameras.main, W = cam.width, H = cam.height, z = cam.zoom, v = cam.worldView;
-    if (this.calque.width !== W || this.calque.height !== H) { this.calque.resize(W, H); this.formes.resize(W, H); }
-    this.calque.setScale(1 / z).setPosition(W / 2 - W / 2 / z, H / 2 - H / 2 / z);
+    const tw = Math.max(1, Math.ceil(W * f)), th = Math.max(1, Math.ceil(H * f));
+    const neuve = this.calque.width !== tw || this.calque.height !== th;
+    if (neuve) { this.calque.resize(tw, th); this.formes.resize(tw, th); }
+    this.calque.setScale(1 / (z * f)).setPosition(W / 2 - W / 2 / z, H / 2 - H / 2 / z);
+    // 3A, en mode console : si rien n'a bougé depuis l'image d'avant (caméra, monstres cachés, décor qui cache), on garde
+    // les textures telles quelles au lieu de tout redessiner (18 changements de cible par image, mesure du 25 nov. 2026)
+    if (leger) {
+      const sig: unknown[] = [v.x, v.y, z, tw, th];
+      for (const im of this.masquants) sig.push(im, im.frame, im.x, im.y, im.rotation, im.scaleX);
+      for (const c of caches) if (ids.has(c.id)) { const o = c.sprite; sig.push(c.id, o.frame, o.x, o.y, o.scaleX, o.alpha); }
+      const avant = this.signature;
+      let pareil = !neuve && avant.length === sig.length;
+      for (let i = 0; pareil && i < sig.length; i++) if (avant[i] !== sig[i]) pareil = false;
+      this.signature = sig;
+      if (pareil) { Mesure.plus('silhouettes gardées'); return; }
+      Mesure.plus('silhouettes refaites');
+    }
     const place = (d: Phaser.GameObjects.Image | Phaser.GameObjects.Sprite, o: Phaser.GameObjects.Image | Phaser.GameObjects.Sprite) =>
       d.setTexture(o.texture.key, o.frame.name).setOrigin(o.originX, o.originY).setRotation(o.rotation)
-        .setPosition((o.x - v.x) * z, (o.y - v.y) * z).setScale(o.scaleX * z, o.scaleY * z);
+        .setPosition((o.x - v.x) * z * f, (o.y - v.y) * z * f).setScale(o.scaleX * z * f, o.scaleY * z * f);
     // formes = tout l'écran SAUF le décor qui cache ; effacer ça du calque garde les silhouettes sur ce décor seulement
     this.formes.clear().fill(0xffffff, 1);
     // (chaque draw/erase de Phaser = une copie de toute la texture : on leur passe une liste, une seule passe)
@@ -254,6 +273,8 @@ export class Transparence {
     }
     if (rouges.length) { this.calque.draw(rouges); this.calque.erase(this.formes, 0, 0); }
   }
+  /** Ce qui était dessiné à l'image d'avant (3A). */
+  private signature: unknown[] = [];
 
   destroy() {
     for (const [im] of this.fondus) if (im.active) im.setAlpha(1);

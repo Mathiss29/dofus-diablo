@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { allege } from './allege';
 import { ISO } from '../sim/iso';
 import { RECOLTE } from '../sim/recolte';
 import type { World } from '../sim/world';
@@ -163,10 +164,14 @@ export class RecolteView {
           const t = RECOLTE.repousse - r.repousse, i = Math.floor(t * 24);
           if (v.coupe && i < v.coupe) img.setFrame(`coupe_${i}`); else { img.setFrame('recolte'); v.etat = 'recolte'; }
         }
-        if (r.dore && prete) img.setTint(0xffe7a0); else img.clearTint();
+        // « Fluidité Thor : » 4A, en mode console : une teinte claire qui pulse à la place du contour brillant (chaque
+        // halo coûtait deux passes de dessin par image)
+        const leger = allege('algHalos');
+        if (leger && (survol || (r.dore && prete))) img.setTint(pulse(survol ? 0xf4ffd0 : 0xffe7a0, survol ? 0xa8e070 : 0xffb830, w.time * 5 + r.id));
+        else if (r.dore && prete) img.setTint(0xffe7a0); else img.clearTint();
         const fx = img.preFX;
         if (fx) {
-          const voulu = survol || (r.dore && prete);
+          const voulu = !leger && (survol || (r.dore && prete));
           const glow = img.getData('glow') as Phaser.FX.Glow | undefined;
           if (voulu && !glow) img.setData('glow', fx.addGlow(r.dore && !survol ? 0xffd34a : 0xf2f0c8, 3, 0, false, 0.1, 8));
           else if (!voulu && glow) { fx.remove(glow); img.setData('glow', undefined); }
@@ -191,4 +196,10 @@ export class RecolteView {
         .fillStyle(0x9ad15a, 1).fillRoundedRect(p.x - 30, p.y - 127, 60 * k, 7, 3);
     }
   }
+}
+
+/** Teinte qui va et vient entre deux couleurs (halo léger du mode console). */
+export function pulse(a: number, b: number, t: number): number {
+  const k = 0.5 + 0.5 * Math.sin(t), m = (d: number) => Math.round(((a >> d) & 255) + (((b >> d) & 255) - ((a >> d) & 255)) * k) << d;
+  return m(16) | m(8) | m(0);
 }

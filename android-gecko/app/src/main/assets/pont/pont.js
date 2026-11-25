@@ -2,13 +2,14 @@
 // et le journal par un port, la page les lit sans attendre avec window.DiablofusAppli.manette() / journal(), comme avec
 // l'appli WebView (src/render/manette.ts, padNatif).
 'use strict';
-let etat = '{"c":false}', journal = '', version = '?';
+let etat = '{"c":false}', journal = '', version = '?', ecran = '';
 const port = browser.runtime.connectNative('diablofus');
 const envoyer = m => { try { port.postMessage(m); } catch (e) { /* appli partie */ } };
 port.onMessage.addListener(m => {
   if (typeof m.m === 'string') etat = m.m;
   if (typeof m.j === 'string') journal = m.j;
   if (typeof m.v === 'string') version = m.v;
+  if (typeof m.e === 'string') ecran = m.e;
   if (m.retour) {   // retour Android = Échap, comme au clavier
     const o = { key: 'Escape', code: 'Escape', keyCode: 27, which: 27, bubbles: true, cancelable: true };
     (document.activeElement || document.body || document).dispatchEvent(new KeyboardEvent('keydown', o));
@@ -22,6 +23,9 @@ const api = {
   moteur: () => 'gecko',
   vibrer: (fort, faible, ms) => envoyer({ k: 'vibrer', fort: +fort || 0, faible: +faible || 0, ms: +ms || 0 }),
   luminosite: f => envoyer({ k: 'lum', f: +f }),
+  // appli 4 : fréquence de l'écran du haut (0 = la plus haute), et ce que l'appli sait de l'écran et du moteur
+  frequence: hz => envoyer({ k: 'hz', hz: +hz || 0 }),
+  ecran: () => ecran,
 };
 window.wrappedJSObject.DiablofusAppli = cloneInto(api, window, { cloneFunctions: true });
 // Erreurs de la page gardées dans le journal de l'appli (rapport de l'écran du bas), comme la console du WebView

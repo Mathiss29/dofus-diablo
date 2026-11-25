@@ -116,11 +116,13 @@ import { COULEUR_INFO, lienObjet, type SorteInfo } from './chatOutils';
 import { BullesChat } from './bullesChat';
 import { demandesEnAttente, menuJoueur, montrerInvitation } from './social';
 import { annonceBas, bilanBas, brancherCompagnon, compagnonRelie, ongletBas, tickCompagnon } from './compagnon';
-import { carteBas, combatBas, depuisPlan, etatBas, groupeBas, quetesBas, raccourcisBas, sacBas } from './compagnonEtat';
+import { carteBas, combatBas, depuisPlan, enCombat, etatBas, groupeBas, quetesBas, raccourcisBas, sacBas } from './compagnonEtat';
 import { rangAbo } from '../sim/boutiqueOgrines';
 import type { EquipSlot } from '../sim/items';
 import { BTN, brancherJeu, brancheActuelle, elementManette, focusManette, manetteActive, reglerControles, reglerVibrations, reglerSticks, reglerBoutons, appliNative, vibrer, type BrancheJeu, type ImageManette } from './manette';
-import { modeConsole, petitEcranConsole, reglerModeConsole, suivreModeConsole, REGLAGE_THOR, REGLAGE_THOR_V2, REGLAGE_THOR_V3, echelleInterface, garderEcranAllume, noterReprise } from './console';
+import { reglerAllegements } from './allege';
+import { Mesure } from './mesureImages';
+import { modeConsole, petitEcranConsole, reglerModeConsole, suivreModeConsole, REGLAGE_THOR, REGLAGE_THOR_V2, REGLAGE_THOR_V3, REGLAGE_THOR_V4, echelleInterface, garderEcranAllume, noterReprise } from './console';
 import { BOUTONS_JEU, COUCHE_LT, MenuStart, cibleAuto, dirMonde, interactionProche, paquetDense, type Interaction } from './manetteJeu';
 import { comparerAuSol, A_LONG, cibleDansDirection, decrireInteraction, Pichenette, RoueConso } from './confortManette';
 /** Archimonstres du jeu (carnet des âmes, « Archis : » 8A). */
@@ -293,9 +295,9 @@ export class ZoneScene extends Phaser.Scene {
   /** 9A : applique le réglage « Thor » s'il n'a jamais été appliqué et qu'on joue sur un petit écran tenu à la main. */
   private reglageThor(): boolean {
     const r = this.reglages;
-    if ((r.presetThor && r.presetThor2 && r.presetThor3) || r.modeConsole === 'non' || !petitEcranConsole()) return false;
+    if ((r.presetThor && r.presetThor2 && r.presetThor3 && r.presetThor4) || r.modeConsole === 'non' || !petitEcranConsole()) return false;
     if (!(r.presetThor && r.presetThor2)) Object.assign(r, r.presetThor ? REGLAGE_THOR_V2 : REGLAGE_THOR);
-    Object.assign(r, REGLAGE_THOR_V3, { presetThor: true, presetThor2: true, presetThor3: true }); sauverReglages(r); return true;
+    Object.assign(r, REGLAGE_THOR_V3, REGLAGE_THOR_V4, { presetThor: true, presetThor2: true, presetThor3: true, presetThor4: true }); sauverReglages(r); return true;
   }
   private ambT = 0;
   private sat?: Phaser.FX.ColorMatrix;
@@ -567,7 +569,7 @@ export class ZoneScene extends Phaser.Scene {
     this.windows.onMenu = c => this.versAccueil(c === 'persos' ? 'persos' : undefined);   // menu principal (Échap)   // rendu en grand (perso_planche : render.cjs échelle 2,2)
     this.windows.reglages = this.reglages;
     this.appliquerReglages();
-    if (this.presetThorNeuf) { this.presetThorNeuf = false; this.time.delayedCall(5000, () => this.hud.toast('Réglage « Thor » appliqué : résolution Équilibrée, 60 images/s, particules coupées (Options › Graphismes)')); }
+    if (this.presetThorNeuf) { this.presetThorNeuf = false; this.time.delayedCall(5000, () => this.hud.toast('Réglage « Thor » appliqué : résolution Équilibrée, images au rythme de l\'écran, particules coupées (Options › Graphismes)')); }
     this.hud.onModules = () => { sauverReglages(this.reglages); this.windows?.refresh(); };
     // idée 1 (2026-11-08) : losange au-dessus des monstres qui comptent pour une quête en cours
     EntityView.deQuete = m => { const Q = this.world.quetes; return !!Q && this.hud.flecheQuete && (Q.estEliteDeQuete(m.id) || Q.pourQuete(m.type, m.x, m.y)); };
@@ -1243,9 +1245,14 @@ export class ZoneScene extends Phaser.Scene {
   /** Options ouvertes depuis l'écran d'accueil (Réglages 11A). */
   ouvrirOptions() { this.windows?.show('opt'); this.windows?.devant(); }
   /** Réglages (maquette « Réglages ») qui ne passent pas par l'ambiance ni le son : touches, interface, chiffres, images par seconde. */
+  private static hzDemande = -1;
   private appliquerReglages() {
     const r = this.reglages;
     Touches.appliquer(r.touches); Touches.regler(r.clavier); reglerControles(r.controles); reglerVibrations(r.vibrations !== false); reglerModeConsole(r.modeConsole);
+    reglerAllegements(r);   // « Fluidité Thor : » 1B
+    // 5B+5D : l'appli Thor règle la fréquence de l'écran du haut (0 = la plus haute)
+    const hz = r.hzEcran === '60' ? 60 : 0;
+    if (hz !== ZoneScene.hzDemande) { ZoneScene.hzDemande = hz; try { appliNative()?.frequence?.(hz); } catch { /* vieille appli */ } }
     this.hud.reglages = r; this.hud.flecheQuete = r.flecheQuete;
     this.fx.chiffres = r.chiffres; this.fx.tailleChiffres = (r.tailleChiffres === 'petite' ? 0.8 : r.tailleChiffres === 'grande' ? 1.3 : 1) * (modeConsole() ? 1.3 : 1);   // Interfaces Thor 5A
     EntityView.barresVie = r.barresVie;
@@ -1288,6 +1295,11 @@ export class ZoneScene extends Phaser.Scene {
         return sacBas(this.world, new Set(neufs.keys()));
       },
       quetes: () => jeu() ? quetesBas(this.world) : null,
+      infos: () => {
+        const c = this.game.canvas, r = this.reglages, l = this.game.loop;
+        return [`Image du jeu : ${c.width}×${c.height} px (résolution ${r.resolution}), limite ${r.fps || 'aucune'}, écran demandé à ${r.hzEcran === '60' ? '60 Hz' : 'sa fréquence la plus haute'}, zone ${this.world.area?.name ?? this.world.zone.name}`,
+          `Monstres : ${this.world.monsters.length} dans la zone, ${this.views.size} affichés · perso : ${this.vivant?.reste ?? 0} images à préparer · ${Math.round(l.actualFps)} images/s (compteur du jeu)`];
+      },
       // « Interfaces Thor : » 4C+4D : le tchat et le journal de la partie (butin, combats, quêtes)
       tchat: () => jeu() ? { enLigne: this.chatEnLigne, l: EnLigne.messages.slice(-60).map(m => ({ h: ligneTchat(m), j: m.canal === 'infos', c: m.canal === 'infos' ? COULEUR_INFO[m.sorte ?? 'serveur'] : undefined })) } : null,
       fiche: (uid, porte) => {
@@ -1751,15 +1763,19 @@ export class ZoneScene extends Phaser.Scene {
       Coop.toutRedemander();
     }
   }
+  private static readonly DIAG = typeof location !== 'undefined' && location.hash.includes('diag');
   update(_: number, deltaMs: number) {
     const t0 = performance.now();
+    Mesure.actif = compagnonRelie() || ZoneScene.DIAG;   // « Fluidité Thor : » 1A : la mesure tourne quand quelqu'un la lit
+    Mesure.debut('bas');
     tickCompagnon(); this.suivreEcranDuBas(); this.confortManette(); this.suivreIdeesThor();
+    Mesure.fin('bas');
     if (!this.vitrine && !this.repriseVue && performance.now() - this.debutScene > 20_000 && !document.hidden) { this.repriseVue = true; noterReprise(null); }   // 8A : la partie a bien repris
     const enConsole = suivreModeConsole();
     if (enConsole !== this.consoleAvant) { const premier = this.consoleAvant === undefined; this.consoleAvant = enConsole; if (!premier) this.appliquerReglages(); }   // 5A : l'échelle console suit
     if (enConsole && !(this.reglages.presetThor && this.reglages.presetThor2) && this.reglageThor()) {   // manette branchée après le lancement
       this.appliquerReglages(); this.updateAmbiance(true); this.windows?.refresh();
-      this.hud.toast('Réglage « Thor » appliqué : résolution Équilibrée, 60 images/s, particules coupées (Options › Graphismes)', 3500);
+      this.hud.toast('Réglage « Thor » appliqué : résolution Équilibrée, images au rythme de l\'écran, particules coupées (Options › Graphismes)', 3500);
     }
     this.updateJeu(deltaMs);
     // Fluidité 5B : images et saccades par zone (pas en vitrine ni sous le rideau d'un voyage)
@@ -1855,6 +1871,7 @@ export class ZoneScene extends Phaser.Scene {
     this.acc += dt;
     if (this.acc < ZoneScene.STEP) { this.render(); return; }   // écran > 60 Hz : on garde la touche pour le prochain pas
     let input = this.vitrine ? { move: { x: 0, y: 0 }, aim: { x: 0, y: 0 }, pressed: null } as PlayerInput : this.readInput();
+    Mesure.debut('sim');
     while (this.acc >= ZoneScene.STEP && this.hitstop <= 0) {
       this.acc -= ZoneScene.STEP;
       // alliés de test (F1) conduits par le jeu, invités de la coop par leurs propres entrées
@@ -1864,6 +1881,7 @@ export class ZoneScene extends Phaser.Scene {
       this.consumeEvents();
       Coop.apresPas(this.world, ZoneScene.STEP);
     }
+    Mesure.fin('sim');
     if (this.hitstop > 0) this.acc = 0;
     this.render();
   }
@@ -2685,6 +2703,7 @@ export class ZoneScene extends Phaser.Scene {
     cam.centerOn(cam.midPoint.x + (s.x - cam.midPoint.x) * 0.03, cam.midPoint.y + (s.y - 40 - cam.midPoint.y) * 0.03);
   }
 
+  private calme = true; private calmeT = 0;
   private render() {
     const w = this.world, alive = new Set<number>(), wv = this.worldView, wg = w.worldGrid;
     const cam = this.cameras.main;
@@ -2694,10 +2713,11 @@ export class ZoneScene extends Phaser.Scene {
     if (Math.abs(cam.zoom - zoomVise) > 0.001) cam.setZoom(cam.zoom + (zoomVise - cam.zoom) * (bossEnCombat ? 0.04 : 0.2));
     this.updateAmbiance();
     this.son.update(!!wg?.mapAt(w.player.x, w.player.y)?.inside);
-    wv?.update(w.player.x, w.player.y);
+    Mesure.debut('decor'); wv?.update(w.player.x, w.player.y); Mesure.fin('decor');
     this.leverRideau(this.game.loop.delta / 1000);
     this.drawRageAura();
     this.drawAureoles();
+    Mesure.debut('persos');
     for (const e of [...w.players, ...w.betes, ...w.monsters]) {
       // monde ouvert : on n'affiche que les monstres des cartes chargées (les autres vivent quand même dans la simulation)
       if (wv && wg && e !== w.player && !wv.isReady(wg.mapAt(e.x, e.y)?.tag)) continue;
@@ -2718,6 +2738,7 @@ export class ZoneScene extends Phaser.Scene {
       this.viewOf(e).sync(e);
     }
     for (const [id, v] of this.views) if (!alive.has(id)) { v.destroy(); this.views.delete(id); }
+    Mesure.fin('persos');
     for (const [id, vv] of this.vivantsAllies) if (!w.players.some(q => q.id === id)) { vv?.destroy(); this.vivantsAllies.delete(id); }
     // Bastion partagé : les autres joueurs en ligne s'y promènent ; on donne aussi sa position
     if (EnLigne.connecte && !this.vitrine) {
@@ -2735,6 +2756,7 @@ export class ZoneScene extends Phaser.Scene {
     this.dessinerLances();
     this.oublierPlanches();
     if (!this.vitrine) this.familierView?.maj(w, this.game.loop.delta / 1000);
+    Mesure.debut('sil');
     if (this.transparence) {
       const caches: Cache[] = [];
       for (const e of [...w.players, ...w.betes, ...w.monsters]) {
@@ -2743,8 +2765,11 @@ export class ZoneScene extends Phaser.Scene {
       }
       this.transparence.update(this.game.loop.delta / 1000, caches);
     }
+    Mesure.fin('sil');
     this.majApparence();
-    this.vivant?.maj();
+    // « Fluidité Thor : » 2B : le perso se prépare dans les moments calmes (combat relu 4 fois par seconde)
+    if (this.time.now - this.calmeT > 250) { this.calmeT = this.time.now; this.calme = !enCombat(w); }
+    Mesure.debut('perso'); this.vivant?.maj(3, this.calme); Mesure.fin('perso');
     this.windows?.majPerso(this.time.now);
     this.panneau?.maj(this.time.now);
     this.panneau?.editeur.dessiner(this, this.panneau.ouvert && this.panneau.ongletPlacement);
@@ -2780,7 +2805,7 @@ export class ZoneScene extends Phaser.Scene {
     this.dialogueView?.update();
     EntityView.temps = this.world.time;
     if (this.reglages.barresVie === 'survol' && !this.vitrine) EntityView.survol = this.monsterUnder(this.input.activePointer)?.id ?? null;
-    this.hud.draw(this.fx.juice, this.game.loop.delta / 1000);
+    Mesure.debut('hud'); this.hud.draw(this.fx.juice, this.game.loop.delta / 1000); Mesure.fin('hud');
     this.windows?.majTresor();
   }
 }

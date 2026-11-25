@@ -98,14 +98,20 @@ export function demarrerManette() {
 /** Appli Android « Diablofus Thor » (« Confort 2 : » 1A) : la manette est lue par l'appli et passée ici
  *  (une WebView ne voit pas toujours la manette, et l'appli la garde même quand on touche l'écran du bas). */
 /** moteur() : 'gecko' dans l'appli « Diablofus Gecko » (android-gecko/, moteur de Firefox embarqué) ; absent dans l'appli WebView. */
-interface AppliNative { moteur?(): string; manette?(): string; vibrer?(fort: number, faible: number, ms: number): void; luminosite?(f: number): void; version?(): string; journal?(): string }
+interface AppliNative { moteur?(): string; manette?(): string; vibrer?(fort: number, faible: number, ms: number): void; luminosite?(f: number): void; version?(): string; journal?(): string;
+  /** Appli 4 : fréquence de l'écran du haut (0 = la plus haute), et ce que l'appli sait de l'écran et du moteur (rapport). */
+  frequence?(hz: number): void; ecran?(): string }
 export function appliNative(): AppliNative | null {
   return typeof window !== 'undefined' ? (window as unknown as { DiablofusAppli?: AppliNative }).DiablofusAppli ?? null : null;
 }
+let padTexte = '', padLu: { c?: boolean; b?: number[]; a?: number[]; t?: number } = {};
 function padNatif(): Gamepad | null {
   const a = appliNative(); if (!a?.manette) return null;
   try {
-    const j = JSON.parse(a.manette()) as { c?: boolean; b?: number[]; a?: number[]; t?: number };
+    // (l'état ne change que quand la manette bouge : on ne relit le texte que s'il a changé)
+    const txt = a.manette();
+    if (txt !== padTexte) { padTexte = txt; padLu = JSON.parse(txt) as typeof padLu; }
+    const j = padLu;
     if (!j.c || !j.b) return null;
     return { id: 'Diablofus Thor', index: 0, connected: true, mapping: 'standard', timestamp: j.t ?? performance.now(), axes: j.a ?? [0, 0, 0, 0],
       buttons: j.b.map(v => ({ pressed: v > 0.5, touched: v > 0, value: v })), vibrationActuator: null, hapticActuators: [] } as unknown as Gamepad;

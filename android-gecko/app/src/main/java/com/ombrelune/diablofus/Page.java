@@ -61,6 +61,8 @@ final class Page {
     se.setPermissionDelegate(new Permissions());
     se.setPromptDelegate(new Invites());
     se.open(Moteur.runtime(ctx));
+    // « Fluidité Thor : » 7A : le jeu passe avant l'écran du bas (priorité du processus de sa page)
+    if (nom.equals("jeu")) try { se.setPriorityHint(GeckoSession.PRIORITY_HIGH); } catch (Throwable ignore) { }
     vue.setSession(se);
     Moteur.pont(ctx).accept(ext -> {
       if (se != session) return;

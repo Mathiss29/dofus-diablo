@@ -1,4 +1,5 @@
 import { v } from './assetUrl';
+import { allege } from './allege';
 import Phaser from 'phaser';
 import { ISO } from '../sim/iso';
 import { GridMap, MAP_COLS, MAP_ROWS, type DecorPlace, type WorldGrid, type WorldMapEntry } from '../sim/gridmap';
@@ -561,7 +562,7 @@ export class WorldView {
     // même porte : rien à refaire, sauf si son dessin n'était pas encore posé (carte voisine en chargement) : on recherche 4 fois par seconde
     if (cle === this.contourCle && (this.contourIm || this.survolIm?.visible || !cle || t - this.contourT < 250)) return;
     this.contourCle = cle; this.contourT = t;
-    if (this.contourIm?.active) { this.contourIm.preFX?.clear(); if (this.contourIm.texture.key === 'paillasson') this.devant(this.contourIm, false); }
+    if (this.contourIm?.active) { this.contourIm.preFX?.clear(); if (this.contourTeinte) { this.contourIm.setTint(this.tint); this.contourTeinte = false; } if (this.contourIm.texture.key === 'paillasson') this.devant(this.contourIm, false); }
     this.contourIm = null;
     this.survolIm?.setVisible(false);
     if (sx === null) return;
@@ -569,8 +570,9 @@ export class WorldView {
     if (this.montrerSurvol(sx, sy)) return;
     const im = this.dessinPorte(sx, sy);
     if (!im?.preFX) return;   // rien à entourer, ou pas de WebGL
-    im.preFX.setPadding(4);
-    im.preFX.addGlow(WorldView.LILAS, 4, 0, false, 0.12, 3);
+    // « Fluidité Thor : » 4A, en mode console : la porte prend une teinte lilas au lieu du contour brillant
+    if (allege('algHalos')) { im.setTint(mulTint(0xcbb6ff, this.tint)); this.contourTeinte = true; }
+    else { im.preFX.setPadding(4); im.preFX.addGlow(WorldView.LILAS, 4, 0, false, 0.12, 3); }
     // paillasson survolé : il passe devant le bord noir de la salle, qui le cache parfois
     if (im.texture.key === 'paillasson') this.devant(im, true);
     this.contourIm = im;
@@ -582,6 +584,7 @@ export class WorldView {
   }
   /** Teinte du contour (le lilas de Sanstour). */
   static readonly LILAS = 0xe2d8ff;
+  private contourTeinte = false;
   private survolIm: Phaser.GameObjects.Image | null = null;
   /** Le contour officiel le plus proche du haut de la case de la porte (survols de monde.json, sur les cartes affichées). */
   private montrerSurvol(sx: number, sy: number): boolean {

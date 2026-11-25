@@ -19,7 +19,7 @@ import org.mozilla.geckoview.GeckoSession;
  * mais le jeu ne dépend plus du « Android System WebView » de la Thor (109, impossible à mettre à jour).
  */
 public final class Principale extends Activity {
-  static final int VERSION = 3;
+  static final int VERSION = 4;
   private static final int FICHIER = 41;
   /** Mode sûr : après un plantage, on lance le jeu seul (sans l'écran du bas). */
   private boolean sansBas = false;
@@ -50,6 +50,7 @@ public final class Principale extends Activity {
       setContentView(jeu.vue);
       Journal.evenement(this, "page du jeu posée");
       Plein.appliquer(getWindow());
+      Pont.frequence(this, getWindow(), 0);   // « Fluidité Thor : » 5D : la fréquence la plus haute, jusqu'à ce que le jeu dise son réglage
     } catch (Throwable e) { erreur("au démarrage", e); }
   }
 

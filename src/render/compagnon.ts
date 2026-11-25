@@ -1,4 +1,6 @@
 import { appliNative } from './manette';
+import { allege, texteAllegements } from './allege';
+import { Mesure } from './mesureImages';
 // Écran du bas de l'AYN Thor (« Écran du bas : » 1A 2A+2B 3A-3D 4A-4C 5A+5B 6A+6B 7A 8A 9B, 2026-11-16) : la page
 // diablofus.com/#compagnon, ouverte dans Chrome sur l'écran du bas pendant que le jeu tourne en haut, montre la carte, le sac,
 // le perso et les quêtes, et reçoit les fenêtres du jeu. Les deux pages se parlent par le lien direct (BroadcastChannel) et,
@@ -24,7 +26,7 @@ export type MsgCompagnon =
   | { k: 'bonjour'; neuf?: boolean } | { k: 'ping'; n: number; t: number } | { k: 'pong'; n: number; t: number }
   | { k: 'etat'; e: EtatBas | null } | { k: 'carte'; c: CarteBas | null } | { k: 'sac'; s: SacBas | null } | { k: 'quetes'; q: QuetesBas | null }
   | { k: 'fiche'; uid: number; html: string } | { k: 'fenetre'; f: FenetreBas | null } | { k: 'styles'; css: string } | { k: 'onglet'; o: OngletBas | 'suivant' }
-  | { k: 'tchat'; l: LigneTchat[]; enLigne: boolean } | { k: 'annonce'; t: string; c?: string; uid?: number } | { k: 'bilan'; titre: string; lignes: string[] } | { k: 'diag'; d: DiagGpu } | { k: 'action'; a: ActionCompagnon } | { k: 'ordre'; o: OrdreBas } | { k: 'accueil'; a: AccueilBas | null };
+  | { k: 'tchat'; l: LigneTchat[]; enLigne: boolean } | { k: 'annonce'; t: string; c?: string; uid?: number } | { k: 'bilan'; titre: string; lignes: string[] } | { k: 'diag'; d: DiagGpu; m?: string[] } | { k: 'gene'; max?: number; base?: number } | { k: 'action'; a: ActionCompagnon } | { k: 'ordre'; o: OrdreBas } | { k: 'accueil'; a: AccueilBas | null };
 export type Lien = 'direct' | 'stockage';
 type De = 'jeu' | 'ecran';
 interface Enveloppe { de: De; id: string; m: MsgCompagnon }
@@ -57,10 +59,15 @@ export class Canal {
     if (this.vus.size > 200) this.vus = new Set([...this.vus].slice(-100));
     this.ecoute?.(env.m, par);
   }
+  /** « Fluidité Thor : » 6B : tant que le lien direct répond, plus d'écriture de secours dans le stockage (le jeu y
+   *  écrivait 4 fois par seconde, et chaque écriture réveillait l'autre page). Le « bonjour » y passe toujours : il
+   *  garde la voie de secours prête et visible dans le rapport. */
+  static econome = false;
   envoyer(m: MsgCompagnon) {
     const env: Enveloppe = { de: this.moi, id: `${this.moi}${Date.now().toString(36)}${(this.n++).toString(36)}${Math.random().toString(36).slice(2, 6)}`, m };
     try { this.bc?.postMessage(env); } catch { /* fermé */ }
     if (this.bc && LOURDS.has(m.k)) return;
+    if (Canal.econome && this.bc && m.k !== 'bonjour' && this.recu.direct && performance.now() - this.recu.direct < 5000) return;
     try { localStorage.setItem(CLE + this.moi, JSON.stringify(env)); } catch { /* stockage indisponible ou plein */ }
   }
 }
@@ -79,6 +86,8 @@ export interface BrancheCompagnon {
   action(a: ActionCompagnon): void;
   ordre(o: OrdreBas): void;
   annonce(t: string): void;
+  /** Lignes en plus pour le rapport (résolution, limite d'images…). */
+  infos?(): string[];
 }
 let canalJeu: Canal | null = null, branche: BrancheCompagnon | null = null, miroir: MiroirJeu | null = null;
 let actifJusque = 0, envoiT = 0, diagT = 0, lentT = 0, toutRenvoyer = true, nbStyles = -1;
@@ -123,6 +132,17 @@ function ouvrirCanal() {
     } else if (m.k === 'ping') {
       c.envoyer({ k: 'pong', n: m.n, t: m.t });
       branche?.annonce('Coucou de l\'écran du bas !');
+    } else if (m.k === 'gene') {
+      // « Fluidité Thor : » 1A : l'écran du bas va s'occuper 200 ms ; on mesure la plus longue attente entre deux images du jeu
+      // (les 200 premières ms servent de repère : sur un jeu déjà lent, une longue attente ne prouve rien)
+      const debut = performance.now();
+      let avant = debut, max = 0, base = 0;
+      const tour = () => {
+        const n = performance.now(), d = n - avant; avant = n;
+        if (n - debut < 200) base = Math.max(base, d); else max = Math.max(max, d);
+        if (n - debut < 750) requestAnimationFrame(tour); else c.envoyer({ k: 'gene', max: Math.round(max), base: Math.round(base) });
+      };
+      requestAnimationFrame(tour);
     } else if (m.k === 'action') branche?.action(m.a);
     else if (m.k === 'ordre') {
       if (m.o.k === 'evt') miroir?.rejouer(m.o.e);
@@ -133,14 +153,20 @@ function ouvrirCanal() {
 }
 
 /** Envoie le sac ou les quêtes si leur contenu a changé depuis le dernier envoi (ou si tout doit repartir). */
-function siChange(k: string, v: unknown, m: MsgCompagnon) {
+function siChange(k: string, v: unknown, m: MsgCompagnon): boolean {
   const j = JSON.stringify(v);
-  if (!toutRenvoyer && derniers[k] === j) return;
+  if (!toutRenvoyer && derniers[k] === j) return false;
   derniers[k] = j;
-  canalJeu!.envoyer(m);
+  canalJeu!.envoyer(m); Mesure.plus('messages vers le bas');
+  return true;
 }
+let etatForce = 0, carteForcee = 0, tchatT = 0;
 
-/** À chaque image : perso et carte 4 fois par seconde, sac et quêtes quand ils changent, la fenêtre ouverte en copie. */
+/** À chaque image : perso et carte 4 fois par seconde, sac et quêtes quand ils changent, la fenêtre ouverte en copie.
+ *  « Fluidité Thor : » 6A, en mode console : le perso et la carte ne partent que s'ils ont changé (au repos, plus rien ne
+ *  part ; un état par seconde au moins, pour que l'écran du bas sache que le jeu est là), le sac
+ *  et les quêtes
+ *  sont relus toutes les 2 secondes, 5 pendant un combat (un ordre venu du bas les renvoie aussitôt). */
 export function tickCompagnon() {
   const t = performance.now();
   if (!canalJeu) return;
@@ -152,17 +178,32 @@ export function tickCompagnon() {
   miroir?.suivre(f?.el ?? null, f?.mode);
   if (t - envoiT < 250) return;
   envoiT = t;
-  c.envoyer({ k: 'etat', e: b?.etat() ?? null });
-  c.envoyer({ k: 'carte', c: b?.carte() ?? null });
-  if (toutRenvoyer || t - lentT > 1000) {
-    lentT = t;
+  const eco = allege('algLien');
+  Canal.econome = eco;
+  const etat = b?.etat() ?? null;
+  if (!eco) { c.envoyer({ k: 'etat', e: etat }); c.envoyer({ k: 'carte', c: b?.carte() ?? null }); Mesure.plus('messages vers le bas', 2); }
+  else {
+    if (t - etatForce > 1000) delete derniers.etat;
+    // (le compteur d'images bouge tout le temps : il ne compte pas comme un changement)
+    if (siChange('etat', etat ? { ...etat, fps: 0 } : null, { k: 'etat', e: etat })) etatForce = t;
+    if (t - carteForcee > 5000) delete derniers.carte;
+    const carte = b?.carte() ?? null;
+    if (siChange('carte', carte, { k: 'carte', c: carte })) carteForcee = t;
+  }
+  // styles et tchat chaque seconde ; sac et quêtes : chaque seconde, ou en mode économe toutes les 2 s (5 s en combat)
+  if (toutRenvoyer || t - tchatT > 1000) {
+    tchatT = t;
     const n = document.querySelectorAll('style').length;
     if (toutRenvoyer || n !== nbStyles) { nbStyles = n; c.envoyer({ k: 'styles', css: stylesDuJeu() }); }
-    const sac = b?.sac() ?? null, qu = b?.quetes() ?? null, tc = b?.tchat() ?? null;
+    const tc = b?.tchat() ?? null;
+    if (tc) siChange('tchat', tc, { k: 'tchat', ...tc });
+  }
+  if (toutRenvoyer || lentT === 0 || t - lentT > (!eco ? 1000 : etat?.combat?.en ? 5000 : 2000)) {
+    lentT = t;
+    const sac = b?.sac() ?? null, qu = b?.quetes() ?? null;
     siChange('sac', sac, { k: 'sac', s: sac });
     siChange('quetes', qu, { k: 'quetes', q: qu });
-    if (tc) siChange('tchat', tc, { k: 'tchat', ...tc });
     toutRenvoyer = false;
   }
-  if (t - diagT > 2000) { diagT = t; c.envoyer({ k: 'diag', d: diagGpu() }); }
+  if (t - diagT > 2000) { diagT = t; c.envoyer({ k: 'diag', d: diagGpu(), m: [...Mesure.lignes(), `Allègements : ${texteAllegements()}`, ...(branche?.infos?.() ?? [])] }); }
 }

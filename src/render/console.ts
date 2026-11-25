@@ -37,6 +37,9 @@ export const REGLAGE_THOR_V2 = { resolution: 'normale' as const };
 /** Version 3 (2026-11-25) : résolution Équilibrée (1281×720 sur la Thor). En Normale, l'image de 480 px de haut était
  *  étirée sur l'écran 1080p : Mathis trouvait le jeu flou. */
 export const REGLAGE_THOR_V3 = { resolution: 'moyenne' as const };
+/** Version 4 (« Fluidité Thor : » 5A+5D, 2026-11-25) : plus de limite à 60. Le limiteur du moteur sautait des images quand
+ *  l'écran tournait lui aussi à 60 ; le jeu suit maintenant l'écran (120 Hz sur l'écran du haut de la Thor s'il les tient). */
+export const REGLAGE_THOR_V4 = { fps: 0 };
 
 /** « Confort 2 : » 5A : l'interface a sa propre échelle en mode console (celle du PC ne bouge pas). */
 export function echelleInterface(r: { echelle: number; echelleConsole?: number }): number {
