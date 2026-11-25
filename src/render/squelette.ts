@@ -23,7 +23,18 @@ interface Skin { tex: string; parts: Record<string, Morceau[]> }
 type Trace = number[];
 export interface AnimsData { echelle: number; graphiques: Morceau[][]; noeuds: string[]; anims: Record<string, Trace[][]>; shots: Record<string, number> }
 
-const json = async <T>(f: string): Promise<T> => (await fetch(v(`${DOSSIER}/${f}`))).json() as Promise<T>;
+/** Trois essais, espacés : un seul fichier raté et tout l'assemblage tombait, et le perso finissait sur sa planche de secours
+ *  (un carré noir pour les classes qui n'en ont pas, vu sur la Thor le 2026-11-25). */
+async function insister<T>(faire: () => Promise<T>): Promise<T> {
+  for (let essai = 0; ; essai++) {
+    try { return await faire(); } catch (e) { if (essai >= 2) throw e; await new Promise(r => setTimeout(r, 400 * (essai + 1))); }
+  }
+}
+const json = <T>(f: string): Promise<T> => insister(async () => {
+  const r = await fetch(v(`${DOSSIER}/${f}`));
+  if (!r.ok) throw new Error(`${f} : ${r.status}`);
+  return r.json() as Promise<T>;
+});
 const cacheJson = new Map<string, Promise<unknown>>();
 function charge<T>(f: string): Promise<T> {
   if (!cacheJson.has(f)) cacheJson.set(f, json<T>(f).catch(e => { cacheJson.delete(f); throw e; }));
@@ -32,7 +43,15 @@ function charge<T>(f: string): Promise<T> {
 const cacheImg = new Map<string, Promise<HTMLImageElement>>();
 function image(f: string): Promise<HTMLImageElement> {
   if (!cacheImg.has(f)) cacheImg.set(f, (async () => {
-    const im = new Image(); im.crossOrigin = 'anonymous'; im.src = v(`${DOSSIER}/${f}`); await im.decode(); return im;
+    return insister(async () => {
+      const im = new Image(); im.crossOrigin = 'anonymous';
+      const arrivee = new Promise<void>((ok, ko) => { im.onload = () => ok(); im.onerror = () => ko(new Error(`image ${f}`)); });
+      im.src = v(`${DOSSIER}/${f}`);
+      await arrivee;
+      try { await im.decode(); } catch { /* Firefox refuse parfois decode() sur une image pourtant chargée : elle se décodera au dessin */ }
+      if (!im.naturalWidth) throw new Error(`image vide ${f}`);
+      return im;
+    });
   })().catch(e => { cacheImg.delete(f); throw e; }));
   return cacheImg.get(f)!;
 }
