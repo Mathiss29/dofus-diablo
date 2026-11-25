@@ -1229,10 +1229,11 @@ export class Hud {
     const cleMenus = `${colX}|${top}|${step}|${this.menus.length}`;
     const gm = cleMenus !== this.cleMenus ? this.scene.make.graphics({}, false) : null;
     this.menus.forEach((m, i) => {
-      const y = top + bs / 2 + i * step, x = colX + (36 - bs) / 2;
+      // Thor : l'écran du bas relié a tous les menus (onglet Perso), la colonne de boutons de 10 px ne sert plus en haut
+      const y = top + bs / 2 + i * step, x = this.basRelie ? -9000 : colX + (36 - bs) / 2;
       this.rects.push([x, y - bs / 2, bs, bs]);
       if (gm) {
-        const lx = x - colX, ly = y - top;
+        const lx = (36 - bs) / 2, ly = y - top;
         gm.fillStyle(0x1b1a16, 1); gm.fillRoundedRect(lx, ly - bs / 2, bs, bs, 5);
         gm.fillStyle(0x3a3933, 1); gm.fillRoundedRect(lx + 1.5, ly - bs / 2 + 1.5, bs - 3, bs - 3, 4);
         gm.fillStyle(0x47463f, 1); gm.fillRoundedRect(lx + 2, ly - bs / 2 + 2, bs - 4, (bs - 4) / 2, { tl: 3, tr: 3, bl: 0, br: 0 });
@@ -1251,6 +1252,7 @@ export class Hud {
       gm.generateTexture(k, 36, Math.max(1, this.menus.length * step)); gm.destroy();
       this.imMenus.setTexture(k).setPosition(colX, top).setVisible(true);
     }
+    if (this.imMenus.visible === this.basRelie && this.cleMenus) this.imMenus.setVisible(!this.basRelie);
 
     // --- Barre du bas : XP, 6 sorts, clic droit, déplacement, potion, Rage ---
     // Interfaces Thor 1C+1D : en mode console, rangée fine sans cadre (icônes 40 % plus petites) qui se cache hors combat

@@ -7,7 +7,7 @@ import { CLE_UNE_TEXTURE, texteDiag, uneTexture, type DiagGpu } from './diagGpu'
 import { Canal, type ActionCompagnon, type LigneTchat, type OngletBas, type OrdreBas } from './compagnon';
 import type { AccueilBas } from './accueilThor';
 import type { CarteBas, EtatBas, ObjetBas, QuetesBas, SacBas } from './compagnonEtat';
-import { CSS_BAS, MiroirBas } from './miroir';
+import { MiroirBas } from './miroir';
 import { v } from './assetUrl';
 import { verifierVersion } from './miseAJour';
 import { appliNative } from './manette';
@@ -108,7 +108,7 @@ html,body{margin:0;background:#0d0f14;overscroll-behavior:none}
 #cmp .effets{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;min-height:24px}
 #cmp .ef{font-size:11.5px;padding:3px 7px;border-radius:12px;background:#1d2a3a;color:#9cc9ff}
 #cmp .ef.monstre{background:#3a1d1d;color:#ff9a8a}#cmp .ef.objet{background:#2e2414;color:#f0c070}
-#cmp .acts{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px}
+#cmp .acts{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px}#cmp .acts.menus{grid-template-columns:repeat(4,1fr)}#cmp .acts.menus button{background:#161a22;border-color:#2a2f3a;font-size:12px;padding:8px 4px}#cmp .acts.menus:empty{display:none}#cmp .acts.menus{margin-bottom:56px}
 /* quêtes */
 #cmp .q{background:#161a22;border:1px solid #2a2f3a;border-radius:10px;padding:7px 9px;margin-bottom:6px}
 #cmp .q.suivie{border-color:#d3f46f}
@@ -166,8 +166,8 @@ html,body{margin:0;background:#0d0f14;overscroll-behavior:none}
 #cmp .fen{position:absolute;inset:0;z-index:4;background:#0d0f14;display:grid;grid-template-rows:38px minmax(0,1fr)}
 #cmp .fen[hidden]{display:none}
 #cmp .fen .fh{display:flex;align-items:center;justify-content:space-between;padding:0 6px 0 10px;background:#12151c;border-bottom:1px solid #2a2f3a;font:400 15px Rowdies,Lexend,sans-serif;color:#d3f46f}
-#cmp .fen .fh button{padding:5px 12px}
-#cmp .fen .fc{overflow:auto;padding:2px}
+#cmp .fen .fh button{padding:5px 12px}#cmp .fen .fh i{flex:1}#cmp .fen .fh button[data-f=zoom]{margin-right:6px;background:#161a22;border-color:#2a2f3a;font-size:12px}#cmp .fen .fh button[hidden]{display:none}
+#cmp .fen .fc{overflow:auto;padding:2px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 /* liens (diagnostic) */
 #cmp .btns .appli{display:inline-block;padding:7px 10px;border-radius:8px;background:#2b3a14;border:1px solid #4d5a2c;color:#d3f46f;font-size:12.5px;text-decoration:none}
 #cmp .liens{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
@@ -189,7 +189,7 @@ const NOMS: Record<string, string> = { direct: 'Lien direct', stockage: 'Stockag
 export function ecranCompagnon() {
   document.getElementById('chargement')?.remove();
   document.getElementById('game')?.remove();
-  const s = document.createElement('style'); s.textContent = CSS + CSS_BAS; document.head.appendChild(s);
+  const s = document.createElement('style'); s.textContent = CSS; document.head.appendChild(s);
   const stJeu = document.createElement('style'); stJeu.id = 'cmp-jeu'; document.head.insertBefore(stJeu, s);   // styles du jeu, sous les nôtres
   const r = document.createElement('div'); r.id = 'cmp'; document.body.appendChild(r);
   r.innerHTML = `<div class="vues">
@@ -208,7 +208,7 @@ export function ecranCompagnon() {
         <div class="btns"><button data-d="ping">Coucou au jeu</button><button data-d="rapport">Copier le rapport</button><button data-d="texture">Essai carrés noirs</button><button data-d="retour">Retour</button>${appliNative() ? '' : '<a class="appli" href="appli/diablofus-thor.apk" download>Appli Thor (deux écrans)</a>'}${appliNative()?.moteur ? '' : '<a class="appli" href="https://assets.diablofus.com/appli/diablofus-gecko.apk" download>Appli Thor, moteur Firefox</a>'}</div>
         <div class="journal"></div></div>
       <div class="bilan" hidden><h4></h4><div class="bl"></div><button data-bilan="x">Fermer</button></div>
-      <div class="fen" hidden><div class="fh"><span></span><button data-f="x">✕ Fermer</button></div><div class="fc"></div></div>
+      <div class="fen" hidden><div class="fh"><span></span><i></i><button data-f="zoom" title="Lisible (on fait glisser) ou entière (tout tient, en petit)">🔍</button><button data-f="x">✕ Fermer</button></div><div class="fc"></div></div>
       <button class="ctx" hidden></button>
       <div class="toast" style="opacity:0"></div>
     </div>
@@ -223,11 +223,12 @@ export function ecranCompagnon() {
   const detail: Record<string, string> = {};
   const pings = new Map<number, number>(); let nPing = 0, dernierPing = '';
   let etat: EtatBas | null = null, etatT = 0, carte: CarteBas | null = null, sac: SacBas | null = null, quetes: QuetesBas | null = null;
+  let modeFen = '';
   let stylesRecus = false, diag: DiagGpu | null = null, enJeu = false;
   const lignes: string[] = [];
   const noter = (t: string) => { lignes.unshift(`${new Date().toLocaleTimeString('fr-FR')}  ${t}`); lignes.length = Math.min(lignes.length, 8); q('.journal').textContent = lignes.join('\n'); };
   let toastT = 0;
-  const toast = (t: string) => { const el = q('.toast'); el.textContent = t; el.style.opacity = '1'; clearTimeout(toastT); toastT = window.setTimeout(() => { el.style.opacity = '0'; }, 2200); };
+  const toast = (t: string) => { const el = q('.toast'); el.textContent = t; el.style.bottom = miroir.ouverte ? 'auto' : ''; el.style.top = miroir.ouverte ? '52px' : ''; el.style.opacity = '1'; clearTimeout(toastT); toastT = window.setTimeout(() => { el.style.opacity = '0'; }, 2200); };
   const relie = () => { const m = Math.max(vu.direct, vu.stockage); return m > 0 && performance.now() - m < 3000; };
   const ordre = (o: OrdreBas) => c.envoyer({ k: 'ordre', o });
   const action = (a: ActionCompagnon) => c.envoyer({ k: 'action', a });
@@ -258,6 +259,9 @@ export function ecranCompagnon() {
   // ---------- fenêtre du jeu reçue (2A+2B) ----------
   const miroir = new MiroirBas(q('.fen .fc'), e => ordre({ k: 'evt', e }));
   q('.fen [data-f="x"]').addEventListener('click', () => action('fermer'));
+  // 2026-11-25 : grandes fenêtres (Métiers, Bestiaire, Succès…) lisibles en bas, on les fait glisser ; 🔍 = les voir entières
+  const majZoom = () => { const b = q('.fen [data-f="zoom"]'); b.hidden = !miroir.tropLarge; b.classList.toggle('on', miroir.lisible); b.textContent = miroir.lisible ? '🔍 Entière' : '🔍 Lisible'; };
+  q('.fen [data-f="zoom"]').addEventListener('click', () => { miroir.basculerZoom(); q('.fen .fc').scrollTo(0, 0); majZoom(); });
 
   // ---------- tchat et journal (4C+4D, 8A) ----------
   let tchat: LigneTchat[] = [], tchatEnLigne = false, vueT: 'tchat' | 'journal' = 'tchat', nonLus = 0;
@@ -310,13 +314,14 @@ export function ecranCompagnon() {
         journal.push({ h: `<b>${esc(m.titre)}</b> · ${m.lignes.map(esc).join(' · ')}`, j: true, c: '#ffd27a' });
         break;
       }
-      case 'styles': stJeu.textContent = m.css; stylesRecus = true; break;
+      case 'styles': stJeu.textContent = m.css; miroir.styles(m.css); stylesRecus = true; break;
       case 'fiche': if (m.uid === choisi?.uid) { ficheHtml = m.html; dessinerFiche(); } break;
       case 'fenetre': {
         const avant = miroir.ouverte; miroir.montrer(m.f);
         const fen = q('.fen'); fen.hidden = !m.f;
         if (m.f) q('.fen .fh span').textContent = FENETRES[m.f.mode] ?? 'Fenêtre';
         if (!avant && m.f) miroir.montrer(m.f);   // la taille du conteneur n'est connue qu'une fois visible
+        if (m.f) { if (m.f.mode !== modeFen) { modeFen = m.f.mode; q('.fen .fc').scrollTo(0, 0); } majZoom(); } else modeFen = '';
         break;
       }
       case 'onglet': {
@@ -669,10 +674,13 @@ export function ecranCompagnon() {
       persoCle = cle;
       el.innerHTML = `<div class="ph"><img alt=""><div style="flex:1;min-width:0"><div class="nm"></div><small class="cl"></small><div class="bar xp"><div style="background:#d3f46f"></div></div></div><div class="kam"></div></div>
         <div class="pv"></div><div class="ligne"></div><div class="sorts"></div><div class="effets"></div><div class="rac"></div><div class="grp"></div>
-        <div class="acts">${e ? '<button data-a="potion" class="pot">Potion</button><button data-a="sorts">Sorts</button><button data-a="car">Caracs</button><button data-a="job">Métiers</button><button data-a="succes">Succès</button>' : ''}</div>`;
+        <div class="acts">${e ? '<button data-a="potion" class="pot">Potion</button><button data-a="sorts">Sorts</button><button data-a="car">Caracs</button><button data-a="job">Métiers</button><button data-a="succes">Succès</button>' : ''}</div>
+        <div class="acts menus"></div>`;
       el.appendChild(reg);
     }
     majReg(e);
+    const dm = el.querySelector<HTMLElement>('.acts.menus'), cleM = (e?.menus ?? []).map(m => m[0]).join(',');
+    if (dm && dm.dataset.k !== cleM) { dm.dataset.k = cleM; dm.innerHTML = (e?.menus ?? []).map(([a, n]) => `<button data-a="${a}">${esc(n)}</button>`).join(''); }
     const im = el.querySelector<HTMLImageElement>('.ph img')!, src = `assets/accueil/c_${classeId}.png`;
     if (!im.src.endsWith(src)) im.src = src;
     if (!e) {

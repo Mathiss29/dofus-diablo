@@ -2333,6 +2333,8 @@
           }
         ],
         "Corrections": [
+          "Thor : les Options ne restent plus invisibles après une fenêtre ouverte sur l'écran du bas.",
+          "Thor : fenêtres du bas lisibles (loupe), tous les menus dans l'onglet Perso, sorts à poser au toucher.",
           "Appli Thor moteur Firefox : listes des Options et couleurs du perso s'ouvrent de nouveau.",
           "Appli Thor moteur Firefox : le jeu ne bloque plus au chargement (console de la page refusée).",
           "Manette : le vibreur de l'appli marche même si le navigateur ne connaît pas les manettes."

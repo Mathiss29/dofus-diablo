@@ -32,6 +32,8 @@ type Parle = Exclude<Canal, 'infos'>;
 const LIGNES_REPOS = 6;
 
 const CSS = `
+/* Thor : l'écran du bas relié a son onglet Tchat (et le journal) ; en haut, les lignes recouvraient la flèche de quête */
+html.bas-relie .chat-df:not(.ouvert){display:none}html.console.fen-ouverte .chat-df:not(.ouvert){display:none}
 .chat-df{position:fixed;left:12px;bottom:160px;width:360px;z-index:25;font:13px/1.35 Lexend,sans-serif;color:#ece6d4;transform-origin:0 100%;transform:scale(var(--echelle,1))}
 .chat-df .ch-msgs{max-height:170px;overflow:hidden;display:flex;flex-direction:column;padding:4px 8px;border-radius:5px 5px 0 0}
 .chat-df .ch-msgs>div{text-shadow:0 1px 2px #000,0 0 3px #000;word-wrap:break-word}

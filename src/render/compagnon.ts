@@ -12,7 +12,9 @@ import type { AccueilBas } from './accueilThor';
 export type OngletBas = 'carte' | 'sac' | 'perso' | 'quetes' | 'tchat';
 /** Une ligne du tchat ou du journal (« Interfaces Thor : » 4C+4D) : html déjà mis en forme par chat.ts ; journal = ligne du jeu (butin, combat…). */
 export interface LigneTchat { h: string; j: boolean; c?: string }
-export type ActionCompagnon = 'potion' | 'inv' | 'sorts' | 'car' | 'carte' | 'quetes' | 'job' | 'succes' | 'fermer' | 'recharger';
+export type ActionCompagnon = 'potion' | 'inv' | 'sorts' | 'car' | 'carte' | 'quetes' | 'job' | 'succes' | 'fermer' | 'recharger' | MenuBas;
+/** Tous les menus de la colonne du haut, ouverts depuis l'onglet Perso du bas (« adapte tout le jeu pour la Thor », 2026-11-25). */
+export type MenuBas = 'bestiaire' | 'dofus' | 'campagne' | 'guide' | 'social' | 'ladder' | 'idoles' | 'boutique' | 'hdv' | 'opt' | 'menu';
 /** Ordres de l'écran du bas vers le jeu. */
 export type OrdreBas =
   | { k: 'equiper'; uid: number } | { k: 'retirer'; slot: string } | { k: 'cadenas'; uid: number } | { k: 'defaire'; uid: number }

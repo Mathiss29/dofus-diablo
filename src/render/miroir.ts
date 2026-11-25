@@ -17,13 +17,16 @@ export class MiroirJeu {
   get suivie() { return this.el; }
 
   /** Fenêtre à copier en bas (null : plus rien). */
+  private racine: HTMLElement | null = null;
   suivre(el: HTMLElement | null, mode = '') {
     if (el === this.el) return;
     this.obs?.disconnect(); this.obs = null; clearTimeout(this.minuterie); this.minuterie = 0;
-    this.el?.parentElement?.classList.remove('dw-bas');
+    // la racine est gardée : une fenêtre fermée n'a plus de parent, et la racine restait cachée pour la fenêtre suivante
+    // (Options invisibles en haut après avoir ouvert Sorts ou Caracs en bas, rapport de Mathis 2026-11-25)
+    this.racine?.classList.remove('dw-bas'); this.racine = null;
     this.el = el; this.mode = mode;
     if (!el) { this.envoyer(null); return; }
-    const racine = el.parentElement ?? el;
+    const racine = this.racine = el.parentElement ?? el;
     racine.classList.add('dw-bas');
     this.tip = racine.querySelector<HTMLElement>(':scope > .tip');
     this.obs = new MutationObserver(() => this.planifier());
@@ -99,13 +102,25 @@ const chemin = (de: Element, racine: Element): number[] | null => {
   return l;
 };
 
+/** Plus petite échelle « lisible » d'une fenêtre en bas (textes de 12 px → ~10 px sur l'écran de 3,9 pouces). */
+const LISIBLE = 0.82;
 export class MiroirBas {
   private hote: HTMLDivElement;
+  private st: HTMLStyleElement;
+  /** Zoom lisible (défaut) : une grande fenêtre n'est pas écrasée à la largeur de l'écran, on la fait glisser au doigt. */
+  lisible = true;
   private dernier: FenetreBas | null = null;
   private appui = 0;
   private long = false;
   constructor(private conteneur: HTMLElement, private envoyer: (e: EvtBas) => void) {
-    this.hote = document.createElement('div'); this.hote.className = 'dw cmp-dw'; conteneur.appendChild(this.hote);
+    // La copie vit dans une racine fantôme (shadow DOM) : les styles de la page du bas (« #cmp .sorts », « #cmp .bar »,
+    // « #cmp button »…) portaient les mêmes noms que ceux des fenêtres du jeu et les déformaient (fenêtre des Sorts
+    // sans sa liste en bas, 2026-11-25). Ici, seuls les styles du jeu s'appliquent.
+    const porte = document.createElement('div'); porte.className = 'cmp-porte'; conteneur.appendChild(porte);
+    const ombre = porte.attachShadow({ mode: 'open' });
+    this.st = document.createElement('style'); this.st.textContent = CSS_BAS; ombre.appendChild(this.st);
+    this.hote = document.createElement('div'); this.hote.className = 'dw cmp-dw'; ombre.appendChild(this.hote);
+    try { this.lisible = localStorage.getItem('diablofus.bas.zoom') !== '0'; } catch { /* pas de stockage */ }
     const win = () => this.hote.querySelector<HTMLElement>(':scope > .win');
     const viser = (ev: Event) => { const w = win(), t = ev.target as Element; return w && t && w.contains(t) ? chemin(t, w) : null; };
     // appui long = survol (infobulle d'un objet, d'un sort) ; appui court = clic
@@ -131,6 +146,16 @@ export class MiroirBas {
     }, true);
     new ResizeObserver(() => this.ajuster()).observe(conteneur);
   }
+  /** Styles du jeu, reçus du haut. */
+  styles(css: string) { this.st.textContent = css + CSS_BAS; this.ajuster(); }
+  /** Bascule entre « lisible » (on fait glisser) et « entière » (tout tient, en petit). */
+  basculerZoom(): boolean {
+    this.lisible = !this.lisible;
+    try { localStorage.setItem('diablofus.bas.zoom', this.lisible ? '1' : '0'); } catch { /* rien */ }
+    this.ajuster(); return this.lisible;
+  }
+  /** Vrai si la fenêtre ouverte ne tient pas en largeur à une taille lisible (le bouton de zoom sert). */
+  get tropLarge() { const f = this.dernier; return !!f && (this.conteneur.clientWidth - 4) / Math.max(1, f.w) < LISIBLE; }
   get ouverte() { return !!this.dernier; }
   get mode() { return this.dernier?.mode ?? ''; }
 
@@ -152,7 +177,8 @@ export class MiroirBas {
     if (!f || !w || L < 20) return;
     // la fenêtre garde sa taille du haut (ses largeurs en --vw/--vh n'ont pas de sens ici), puis rétrécit à la largeur du bas
     w.style.setProperty('width', `${f.w}px`, 'important'); w.style.setProperty('height', `${f.h}px`, 'important');
-    const k = Math.min(1, (L - 4) / Math.max(1, f.w));
+    const tient = Math.min(1, (L - 4) / Math.max(1, f.w));
+    const k = this.lisible ? Math.max(tient, LISIBLE) : tient;
     this.hote.style.setProperty('--k', k.toFixed(3));
     this.hote.style.width = `${Math.ceil(f.w * k)}px`; this.hote.style.height = `${Math.ceil(f.h * k)}px`;
   }
