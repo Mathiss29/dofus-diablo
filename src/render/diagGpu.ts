@@ -17,6 +17,7 @@ const poids = new Map<WebGLTexture, number>();
 const liee = new WeakMap<object, WebGLTexture | null>();
 const ERR: Record<number, string> = { 0x500: 'INVALID_ENUM', 0x501: 'INVALID_VALUE', 0x502: 'INVALID_OPERATION', 0x505: 'OUT_OF_MEMORY', 0x9242: 'CONTEXT_LOST' };
 const debut = performance.now();
+let derniereLecture = 0;
 
 export const diagGpu = (): DiagGpu => d;
 
@@ -39,7 +40,9 @@ export function brancherDiagGpu() {
       const w = a.length >= 9 ? a[3] as number : src?.width ?? 0, h = a.length >= 9 ? a[4] as number : src?.height ?? 0;
       d.envois++;
       if (!d.maxTexture) premierContact(this);
-      const e = this.getError();
+      // getError attend la carte graphique : au plus 4 fois par seconde (l'erreur reste notée jusqu'à sa lecture)
+      const t = performance.now(), e = t - derniereLecture > 250 ? this.getError() : 0;
+      if (t - derniereLecture > 250) derniereLecture = t;
       if (e) { d.echecs.push({ w, h, err: ERR[e] ?? `0x${e.toString(16)}`, t: Math.round((performance.now() - debut) / 1000) }); if (d.echecs.length > 12) d.echecs.shift(); console.warn('[GPU] envoi de texture refusé', w, h, ERR[e] ?? e); }
       const tex = liee.get(this);
       if (tex) { poids.set(tex, w * h * 4); recompter(); }
