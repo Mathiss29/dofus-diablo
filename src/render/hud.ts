@@ -1094,12 +1094,18 @@ export class Hud {
     }
 
     // --- Mini-carte et colonne de menus (haut droite) ---
-    const colX = W - 12 - 36, mw = 210, mh = 150, [mx, my] = this.place('mini', colX - 10 - mw, 10, mw, mh + 20);
+    // Thor (2026-11-25, accord de Mathis) : écran du bas relié = pas de mini-carte en haut (la carte est en bas). Sa caméra
+    // redessinait tout le monde une 2e fois à chaque image. Le nom du lieu, les images/s et les textes d'arène restent, remontés.
+    const sansMini = this.basRelie;
+    const colX = W - 12 - 36, mw = 210, mh = sansMini ? 0 : 150, [mx, my] = this.place('mini', colX - 10 - mw, 10, mw, mh + 20);
     // cadre seulement : l'intérieur est filmé par la caméra de la mini-carte, dessinée avant l'interface
-    this.rects.push([mx - 3, my - 3, mw + 6, mh + 6]); this.miniRect = [mx, my, mw, mh];
-    g.lineStyle(3, 0x24231d, 1); g.strokeRoundedRect(mx - 2, my - 2, mw + 4, mh + 4, 5);
-    g.lineStyle(1, 0x5a584c, 1); g.strokeRoundedRect(mx - 3.5, my - 3.5, mw + 7, mh + 7, 6);
-    if (this.muet) {
+    this.miniRect = [mx, my, mw, mh];
+    if (!sansMini) {
+      this.rects.push([mx - 3, my - 3, mw + 6, mh + 6]);
+      g.lineStyle(3, 0x24231d, 1); g.strokeRoundedRect(mx - 2, my - 2, mw + 4, mh + 4, 5);
+      g.lineStyle(1, 0x5a584c, 1); g.strokeRoundedRect(mx - 3.5, my - 3.5, mw + 7, mh + 7, 6);
+    }
+    if (this.muet && !sansMini) {
       const ix = mx + 8, iy = my + mh - 22;
       g.fillStyle(0x0d0c0a, 0.75); g.fillRoundedRect(ix - 4, iy - 4, 30, 22, 4);
       g.fillStyle(0xe8e2cc, 1); g.fillRect(ix, iy + 4, 5, 6); g.fillTriangle(ix + 4, iy + 7, ix + 11, iy, ix + 11, iy + 14);
@@ -1108,7 +1114,9 @@ export class Hud {
     const mc = this.miniCam;
     this.miniIcon.setVisible(false);
     let nPts = 0;
-    if (mc) {
+    if (mc && mc.visible === sansMini) mc.setVisible(!sansMini);
+    if (sansMini) for (const r of this.rpMini) r.setVisible(false);
+    if (mc && !sansMini) {
       const ps = ISO.toScreen(p.x, p.y);
       mc.setViewport(Math.round(mx * this.k), Math.round(my * this.k), Math.round(mw * this.k), Math.round(mh * this.k)).setZoom(0.16 * this.k).centerOn(ps.x, ps.y - 20);
       // monstres (points rouges, dorés pour les élites) par-dessus le décor filmé
@@ -1212,7 +1220,7 @@ export class Hud {
     const ici2 = world.worldGrid?.mapAt(p.x, p.y), co = R?.coords !== false && ici2 && !ici2.inside ? `  [${ici2.x},${ici2.y}]` : '';
     this.miniLabel.setPosition(mx + mw / 2, my + mh + 6).setText(`${world.lieu ?? world.area?.name ?? world.zone.name}${co}`);
     // 7C : compteur d'images, dans le coin de la mini-carte
-    this.fpsTxt.setVisible(!!R?.compteurFps).setPosition(mx + 6, my + 4);
+    this.fpsTxt.setVisible(!!R?.compteurFps).setPosition(sansMini ? mx - 40 : mx + 6, my + 4);
     if (R?.compteurFps) this.fpsTxt.setText(`${Math.round(this.scene.game.loop.actualFps)} FPS`);
     const ar = world.arene, ga = !ar && world.guerre?.attaque && !world.guerre.attaque.fini && world.guerre.surIle().includes(p) ? world.guerre.attaque : null;
     if (ga) this.areneTxt.setVisible(true).setPosition(mx + mw / 2, my + mh + 22).setText(`${ga.c.nom}\nVague ${ga.vague} / 5 · ${ga.restantes} / ${ga.cawottes.length} cawottes · ${chrono(ga.chrono)}`);
