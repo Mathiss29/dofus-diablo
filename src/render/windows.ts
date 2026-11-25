@@ -1,6 +1,7 @@
 import { QUALITES, REGLAGES_DEFAUT, sauverReglages, type Reglages } from './ambiance';
 import { reculPetitEcran } from './pixel';
 import { reglerModeConsole } from './console';
+import { brancherPoseAuToucher, CSS_POSE } from './poseAuToucher';
 import { manetteActive, reglerControles, reglerVibrations, capturerBouton, carteDisposition, echangerBouton, NOMS_BOUTONS, BTN } from './manette';
 import * as Touches from './touches';
 import { ICON_CSS, iconHtml, prechargerIcones } from './icons';
@@ -51,7 +52,7 @@ const DOF_CSS = `.dw .win.dofw{width:640px}.dw .dof-c .ic{width:70%;height:70%}.
 .dw .dof-d h4{margin:0 0 2px;color:#e8c76b}.dw .dof-s{display:flex;gap:6px;flex-wrap:wrap}.dw .dof-s span{background:rgba(255,255,255,.06);border-radius:10px;padding:2px 8px;font-size:12px}
 .dw .dof-s span.ok{background:rgba(185,229,75,.18);color:#d7f59a}`;
 /** Fenêtre de l'Almanax (15C). */
-const MENU_CSS = `.dw .win.menu{width:330px;grid-template-rows:46px auto}
+const MENU_CSS = CSS_POSE + `.dw .win.menu{width:330px;grid-template-rows:46px auto}
 .dw .mp{display:flex;flex-direction:column;padding:4px 0 14px}
 .dw .mp .grp{display:flex;flex-direction:column;align-items:center;gap:10px;padding:14px 26px;border-bottom:1px solid #0d0c0a;box-shadow:0 1px 0 #ffffff12}
 .dw .mp .grp:last-child{border:0;box-shadow:none;padding-bottom:4px}
@@ -1017,6 +1018,7 @@ export class Windows {
   constructor(private world: World) {
     const style = document.createElement('style'); style.textContent = DOF_CSS + MENU_CSS + ALM_CSS + SOCIAL_CSS + CSS + ICON_CSS + BUTIN_CSS + FORGE_CSS + CODEX_CSS + LADDER_CSS + TRESOR_CSS + IDOLES_CSS + ARENE_CSS + PANOPLIE_CSS + CARNET_CSS + HDV_CSS; document.head.appendChild(style);
     this.root = document.createElement('div'); this.root.className = 'dw'; document.body.appendChild(this.root);
+    this.lacherPose = brancherPoseAuToucher(this.root, t => this.onDire?.(t));
     // « Tchat : » 6A : le mousedown garde le champ du tchat actif ; le clic qui suit ne fait rien d'autre (pas de cadenas)
     this.root.addEventListener('mousedown', e => {
       const it = this.tipItem;
@@ -1251,19 +1253,25 @@ export class Windows {
   /** Fenêtre ouverte (ou null). */
   get ouverte(): Mode | null { return this.win ? this.mode : null; }
   /** Ouvre la fenêtre demandée, ou la ferme si c'est déjà elle. */
+  private lacherPose: (() => void) | null = null;
+  /** Petit message à montrer au joueur (toast du jeu). */
+  onDire: ((t: string) => void) | null = null;
   toggle(mode: Mode = 'inv') { if (this.win && this.mode === mode) this.close(); else this.show(mode); }
   close(son = true) {
+    this.lacherPose?.();
     if (this.win && son) Son.jouer(MANIFESTE.ui.fermer, 'interface', { cle: 'fenetre', ecart: 0.1 });   // 6B
     this.win?.remove(); this.win = null; this.ajusteur?.disconnect(); this.ajusteur = null; this.tip.style.display = 'none'; this.touchesVue = false; this.touchesEcoute = null; if (this.boutonEcoute != null) { this.boutonEcoute = null; capturerBouton(null); }
     this.root.style.zIndex = '';
+    document.documentElement.classList.remove('fen-ouverte');
   }
-  destroy() { this.root.remove(); window.removeEventListener('keydown', this.captureTouche, true); window.removeEventListener('resize', this.surResize);
+  destroy() { document.documentElement.classList.remove('fen-ouverte'); this.root.remove(); window.removeEventListener('keydown', this.captureTouche, true); window.removeEventListener('resize', this.surResize);
     window.removeEventListener('keydown', this.majTip); window.removeEventListener('keyup', this.majTip); window.removeEventListener('blur', this.majTip); this.finCoop(); this.finEnLigne(); clearInterval(this.minuteSocial); }
 
   show(mode: Mode = 'inv') {
     this.close(false);
     Son.jouer(MANIFESTE.ui.ouvrir, 'interface', { cle: 'fenetre', ecart: 0.1 });   // 6B : ouverture, puis clic sur les boutons
 
+    document.documentElement.classList.add('fen-ouverte');   // petit écran : le tchat replié ne passe plus par-dessus la fenêtre
     this.mode = mode;
     if (mode === 'garde') {
       this.garde = this.perso ? { tete: this.perso.app.tete, couleurs: [...this.perso.app.couleurs] } : null;

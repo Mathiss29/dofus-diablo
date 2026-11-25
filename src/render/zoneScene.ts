@@ -548,6 +548,7 @@ export class ZoneScene extends Phaser.Scene {
     // Bestiaire (maquette « Drops » 1A) : les monstres vaincus du compte ; la partie de test voit tout
     this.windows.vaincus = () => this.bestiaire; this.windows.toutVoir = !!this.test;
     this.windows.onZaap = i => { this.zaapChoix = i; };
+    this.windows.onDire = t => this.hud.toast(t);
     this.windows.toastFn = t => this.hud.toast(t, 2600);
     this.windows.onOuvrirTresor = () => { this.coffreDemande = true; };   // Enutrof (interface du coffre 2C)
     this.windows.onCarteQuete = () => { if (this.carte?.dispo) this.carte.montrerQuete(); };   // Carnet des Fêlures : voir le chapitre sur la carte
@@ -822,6 +823,19 @@ export class ZoneScene extends Phaser.Scene {
     this.test = null;   // la sauvegarde de fin de scène ne doit pas écraser ce qu'on vient d'écrire
     this.scene.restart({});
   }
+  /** Menus que l'onglet Perso de l'écran du bas peut ouvrir (ceux de la colonne du haut, selon le perso). */
+  private menusBas(): [string, string][] {
+    const p = this.world.player, q = this.world.quetes;
+    const l: [string, string][] = [['bestiaire', 'Bestiaire']];
+    if (p.v03) l.push(['dofus', 'Dofus']);
+    if (q?.campagneOuverte) l.push(['campagne', 'Carnet']);
+    if (p.v06) l.push(['idoles', 'Idoles']);
+    l.push(['social', 'Social'], ['ladder', 'Classement'], ['boutique', 'Boutique']);
+    if (this.world.opts.hdv) l.push(['hdv', 'Hôtel de Vente']);
+    l.push(['guide', 'Guide'], ['opt', 'Options'], ['menu', 'Quitter']);
+    return l;
+  }
+
   private actionsTest() {
     const reglages = () => ({ ...REGLAGES_TEST, ...this.world.test });
     return {
@@ -1258,7 +1272,7 @@ export class ZoneScene extends Phaser.Scene {
         const i = interactionProche(this.world, this.world.player), d = i ? decrireInteraction(this.world, i) : null;   // 1E : bouton en bas
         return { ...etatBas(this.world, this.perso?.nom ?? this.world.player.cls.name, this.perso?.sexe ?? 'm'), inter: d?.texte ?? null,
           combat: combatBas(this.world, this.manCible ?? this.hud.cibleId), raccourcis: raccourcisBas(this.world), groupe: groupeBas(this.world), fps: Math.round(this.game.loop.actualFps),
-          son: { musique: this.reglages.volMusique, effets: this.reglages.volEffets, muet: this.reglages.muet } };
+          son: { musique: this.reglages.volMusique, effets: this.reglages.volEffets, muet: this.reglages.muet }, menus: this.menusBas() };
       },
       carte: () => jeu() ? carteBas(this.world, k => interactionProche(this.world, this.world.player)?.k === k) : null,
       sac: () => {
@@ -1289,7 +1303,8 @@ export class ZoneScene extends Phaser.Scene {
         else if (a === 'inv') ongletBas('sac');
         else if (a === 'quetes') ongletBas('quetes');
         else if (a === 'fermer') this.fermerOuvert();
-        else { if (this.carte?.ouverte) this.carte.fermer(); this.windows?.toggle(a); }
+        else if (a === 'opt' || a === 'menu' || a === 'guide') { if (this.carte?.ouverte) this.carte.fermer(); this.windows?.toggle(a); if (this.windows?.ouverte === a) this.hud.toast(`${a === 'opt' ? 'Options' : a === 'guide' ? 'Guide' : 'Menu'} : sur l'écran du haut`); }
+        else if (a === 'sorts' || a === 'car' || a === 'job' || a === 'succes' || this.menusBas().some(m => m[0] === a)) { if (this.carte?.ouverte) this.carte.fermer(); this.windows?.toggle(a); }
       },
       ordre: o => {
         if (!jeu()) return;
@@ -1418,9 +1433,11 @@ export class ZoneScene extends Phaser.Scene {
   /** Personne d'autre dans la partie (pas de coop ni de monde tenu par le serveur) : le menu Start peut la mettre en pause. */
   private seulEnPartie() { return Coop.etat === 'hors' && !this.miroir && this.world.players.length === 1; }
   /** Écran du bas relié : le sac, les quêtes et la carte s'ouvrent en bas (leur onglet), le haut s'allège (6B). */
+  private basRelieAvant = false;
   private suivreEcranDuBas() {
     const relie = compagnonRelie() && !this.vitrine;
     this.hud.basRelie = relie;
+    if (relie !== this.basRelieAvant) { this.basRelieAvant = relie; document.documentElement.classList.toggle('bas-relie', relie); }
     if (!relie || this.menuStart?.ouvert) return;   // menu Start : ses onglets restent en haut (sinon le sac partait en bas et le menu se fermait)
     const m = this.windows?.ouverte;
     if (m === 'inv' || m === 'quetes') { this.windows!.close(false); ongletBas(m === 'inv' ? 'sac' : 'quetes'); }

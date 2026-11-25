@@ -26,6 +26,8 @@ export interface EtatBas {
   combat?: CombatBas; raccourcis?: RaccourciBas[]; groupe?: AllieBas[]; fps?: number;
   /** « Confort 2 : » 7A : volumes réglables depuis l'écran du bas. */
   son?: { musique: number; effets: number; muet: boolean };
+  /** Menus ouvrables depuis le bas : [action, nom] (ceux que ce perso a le droit d'ouvrir). */
+  menus?: [string, string][];
 }
 export interface CombatBas { en: boolean; cible: { nom: string; niveau: number; pv: number; pvMax: number; rang: number; info: string } | null; radar: [number, number, number][] }
 /** 2A : raccourcis au doigt (id d'une ressource, ou 'havresac', 'zaap'). */
