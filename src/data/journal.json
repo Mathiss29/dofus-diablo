@@ -2333,6 +2333,7 @@
           }
         ],
         "Corrections": [
+          "Appli Thor moteur Firefox : le jeu ne bloque plus au chargement (console de la page refusée).",
           "Manette : le vibreur de l'appli marche même si le navigateur ne connaît pas les manettes."
         ]
       }

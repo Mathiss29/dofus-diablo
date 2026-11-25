@@ -19,7 +19,7 @@ import org.mozilla.geckoview.GeckoSession;
  * mais le jeu ne dépend plus du « Android System WebView » de la Thor (109, impossible à mettre à jour).
  */
 public final class Principale extends Activity {
-  static final int VERSION = 1;
+  static final int VERSION = 2;
   private static final int FICHIER = 41;
   /** Mode sûr : après un plantage, on lance le jeu seul (sans l'écran du bas). */
   private boolean sansBas = false;

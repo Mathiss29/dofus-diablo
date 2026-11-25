@@ -28,7 +28,9 @@ window.wrappedJSObject.DiablofusAppli = cloneInto(api, window, { cloneFunctions:
 const texte = a => { try { return a instanceof Error ? `${a.message}` : typeof a === 'object' ? JSON.stringify(a) : String(a); } catch (e) { return String(a); } };
 try {
   const c = window.wrappedJSObject.console, avant = c.error;
-  exportFunction(function (...a) { envoyer({ k: 'err', t: a.map(texte).join(' ').slice(0, 400) }); return avant.apply(c, a); }, c, { defineAs: 'error' });
+  // avant.call(c, ...a) et non avant.apply(c, a) : la console de la page ne peut pas lire un tableau de l'extension
+  // (« Permission denied to access property "length" », qui faisait échouer le jeu dès sa 1re ligne d'erreur, appli 1)
+  exportFunction(function (...a) { envoyer({ k: 'err', t: a.map(texte).join(' ').slice(0, 400) }); try { avant.call(c, ...a); } catch (e) { /* console muette */ } }, c, { defineAs: 'error' });
 } catch (e) { /* console intouchable */ }
 window.addEventListener('error', e => envoyer({ k: 'err', t: `${e.message} (${e.filename}:${e.lineno})` }));
 window.addEventListener('unhandledrejection', e => envoyer({ k: 'err', t: `promesse : ${texte(e.reason)}` }));

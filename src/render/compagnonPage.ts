@@ -737,7 +737,7 @@ export function ecranCompagnon() {
   const copierRapport = async () => {
     const t = performance.now();
     const txt = ['Diablofus, écran du bas', `Écran : ${innerWidth}×${innerHeight} px CSS, densité ${devicePixelRatio}`,
-      `Appli installée : ${matchMedia('(display-mode: standalone)').matches ? 'oui' : 'non (onglet Chrome)'}`,
+      `Appli installée : ${appliNative() ? `appli Thor${appliNative()?.moteur?.() === 'gecko' ? ' (moteur Firefox)' : ' (WebView)'}` : matchMedia('(display-mode: standalone)').matches ? 'oui' : 'non (onglet du navigateur)'}`,
       ...Object.keys(NOMS).map(k => `${NOMS[k]} : ${vu[k] ? `${t - vu[k] < 5000 ? 'OK' : 'plus de nouvelles'} (${age(vu[k])})` : 'jamais'}${detail[k] ? `, ${detail[k]}` : ''}`),
       `Coucou aller-retour : ${dernierPing || 'pas essayé'}`, ...(diag ? texteDiag(diag) : ['Carte graphique : pas de nouvelles du jeu']), navigator.userAgent,
       ...(natif?.journal ? ['', 'Journal de l\'appli Thor :', natif.journal()] : [])].join('\n');
