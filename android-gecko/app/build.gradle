@@ -1,0 +1,40 @@
+// Appli « Diablofus Thor » avec son propre moteur (GeckoView, le moteur de Firefox), à côté de l'appli WebView (android/).
+plugins { id 'com.android.application' }
+
+// -Pabi=x86_64 : construction d'essai pour l'émulateur du PC (la Thor est en arm64-v8a).
+def abi = project.findProperty('abi') ?: 'arm64-v8a'
+def gecko = '161.0.20261118180411'
+
+android {
+  namespace 'com.ombrelune.diablofus'
+  compileSdk 36
+  defaultConfig {
+    applicationId 'com.ombrelune.diablofus.gecko'
+    minSdk 29
+    targetSdk 34
+    versionCode 1
+    versionName '1.0'
+    ndk { abiFilters abi }
+  }
+  signingConfigs {
+    diablofus {
+      storeFile file(System.getenv('CLE') ?: 'absente.jks')
+      storePassword System.getenv('CLE_MDP') ?: ''
+      keyAlias System.getenv('CLE_ALIAS') ?: 'diablofus'
+      keyPassword System.getenv('CLE_MDP') ?: ''
+    }
+  }
+  buildTypes {
+    release { minifyEnabled false; signingConfig signingConfigs.diablofus }
+  }
+  compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+  packagingOptions { jniLibs { useLegacyPackaging true } }
+}
+
+dependencies {
+  implementation "org.mozilla.geckoview:geckoview-${abi}:${gecko}"
+}
+
+// GeckoView 161 tire androidx.core 1.19 (prévu pour compileSdk 37 et AGP 9.1) : on garde AGP 8 et compileSdk 36, l'appli
+// n'appelle aucune API d'Android 37 (la Thor est en Android 13).
+tasks.configureEach { if (name.startsWith('check') && name.endsWith('AarMetadata')) enabled = false }
