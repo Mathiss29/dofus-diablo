@@ -2330,6 +2330,16 @@
               "AYN Thor",
               "Options › Manette"
             ]
+          },
+          {
+            "titre": "Récompenses de Vétéran d'Idlus",
+            "phrase": "Un code Idlus entré dans Code cadeau donne Ogrines, titre, ornement et auréole selon ton palier.",
+            "details": "Le code s'obtient sur la page Diablofus d'Idlus. Le même code donne la suite si ton palier monte.",
+            "icone": "options",
+            "etiquettes": [
+              "Options › Compte",
+              "Idlus"
+            ]
           }
         ],
         "Corrections": [

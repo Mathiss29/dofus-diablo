@@ -328,6 +328,8 @@ export class Quetes {
   /** Menu des succès : voir EtatQuetes. recuperes = null tant que la sauvegarde n'en a pas (ancien perso : tout est déjà donné). */
   recuperes = new Set<string>(); defis = new Set<string>(); compteurs: Record<string, number> = {};
   titreChoisi: string | null = null; ornementChoisi: number | null = null; epingles: string[] = [];
+  /** Titres du compte venus d'ailleurs (Vétéran d'Idlus) : remis à chaque connexion, jamais sauvegardés avec le perso. */
+  titresBonus: string[] = [];
   /** Boss du donjon apparu (9C) : moment de son apparition, et coup reçu depuis. */
   private bossVu: { t: number; touche: boolean } | null = null;
   /** Défense en cours : quête, objectif, temps tenu, prochaine vague. */
@@ -1317,6 +1319,7 @@ export class Quetes {
     const t: string[] = [];
     for (const id of this.succes) { const x = this.data.succes[id]?.recompense?.titre; if (x && this.visible(id) && !t.includes(x)) t.push(x); }
     for (const id of this.finies) { const x = this.data.quetes[id]?.recompense?.titre; if (x && !t.includes(x)) t.push(x); }   // 11C : étapes de l'Ocre
+    for (const x of this.titresBonus) if (!t.includes(x)) t.push(x);
     return t;
   }
   /** Ornements officiels gagnés (6B). */

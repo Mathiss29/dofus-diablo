@@ -505,7 +505,7 @@ export class ZoneScene extends Phaser.Scene {
     if (this.perso?.etat) restaurerJoueur(this.world, this.perso.etat);
     else if (this.test?.etat) restaurerJoueur(this.world, this.test.etat);
     // « Apparats : » 9 + 16-17 : achats Ogrines et abonnement du compte en ligne (le perso joué en profite)
-    const compte = () => { const w = this.world, b = CompteEnLigne.boutique; if (!w || this.test) return; w.reglerAbo(w.players[0], CompteEnLigne.palier); if (CompteEnLigne.enLigne && b) w.recevoirAchats(b.achats, b.apparats); };
+    const compte = () => { const w = this.world, b = CompteEnLigne.boutique; if (!w || this.test) return; w.reglerAbo(w.players[0], CompteEnLigne.palier); if (CompteEnLigne.enLigne && b) w.recevoirAchats(b.achats, b.apparats); const v = CompteEnLigne.idlus; if (CompteEnLigne.enLigne && v) w.recevoirIdlus(v.palier, v.adieu); };
     compte();
     const finCompte = CompteEnLigne.ecouter(compte);
     this.events.once('shutdown', () => { finCompte(); });

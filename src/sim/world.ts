@@ -46,7 +46,7 @@ import { ALMANAX, jourAlmanax, type JourAlmanax } from './almanax';
 import { COFFRE, coffreVide, type Coffre } from './coffre';
 import { MES_PALETTES_MAX, PALETTES_PERSO, PALETTE_PAR_ID, paletteOuverte } from './palettes';
 import { FAMILIERS_SOURCES } from './menagerie';
-import { placesTenues, prixPlaceTenue, styleDef, type SorteStyle } from './style';
+import { placesTenues, prixPlaceTenue, styleDef, type SorteStyle, TITRES_IDLUS } from './style';
 import { avantage, BOUTIQUE_OGRINES, rangAbo, type Palier } from './boutiqueOgrines';
 import { themeChoisi, themesEnJeu, themesPossedes, zoneAvecTheme, type Teintures, type ThemesHavreSac } from './havresac';
 /** Archimonstres (0.3, 15B) : chance qu'un monstre d'un groupe soit son archimonstre ; pierres d'âme officielles (vide, pleine). */
@@ -2754,6 +2754,17 @@ export class World {
     for (const a of articles) { const t = A[a]?.meubles; if (t != null) for (const id of raresDuTheme(t)) if (!c.meubles?.includes(id)) { (c.meubles ??= []).push(id); n++; } }
     return n;
   }
+  /** Vétéran d'Idlus (code d'Idlus, serveur/idlus.mjs ; Mathis 2026-11-25, 3A) : Bronze = titre, Argent = ornement de nom,
+   *  Or = auréole, Défi d'adieu = titre. Donnés au joueur de cet écran, pour tout le compte. Rend le nombre de nouveautés. */
+  recevoirIdlus(palier: number, adieu: boolean): number {
+    const c = this.coffre, p = this.players[0];
+    let n = 0;
+    const styles = [...(palier >= 2 ? ['ornements:idlus'] : []), ...(palier >= 3 ? ['aureoles:idlus'] : [])];
+    for (const s of styles) if (!c.styles?.includes(s)) { (c.styles ??= []).push(s); n++; }
+    const titres = [...(palier >= 1 ? [TITRES_IDLUS.veteran] : []), ...(adieu ? [TITRES_IDLUS.adieu] : [])];
+    if (p.quetes) for (const t of titres) if (!p.quetes.titresBonus.includes(t)) { p.quetes.titresBonus.push(t); n++; }
+    return n;
+  }
   /** 17C + 17J : avantages déjà pris aujourd'hui (remis à zéro chaque jour). */
   aboDuJour() { const p = this.player, j = this.opts.aujourdhui ?? ''; if (p.aboJour.jour !== j) p.aboJour = { jour: j, beni: 0, cles: 0 }; return p.aboJour; }
   /** 17K : durée d'une récolte (plus courte avec l'abonnement). */
@@ -3190,7 +3201,7 @@ export class World {
   }
   acheterStyle(sorte: SorteStyle, id: string): boolean {
     const d = styleDef(sorte, id), c = this.coffre;
-    if (!d || d.ogrines || d.abo || this.aLeStyle(sorte, id)) return false;   // Ogrines et abonnement : pas en Pépites
+    if (!d || d.ogrines || d.abo || d.idlus || this.aLeStyle(sorte, id)) return false;   // Ogrines, abonnement, Vétéran d'Idlus : pas en Pépites
     const ok = this.payer(d.prix, PEPITE, () => { (c.styles ??= []).push(`${sorte}:${id}`); return true; }, `style:${sorte}:${id}`);
     if (ok) { this.player.style[sorte] = id; this.emit({ k: 'coffre' }); }
     return ok;
