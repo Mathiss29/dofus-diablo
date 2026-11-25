@@ -2455,7 +2455,7 @@ export class Windows {
         ], reset: () => { r.echelle = 1; r.echelleConsole = 1; r.toujoursAllume = true; } },
         { id: 'graphismes', titre: 'Graphismes', opts: [
           { k: 'qualite', nom: 'Qualité prédéfinie', aide: 'Basse : sans vent, eau animée ni particules, lumières douces, résolution normale, 30 images par seconde. Moyenne : sans particules, 60 images. Haute : tout, sans limite.', t: 'select', choix: [['basse', 'Basse'], ['moyenne', 'Moyenne'], ['haute', 'Haute'], ['perso', 'Personnalisée']] },
-          { k: 'resolution', nom: 'Résolution', aide: 'Écran : net, aux vrais pixels de ton écran. Normale : bien plus rapide si Windows est réglé à 125 % ou 150 %, image un peu moins nette.', t: 'select', choix: [['ecran', 'Écran (net)'], ['normale', 'Normale (rapide)']] },
+          { k: 'resolution', nom: 'Résolution', aide: 'Écran : net, aux vrais pixels de ton écran. Équilibrée : entre les deux, conseillée sur console. Normale : bien plus rapide si Windows est réglé à 125 % ou 150 %, image un peu moins nette.', t: 'select', choix: [['ecran', 'Écran (net)'], ['moyenne', 'Équilibrée'], ['normale', 'Normale (rapide)']] },
           { k: 'fps', nom: 'Images par seconde', t: 'select', choix: [['30', '30'], ['60', '60'], ['120', '120'], ['0', 'Sans limite']] },
           { k: 'compteurFps', nom: 'Afficher le compteur d\'images (FPS)', aide: `Dans le coin de la mini-carte.${Touches.nomAction('fps') ? ` Touche ${Touches.nomAction('fps')}.` : ''}`, t: 'check' },
           { k: 'zoom', nom: 'Zoom de départ', t: 'range', min: 55, max: 120 },

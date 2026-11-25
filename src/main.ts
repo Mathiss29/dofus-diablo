@@ -58,7 +58,7 @@ function demarrer() {
     ...(uneTexture() ? { render: { maxTextures: 1 } } : {}),
   });
   // Écran aux vrais pixels (maquette « Décors : » 1A) : canevas à la densité de l'écran, avant que Phaser le dimensionne
-  reglerDensite(chargerReglages().resolution !== 'normale');   // Fluidité 3A, avant le premier dimensionnement
+  reglerDensite(chargerReglages().resolution);   // Fluidité 3A, avant le premier dimensionnement
   brancherDensite(game);
   brancherTexturesSures(game);   // plus de jeu figé sur une texture détruite encore affichée (rapport du 2026-11-13)
   game.events.once(Phaser.Core.Events.READY, () => prevenirCarteGraphique(game));   // Fluidité 4A

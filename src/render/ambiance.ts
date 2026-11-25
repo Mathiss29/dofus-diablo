@@ -73,7 +73,7 @@ export interface Reglages {
   pulsePv: boolean;
   /** Fluidité 3A : 'ecran' = aux vrais pixels de l'écran (net, maquette Décors 1A) ; 'normale' = un pixel du jeu par pixel CSS
    *  (2,25 fois moins de pixels sur un Windows à 150 %). */
-  resolution: 'ecran' | 'normale';
+  resolution: 'ecran' | 'moyenne' | 'normale';
   // --- Maquette « Tchat : » (2026-11-12) ---
   /** 2A : onglets du tchat (nom et ce qu'ils montrent) ; 5B : taille du tchat [largeur, hauteur des messages] en pixels CSS. */
   chatOnglets: Onglet[];
@@ -98,6 +98,7 @@ export interface Reglages {
   presetThor?: boolean;
   /** Réglage « Thor » version 2 (résolution Normale) déjà appliqué. */
   presetThor2?: boolean;
+  presetThor3?: boolean;
   /** « Idées Thor : » 6A : portée de l'auto-visée à la manette. */
   aideVisee?: 'faible' | 'normale' | 'forte';
   /** « Confort 2 : » 4A : zone morte des sticks (0,05 à 0,5) et vitesse du curseur des menus (0,5 à 2). */
