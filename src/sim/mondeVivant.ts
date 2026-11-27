@@ -3,7 +3,7 @@ import { APPARATS_SOURCES } from './apparats';
 import { degatsMonstre } from './danger';
 import type { GameData, MonsterDef, SubAreaDef } from './defs';
 import { PEPITE } from './items';
-import { V06_PUBLIC } from './pouvoirs';
+import { V06_PUBLIC, V07_PUBLIC } from './pouvoirs';
 import type { Monster } from './monster';
 import type { Player } from './player';
 import type { World } from './world';
@@ -59,7 +59,7 @@ export const heureTexte = (s: number) => `${heureDe(s)} h`;
  *  (celles de la 0.6 seulement si elle est visible : jamais une invasion dans une région fermée). */
 export function candidatsInvasion(data: GameData, v06 = V06_PUBLIC): number[] {
   const sz = data.zones.astrub?.open?.subareas ?? {};
-  return Object.entries(sz).filter(([, s]) => s.monsters.length && s.groupsPerMap > 0 && !s.interieur && !s.cartes && (v06 || !s.v06)).map(([k]) => Number(k)).sort((a, b) => a - b);
+  return Object.entries(sz).filter(([, s]) => s.monsters.length && s.groupsPerMap > 0 && !s.interieur && !s.cartes && (v06 || !s.v06) && (V07_PUBLIC || !s.v07)).map(([k]) => Number(k)).sort((a, b) => a - b);
 }
 /** Mélange entier d'une heure : la même sous-zone pour tous les joueurs (pas de hasard ici, juste l'heure). */
 function melange(h: number): number {

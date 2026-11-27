@@ -36,7 +36,7 @@ export type Manifest = {
   /** Coups des animations de récolte (maquette Armes 9A) : par geste officiel (AnimFaucher, AnimHache…). */
   recolte?: Record<string, string[]>;
   /** 0.4 suite 13A + 13B : musique officielle et fonds d'ambiance de chaque sous-zone d'Amakna (fondNuit : en plus du soir à l'aube). */
-  lieux?: Record<string, { musique: string; fond: string[]; fondNuit?: string[] }>;
+  lieux?: Record<string, { musique: string; fond: string[]; fondNuit?: string[]; combat?: string }>;
   /** 0.4 suite 13C : sons des donjons (grilles de l'arène, vague, arrivée du boss, porte, salle vidée…). */
   donjon?: Record<string, string>;
 };
@@ -47,12 +47,12 @@ const DOSSIER = 'assets/son/';
 
 /** 0.4 suite 13A-13C : ce qui joue à cet endroit. Dans un donjon : la musique des salles du thème de son boss (boss_<thème> ->
  *  donjon_<thème>) ; dans une sous-zone d'Amakna : sa musique et son ambiance (plus celle de la nuit) ; sinon null (musique de la zone). */
-export function sonDuLieu(m: Pick<Manifest, 'musiques' | 'lieux'>, sous: number | undefined, nuit: boolean, musiqueBoss: string | null): { musique: string; fond: string[] } | null {
+export function sonDuLieu(m: Pick<Manifest, 'musiques' | 'lieux'>, sous: number | undefined, nuit: boolean, musiqueBoss: string | null): { musique: string; fond: string[]; combat?: string } | null {
   const dj = musiqueBoss?.replace(/^boss_/, 'donjon_');
   if (dj && m.musiques[dj]) return { musique: dj, fond: ['interieur'] };
   const l = sous != null ? m.lieux?.[sous] : undefined;
   if (!l || !m.musiques[l.musique]) return null;
-  return { musique: l.musique, fond: [...l.fond, ...(nuit ? l.fondNuit ?? [] : [])] };
+  return { musique: l.musique, fond: [...l.fond, ...(nuit ? l.fondNuit ?? [] : [])], ...(l.combat ? { combat: l.combat } : {}) };
 }
 
 /** Force d'un son selon la distance à l'écran (pixels) : plein jusqu'à `pres`, nul à `loin`. */
@@ -148,7 +148,7 @@ class Moteur {
   private combatCle: string | null = null;
   private prevu: string | null = null;
   /** Musique de combat de la zone : Incarnam, ou Amakna à Astrub (7A). */
-  private combatZone: 'incarnam' | 'amakna' = 'incarnam';
+  private combatZone = 'incarnam';
   /** Couches de la musique du boss à jouer (palierBoss). */
   private palier = 0;
   private anciens: Flux[] = [];
@@ -234,7 +234,7 @@ class Moteur {
   /** Accueil et premier chargement (1A). */
   menu() { this.voulu = 'menu'; this.combatVoulu = false; this.oublierExplo(); }
   /** Musique d'une zone : liste de morceaux joués en alternance (2A + 2B). */
-  zone(liste: string[], combat: 'incarnam' | 'amakna' = 'incarnam') {
+  zone(liste: string[], combat = 'incarnam') {
     this.voulu = liste.length ? 'zone' : 'rien'; this.liste = liste; this.combatZone = combat;
     if (this.misDeCote && !liste.includes(this.misDeCote.nom)) this.oublierExplo();
     // on change de zone : le morceau d'une autre zone (ex. Bastion) s'efface en 2 s au lieu de jouer jusqu'à sa fin
@@ -290,8 +290,11 @@ class Moteur {
     const m = MANIFESTE.musiques[nom];
     return typeof m === 'string' ? { calme: m } : 'pistes' in m ? { calme: m.pistes[0] } : m;
   }
-  /** 7A : fichiers de la musique de combat de la zone (combat_… à Incarnam, combat_amakna_… à Astrub). */
-  private prefixe() { return this.combatZone === 'amakna' && MANIFESTE.musiques.combat_amakna_intro ? 'combat_amakna_' : 'combat_'; }
+  /** 7A : fichiers de la musique de combat de la zone (combat_… à Incarnam, combat_amakna_… à Astrub, combat_<région>_… là où le lieu en donne une : Otomaï, Pandala…). */
+  private prefixe() {
+    if (this.combatZone !== 'incarnam' && MANIFESTE.musiques[`combat_${this.combatZone}_intro`]) return `combat_${this.combatZone}_`;
+    return this.combatZone !== 'incarnam' && MANIFESTE.musiques.combat_amakna_intro ? 'combat_amakna_' : 'combat_';
+  }
   /** Clé de la musique de combat voulue : celle du boss si elle existe, sinon « zone:<préfixe> ». */
   private cleCombat(musique: string | null) {
     const m = musique ? MANIFESTE.musiques[musique] : undefined;

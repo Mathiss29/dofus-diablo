@@ -12,19 +12,26 @@ PQ, PM, PZ = (os.path.join(R, 'src/data', f) for f in ('quetes.json', 'monsters.
 Q, M, Z = (json.load(open(p, encoding='utf-8')) for p in (PQ, PM, PZ))
 
 # niveau de chaque âme : la sous-zone la plus basse où vit son monstre (archimonstre), ou le niveau du boss
-niv = {}
+# Âmes de la 0.7 (monstre qui ne vit que dans des sous-zones v07, ou boss v07) : pages à part, après celles du jeu public, avec le
+# drapeau v07 (partie de test tant que la 0.7 n'est pas sortie) : les pages déjà publiques ne bougent pas.
+niv, pub = {}, set()
 for z in Z.values():
     for s in (z.get('open') or {}).get('subareas', {}).values():
         for m in s.get('monsters', []) + ([s['elite']] if s.get('elite') else []):
             niv[m] = min(niv.get(m, 999), s['level'])
-ames = []
+            if not s.get('v07'): pub.add(m)
+ames, ames07 = [], []
 for k, d in M.items():
     if not d.get('ame'): continue
     n = niv.get(d['archiDe']) if d.get('archiDe') else d.get('level')
-    ames.append((n or d.get('level') or 1, 0 if d.get('archiDe') else 1, k))
-ames.sort()
-nb = max(1, round(len(ames) / 20)); taille = len(ames) / nb
-chap = [ames[round(i * taille):round((i + 1) * taille)] for i in range(nb)]
+    v07 = d.get('v07') or (d.get('archiDe') and d['archiDe'] in niv and d['archiDe'] not in pub)
+    (ames07 if v07 else ames).append((n or d.get('level') or 1, 0 if d.get('archiDe') else 1, k))
+def pages(l):
+    if not l: return []
+    l.sort(); n = max(1, round(len(l) / 20)); t = len(l) / n
+    return [l[round(i * t):round((i + 1) * t)] for i in range(n)]
+chap = pages(ames); npub = len(chap); chap += pages(ames07); ames += ames07
+nb = len(chap)
 
 PNJ = 'assistante_otomai'
 Q['pnj'][PNJ] = {'nom': "Assistante d'Otomaï", 'dofusId': 6693, 'zone': 'bastion', 'carte': 'marche', 'case': Q['pnj'].get(PNJ, {}).get('case', Q['pnj']['otomai']['case'] + 2),
@@ -33,8 +40,8 @@ Q['pnj'][PNJ] = {'nom': "Assistante d'Otomaï", 'dofusId': 6693, 'zone': 'bastio
   'discussion': [{'reponse': 'Tu gardes les âmes que je capture ?', 'texte': "Non, elles restent dans ta besace. Je les regarde, je les note dans le grand registre, et je te les rends. Elles sont plus calmes près de leur chasseur."},
                  {'reponse': "Et le Dofus Ocre ?", 'texte': "Otomaï en parle à chaque repas. Il faut toutes les âmes du registre, puis celle du Kralamoure Géant. Celle-là, personne ne l'a encore vue passer."}]}
 
-TITRES = {2: 'Chasseur assidu', 4: 'Traqueur Implacable', nb: 'Moissonneur des Âmes'}   # titles 429, 166, 115
-ORNEMENT = {nb: {'id': 57, 'nom': 'Quêteur', 'icone': 2}}
+TITRES = {2: 'Chasseur assidu', 4: 'Traqueur Implacable', npub: 'Moissonneur des Âmes'}   # titre et ornement à la dernière page publique   # titles 429, 166, 115
+ORNEMENT = {npub: {'id': 57, 'nom': 'Quêteur', 'icone': 2}}
 NOMS = ['La liste d\'Otomaï', 'Les petites âmes', 'Le registre s\'épaissit', 'Âmes de caractère', 'Les chasses lointaines', 'Les âmes rebelles', 'La grande moisson']
 BULLES = ["Une âme, ça se capture quand la bête tombe, avec une Petite pierre d'âme dans le sac. Ensuite, viens me la montrer.",
           "Le registre a faim. Vingt âmes de plus, et je tourne la page.",
@@ -53,6 +60,7 @@ for i, c in enumerate(chap, 1):
     if i in TITRES: rec['titre'] = TITRES[i]
     if i in ORNEMENT: rec['ornement'] = ORNEMENT[i]
     Q['quetes'][qid] = {'type': 'secondaire', 'serie': "L'éternelle moisson", 'pnj': 'otomai' if i == 1 else PNJ, 'rendre': PNJ,
+      **({'v07': True} if i > npub else {}),
       'nom': f"L'éternelle moisson ({i}/{nb}) : {NOMS[min(i, len(NOMS)) - 1]}", 'niveau': lvl, **({'requiert': [avant]} if avant else {}),
       'texte': (f"Otomaï veut le Dofus Ocre, et pour ça il lui faut les âmes de tous les archimonstres du monde. Capture-les avec une Petite pierre d'âme, puis montre-les à son Assistante, au Marché couvert. Cette page du registre : {quoi}."
                 if i == 1 else f"Une nouvelle page du registre de l'Assistante d'Otomaï : {quoi}, de niveau {lvl} à {haut}. Le Bestiaire (onglet Archimonstres) et la carte du monde montrent où les trouver."),

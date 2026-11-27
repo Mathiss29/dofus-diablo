@@ -954,6 +954,24 @@
      "texte": "Pas encore. Le jour où les marchands du Bastion feront affaire entre aventuriers, je tiendrai le comptoir des âmes."
     }
    ]
+  },
+  "marin_otomai": {
+   "nom": "Marin d'Otomaï",
+   "sprite": "capitaine",
+   "zone": "astrub",
+   "carte": "15_28",
+   "v07": true,
+   "titre": "Bateau pour l'île d'Otomaï",
+   "phrase": "L'île d'Otomaï ? Le bateau est prêt. C'est la cargaison qui ne l'est pas."
+  },
+  "passeur_pandala": {
+   "nom": "Passeur pandawa",
+   "sprite": "garde_pandala",
+   "zone": "astrub",
+   "carte": "10_-5",
+   "v07": true,
+   "titre": "Bateau pour l'île de Pandala",
+   "phrase": "Pandala ne reçoit pas les mains vides. Apporte quelque chose, et on parlera de la traversée."
   }
  },
  "quetes": {
@@ -4684,7 +4702,7 @@
    "serie": "L'éternelle moisson",
    "pnj": "otomai",
    "rendre": "assistante_otomai",
-   "nom": "L'éternelle moisson (1/8) : La liste d'Otomaï",
+   "nom": "L'éternelle moisson (1/10) : La liste d'Otomaï",
    "niveau": 10,
    "texte": "Otomaï veut le Dofus Ocre, et pour ça il lui faut les âmes de tous les archimonstres du monde. Capture-les avec une Petite pierre d'âme, puis montre-les à son Assistante, au Marché couvert. Cette page du registre : 20 archimonstres et 1 boss de donjon.",
    "etapes": [
@@ -4741,7 +4759,7 @@
    "serie": "L'éternelle moisson",
    "pnj": "assistante_otomai",
    "rendre": "assistante_otomai",
-   "nom": "L'éternelle moisson (2/8) : Les petites âmes",
+   "nom": "L'éternelle moisson (2/10) : Les petites âmes",
    "niveau": 20,
    "requiert": [
     "moisson_1"
@@ -4802,7 +4820,7 @@
    "serie": "L'éternelle moisson",
    "pnj": "assistante_otomai",
    "rendre": "assistante_otomai",
-   "nom": "L'éternelle moisson (3/8) : Le registre s'épaissit",
+   "nom": "L'éternelle moisson (3/10) : Le registre s'épaissit",
    "niveau": 30,
    "requiert": [
     "moisson_2"
@@ -4862,7 +4880,7 @@
    "serie": "L'éternelle moisson",
    "pnj": "assistante_otomai",
    "rendre": "assistante_otomai",
-   "nom": "L'éternelle moisson (4/8) : Âmes de caractère",
+   "nom": "L'éternelle moisson (4/10) : Âmes de caractère",
    "niveau": 40,
    "requiert": [
     "moisson_3"
@@ -4923,7 +4941,7 @@
    "serie": "L'éternelle moisson",
    "pnj": "assistante_otomai",
    "rendre": "assistante_otomai",
-   "nom": "L'éternelle moisson (5/8) : Les chasses lointaines",
+   "nom": "L'éternelle moisson (5/10) : Les chasses lointaines",
    "niveau": 40,
    "requiert": [
     "moisson_4"
@@ -4984,7 +5002,7 @@
    "serie": "L'éternelle moisson",
    "pnj": "assistante_otomai",
    "rendre": "assistante_otomai",
-   "nom": "L'éternelle moisson (6/8) : Les âmes rebelles",
+   "nom": "L'éternelle moisson (6/10) : Les âmes rebelles",
    "niveau": 50,
    "requiert": [
     "moisson_5"
@@ -5044,7 +5062,7 @@
    "serie": "L'éternelle moisson",
    "pnj": "assistante_otomai",
    "rendre": "assistante_otomai",
-   "nom": "L'éternelle moisson (7/8) : La grande moisson",
+   "nom": "L'éternelle moisson (7/10) : La grande moisson",
    "niveau": 60,
    "requiert": [
     "moisson_6"
@@ -5104,7 +5122,7 @@
    "serie": "L'éternelle moisson",
    "pnj": "assistante_otomai",
    "rendre": "assistante_otomai",
-   "nom": "L'éternelle moisson (8/8) : La grande moisson",
+   "nom": "L'éternelle moisson (8/10) : La grande moisson",
    "niveau": 80,
    "requiert": [
     "moisson_7"
@@ -5163,6 +5181,123 @@
      "icone": 2
     }
    },
+   "merci": "Belle page. Je la recopie au propre, Otomaï ne sait pas lire mon écriture."
+  },
+  "moisson_9": {
+   "type": "secondaire",
+   "serie": "L'éternelle moisson",
+   "pnj": "assistante_otomai",
+   "rendre": "assistante_otomai",
+   "v07": true,
+   "nom": "L'éternelle moisson (9/10) : La grande moisson",
+   "niveau": 100,
+   "requiert": [
+    "moisson_8"
+   ],
+   "texte": "Une nouvelle page du registre de l'Assistante d'Otomaï : 18 archimonstres, de niveau 100 à 110. Le Bestiaire (onglet Archimonstres) et la carte du monde montrent où les trouver.",
+   "etapes": [
+    {
+     "nom": "Page 9 du registre",
+     "bulle": "Presque tout le registre. Otomaï n'en dort plus, il prépare déjà le Kralamoure.",
+     "objectifs": [
+      {
+       "t": "ames",
+       "texte": "Capturer et montrer 18 âmes (18 archimonstres)",
+       "monstres": [
+        "archi_bambouto",
+        "archi_bitouf_des_plaines",
+        "archi_bourbassingue",
+        "archi_bulbuisson",
+        "archi_corbac",
+        "archi_craqueboule_poli",
+        "archi_craqueleur_poli",
+        "archi_floristile",
+        "archi_grenufar",
+        "archi_kido",
+        "archi_kilibriss",
+        "archi_le_ouassingue_entourbe",
+        "archi_mufafah",
+        "archi_tourbassingue",
+        "archi_chevaucheur_koalak",
+        "archi_fauchalak",
+        "archi_fossoyeur_koalak",
+        "archi_guerrier_koalak"
+       ]
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 16500,
+    "kamas": 3300,
+    "pepites": 65,
+    "objets": [
+     [
+      "9686",
+      3
+     ]
+    ],
+    "sac": "rare"
+   },
+   "merci": "Belle page. Je la recopie au propre, Otomaï ne sait pas lire mon écriture."
+  },
+  "moisson_10": {
+   "type": "secondaire",
+   "serie": "L'éternelle moisson",
+   "pnj": "assistante_otomai",
+   "rendre": "assistante_otomai",
+   "v07": true,
+   "nom": "L'éternelle moisson (10/10) : La grande moisson",
+   "niveau": 110,
+   "requiert": [
+    "moisson_9"
+   ],
+   "texte": "Une nouvelle page du registre de l'Assistante d'Otomaï : 19 archimonstres, de niveau 110 à 120. Le Bestiaire (onglet Archimonstres) et la carte du monde montrent où les trouver.",
+   "etapes": [
+    {
+     "nom": "Page 10 du registre",
+     "bulle": "Presque tout le registre. Otomaï n'en dort plus, il prépare déjà le Kralamoure.",
+     "objectifs": [
+      {
+       "t": "ames",
+       "texte": "Capturer et montrer 19 âmes (19 archimonstres)",
+       "monstres": [
+        "archi_koalak_farouche",
+        "archi_koalak_sanguin",
+        "archi_maitre_koalak",
+        "archi_momie_koalak",
+        "archi_troollaraj",
+        "archi_warko_violet",
+        "archi_akakwa",
+        "archi_betto",
+        "archi_disciple_zoth",
+        "archi_gamine_zoth",
+        "archi_guerrier_zoth",
+        "archi_ishigro_pake",
+        "archi_kokom",
+        "archi_lolojiki",
+        "archi_maitre_zoth",
+        "archi_parashukoui",
+        "archi_sarkapwane",
+        "archi_sergent_zoth",
+        "archi_tetonuki"
+       ]
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 18000,
+    "kamas": 3600,
+    "pepites": 70,
+    "objets": [
+     [
+      "9686",
+      3
+     ]
+    ],
+    "sac": "epique"
+   },
    "merci": "Tout le registre ! Il ne manque plus que l'âme du Kralamoure Géant. Quand la route vers son antre sera ouverte, Otomaï t'attendra."
   },
   "moisson_fin": {
@@ -5172,7 +5307,7 @@
    "rendre": "otomai",
    "bientot": true,
    "requiert": [
-    "moisson_8"
+    "moisson_10"
    ],
    "nom": "L'ultime Épreuve",
    "niveau": 160,
@@ -5192,6 +5327,90 @@
    "recompense": {
     "xp": 48000,
     "dofus": "7754"
+   }
+  },
+  "otomai_passage": {
+   "type": "secondaire",
+   "pnj": "marin_otomai",
+   "rendre": "marin_otomai",
+   "serie": "Otomaï",
+   "nom": "Cap sur Otomaï",
+   "niveau": 95,
+   "requiert": [],
+   "v07": true,
+   "texte": "Le marin d'Otomaï devait rapporter des fioles à l'alchimiste de l'île, mais les Porcos ont pillé sa cargaison sur la route de Sufokia. Va la reprendre dans leur Territoire, puis reviens embarquer.",
+   "etapes": [
+    {
+     "nom": "La cargaison volée",
+     "bulle": "Les Porcos se sont servis dans mes caisses. Toutes les fioles sont dans leur Territoire, au nord d'Amakna.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 25 monstres du Territoire des Porcos",
+       "n": 25,
+       "sousZone": 11
+      }
+     ]
+    },
+    {
+     "nom": "Paré à l'embarquement",
+     "bulle": "Les fioles sont à bord, presque toutes. Viens, on lève l'ancre avant que la marée tourne.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Parler au marin d'Otomaï",
+       "pnj": "marin_otomai"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 30000,
+    "kamas": 5000,
+    "pepites": 50,
+    "sac": "epique"
+   }
+  },
+  "pandala_passage": {
+   "type": "secondaire",
+   "pnj": "passeur_pandala",
+   "rendre": "passeur_pandala",
+   "serie": "Pandala",
+   "nom": "Cap sur Pandala",
+   "niveau": 95,
+   "requiert": [],
+   "v07": true,
+   "texte": "Le passeur pandawa n'emmène personne les mains vides : Pandala prépare sa fête et réclame des œufs de Dragoeuf pour les feux d'artifice. Va les chercher, puis reviens au port.",
+   "etapes": [
+    {
+     "nom": "Des œufs pour la fête",
+     "bulle": "Les Dragoss gardent leurs œufs de près, au Village des Dragoeufs. Sois plus têtu qu'eux.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 25 monstres du Village des Dragoeufs",
+       "n": 25,
+       "sousZone": 315
+      }
+     ]
+    },
+    {
+     "nom": "Paré à l'embarquement",
+     "bulle": "Ça sent l'œuf et la poudre. Parfait. Monte, Pandala t'attend.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Parler au passeur pandawa",
+       "pnj": "passeur_pandala"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 30000,
+    "kamas": 5000,
+    "pepites": 50,
+    "sac": "epique"
    }
   }
  },

@@ -35,7 +35,7 @@ export class SonView {
   /** Bastion : bord de l'île centrale vers chaque île de nation (écran), pour la couche de musique de la nation. */
   private iles: { n: string; x: number; y: number }[] = [];
   /** 0.4 suite 13A : musique de l'endroit en cours (sous-zone d'Amakna, salles d'un donjon), '' = celle de la zone. */
-  private musiqueLieu = '';
+  private musiqueLieu = '|';
   /** 13C : la salle du donjon où l'on est avait encore des monstres (la porte verrouillée s'ouvre quand elle se vide). */
   private salleOccupee: string | null = null;
 
@@ -172,8 +172,8 @@ export class SonView {
     const occupee = verrou && !w.salleVide(tag!) ? tag : null;
     if (this.salleOccupee && this.salleOccupee === tag && !occupee) this.donjon('salleVide');
     this.salleOccupee = occupee;
-    const musique = l?.musique ?? '';
-    if (musique !== this.musiqueLieu) { this.musiqueLieu = musique; Son.zone([musique || 'astrub'], 'amakna'); }
+    const musique = l?.musique ?? '', cle = `${musique}|${l?.combat ?? ''}`;
+    if (cle !== this.musiqueLieu) { this.musiqueLieu = cle; Son.zone([musique || 'astrub'], l?.combat ?? 'amakna'); }
     return l ? (inside && !dj ? ['interieur'] : l.fond) : null;
   }
 

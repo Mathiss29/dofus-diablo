@@ -24,9 +24,9 @@ function passerPortail(w: World, clic = true) {
 }
 
 describe('Astrub (0.2a)', () => {
-  it('359 cartes du dehors + les 642 d\'Amakna, les 58 de l\'île des Wabbits, les 169 de Cania sud et de Moon (0.4) et les 121 de la Baie de Sufokia (0.6.1), sur la grille du continent, chacune avec des cases marchables', () => {
+  it('359 cartes du dehors + les 642 d\'Amakna, les 58 de l\'île des Wabbits, les 169 de Cania sud et de Moon (0.4) et les 121 de la Baie de Sufokia (0.6.1) et les 569 de la 0.7, sur la grille du continent, chacune avec des cases marchables', () => {
     const wg = new WorldGrid(astrub);
-    expect(astrub.maps.filter(m => !m.inside).length).toBe(359 + 642 + 58 + 5 + 169 + 838 + 121);   // + Baie de Sufokia (122 cartes moins l'îlot [26,22] sans voisine), publique (tools/extraction/sufokia061)
+    expect(astrub.maps.filter(m => !m.inside).length).toBe(359 + 642 + 58 + 5 + 169 + 838 + 121 + 569);   // + Baie de Sufokia (122 cartes moins l'îlot [26,22] sans voisine), publique (tools/extraction/sufokia061)
     // 0.6 (cachée) : les 838 cartes du dehors des 5 régions, fermées hors partie de test (tools/extraction/regions06)
     expect(astrub.maps.filter(m => m.v06 && !m.inside).length).toBe(838);
     expect(astrub.maps.filter(m => m.v06 && m.inside).length).toBe(6 + 47);   // les 5 arènes des donjons de la 0.6 et la Salle au trésor (tools/extraction/arenes06) + 47 intérieurs utiles (regions06/interieurs06.py)
@@ -37,7 +37,11 @@ describe('Astrub (0.2a)', () => {
     expect(astrub.maps.filter(m => m.essai && !m.inside).length).toBe(642 + 58 + 5 + 169);
     expect(astrub.maps.filter(m => m.essai && m.inside).length).toBe(8 + 36 + 36 + 38 + 4 + 1);   // + la salle au masque du Village Kanniboul (« Kanniboul : » une seule salle)
     expect(astrub.maps.filter(m => m.essai).every(m => wg.freeByMap.get(m.tag)!.length === 0)).toBe(true);
-    wg.ouvrirEssai(); wg.ouvrirV06();
+    // 0.7 (cachée) : 569 cartes du dehors (Otomaï, Cania nord, Koalaks haut, Pandala, Champs de glace, tools/extraction/regions07) + la taverne du Zaap de Pandala
+    expect(astrub.maps.filter(m => m.v07 && !m.inside).length).toBe(569);
+    expect(astrub.maps.filter(m => m.v07 && m.inside).map(m => m.tag)).toEqual(['taverne_pandala_1']);
+    expect(astrub.maps.filter(m => m.v07).every(m => wg.freeByMap.get(m.tag)!.length === 0)).toBe(true);
+    wg.ouvrirEssai(); wg.ouvrirV06(); wg.ouvrirV07();
     expect(astrub.origin).toEqual([-88, -93]);
     // (les couloirs des donjons en couloirs ne s'ouvrent qu'en partie de test : tests/couloirs.test.ts)
     for (const m of astrub.maps) if (!m.dessus) expect(wg.freeByMap.get(m.tag)!.length, m.tag).toBeGreaterThan(20);

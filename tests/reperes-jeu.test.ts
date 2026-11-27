@@ -29,8 +29,11 @@ describe('repères de la carte : chaque repère mène quelque part', () => {
     for (const n of ['île des Wabbits (500 kamas)', 'île de Moon', 'Frigost (après « Cap sur Frigost »)']) expect(ici[0].n).toContain(n);
     // l'autre bout de chaque bateau dit d'où il vient
     for (const t of ['24_-2', '32_11', '-79_-37']) expect(l.find(r => r.t === t && famille(r) === 'transport')?.n, t).toBe('Bateau vers le Port de Madrestam');
-    // les transports officiels qui ne mènent à rien chez nous ont disparu (canon de Moon, bateau de Pandala…)
-    for (const t of ['11_10', '10_-5', '12_-3']) expect(l.some(r => r.t === t && famille(r) === 'transport'), t).toBe(false);
+    // les transports officiels qui ne mènent à rien chez nous ont disparu (canon de Moon, bateau de Sakaï…)
+    for (const t of ['11_10', '12_-3']) expect(l.some(r => r.t === t && famille(r) === 'transport'), t).toBe(false);
+    // 0.7 (2A) : le bateau officiel de Pandala, sur le quai voisin, et celui d'Otomaï à Sufokia
+    expect(l.find(r => r.t === '10_-5' && famille(r) === 'transport')?.n).toContain('île de Pandala');
+    expect(l.find(r => r.t === '15_28' && famille(r) === 'transport')?.n).toContain("île d'Otomaï");
   });
 
   for (const { id, open, plan } of MONDES) it(`${id} : transports, donjons, ateliers et services`, () => {

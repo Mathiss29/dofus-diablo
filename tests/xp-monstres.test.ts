@@ -15,11 +15,11 @@ describe('XP des monstres (0.4 : une courbe selon le niveau, tools/contenu/xp_mo
     // jusqu'au 60 ; au-delà la courbe de la 0.6 (6B) demande plus de tués par niveau : l'XP d'un monstre plafonne vers 90-100
     for (const a of normaux) for (const b of normaux) if (a.level! < b.level! && b.level! <= 60) expect(a.xp!, `${a.name} / ${b.name}`).toBeLessThanOrEqual(b.xp!);
   });
-  it('un monstre de son niveau fait passer un niveau en 50 à 130 tués jusqu\'au 60, 200 au 90 (0.6 : 6B ; XP du niveau n = 200 × n)', () => {
+  it('un monstre de son niveau fait passer un niveau en 50 à 130 tués jusqu\'au 60, 200 au 90, 400 au 200 (0.6 : 6B ; XP du niveau n = 200 × n)', () => {
     for (const m of normaux) {
       const tues = (GAME_DATA.classes.iop.xpBase * m.level!) / m.xp!;
       expect(tues, m.name).toBeGreaterThanOrEqual(50);
-      expect(tues, m.name).toBeLessThanOrEqual(m.level! <= 60 ? 130 : 210);
+      expect(tues, m.name).toBeLessThanOrEqual(m.level! <= 60 ? 130 : m.level! <= 90 ? 210 : 2 * (100 + 100 * (m.level! - 90) / 110) + 5);   // 0.7 (7A) : même courbe, 400 au 200
     }
   });
 });

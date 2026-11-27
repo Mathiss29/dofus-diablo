@@ -49566,5 +49566,11682 @@
   "archiDe": "moumoule",
   "archiEchelle": 1.0,
   "ame": "34068"
+ },
+ "troollaraj": {
+  "dofusId": 233,
+  "name": "Troollaraj",
+  "hp": 5250,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "troollaraj",
+  "color": "#d8d0b8",
+  "xp": 93,
+  "spells": [
+   {
+    "id": 307,
+    "name": "Vindication Troollesque",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pm",
+      "n": 1,
+      "dur": 4
+     },
+     {
+      "k": "pm",
+      "n": 5,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 308,
+    "name": "Absorption Troollesque",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 100,
+      "max": 100
+     },
+     {
+      "k": "pm",
+      "n": 1,
+      "dur": 2
+     }
+    ]
+   },
+   {
+    "id": 3442,
+    "name": "Écrasement Troollesque",
+    "pa": 4,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pa",
+      "n": -3,
+      "dur": 1
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 41,
+      "max": 50,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 112,
+  "res": {
+   "terre": 26,
+   "feu": -9,
+   "eau": -19,
+   "air": 16,
+   "neutre": 26
+  },
+  "caracs": {
+   "force": 448,
+   "intelligence": 448,
+   "chance": 448,
+   "agilite": 448,
+   "sagesse": 336,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "corbac": {
+  "dofusId": 281,
+  "name": "Corbac",
+  "hp": 4500,
+  "speed": 95,
+  "radius": 16,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "corbac",
+  "color": "#d8d0b8",
+  "xp": 92,
+  "spells": [
+   {
+    "id": 624,
+    "name": "Cri Déstabilisateur",
+    "pa": 3,
+    "po": [
+     0,
+     6
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 17,
+      "max": 20,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 3368,
+    "name": "Lancer d'œuf",
+    "pa": 2,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 21,
+      "max": 26,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 6963,
+    "name": "Dilacération",
+    "pa": 5,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 2,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 31,
+      "max": 40,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 102,
+  "res": {
+   "terre": 26,
+   "feu": 26,
+   "eau": -19,
+   "air": -19,
+   "neutre": 26
+  },
+  "caracs": {
+   "force": 408,
+   "intelligence": 408,
+   "chance": 408,
+   "agilite": 408,
+   "sagesse": 306,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "maitre_corbac": {
+  "dofusId": 289,
+  "name": "Maître Corbac",
+  "hp": 11250,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "maitre_corbac",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 627,
+    "name": "Sanction Ténébreuse",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 51,
+      "max": 70,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 628,
+    "name": "Lien Volatile",
+    "pa": 2,
+    "po": [
+     0,
+     8
+    ],
+    "relance": 0,
+    "anim": 3,
+    "zone": "C2",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 629,
+    "name": "Invocation de Corbac",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 3,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "invoque",
+      "monster": "corbac"
+     }
+    ]
+   },
+   {
+    "id": 630,
+    "name": "Carapace d'Ailes",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pm",
+      "n": -5,
+      "dur": 2
+     },
+     {
+      "k": "pa",
+      "n": -12,
+      "dur": 2
+     }
+    ]
+   }
+  ],
+  "level": 110,
+  "res": {
+   "terre": 25,
+   "feu": 45,
+   "eau": 55,
+   "air": 55,
+   "neutre": 25
+  },
+  "caracs": {
+   "force": 440,
+   "intelligence": 440,
+   "chance": 440,
+   "agilite": 440,
+   "sagesse": 440,
+   "esquivePA": 25,
+   "esquivePM": 30,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "padgref_demoel": {
+  "dofusId": 459,
+  "name": "Padgref Demoël",
+  "hp": 40000,
+  "speed": 95,
+  "radius": 26,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "padgref_demoel",
+  "color": "#d8d0b8",
+  "xp": 95,
+  "spells": [
+   {
+    "id": 915,
+    "name": "Attraction",
+    "pa": 3,
+    "po": [
+     1,
+     30
+    ],
+    "relance": 0,
+    "anim": 1103,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "attire",
+      "n": 6
+     }
+    ],
+    "gfx": 21102
+   },
+   {
+    "id": 4178,
+    "name": "Assaut aérien",
+    "pa": 3,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 0,
+    "anim": 7,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 9,
+      "max": 10,
+      "steal": true
+     },
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 14,
+      "max": 16,
+      "steal": false
+     }
+    ],
+    "gfx": 125
+   },
+   {
+    "id": 4179,
+    "name": "Transposition aqueuse",
+    "pa": 3,
+    "po": [
+     1,
+     14
+    ],
+    "relance": 4,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 51,
+      "max": 60,
+      "steal": false
+     }
+    ],
+    "gfx": 1621
+   },
+   {
+    "id": 4180,
+    "name": "Absorption brûlante",
+    "pa": 4,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 0,
+    "anim": 9,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 27,
+      "max": 31,
+      "steal": true
+     }
+    ],
+    "gfx": 1002
+   },
+   {
+    "id": 8261,
+    "name": "Sanction",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 2,
+    "anim": 1109,
+    "zone": "P1",
+    "allies": true,
+    "effects": [],
+    "gfx": 8407
+   }
+  ],
+  "level": 130,
+  "res": {
+   "terre": -15,
+   "feu": 15,
+   "eau": -15,
+   "air": -10,
+   "neutre": 30
+  },
+  "caracs": {
+   "force": 300,
+   "intelligence": 300,
+   "chance": 300,
+   "agilite": 300,
+   "sagesse": 300,
+   "esquivePA": 28,
+   "esquivePM": 32,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "koulosse": {
+  "dofusId": 670,
+  "name": "Koulosse",
+  "hp": 14500,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "koulosse",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 604,
+    "name": "Invocation de Bouftou des cavernes",
+    "pa": 4,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 605,
+    "name": "Calumet de la paix",
+    "pa": 3,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 2,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pm",
+      "n": 5,
+      "dur": 2
+     }
+    ]
+   },
+   {
+    "id": 606,
+    "name": "Appel du Koulosse",
+    "pa": 3,
+    "po": [
+     2,
+     8
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "attire",
+      "n": 10
+     }
+    ]
+   },
+   {
+    "id": 607,
+    "name": "Souffle du Koulosse",
+    "pa": 2,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pa",
+      "n": -100,
+      "dur": 1
+     },
+     {
+      "k": "dommages",
+      "n": 10,
+      "dur": 2
+     }
+    ]
+   }
+  ],
+  "level": 100,
+  "res": {
+   "terre": 28,
+   "feu": -12,
+   "eau": -12,
+   "air": 33,
+   "neutre": 78
+  },
+  "caracs": {
+   "force": 0,
+   "intelligence": 0,
+   "chance": 9999,
+   "agilite": 500,
+   "sagesse": 0,
+   "esquivePA": 30,
+   "esquivePM": 40,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "koalak_sanguin": {
+  "dofusId": 744,
+  "name": "Koalak Sanguin",
+  "hp": 5000,
+  "speed": 95,
+  "radius": 21,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "koalak_sanguin",
+  "color": "#d8d0b8",
+  "xp": 92,
+  "spells": [
+   {
+    "id": 731,
+    "name": "Sang Chaud",
+    "pa": 2,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 4,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 782,
+    "name": "Punition Sanguine",
+    "pa": 6,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 11,
+      "max": 15,
+      "steal": true
+     }
+    ]
+   },
+   {
+    "id": 3054,
+    "name": "Transfert de Vie Sanguin",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 1,
+    "anim": 9,
+    "zone": "C3",
+    "allies": true,
+    "effects": [],
+    "gfx": 21103
+   },
+   {
+    "id": 3055,
+    "name": "Châtiment Sanguin",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 5,
+    "anim": 9,
+    "zone": "P1",
+    "allies": false,
+    "effects": [],
+    "gfx": 985
+   }
+  ],
+  "level": 102,
+  "res": {
+   "terre": 15,
+   "feu": 10,
+   "eau": -10,
+   "air": -20,
+   "neutre": 20
+  },
+  "caracs": {
+   "force": 0,
+   "intelligence": 0,
+   "chance": 0,
+   "agilite": 100,
+   "sagesse": 100,
+   "esquivePA": 1,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "warko_violet": {
+  "dofusId": 745,
+  "name": "Warko Violet",
+  "hp": 5500,
+  "speed": 95,
+  "radius": 29,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "warko_violet",
+  "color": "#d8d0b8",
+  "xp": 93,
+  "spells": [
+   {
+    "id": 746,
+    "name": "Invocation de Workette",
+    "pa": 5,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 4,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 747,
+    "name": "Cécité",
+    "pa": 2,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 4,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 51,
+      "max": 60,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 748,
+    "name": "Vision Lointaine",
+    "pa": 2,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 4,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 749,
+    "name": "Pichenette",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "T1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 31,
+      "max": 50,
+      "steal": true
+     }
+    ]
+   }
+  ],
+  "level": 106,
+  "res": {
+   "terre": -19,
+   "feu": 10,
+   "eau": -19,
+   "air": 10,
+   "neutre": 30
+  },
+  "caracs": {
+   "force": 0,
+   "intelligence": 200,
+   "chance": 200,
+   "agilite": 200,
+   "sagesse": 150,
+   "esquivePA": 7,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "guerrier_koalak": {
+  "dofusId": 749,
+  "name": "Guerrier Koalak",
+  "hp": 4500,
+  "speed": 95,
+  "radius": 32,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "guerrier_koalak",
+  "color": "#d8d0b8",
+  "xp": 92,
+  "spells": [
+   {
+    "id": 742,
+    "name": "Boutade",
+    "pa": 5,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 31,
+      "max": 40,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 4
+     },
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 743,
+    "name": "Assommoir",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 21,
+      "max": 35,
+      "steal": false
+     },
+     {
+      "k": "pa",
+      "n": -100,
+      "dur": 1
+     },
+     {
+      "k": "pm",
+      "n": -100,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 3050,
+    "name": "Rage du Guerrier",
+    "pa": 6,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 6,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 31,
+      "dur": 4
+     }
+    ]
+   }
+  ],
+  "level": 101,
+  "res": {
+   "terre": 10,
+   "feu": 10,
+   "eau": -9,
+   "air": -19,
+   "neutre": 40
+  },
+  "caracs": {
+   "force": 0,
+   "intelligence": 0,
+   "chance": 240,
+   "agilite": 240,
+   "sagesse": 240,
+   "esquivePA": 3,
+   "esquivePM": 2,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "koalak_farouche": {
+  "dofusId": 756,
+  "name": "Koalak Farouche",
+  "hp": 3750,
+  "speed": 95,
+  "radius": 21,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "koalak_farouche",
+  "color": "#d8d0b8",
+  "xp": 92,
+  "spells": [
+   {
+    "id": 752,
+    "name": "Sarbakane",
+    "pa": 4,
+    "po": [
+     2,
+     7
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 41,
+      "max": 60,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 753,
+    "name": "Soufflette de Kaliptus",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 31,
+      "max": 40,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 3052,
+    "name": "Invisibilité Farouche",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 8,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pm",
+      "n": 2,
+      "dur": 3
+     }
+    ]
+   },
+   {
+    "id": 3053,
+    "name": "Invisibilité Farouche d'Autrui",
+    "pa": 2,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 6,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   }
+  ],
+  "level": 104,
+  "res": {
+   "terre": 10,
+   "feu": -9,
+   "eau": -9,
+   "air": 10,
+   "neutre": 20
+  },
+  "caracs": {
+   "force": 0,
+   "intelligence": 0,
+   "chance": 0,
+   "agilite": 300,
+   "sagesse": 150,
+   "esquivePA": 0,
+   "esquivePM": 15,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "maitre_koalak": {
+  "dofusId": 758,
+  "name": "Maître Koalak",
+  "hp": 5000,
+  "speed": 95,
+  "radius": 22,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "maitre_koalak",
+  "color": "#d8d0b8",
+  "xp": 93,
+  "spells": [
+   {
+    "id": 762,
+    "name": "Frappe du Maître",
+    "pa": 5,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "C2",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 101,
+      "max": 120,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 763,
+    "name": "Réconciliation",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 2,
+    "anim": 0,
+    "zone": "X1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 51,
+      "max": 80
+     }
+    ]
+   },
+   {
+    "id": 3431,
+    "name": "Transposition du Maître",
+    "pa": 3,
+    "po": [
+     1,
+     10
+    ],
+    "relance": 4,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [],
+    "gfx": 1621
+   }
+  ],
+  "level": 108,
+  "res": {
+   "terre": -10,
+   "feu": 50,
+   "eau": -10,
+   "air": -10,
+   "neutre": -25
+  },
+  "caracs": {
+   "force": 0,
+   "intelligence": 200,
+   "chance": 100,
+   "agilite": 500,
+   "sagesse": 100,
+   "esquivePA": 1,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "chevaucheur_koalak": {
+  "dofusId": 759,
+  "name": "Chevaucheur Koalak",
+  "hp": 4500,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "chevaucheur_koalak",
+  "color": "#d8d0b8",
+  "xp": 92,
+  "spells": [
+   {
+    "id": 756,
+    "name": "Choc Frontal",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 757,
+    "name": "Correction",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 16,
+      "max": 25,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -3,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 758,
+    "name": "Prévention",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 6,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 102,
+  "res": {
+   "terre": 29,
+   "feu": -58,
+   "eau": 10,
+   "air": 50,
+   "neutre": 20
+  },
+  "caracs": {
+   "force": 0,
+   "intelligence": 0,
+   "chance": 0,
+   "agilite": 500,
+   "sagesse": 150,
+   "esquivePA": 1,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "momie_koalak": {
+  "dofusId": 760,
+  "name": "Momie Koalak",
+  "hp": 5000,
+  "speed": 95,
+  "radius": 25,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "momie_koalak",
+  "color": "#d8d0b8",
+  "xp": 93,
+  "spells": [
+   {
+    "id": 759,
+    "name": "Malédiction de la Momie",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 4,
+    "zone": "C63",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 16,
+      "max": 20,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 760,
+    "name": "Clepsydre",
+    "pa": 5,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "X3",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 31,
+      "max": 40,
+      "steal": true
+     },
+     {
+      "k": "pa",
+      "n": -2,
+      "dur": 0
+     }
+    ]
+   },
+   {
+    "id": 761,
+    "name": "Bandelette Ancestrale",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 1,
+    "zone": "X3",
+    "allies": true,
+    "effects": []
+   }
+  ],
+  "level": 106,
+  "res": {
+   "terre": -25,
+   "feu": 10,
+   "eau": 50,
+   "air": -50,
+   "neutre": 60
+  },
+  "caracs": {
+   "force": 0,
+   "intelligence": 200,
+   "chance": 250,
+   "agilite": 100,
+   "sagesse": 400,
+   "esquivePA": 8,
+   "esquivePM": 12,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "fossoyeur_koalak": {
+  "dofusId": 761,
+  "name": "Fossoyeur Koalak",
+  "hp": 4500,
+  "speed": 95,
+  "radius": 19,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "fossoyeur_koalak",
+  "color": "#d8d0b8",
+  "xp": 92,
+  "spells": [
+   {
+    "id": 754,
+    "name": "Enterrement",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 7,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pm",
+      "n": 3,
+      "dur": 2
+     }
+    ]
+   },
+   {
+    "id": 755,
+    "name": "Motte de terre",
+    "pa": 4,
+    "po": [
+     1,
+     4
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 31,
+      "max": 45,
+      "steal": false
+     },
+     {
+      "k": "puissance",
+      "n": -21,
+      "dur": 4
+     }
+    ]
+   }
+  ],
+  "level": 101,
+  "res": {
+   "terre": 50,
+   "feu": 20,
+   "eau": -19,
+   "air": 20,
+   "neutre": 10
+  },
+  "caracs": {
+   "force": 250,
+   "intelligence": 0,
+   "chance": 0,
+   "agilite": 400,
+   "sagesse": 50,
+   "esquivePA": 0,
+   "esquivePM": 15,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "skeunk": {
+  "dofusId": 780,
+  "name": "Skeunk",
+  "hp": 12500,
+  "speed": 95,
+  "radius": 31,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "skeunk",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 3424,
+    "name": "Chant Régénérant",
+    "pa": 3,
+    "po": [
+     0,
+     10
+    ],
+    "relance": 0,
+    "anim": 9,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 31,
+      "max": 40
+     },
+     {
+      "k": "soin",
+      "min": 11,
+      "max": 15
+     }
+    ],
+    "gfx": 20702
+   },
+   {
+    "id": 3425,
+    "name": "Chant Stimulant",
+    "pa": 2,
+    "po": [
+     0,
+     10
+    ],
+    "relance": 1,
+    "anim": 701,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 150,
+      "pct": true,
+      "dur": 2
+     }
+    ],
+    "gfx": 119
+   },
+   {
+    "id": 3426,
+    "name": "Chant de Jouvence",
+    "pa": 4,
+    "po": [
+     0,
+     10
+    ],
+    "relance": 2,
+    "anim": 9,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "desenvoute",
+      "n": 2
+     }
+    ],
+    "gfx": 1641
+   },
+   {
+    "id": 3427,
+    "name": "Chant Immobilisant",
+    "pa": 3,
+    "po": [
+     1,
+     10
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pm",
+      "n": -4,
+      "dur": 1
+     },
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ],
+    "gfx": 920
+   },
+   {
+    "id": 3428,
+    "name": "Chant Foudroyant",
+    "pa": 5,
+    "po": [
+     1,
+     10
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "C2",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 41,
+      "max": 60,
+      "steal": false
+     }
+    ],
+    "gfx": 20811
+   }
+  ],
+  "level": 120,
+  "res": {
+   "terre": 28,
+   "feu": -5,
+   "eau": -5,
+   "air": 38,
+   "neutre": 28
+  },
+  "caracs": {
+   "force": 336,
+   "intelligence": 336,
+   "chance": 336,
+   "agilite": 336,
+   "sagesse": 272,
+   "esquivePA": 5,
+   "esquivePM": 5,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "fauchalak": {
+  "dofusId": 783,
+  "name": "Fauchalak",
+  "hp": 5000,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "fauchalak",
+  "color": "#d8d0b8",
+  "xp": 93,
+  "spells": [
+   {
+    "id": 779,
+    "name": "Malédiction Koalak",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "C63",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pm",
+      "n": -3,
+      "dur": 1
+     },
+     {
+      "k": "pa",
+      "n": -3,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 780,
+    "name": "Fauche",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 781,
+    "name": "Renfort du Cimetière Primitif",
+    "pa": 4,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 10,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "invoque",
+      "monster": "chevaucheur_koalak"
+     },
+     {
+      "k": "invoque",
+      "monster": "fossoyeur_koalak"
+     },
+     {
+      "k": "invoque",
+      "monster": "maitre_koalak"
+     },
+     {
+      "k": "invoque",
+      "monster": "momie_koalak"
+     }
+    ]
+   },
+   {
+    "id": 3049,
+    "name": "Libération Koalak",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 2,
+    "anim": 1,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "repousse",
+      "n": 3
+     }
+    ]
+   }
+  ],
+  "level": 108,
+  "res": {
+   "terre": 10,
+   "feu": -10,
+   "eau": 20,
+   "air": -10,
+   "neutre": 30
+  },
+  "caracs": {
+   "force": 0,
+   "intelligence": 200,
+   "chance": 100,
+   "agilite": 600,
+   "sagesse": 100,
+   "esquivePA": 2,
+   "esquivePM": 24,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "corbac_apprivoise": {
+  "dofusId": 818,
+  "name": "Corbac Apprivoisé",
+  "hp": 5500,
+  "speed": 95,
+  "radius": 26,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "corbac_apprivoise",
+  "color": "#d8d0b8",
+  "xp": 92,
+  "spells": [
+   {
+    "id": 803,
+    "name": "Plumeau Déstabilisant",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "X1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 804,
+    "name": "Plumette",
+    "pa": 4,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 3,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 805,
+    "name": "Bousculade plumeuse",
+    "pa": 4,
+    "po": [
+     1,
+     12
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 13,
+      "max": 18,
+      "steal": true
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 13,
+      "max": 18,
+      "steal": true
+     },
+     {
+      "k": "attire",
+      "n": 12
+     },
+     {
+      "k": "repousse",
+      "n": 12
+     }
+    ]
+   }
+  ],
+  "level": 102,
+  "res": {
+   "terre": -14,
+   "feu": 26,
+   "eau": 26,
+   "air": -29,
+   "neutre": 21
+  },
+  "caracs": {
+   "force": 408,
+   "intelligence": 408,
+   "chance": 408,
+   "agilite": 408,
+   "sagesse": 306,
+   "esquivePA": 6,
+   "esquivePM": 6,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "buveur": {
+  "dofusId": 819,
+  "name": "Buveur",
+  "hp": 4500,
+  "speed": 95,
+  "radius": 23,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "buveur",
+  "color": "#d8d0b8",
+  "xp": 92,
+  "spells": [
+   {
+    "id": 806,
+    "name": "Daudoh",
+    "pa": 4,
+    "po": [
+     1,
+     16
+    ],
+    "relance": 4,
+    "anim": 2,
+    "zone": "C5",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pa",
+      "n": -2,
+      "dur": 1
+     },
+     {
+      "k": "pm",
+      "n": -2,
+      "dur": 1
+     },
+     {
+      "k": "soin",
+      "min": 21,
+      "max": 30
+     }
+    ]
+   },
+   {
+    "id": 807,
+    "name": "Buvette",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 5,
+    "anim": 0,
+    "zone": "X1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 808,
+    "name": "Parchotage",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 21,
+      "max": 30,
+      "steal": true
+     },
+     {
+      "k": "repousse",
+      "n": 5
+     }
+    ]
+   }
+  ],
+  "level": 102,
+  "res": {
+   "terre": -9,
+   "feu": -9,
+   "eau": 66,
+   "air": -9,
+   "neutre": 1
+  },
+  "caracs": {
+   "force": 408,
+   "intelligence": 408,
+   "chance": 408,
+   "agilite": 408,
+   "sagesse": 306,
+   "esquivePA": 6,
+   "esquivePM": 6,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "renarbo": {
+  "dofusId": 820,
+  "name": "Renarbo",
+  "hp": 4500,
+  "speed": 95,
+  "radius": 28,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "renarbo",
+  "color": "#d8d0b8",
+  "xp": 92,
+  "spells": [
+   {
+    "id": 809,
+    "name": "Croassement",
+    "pa": 4,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 810,
+    "name": "Ramage",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 2,
+    "zone": "X1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 811,
+    "name": "Déplumage",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "pa",
+      "n": -1,
+      "dur": 1
+     }
+    ]
+   }
+  ],
+  "level": 102,
+  "res": {
+   "terre": 21,
+   "feu": -9,
+   "eau": -24,
+   "air": 66,
+   "neutre": -14
+  },
+  "caracs": {
+   "force": 408,
+   "intelligence": 408,
+   "chance": 408,
+   "agilite": 408,
+   "sagesse": 306,
+   "esquivePA": 6,
+   "esquivePM": 6,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "bitouf_des_plaines": {
+  "dofusId": 1019,
+  "name": "Bitouf des Plaines",
+  "hp": 4250,
+  "speed": 95,
+  "radius": 32,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "bitouf_des_plaines",
+  "color": "#d8d0b8",
+  "xp": 91,
+  "spells": [
+   {
+    "id": 944,
+    "name": "Vrüt vrüt",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 4534,
+    "name": "Plumeau Cécitant",
+    "pa": 2,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 11,
+      "max": 15,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 97,
+  "res": {
+   "terre": -19,
+   "feu": -23,
+   "eau": -9,
+   "air": -9,
+   "neutre": 5
+  },
+  "caracs": {
+   "force": 220,
+   "intelligence": 220,
+   "chance": 220,
+   "agilite": 220,
+   "sagesse": 220,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "craqueleur_poli": {
+  "dofusId": 1025,
+  "name": "Craqueleur Poli",
+  "hp": 4250,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "craqueleur_poli",
+  "color": "#d8d0b8",
+  "xp": 91,
+  "spells": [
+   {
+    "id": 945,
+    "name": "Polissage",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 31,
+      "max": 40,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 1029,
+    "name": "Pierre qui roule n'amasse pas mousse",
+    "pa": 3,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [],
+    "gfx": 885
+   },
+   {
+    "id": 1122,
+    "name": "Je vous en prie",
+    "pa": 3,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     },
+     {
+      "k": "pa",
+      "n": -1,
+      "dur": 1
+     }
+    ]
+   }
+  ],
+  "level": 96,
+  "res": {
+   "terre": 25,
+   "feu": -5,
+   "eau": -40,
+   "air": 5,
+   "neutre": 1
+  },
+  "caracs": {
+   "force": 180,
+   "intelligence": 180,
+   "chance": 180,
+   "agilite": 180,
+   "sagesse": 280,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "craqueboule_poli": {
+  "dofusId": 1026,
+  "name": "Craqueboule Poli",
+  "hp": 4000,
+  "speed": 95,
+  "radius": 20,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "craqueboule_poli",
+  "color": "#d8d0b8",
+  "xp": 91,
+  "spells": [
+   {
+    "id": 951,
+    "name": "Rocaille",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 4532,
+    "name": "Glotte",
+    "pa": 4,
+    "po": [
+     2,
+     8
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 200,
+      "pct": true,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 4533,
+    "name": "Tourniquet",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "*5",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 31,
+      "max": 40,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 93,
+  "res": {
+   "terre": 5,
+   "feu": -25,
+   "eau": 5,
+   "air": 25,
+   "neutre": 1
+  },
+  "caracs": {
+   "force": 150,
+   "intelligence": 150,
+   "chance": 150,
+   "agilite": 150,
+   "sagesse": 150,
+   "esquivePA": 0,
+   "esquivePM": 10,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "maitre_zoth": {
+  "dofusId": 1052,
+  "name": "Maître Zoth",
+  "hp": 6500,
+  "speed": 95,
+  "radius": 28,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "maitre_zoth",
+  "color": "#d8d0b8",
+  "xp": 95,
+  "spells": [
+   {
+    "id": 1092,
+    "name": "Bataille pour la terre des Zoths",
+    "pa": 7,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 41,
+      "max": 60,
+      "steal": false
+     },
+     {
+      "k": "pa",
+      "n": -10,
+      "dur": 0
+     }
+    ]
+   },
+   {
+    "id": 1093,
+    "name": "Incitation",
+    "pa": 5,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   }
+  ],
+  "level": 126,
+  "res": {
+   "terre": 40,
+   "feu": -7,
+   "eau": -47,
+   "air": 14,
+   "neutre": 11
+  },
+  "caracs": {
+   "force": 450,
+   "intelligence": 450,
+   "chance": 450,
+   "agilite": 450,
+   "sagesse": 450,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "gamine_zoth": {
+  "dofusId": 1053,
+  "name": "Gamine Zoth",
+  "hp": 5750,
+  "speed": 95,
+  "radius": 22,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "gamine_zoth",
+  "color": "#d8d0b8",
+  "xp": 94,
+  "spells": [
+   {
+    "id": 1088,
+    "name": "Tyrannie",
+    "pa": 6,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 26,
+      "max": 35,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 1089,
+    "name": "Gaminerie",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 5,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 101,
+      "max": 150
+     }
+    ]
+   },
+   {
+    "id": 4259,
+    "name": "Transgaminerie",
+    "pa": 3,
+    "po": [
+     1,
+     10
+    ],
+    "relance": 4,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "pm",
+      "n": 3,
+      "dur": 1
+     }
+    ],
+    "gfx": 1621
+   }
+  ],
+  "level": 117,
+  "res": {
+   "terre": -39,
+   "feu": 7,
+   "eau": 30,
+   "air": 0,
+   "neutre": 10
+  },
+  "caracs": {
+   "force": 400,
+   "intelligence": 400,
+   "chance": 400,
+   "agilite": 400,
+   "sagesse": 150,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "guerrier_zoth": {
+  "dofusId": 1054,
+  "name": "Guerrier Zoth",
+  "hp": 6000,
+  "speed": 95,
+  "radius": 28,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "guerrier_zoth",
+  "color": "#d8d0b8",
+  "xp": 94,
+  "spells": [
+   {
+    "id": 1090,
+    "name": "Héchaud Fourrée",
+    "pa": 6,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 6,
+      "max": 10,
+      "steal": false
+     },
+     {
+      "k": "dommages",
+      "n": 200,
+      "dur": 2
+     }
+    ],
+    "gfx": 21003
+   },
+   {
+    "id": 1091,
+    "name": "Mêlée",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 2,
+    "zone": "C3",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 100,
+      "dur": 2
+     },
+     {
+      "k": "pm",
+      "n": 2,
+      "dur": 2
+     }
+    ]
+   }
+  ],
+  "level": 120,
+  "res": {
+   "terre": 5,
+   "feu": 38,
+   "eau": 10,
+   "air": -30,
+   "neutre": -15
+  },
+  "caracs": {
+   "force": 500,
+   "intelligence": 500,
+   "chance": 500,
+   "agilite": 500,
+   "sagesse": 500,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "disciple_zoth": {
+  "dofusId": 1055,
+  "name": "Disciple Zoth",
+  "hp": 5500,
+  "speed": 95,
+  "radius": 24,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "disciple_zoth",
+  "color": "#d8d0b8",
+  "xp": 94,
+  "spells": [
+   {
+    "id": 1086,
+    "name": "Supplice",
+    "pa": 5,
+    "po": [
+     1,
+     10
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 16,
+      "max": 25,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -2,
+      "dur": 1
+     }
+    ],
+    "gfx": 879
+   },
+   {
+    "id": 1087,
+    "name": "Zothomaï",
+    "pa": 5,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 26,
+      "max": 40,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 1
+     }
+    ]
+   }
+  ],
+  "level": 114,
+  "res": {
+   "terre": 10,
+   "feu": -38,
+   "eau": 5,
+   "air": 32,
+   "neutre": 10
+  },
+  "caracs": {
+   "force": 400,
+   "intelligence": 400,
+   "chance": 400,
+   "agilite": 400,
+   "sagesse": 400,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "sergent_zoth": {
+  "dofusId": 1056,
+  "name": "Sergent Zoth",
+  "hp": 6250,
+  "speed": 95,
+  "radius": 31,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "sergent_zoth",
+  "color": "#d8d0b8",
+  "xp": 95,
+  "spells": [
+   {
+    "id": 1094,
+    "name": "Kulbutage",
+    "pa": 5,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 26,
+      "max": 45,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 11,
+      "max": 20,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 1095,
+    "name": "Emprise",
+    "pa": 4,
+    "po": [
+     1,
+     10
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 123,
+  "res": {
+   "terre": 7,
+   "feu": 5,
+   "eau": 34,
+   "air": -35,
+   "neutre": -8
+  },
+  "caracs": {
+   "force": 400,
+   "intelligence": 400,
+   "chance": 400,
+   "agilite": 400,
+   "sagesse": 400,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "tourbassingue": {
+  "dofusId": 1058,
+  "name": "Tourbassingue",
+  "hp": 4500,
+  "speed": 95,
+  "radius": 16,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "tourbassingue",
+  "color": "#d8d0b8",
+  "xp": 92,
+  "spells": [
+   {
+    "id": 1081,
+    "name": "Tourbe réparatrice",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 2,
+    "anim": 1,
+    "zone": "C2",
+    "allies": true,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 26,
+      "max": 30
+     }
+    ]
+   },
+   {
+    "id": 1082,
+    "name": "Tourbe Malveillante",
+    "pa": 5,
+    "po": [
+     1,
+     7
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 101,
+  "res": {
+   "terre": 15,
+   "feu": 33,
+   "eau": -27,
+   "air": -11,
+   "neutre": 20
+  },
+  "caracs": {
+   "force": 250,
+   "intelligence": 250,
+   "chance": 250,
+   "agilite": 250,
+   "sagesse": 250,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "bourbassingue": {
+  "dofusId": 1059,
+  "name": "Bourbassingue",
+  "hp": 4000,
+  "speed": 95,
+  "radius": 26,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "bourbassingue",
+  "color": "#d8d0b8",
+  "xp": 91,
+  "spells": [
+   {
+    "id": 1040,
+    "name": "Attraction boueuse",
+    "pa": 4,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "attire",
+      "n": 5
+     }
+    ],
+    "gfx": 888
+   },
+   {
+    "id": 1079,
+    "name": "Boue sirupeuse",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 16,
+      "max": 25,
+      "steal": true
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 16,
+      "max": 25,
+      "steal": true
+     }
+    ]
+   },
+   {
+    "id": 1080,
+    "name": "Bourbier",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "C3",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pm",
+      "n": -3,
+      "dur": 1
+     }
+    ]
+   }
+  ],
+  "level": 95,
+  "res": {
+   "terre": 35,
+   "feu": -31,
+   "eau": 15,
+   "air": 9,
+   "neutre": 13
+  },
+  "caracs": {
+   "force": 200,
+   "intelligence": 200,
+   "chance": 200,
+   "agilite": 200,
+   "sagesse": 200,
+   "esquivePA": 0,
+   "esquivePM": 10,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "mufafah": {
+  "dofusId": 1068,
+  "name": "Mufafah",
+  "hp": 4000,
+  "speed": 95,
+  "radius": 26,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "mufafah",
+  "color": "#d8d0b8",
+  "xp": 91,
+  "spells": [
+   {
+    "id": 952,
+    "name": "Rugissement Mufafesque",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 5,
+    "anim": 1,
+    "zone": "C5",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 20,
+      "dur": 3
+     },
+     {
+      "k": "pm",
+      "n": 2,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 1033,
+    "name": "Déchirure",
+    "pa": 5,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 61,
+      "max": 80,
+      "steal": true
+     }
+    ]
+   }
+  ],
+  "level": 94,
+  "res": {
+   "terre": -36,
+   "feu": 27,
+   "eau": 5,
+   "air": 3,
+   "neutre": 5
+  },
+  "caracs": {
+   "force": 90,
+   "intelligence": 90,
+   "chance": 90,
+   "agilite": 90,
+   "sagesse": 90,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "kido": {
+  "dofusId": 1069,
+  "name": "Kido",
+  "hp": 4000,
+  "speed": 95,
+  "radius": 16,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "kido",
+  "color": "#d8d0b8",
+  "xp": 91,
+  "spells": [
+   {
+    "id": 1034,
+    "name": "Clapet",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "L4",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 31,
+      "max": 40,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 4
+     }
+    ]
+   },
+   {
+    "id": 1035,
+    "name": "Cuicui d'Amour",
+    "pa": 3,
+    "po": [
+     1,
+     7
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 16,
+      "max": 20
+     },
+     {
+      "k": "soin",
+      "min": 21,
+      "max": 25
+     }
+    ],
+    "gfx": 886
+   }
+  ],
+  "level": 95,
+  "res": {
+   "terre": -25,
+   "feu": 25,
+   "eau": -5,
+   "air": 6,
+   "neutre": 5
+  },
+  "caracs": {
+   "force": 180,
+   "intelligence": 180,
+   "chance": 180,
+   "agilite": 180,
+   "sagesse": 180,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "kilibriss": {
+  "dofusId": 1070,
+  "name": "Kilibriss",
+  "hp": 4250,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "kilibriss",
+  "color": "#d8d0b8",
+  "xp": 91,
+  "spells": [
+   {
+    "id": 1036,
+    "name": "Brisskote",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 2,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 41,
+      "max": 60,
+      "steal": true
+     },
+     {
+      "k": "pm",
+      "n": -4,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 1037,
+    "name": "Briss Deuniss",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 4535,
+    "name": "Brissolette",
+    "pa": 5,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 3,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 26,
+      "max": 35,
+      "steal": false
+     }
+    ],
+    "gfx": 20801
+   }
+  ],
+  "level": 98,
+  "res": {
+   "terre": 20,
+   "feu": -9,
+   "eau": 17,
+   "air": -27,
+   "neutre": 27
+  },
+  "caracs": {
+   "force": 180,
+   "intelligence": 180,
+   "chance": 180,
+   "agilite": 180,
+   "sagesse": 280,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "le_ouassingue_entourbe": {
+  "dofusId": 1096,
+  "name": "Le Ouassingue Entourbé",
+  "hp": 4000,
+  "speed": 95,
+  "radius": 16,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "le_ouassingue_entourbe",
+  "color": "#d8d0b8",
+  "xp": 90,
+  "spells": [
+   {
+    "id": 527,
+    "name": "Équarrissage",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 22,
+      "max": 26,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 3308,
+    "name": "Abnégation",
+    "pa": 2,
+    "po": [
+     0,
+     5
+    ],
+    "relance": 4,
+    "anim": 9,
+    "zone": "C2",
+    "allies": true,
+    "effects": [],
+    "gfx": 1620
+   },
+   {
+    "id": 3309,
+    "name": "Permutation",
+    "pa": 3,
+    "po": [
+     1,
+     10
+    ],
+    "relance": 8,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [],
+    "gfx": 1621
+   },
+   {
+    "id": 3310,
+    "name": "Reformation",
+    "pa": 4,
+    "po": [
+     0,
+     4
+    ],
+    "relance": 8,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 261,
+      "max": 280
+     }
+    ],
+    "gfx": 20106
+   }
+  ],
+  "level": 92,
+  "res": {
+   "terre": 36,
+   "feu": 51,
+   "eau": 56,
+   "air": 51,
+   "neutre": 56
+  },
+  "caracs": {
+   "force": 170,
+   "intelligence": 170,
+   "chance": 170,
+   "agilite": 170,
+   "sagesse": 170,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "blop_multicolore_royal": {
+  "dofusId": 1188,
+  "name": "Blop Multicolore Royal",
+  "hp": 8500,
+  "speed": 95,
+  "radius": 31,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "blop_multicolore_royal",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 1172,
+    "name": "Blopoutrage Royal",
+    "pa": 6,
+    "po": [
+     1,
+     4
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 21,
+      "max": 30,
+      "steal": true
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 21,
+      "max": 30,
+      "steal": true
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 21,
+      "max": 30,
+      "steal": true
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 21,
+      "max": 30,
+      "steal": true
+     },
+     {
+      "k": "pm",
+      "n": -2,
+      "dur": 0
+     }
+    ]
+   },
+   {
+    "id": 1173,
+    "name": "Blopagation",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "C63",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 1174,
+    "name": "Blopacification",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "C63",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 50,
+      "dur": 2
+     },
+     {
+      "k": "pm",
+      "n": 2,
+      "dur": 2
+     }
+    ]
+   }
+  ],
+  "level": 120,
+  "res": {
+   "terre": 15,
+   "feu": 15,
+   "eau": 15,
+   "air": 15,
+   "neutre": -15
+  },
+  "caracs": {
+   "force": 350,
+   "intelligence": 350,
+   "chance": 350,
+   "agilite": 350,
+   "sagesse": 400,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "kruorre_le_chafer_hai": {
+  "dofusId": 2685,
+  "name": "Kruorre le Chafer Haï",
+  "hp": 12000,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "kruorre_le_chafer_hai",
+  "color": "#d8d0b8",
+  "xp": 94,
+  "spells": [
+   {
+    "id": 1628,
+    "name": "Chafouette",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 1,
+    "zone": "C4",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 100,
+      "dur": 3
+     }
+    ]
+   },
+   {
+    "id": 5538,
+    "name": "Charnaque",
+    "pa": 3,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 301,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 31,
+      "max": 35,
+      "steal": false
+     }
+    ],
+    "gfx": 20408
+   },
+   {
+    "id": 5539,
+    "name": "Invisibilité Alpha",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 6,
+    "anim": 402,
+    "zone": "C2",
+    "allies": true,
+    "effects": [
+     {
+      "k": "pm",
+      "n": 3,
+      "dur": 3
+     },
+     {
+      "k": "pm",
+      "n": 2,
+      "dur": 3
+     }
+    ],
+    "gfx": 20406
+   },
+   {
+    "id": 5540,
+    "name": "Coup mortel du Chafer",
+    "pa": 4,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 0,
+    "anim": 405,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 41,
+      "max": 45,
+      "steal": false
+     }
+    ],
+    "gfx": 20410
+   }
+  ],
+  "level": 120,
+  "res": {
+   "terre": -5,
+   "feu": 15,
+   "eau": 5,
+   "air": 15,
+   "neutre": -10
+  },
+  "caracs": {
+   "force": 900,
+   "intelligence": 900,
+   "chance": 900,
+   "agilite": 900,
+   "sagesse": 900,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "boufmouth": {
+  "dofusId": 2850,
+  "name": "Boufmouth",
+  "hp": 5250,
+  "speed": 95,
+  "radius": 22,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "boufmouth",
+  "color": "#d8d0b8",
+  "xp": 93,
+  "spells": [
+   {
+    "id": 2217,
+    "name": "Krouth",
+    "pa": 5,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 31,
+      "max": 40,
+      "steal": true
+     }
+    ],
+    "gfx": 1229
+   },
+   {
+    "id": 2218,
+    "name": "Klougmouth",
+    "pa": 5,
+    "po": [
+     4,
+     6
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 26,
+      "max": 35,
+      "steal": false
+     }
+    ],
+    "gfx": 20902
+   },
+   {
+    "id": 2219,
+    "name": "Moumouth",
+    "pa": 5,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [],
+    "gfx": 1348
+   }
+  ],
+  "level": 112,
+  "res": {
+   "terre": 15,
+   "feu": 5,
+   "eau": -32,
+   "air": 45,
+   "neutre": 23
+  },
+  "caracs": {
+   "force": 380,
+   "intelligence": 380,
+   "chance": 380,
+   "agilite": 380,
+   "sagesse": 280,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "boufmouth_de_guerre": {
+  "dofusId": 2851,
+  "name": "Boufmouth de guerre",
+  "hp": 5250,
+  "speed": 95,
+  "radius": 30,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "boufmouth_de_guerre",
+  "color": "#d8d0b8",
+  "xp": 93,
+  "spells": [
+   {
+    "id": 2220,
+    "name": "Koudblouze",
+    "pa": 5,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 50,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 2221,
+    "name": "Boufbaffe",
+    "pa": 5,
+    "po": [
+     1,
+     7
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 26,
+      "max": 35,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 0
+     }
+    ],
+    "missile": 1230,
+    "gfx": 1231
+   },
+   {
+    "id": 2222,
+    "name": "Hubermouth",
+    "pa": 5,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 2,
+    "zone": "C2",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 51,
+      "dur": 2
+     }
+    ]
+   }
+  ],
+  "level": 112,
+  "res": {
+   "terre": 20,
+   "feu": -38,
+   "eau": 30,
+   "air": 15,
+   "neutre": 50
+  },
+  "caracs": {
+   "force": 380,
+   "intelligence": 380,
+   "chance": 380,
+   "agilite": 380,
+   "sagesse": 280,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "boufmouth_legendaire": {
+  "dofusId": 2852,
+  "name": "Boufmouth légendaire",
+  "hp": 5250,
+  "speed": 95,
+  "radius": 28,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "boufmouth_legendaire",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 2223,
+    "name": "Koudkorn",
+    "pa": 5,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "T1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 41,
+      "max": 50,
+      "steal": false
+     },
+     {
+      "k": "pa",
+      "n": -2,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 2224,
+    "name": "Moutharde",
+    "pa": 5,
+    "po": [
+     4,
+     5
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 31,
+      "max": 40,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 4
+     }
+    ],
+    "missile": 1218,
+    "gfx": 1229
+   },
+   {
+    "id": 2225,
+    "name": "Moubilité",
+    "pa": 5,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 3,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "pm",
+      "n": 3,
+      "dur": 2
+     }
+    ],
+    "gfx": 20204
+   }
+  ],
+  "level": 112,
+  "res": {
+   "terre": -35,
+   "feu": 51,
+   "eau": 10,
+   "air": 19,
+   "neutre": 15
+  },
+  "caracs": {
+   "force": 380,
+   "intelligence": 380,
+   "chance": 380,
+   "agilite": 380,
+   "sagesse": 280,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "bouftonmouth": {
+  "dofusId": 2853,
+  "name": "Bouftonmouth",
+  "hp": 5250,
+  "speed": 95,
+  "radius": 16,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "bouftonmouth",
+  "color": "#d8d0b8",
+  "xp": 93,
+  "spells": [
+   {
+    "id": 931,
+    "name": "Moursure",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 31,
+      "max": 40,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 2226,
+    "name": "Bizmouth",
+    "pa": 4,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 51,
+      "max": 60
+     }
+    ],
+    "gfx": 912
+   }
+  ],
+  "level": 112,
+  "res": {
+   "terre": 60,
+   "feu": 20,
+   "eau": 15,
+   "air": -40,
+   "neutre": 10
+  },
+  "caracs": {
+   "force": 380,
+   "intelligence": 380,
+   "chance": 380,
+   "agilite": 380,
+   "sagesse": 280,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "royalmouth": {
+  "dofusId": 2854,
+  "name": "Royalmouth",
+  "hp": 12500,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "royalmouth",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 2230,
+    "name": "Regroupmouth",
+    "pa": 5,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "X3",
+    "allies": false,
+    "effects": [
+     {
+      "k": "attire",
+      "n": 3
+     },
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 57,
+      "max": 67,
+      "steal": false
+     }
+    ],
+    "gfx": 1082
+   },
+   {
+    "id": 2231,
+    "name": "Lichemouth",
+    "pa": 5,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 66,
+      "max": 75,
+      "steal": true
+     }
+    ]
+   },
+   {
+    "id": 2355,
+    "name": "Aléamouth",
+    "pa": 5,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "invoque",
+      "monster": "boufmouth"
+     },
+     {
+      "k": "invoque",
+      "monster": "boufmouth_de_guerre"
+     },
+     {
+      "k": "invoque",
+      "monster": "boufmouth_legendaire"
+     },
+     {
+      "k": "invoque",
+      "monster": "bouftonmouth"
+     }
+    ],
+    "gfx": 1228
+   }
+  ],
+  "level": 120,
+  "res": {
+   "terre": 33,
+   "feu": 26,
+   "eau": -11,
+   "air": 48,
+   "neutre": 23
+  },
+  "caracs": {
+   "force": 500,
+   "intelligence": 500,
+   "chance": 500,
+   "agilite": 500,
+   "sagesse": 400,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "bouflouth": {
+  "dofusId": 2901,
+  "name": "Bouflouth",
+  "hp": 32500,
+  "speed": 95,
+  "radius": 28,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "bouflouth",
+  "color": "#d8d0b8",
+  "xp": 94,
+  "spells": [
+   {
+    "id": 2441,
+    "name": "Mammouth",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 6,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "invoque",
+      "monster": "boufmouth_de_guerre"
+     }
+    ],
+    "gfx": 20204
+   },
+   {
+    "id": 2442,
+    "name": "Gloutmouth",
+    "pa": 5,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 5,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": [],
+    "gfx": 20614
+   },
+   {
+    "id": 4196,
+    "name": "Hypermouth",
+    "pa": 5,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 2,
+    "zone": "C2",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 51,
+      "dur": 2
+     }
+    ]
+   },
+   {
+    "id": 4197,
+    "name": "Embrochmouth",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 17,
+      "max": 33,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 5
+     }
+    ]
+   }
+  ],
+  "level": 120,
+  "res": {
+   "terre": 0,
+   "feu": 0,
+   "eau": 0,
+   "air": 0,
+   "neutre": 80
+  },
+  "caracs": {
+   "force": 300,
+   "intelligence": 300,
+   "chance": 300,
+   "agilite": 300,
+   "sagesse": 450,
+   "esquivePA": 0,
+   "esquivePM": 20,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "ali_grothor": {
+  "dofusId": 3524,
+  "name": "Ali Grothor",
+  "hp": 35000,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "ali_grothor",
+  "color": "#d8d0b8",
+  "xp": 95,
+  "spells": [
+   {
+    "id": 3967,
+    "name": "Ture",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 121,
+      "max": 135,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 181,
+      "max": 195,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 3968,
+    "name": "Hida",
+    "pa": 3,
+    "po": [
+     2,
+     5
+    ],
+    "relance": 0,
+    "anim": 3,
+    "zone": "L1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 76,
+      "max": 90,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 46,
+      "max": 60,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 3
+     }
+    ]
+   },
+   {
+    "id": 3969,
+    "name": "Risation",
+    "pa": 2,
+    "po": [
+     4,
+     8
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "pm",
+      "n": -3,
+      "dur": 1
+     },
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 31,
+      "max": 45,
+      "steal": false
+     }
+    ],
+    "gfx": 2414
+   },
+   {
+    "id": 3971,
+    "name": "Rage Électrique",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 2,
+    "zone": "A1",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 130,
+  "res": {
+   "terre": 10,
+   "feu": 30,
+   "eau": -15,
+   "air": 25,
+   "neutre": 20
+  },
+  "caracs": {
+   "force": 300,
+   "intelligence": 300,
+   "chance": 300,
+   "agilite": 300,
+   "sagesse": 400,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "truchmuche": {
+  "dofusId": 3620,
+  "name": "Truchmuche",
+  "hp": 5500,
+  "speed": 95,
+  "radius": 32,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "truchmuche",
+  "color": "#d8d0b8",
+  "xp": 93,
+  "spells": [
+   {
+    "id": 4389,
+    "name": "Laxatif",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 41,
+      "max": 50,
+      "steal": false
+     }
+    ],
+    "gfx": 2741
+   },
+   {
+    "id": 4390,
+    "name": "Pourriture intestinale",
+    "pa": 3,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ],
+    "gfx": 2742
+   },
+   {
+    "id": 4392,
+    "name": "Indigestion contagieuse",
+    "pa": 4,
+    "po": [
+     1,
+     10
+    ],
+    "relance": 2,
+    "anim": 3,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pm",
+      "n": -2,
+      "dur": 1
+     }
+    ],
+    "gfx": 2133
+   },
+   {
+    "id": 4393,
+    "name": "Diarrhée affaiblissante",
+    "pa": 12,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 4,
+    "zone": "C63",
+    "allies": false,
+    "effects": [],
+    "gfx": 2150
+   }
+  ],
+  "level": 113,
+  "res": {
+   "terre": -23,
+   "feu": 17,
+   "eau": 27,
+   "air": -3,
+   "neutre": -8
+  },
+  "caracs": {
+   "force": 230,
+   "intelligence": 230,
+   "chance": 230,
+   "agilite": 230,
+   "sagesse": 310,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "truchideur": {
+  "dofusId": 3621,
+  "name": "Truchideur",
+  "hp": 5250,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "truchideur",
+  "color": "#d8d0b8",
+  "xp": 93,
+  "spells": [
+   {
+    "id": 4395,
+    "name": "Truchidage",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "L2",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 31,
+      "max": 40,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 4396,
+    "name": "Boulette baveuse",
+    "pa": 3,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 31,
+      "max": 40,
+      "steal": false
+     }
+    ],
+    "gfx": 2739
+   },
+   {
+    "id": 4397,
+    "name": "Truchenrut",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 3,
+    "zone": "Q8",
+    "allies": false,
+    "effects": [
+     {
+      "k": "attire",
+      "n": 3
+     }
+    ]
+   },
+   {
+    "id": 4398,
+    "name": "Bouffée de chaleur",
+    "pa": 11,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 4,
+    "anim": 4,
+    "zone": "P1",
+    "allies": false,
+    "effects": [],
+    "gfx": 2090
+   }
+  ],
+  "level": 112,
+  "res": {
+   "terre": 22,
+   "feu": -23,
+   "eau": 17,
+   "air": -13,
+   "neutre": 32
+  },
+  "caracs": {
+   "force": 220,
+   "intelligence": 220,
+   "chance": 220,
+   "agilite": 220,
+   "sagesse": 300,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "truchtine": {
+  "dofusId": 3622,
+  "name": "Truchtine",
+  "hp": 5250,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "truchtine",
+  "color": "#d8d0b8",
+  "xp": 93,
+  "spells": [
+   {
+    "id": 4400,
+    "name": "Dégage !",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 4
+     }
+    ]
+   },
+   {
+    "id": 4401,
+    "name": "Vision trouble",
+    "pa": 3,
+    "po": [
+     1,
+     12
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 31,
+      "max": 40,
+      "steal": false
+     }
+    ],
+    "gfx": 2530
+   },
+   {
+    "id": 4402,
+    "name": "Rondelle réparatrice",
+    "pa": 3,
+    "po": [
+     1,
+     12
+    ],
+    "relance": 0,
+    "anim": 3,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 51,
+      "max": 60
+     }
+    ]
+   },
+   {
+    "id": 4403,
+    "name": "Myopie",
+    "pa": 11,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 4,
+    "zone": "C63",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 111,
+  "res": {
+   "terre": -23,
+   "feu": 17,
+   "eau": -13,
+   "air": 32,
+   "neutre": -18
+  },
+  "caracs": {
+   "force": 210,
+   "intelligence": 210,
+   "chance": 210,
+   "agilite": 210,
+   "sagesse": 290,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "truchon": {
+  "dofusId": 3623,
+  "name": "Truchon",
+  "hp": 5250,
+  "speed": 95,
+  "radius": 20,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "truchon",
+  "color": "#d8d0b8",
+  "xp": 93,
+  "spells": [
+   {
+    "id": 4405,
+    "name": "Claque du bec",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 31,
+      "max": 40,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "id": 4406,
+    "name": "Proutoto",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 31,
+      "max": 40,
+      "steal": false
+     },
+     {
+      "k": "pa",
+      "n": -2,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 4407,
+    "name": "Exhalation chétive",
+    "pa": 1,
+    "po": [
+     0,
+     1
+    ],
+    "relance": 2,
+    "anim": 3,
+    "zone": "C3",
+    "allies": true,
+    "effects": [
+     {
+      "k": "pm",
+      "n": 2,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 4408,
+    "name": "Survie de l'espèce",
+    "pa": 12,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 3,
+    "zone": "C63",
+    "allies": true,
+    "effects": []
+   }
+  ],
+  "level": 110,
+  "res": {
+   "terre": 12,
+   "feu": 22,
+   "eau": -3,
+   "air": -18,
+   "neutre": 2
+  },
+  "caracs": {
+   "force": 200,
+   "intelligence": 200,
+   "chance": 200,
+   "agilite": 200,
+   "sagesse": 280,
+   "esquivePA": 0,
+   "esquivePM": 10,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "fojumo": {
+  "dofusId": 4015,
+  "name": "Fojumo",
+  "hp": 40000,
+  "speed": 95,
+  "radius": 27,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "fojumo",
+  "color": "#d8d0b8",
+  "xp": 96,
+  "spells": [
+   {
+    "id": 5577,
+    "name": "Assassinat silencieux",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 36,
+      "max": 40,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 70,
+      "max": 70,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 5578,
+    "name": "Substitution furtive",
+    "pa": 2,
+    "po": [
+     1,
+     63
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 100,
+      "pct": true,
+      "dur": 2
+     },
+     {
+      "k": "pm",
+      "n": 2,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 5585,
+    "name": "Dissimulation nocive",
+    "pa": 3,
+    "po": [
+     1,
+     63
+    ],
+    "relance": 4,
+    "anim": 1,
+    "zone": "C7",
+    "allies": true,
+    "effects": []
+   }
+  ],
+  "level": 140,
+  "res": {
+   "terre": 10,
+   "feu": 5,
+   "eau": 15,
+   "air": 10,
+   "neutre": -15
+  },
+  "caracs": {
+   "force": 600,
+   "intelligence": 600,
+   "chance": 0,
+   "agilite": 400,
+   "sagesse": 400,
+   "esquivePA": 10,
+   "esquivePM": 30,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "nenufor_tilotus": {
+  "dofusId": 4041,
+  "name": "Nenufor Tilotus",
+  "hp": 32500,
+  "speed": 95,
+  "radius": 21,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "nenufor_tilotus",
+  "color": "#d8d0b8",
+  "xp": 94,
+  "spells": [
+   {
+    "id": 5532,
+    "name": "Spores de Nymphéacée",
+    "pa": 3,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "C4",
+    "allies": false,
+    "effects": [],
+    "gfx": 21009
+   },
+   {
+    "id": 5700,
+    "name": "Invocation de Nufor",
+    "pa": 3,
+    "po": [
+     1,
+     63
+    ],
+    "relance": 2,
+    "anim": 1,
+    "zone": "C63",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 5701,
+    "name": "Rhizome agressif",
+    "pa": 3,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "C3",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 26,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -2,
+      "dur": 1
+     }
+    ]
+   }
+  ],
+  "level": 120,
+  "res": {
+   "terre": 20,
+   "feu": -15,
+   "eau": 10,
+   "air": -5,
+   "neutre": 0
+  },
+  "caracs": {
+   "force": 600,
+   "intelligence": 600,
+   "chance": 0,
+   "agilite": 300,
+   "sagesse": 300,
+   "esquivePA": 10,
+   "esquivePM": 30,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "troolligark": {
+  "dofusId": 4538,
+  "name": "Troolligark",
+  "hp": 5250,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "troolligark",
+  "color": "#d8d0b8",
+  "xp": 93,
+  "spells": [
+   {
+    "id": 308,
+    "name": "Absorption Troollesque",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 100,
+      "max": 100
+     },
+     {
+      "k": "pm",
+      "n": 1,
+      "dur": 2
+     }
+    ]
+   },
+   {
+    "id": 6927,
+    "name": "Controoll",
+    "pa": 2,
+    "po": [
+     1,
+     10
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pa",
+      "n": -3,
+      "dur": 1
+     },
+     {
+      "k": "pm",
+      "n": -3,
+      "dur": 1
+     },
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 11,
+      "max": 14,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 6928,
+    "name": "Troollage",
+    "pa": 4,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 41,
+      "max": 50,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 4
+     }
+    ]
+   }
+  ],
+  "level": 112,
+  "res": {
+   "terre": -19,
+   "feu": 16,
+   "eau": 26,
+   "air": 26,
+   "neutre": -9
+  },
+  "caracs": {
+   "force": 448,
+   "intelligence": 448,
+   "chance": 448,
+   "agilite": 448,
+   "sagesse": 336,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "troolleole": {
+  "dofusId": 4539,
+  "name": "Troolléolé",
+  "hp": 5250,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "troolleole",
+  "color": "#d8d0b8",
+  "xp": 93,
+  "spells": [
+   {
+    "id": 308,
+    "name": "Absorption Troollesque",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 100,
+      "max": 100
+     },
+     {
+      "k": "pm",
+      "n": 1,
+      "dur": 2
+     }
+    ]
+   },
+   {
+    "id": 3461,
+    "name": "Troollahonte",
+    "pa": 5,
+    "po": [
+     2,
+     12
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 41,
+      "max": 50,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -2,
+      "dur": 1
+     }
+    ],
+    "gfx": 20115
+   },
+   {
+    "id": 6929,
+    "name": "Troollfesse",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 15,
+      "max": 20,
+      "steal": true
+     },
+     {
+      "k": "repousse",
+      "n": 1
+     }
+    ]
+   }
+  ],
+  "level": 112,
+  "res": {
+   "terre": 16,
+   "feu": 26,
+   "eau": -9,
+   "air": 26,
+   "neutre": -19
+  },
+  "caracs": {
+   "force": 448,
+   "intelligence": 448,
+   "chance": 448,
+   "agilite": 448,
+   "sagesse": 336,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "troollogram": {
+  "dofusId": 4540,
+  "name": "Troollogram",
+  "hp": 2750,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "troollogram",
+  "color": "#d8d0b8",
+  "xp": 93,
+  "spells": [
+   {
+    "id": 6932,
+    "name": "Troollz",
+    "pa": 3,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 31,
+      "max": 40,
+      "steal": true
+     },
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 17,
+      "max": 22,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 6933,
+    "name": "Pettrooll",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "C3",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 112,
+  "res": {
+   "terre": 26,
+   "feu": -19,
+   "eau": 26,
+   "air": -9,
+   "neutre": 16
+  },
+  "caracs": {
+   "force": 448,
+   "intelligence": 448,
+   "chance": 448,
+   "agilite": 448,
+   "sagesse": 336,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "malediction_de_cra": {
+  "dofusId": 4614,
+  "name": "Malédiction de Crâ",
+  "hp": 3,
+  "speed": 95,
+  "radius": 27,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "malediction_de_cra",
+  "color": "#d8d0b8",
+  "xp": 4,
+  "spells": [],
+  "level": 1,
+  "res": {
+   "terre": 0,
+   "feu": 0,
+   "eau": 0,
+   "air": 0,
+   "neutre": 0
+  },
+  "caracs": {
+   "force": 0,
+   "intelligence": 0,
+   "chance": 0,
+   "agilite": 0,
+   "sagesse": 0,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "jerart_dupaindur": {
+  "dofusId": 4949,
+  "name": "Jérart Dupaindur",
+  "hp": 32500,
+  "speed": 95,
+  "radius": 29,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "jerart_dupaindur",
+  "color": "#d8d0b8",
+  "xp": 95,
+  "spells": [
+   {
+    "id": 8926,
+    "name": "Murge",
+    "pa": 2,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "X1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 51,
+      "max": 60,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -2,
+      "dur": 1
+     }
+    ],
+    "gfx": 21212
+   },
+   {
+    "id": 8927,
+    "name": "Soif inextinguible",
+    "pa": 2,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 2,
+    "anim": 5,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 8929,
+    "name": "Tournée générale",
+    "pa": 2,
+    "po": [
+     1,
+     63
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "avance",
+      "n": 63
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 41,
+      "max": 50,
+      "steal": false
+     }
+    ],
+    "gfx": 21217
+   }
+  ],
+  "level": 130,
+  "res": {
+   "terre": 15,
+   "feu": 15,
+   "eau": 15,
+   "air": 15,
+   "neutre": 15
+  },
+  "caracs": {
+   "force": 300,
+   "intelligence": 300,
+   "chance": 300,
+   "agilite": 300,
+   "sagesse": 600,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "gobrechaun": {
+  "dofusId": 5073,
+  "name": "Gobrechaun",
+  "hp": 27500,
+  "speed": 95,
+  "radius": 20,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "gobrechaun",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 8975,
+    "name": "Jig",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "V1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ],
+    "gfx": 137
+   },
+   {
+    "id": 8976,
+    "name": "Lance-en-Ciel",
+    "pa": 2,
+    "po": [
+     1,
+     15
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 17,
+      "max": 20,
+      "steal": false
+     },
+     {
+      "k": "pa",
+      "n": -2,
+      "dur": 2
+     },
+     {
+      "k": "puissance",
+      "n": -100,
+      "dur": 2
+     }
+    ],
+    "gfx": 114
+   }
+  ],
+  "level": 110,
+  "res": {
+   "terre": 15,
+   "feu": 0,
+   "eau": 20,
+   "air": 0,
+   "neutre": 0
+  },
+  "caracs": {
+   "force": 300,
+   "intelligence": 300,
+   "chance": 300,
+   "agilite": 300,
+   "sagesse": 440,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "sarkapwane": {
+  "dofusId": 6203,
+  "name": "Sarkapwane",
+  "hp": 5500,
+  "speed": 95,
+  "radius": 20,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "sarkapwane",
+  "color": "#d8d0b8",
+  "xp": 95,
+  "spells": [
+   {
+    "id": 16717,
+    "name": "Crache eau",
+    "pa": 3,
+    "po": [
+     3,
+     8
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 30,
+      "max": 34,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 30,
+      "max": 34,
+      "steal": false
+     }
+    ],
+    "missile": 5724
+   },
+   {
+    "id": 16718,
+    "name": "Kwap",
+    "pa": 3,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 36,
+      "max": 42,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 36,
+      "max": 42,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 16721,
+    "name": "Invocation de Bombombre",
+    "pa": 3,
+    "po": [
+     3,
+     9
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "C2",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 16914,
+    "name": "Kwarakiri",
+    "pa": 1,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 3,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 122,
+  "res": {
+   "terre": 10,
+   "feu": -5,
+   "eau": -5,
+   "air": 20,
+   "neutre": 10
+  },
+  "caracs": {
+   "force": 368,
+   "intelligence": 368,
+   "chance": 368,
+   "agilite": 368,
+   "sagesse": 298,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "ishigro_pake": {
+  "dofusId": 6220,
+  "name": "Ishigro Pake",
+  "hp": 6250,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "ishigro_pake",
+  "color": "#d8d0b8",
+  "xp": 95,
+  "spells": [
+   {
+    "id": 16692,
+    "name": "Tsunamishi",
+    "pa": 4,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "avance",
+      "n": 4
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 27,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 2
+     }
+    ],
+    "gfx": 5791
+   },
+   {
+    "id": 16694,
+    "name": "Élévation du Jardin de Pierres",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 2,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 30,
+      "max": 34,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 16695,
+    "name": "Ishi Nuken",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 6,
+      "max": 8,
+      "steal": false
+     },
+     {
+      "k": "pa",
+      "n": -1,
+      "dur": 1
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 6,
+      "max": 8,
+      "steal": false
+     },
+     {
+      "k": "pa",
+      "n": -1,
+      "dur": 1
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 6,
+      "max": 8,
+      "steal": false
+     },
+     {
+      "k": "pa",
+      "n": -1,
+      "dur": 1
+     }
+    ],
+    "gfx": 5853
+   }
+  ],
+  "level": 122,
+  "res": {
+   "terre": 40,
+   "feu": 10,
+   "eau": -15,
+   "air": -30,
+   "neutre": 5
+  },
+  "caracs": {
+   "force": 368,
+   "intelligence": 368,
+   "chance": 368,
+   "agilite": 368,
+   "sagesse": 298,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "tetonuki": {
+  "dofusId": 6221,
+  "name": "Tétonuki",
+  "hp": 6250,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "tetonuki",
+  "color": "#d8d0b8",
+  "xp": 95,
+  "spells": [
+   {
+    "id": 16697,
+    "name": "Tambourrin",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "C4",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 40,
+      "dur": 1
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 28,
+      "max": 31,
+      "steal": false
+     },
+     {
+      "k": "attire",
+      "n": 4
+     },
+     {
+      "k": "repousse",
+      "n": 4
+     }
+    ],
+    "gfx": 5900
+   },
+   {
+    "id": 16698,
+    "name": "Percusseins",
+    "pa": 4,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "C2",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 26,
+      "max": 29,
+      "steal": false
+     }
+    ],
+    "gfx": 5899
+   },
+   {
+    "id": 16769,
+    "name": "Karmamelon",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 122,
+  "res": {
+   "terre": 20,
+   "feu": 30,
+   "eau": -30,
+   "air": -5,
+   "neutre": -5
+  },
+  "caracs": {
+   "force": 368,
+   "intelligence": 368,
+   "chance": 368,
+   "agilite": 368,
+   "sagesse": 289,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "parashukoui": {
+  "dofusId": 6222,
+  "name": "Parashukouï",
+  "hp": 6250,
+  "speed": 95,
+  "radius": 19,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "parashukoui",
+  "color": "#d8d0b8",
+  "xp": 95,
+  "spells": [
+   {
+    "id": 16699,
+    "name": "Valseuses",
+    "pa": 4,
+    "po": [
+     1,
+     4
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 27,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 16700,
+    "name": "Transpompoko",
+    "pa": 4,
+    "po": [
+     4,
+     8
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 29,
+      "max": 32,
+      "steal": false
+     },
+     {
+      "k": "pa",
+      "n": -100,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 16770,
+    "name": "Testirossa",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 20,
+      "max": 23,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 122,
+  "res": {
+   "terre": -20,
+   "feu": 5,
+   "eau": 10,
+   "air": 30,
+   "neutre": -15
+  },
+  "caracs": {
+   "force": 368,
+   "intelligence": 368,
+   "chance": 368,
+   "agilite": 368,
+   "sagesse": 298,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "lolojiki": {
+  "dofusId": 6223,
+  "name": "Lolojiki",
+  "hp": 6250,
+  "speed": 95,
+  "radius": 31,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "lolojiki",
+  "color": "#d8d0b8",
+  "xp": 95,
+  "spells": [
+   {
+    "id": 16703,
+    "name": "Poterie Tanuki",
+    "pa": 4,
+    "po": [
+     1,
+     12
+    ],
+    "relance": 2,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 22,
+      "max": 25,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 16706,
+    "name": "Kaolin",
+    "pa": 3,
+    "po": [
+     6,
+     10
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 16,
+      "max": 19,
+      "steal": false
+     }
+    ],
+    "gfx": 5792
+   },
+   {
+    "id": 16767,
+    "name": "Terre Glaise",
+    "pa": 4,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "+2",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 12,
+      "max": 14,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 12,
+      "max": 14,
+      "steal": false
+     }
+    ],
+    "gfx": 5808
+   }
+  ],
+  "level": 122,
+  "res": {
+   "terre": 15,
+   "feu": -30,
+   "eau": 30,
+   "air": -15,
+   "neutre": 15
+  },
+  "caracs": {
+   "force": 368,
+   "intelligence": 368,
+   "chance": 368,
+   "agilite": 368,
+   "sagesse": 298,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "kokom": {
+  "dofusId": 6229,
+  "name": "Kokom",
+  "hp": 6250,
+  "speed": 95,
+  "radius": 23,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "kokom",
+  "color": "#d8d0b8",
+  "xp": 95,
+  "spells": [
+   {
+    "id": 16721,
+    "name": "Invocation de Bombombre",
+    "pa": 3,
+    "po": [
+     3,
+     9
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "C2",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 16722,
+    "name": "Kom koko",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "T1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 18,
+      "max": 21,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 18,
+      "max": 21,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 18,
+      "max": 21,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 18,
+      "max": 21,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "id": 16723,
+    "name": "Attirance du concombre",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 2,
+    "zone": "C63",
+    "allies": false,
+    "effects": [
+     {
+      "k": "attire",
+      "n": 0
+     },
+     {
+      "k": "attire",
+      "n": 1
+     },
+     {
+      "k": "attire",
+      "n": 2
+     },
+     {
+      "k": "attire",
+      "n": 3
+     },
+     {
+      "k": "attire",
+      "n": 4
+     },
+     {
+      "k": "attire",
+      "n": 5
+     },
+     {
+      "k": "attire",
+      "n": 6
+     },
+     {
+      "k": "attire",
+      "n": 7
+     },
+     {
+      "k": "attire",
+      "n": 8
+     },
+     {
+      "k": "attire",
+      "n": 1
+     },
+     {
+      "k": "attire",
+      "n": 2
+     },
+     {
+      "k": "attire",
+      "n": 3
+     },
+     {
+      "k": "attire",
+      "n": 4
+     },
+     {
+      "k": "attire",
+      "n": 5
+     },
+     {
+      "k": "attire",
+      "n": 6
+     },
+     {
+      "k": "attire",
+      "n": 7
+     },
+     {
+      "k": "attire",
+      "n": 8
+     }
+    ]
+   },
+   {
+    "id": 16914,
+    "name": "Kwarakiri",
+    "pa": 1,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 3,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 122,
+  "res": {
+   "terre": -15,
+   "feu": 20,
+   "eau": 20,
+   "air": -5,
+   "neutre": -15
+  },
+  "caracs": {
+   "force": 368,
+   "intelligence": 368,
+   "chance": 368,
+   "agilite": 368,
+   "sagesse": 298,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "akakwa": {
+  "dofusId": 6230,
+  "name": "Akakwa",
+  "hp": 7250,
+  "speed": 95,
+  "radius": 18,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "akakwa",
+  "color": "#d8d0b8",
+  "xp": 95,
+  "spells": [
+   {
+    "id": 16724,
+    "name": "Kwapoeira",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "C2",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 39,
+      "max": 46,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 39,
+      "max": 46,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 16721,
+    "name": "Invocation de Bombombre",
+    "pa": 3,
+    "po": [
+     3,
+     9
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "C2",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 16725,
+    "name": "Akabond",
+    "pa": 3,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "L63",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 31,
+      "max": 36,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 16914,
+    "name": "Kwarakiri",
+    "pa": 1,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 3,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 122,
+  "res": {
+   "terre": 20,
+   "feu": 10,
+   "eau": 5,
+   "air": -15,
+   "neutre": 20
+  },
+  "caracs": {
+   "force": 368,
+   "intelligence": 368,
+   "chance": 368,
+   "agilite": 368,
+   "sagesse": 298,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "betto": {
+  "dofusId": 6231,
+  "name": "Betto",
+  "hp": 8500,
+  "speed": 95,
+  "radius": 27,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "betto",
+  "color": "#d8d0b8",
+  "xp": 95,
+  "spells": [
+   {
+    "id": 16721,
+    "name": "Invocation de Bombombre",
+    "pa": 3,
+    "po": [
+     3,
+     9
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "C2",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 16728,
+    "name": "Pioche-concombre",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "G1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 43,
+      "max": 50,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 43,
+      "max": 50,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 16729,
+    "name": "Komatomi",
+    "pa": 3,
+    "po": [
+     3,
+     12
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 27,
+      "max": 32,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 27,
+      "max": 32,
+      "steal": false
+     },
+     {
+      "k": "attire",
+      "n": 1
+     }
+    ],
+    "gfx": 5733
+   },
+   {
+    "id": 16914,
+    "name": "Kwarakiri",
+    "pa": 1,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 3,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 122,
+  "res": {
+   "terre": -5,
+   "feu": -15,
+   "eau": 30,
+   "air": 10,
+   "neutre": -5
+  },
+  "caracs": {
+   "force": 368,
+   "intelligence": 368,
+   "chance": 368,
+   "agilite": 368,
+   "sagesse": 298,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "bambouto": {
+  "dofusId": 6318,
+  "name": "Bambouto",
+  "hp": 4500,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "bambouto",
+  "color": "#d8d0b8",
+  "xp": 92,
+  "spells": [
+   {
+    "id": 16916,
+    "name": "Bambouffe",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "Q2",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 26,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 26,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 26,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 26,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 16917,
+    "name": "Photosynthèse",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "G2",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 16915,
+    "name": "Presse Tige",
+    "pa": 2,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 16,
+      "max": 20,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 16,
+      "max": 20,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 16,
+      "max": 20,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 16,
+      "max": 20,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 1
+     }
+    ]
+   }
+  ],
+  "level": 102,
+  "res": {
+   "terre": 9,
+   "feu": 9,
+   "eau": 4,
+   "air": 7,
+   "neutre": 10
+  },
+  "caracs": {
+   "force": 304,
+   "intelligence": 304,
+   "chance": 304,
+   "agilite": 304,
+   "sagesse": 240,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "floristile": {
+  "dofusId": 6320,
+  "name": "Floristile",
+  "hp": 5000,
+  "speed": 95,
+  "radius": 17,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "floristile",
+  "color": "#d8d0b8",
+  "xp": 92,
+  "spells": [
+   {
+    "id": 16919,
+    "name": "Nez Bulleux",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "C2",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 26,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 26,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 26,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 26,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 16918,
+    "name": "Pistirage",
+    "pa": 4,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "attire",
+      "n": 7
+     },
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 16,
+      "max": 20,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 16,
+      "max": 20,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 16,
+      "max": 20,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 16,
+      "max": 20,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 16920,
+    "name": "Pétaclier",
+    "pa": 2,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "desenvoute",
+      "n": 1
+     }
+    ]
+   }
+  ],
+  "level": 102,
+  "res": {
+   "terre": 7,
+   "feu": 8,
+   "eau": 9,
+   "air": 0,
+   "neutre": 11
+  },
+  "caracs": {
+   "force": 304,
+   "intelligence": 304,
+   "chance": 304,
+   "agilite": 304,
+   "sagesse": 240,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "bulbuisson": {
+  "dofusId": 6321,
+  "name": "Bulbuisson",
+  "hp": 4750,
+  "speed": 95,
+  "radius": 16,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "bulbuisson",
+  "color": "#d8d0b8",
+  "xp": 92,
+  "spells": [
+   {
+    "id": 16927,
+    "name": "Bulbronce",
+    "pa": 3,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 16929,
+    "name": "Nectarissement",
+    "pa": 2,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 16,
+      "max": 18,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 16,
+      "max": 18,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 16,
+      "max": 18,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 16,
+      "max": 18,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 16928,
+    "name": "Yuccanon",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 17,
+      "max": 20,
+      "steal": true
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 17,
+      "max": 20,
+      "steal": true
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 17,
+      "max": 20,
+      "steal": true
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 17,
+      "max": 20,
+      "steal": true
+     }
+    ]
+   }
+  ],
+  "level": 102,
+  "res": {
+   "terre": 2,
+   "feu": 10,
+   "eau": 9,
+   "air": 7,
+   "neutre": 4
+  },
+  "caracs": {
+   "force": 304,
+   "intelligence": 304,
+   "chance": 304,
+   "agilite": 304,
+   "sagesse": 240,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "grenufar": {
+  "dofusId": 6323,
+  "name": "Grenufar",
+  "hp": 5250,
+  "speed": 95,
+  "radius": 16,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "grenufar",
+  "color": "#d8d0b8",
+  "xp": 92,
+  "spells": [
+   {
+    "id": 16940,
+    "name": "Plongeon",
+    "pa": 2,
+    "po": [
+     2,
+     7
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "Q1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 16,
+      "max": 18,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 16,
+      "max": 18,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 16,
+      "max": 18,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 16,
+      "max": 18,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 16943,
+    "name": "Bactrasoin",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 2,
+    "anim": 3,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 16942,
+    "name": "Amphibaffe",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 21,
+      "max": 25,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 21,
+      "max": 25,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 21,
+      "max": 25,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 21,
+      "max": 25,
+      "steal": false
+     }
+    ],
+    "gfx": 5748
+   }
+  ],
+  "level": 102,
+  "res": {
+   "terre": 15,
+   "feu": 15,
+   "eau": 15,
+   "air": 15,
+   "neutre": 10
+  },
+  "caracs": {
+   "force": 304,
+   "intelligence": 304,
+   "chance": 304,
+   "agilite": 304,
+   "sagesse": 240,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "damadrya": {
+  "dofusId": 6326,
+  "name": "Damadrya",
+  "hp": 12500,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "damadrya",
+  "color": "#d8d0b8",
+  "xp": 20,
+  "spells": [
+   {
+    "id": 16948,
+    "name": "Aubépine",
+    "pa": 2,
+    "po": [
+     1,
+     10
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 16,
+      "max": 20,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 16,
+      "max": 20,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 16,
+      "max": 20,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 16,
+      "max": 20,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 16950,
+    "name": "Bourgeonnement",
+    "pa": 1,
+    "po": [
+     2,
+     5
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 16949,
+    "name": "Urticaire",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "Q2",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 26,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 26,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 26,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 26,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "puissance",
+      "n": -50,
+      "dur": 1
+     }
+    ]
+   }
+  ],
+  "level": 110,
+  "res": {
+   "terre": 12,
+   "feu": 2,
+   "eau": 8,
+   "air": 10,
+   "neutre": 7
+  },
+  "caracs": {
+   "force": 304,
+   "intelligence": 304,
+   "chance": 304,
+   "agilite": 304,
+   "sagesse": 240,
+   "esquivePA": 0,
+   "esquivePM": 40,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  }
+ },
+ "archi_troollaraj": {
+  "dofusId": 2300,
+  "name": "Trooyé l'Oxydé",
+  "hp": 10750,
+  "speed": 106,
+  "radius": 36,
+  "mass": 5.1,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_troollaraj",
+  "color": "#ffd27a",
+  "xp": 372,
+  "spells": [
+   {
+    "id": 307,
+    "name": "Vindication Troollesque",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pm",
+      "n": 1,
+      "dur": 4
+     },
+     {
+      "k": "pm",
+      "n": 5,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 308,
+    "name": "Absorption Troollesque",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 100,
+      "max": 100
+     },
+     {
+      "k": "pm",
+      "n": 1,
+      "dur": 2
+     }
+    ]
+   },
+   {
+    "id": 3442,
+    "name": "Écrasement Troollesque",
+    "pa": 4,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pa",
+      "n": -3,
+      "dur": 1
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 41,
+      "max": 50,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 112,
+  "res": {
+   "terre": 36,
+   "feu": 1,
+   "eau": -9,
+   "air": 26,
+   "neutre": 36
+  },
+  "caracs": {
+   "force": 996,
+   "intelligence": 996,
+   "chance": 996,
+   "agilite": 996,
+   "sagesse": 436,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "troollaraj",
+  "archiEchelle": 1.0,
+  "ame": "34020"
+ },
+ "archi_corbac": {
+  "dofusId": 2437,
+  "name": "Corpat le Vampire",
+  "hp": 9250,
+  "speed": 106,
+  "radius": 18,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_corbac",
+  "color": "#ffd27a",
+  "xp": 368,
+  "spells": [
+   {
+    "id": 624,
+    "name": "Cri Déstabilisateur",
+    "pa": 3,
+    "po": [
+     0,
+     6
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 17,
+      "max": 20,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 3368,
+    "name": "Lancer d'œuf",
+    "pa": 2,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 21,
+      "max": 26,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 6963,
+    "name": "Dilacération",
+    "pa": 5,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 2,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 31,
+      "max": 40,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 102,
+  "res": {
+   "terre": 36,
+   "feu": 36,
+   "eau": -9,
+   "air": -9,
+   "neutre": 36
+  },
+  "caracs": {
+   "force": 916,
+   "intelligence": 916,
+   "chance": 916,
+   "agilite": 916,
+   "sagesse": 406,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "corbac",
+  "archiEchelle": 1.0,
+  "ame": "34067"
+ },
+ "archi_koalak_sanguin": {
+  "dofusId": 2519,
+  "name": "Koalvissie le Chauve",
+  "hp": 10000,
+  "speed": 106,
+  "radius": 23,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_koalak_sanguin",
+  "color": "#ffd27a",
+  "xp": 368,
+  "spells": [
+   {
+    "id": 731,
+    "name": "Sang Chaud",
+    "pa": 2,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 4,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 782,
+    "name": "Punition Sanguine",
+    "pa": 6,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 11,
+      "max": 15,
+      "steal": true
+     }
+    ]
+   },
+   {
+    "id": 3054,
+    "name": "Transfert de Vie Sanguin",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 1,
+    "anim": 9,
+    "zone": "C3",
+    "allies": true,
+    "effects": [],
+    "gfx": 21103
+   },
+   {
+    "id": 3055,
+    "name": "Châtiment Sanguin",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 5,
+    "anim": 9,
+    "zone": "P1",
+    "allies": false,
+    "effects": [],
+    "gfx": 985
+   }
+  ],
+  "level": 102,
+  "res": {
+   "terre": 25,
+   "feu": 20,
+   "eau": 0,
+   "air": -10,
+   "neutre": 30
+  },
+  "caracs": {
+   "force": 100,
+   "intelligence": 100,
+   "chance": 100,
+   "agilite": 300,
+   "sagesse": 200,
+   "esquivePA": 5,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "koalak_sanguin",
+  "archiEchelle": 1.0,
+  "ame": "33936"
+ },
+ "archi_warko_violet": {
+  "dofusId": 2307,
+  "name": "Wara l'Amer",
+  "hp": 10750,
+  "speed": 106,
+  "radius": 31,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_warko_violet",
+  "color": "#ffd27a",
+  "xp": 409,
+  "spells": [
+   {
+    "id": 746,
+    "name": "Invocation de Workette",
+    "pa": 5,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 4,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 747,
+    "name": "Cécité",
+    "pa": 2,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 4,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 51,
+      "max": 60,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 748,
+    "name": "Vision Lointaine",
+    "pa": 2,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 4,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 749,
+    "name": "Pichenette",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "T1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 31,
+      "max": 50,
+      "steal": true
+     }
+    ]
+   }
+  ],
+  "level": 106,
+  "res": {
+   "terre": -9,
+   "feu": 20,
+   "eau": -9,
+   "air": 20,
+   "neutre": 40
+  },
+  "caracs": {
+   "force": 100,
+   "intelligence": 500,
+   "chance": 500,
+   "agilite": 500,
+   "sagesse": 250,
+   "esquivePA": 11,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "warko_violet",
+  "archiEchelle": 1.0,
+  "ame": "34023"
+ },
+ "archi_guerrier_koalak": {
+  "dofusId": 2497,
+  "name": "Guerrite le Veilleur",
+  "hp": 9000,
+  "speed": 106,
+  "radius": 34,
+  "mass": 5.1,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_guerrier_koalak",
+  "color": "#ffd27a",
+  "xp": 368,
+  "spells": [
+   {
+    "id": 742,
+    "name": "Boutade",
+    "pa": 5,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 31,
+      "max": 40,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 4
+     },
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 743,
+    "name": "Assommoir",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 21,
+      "max": 35,
+      "steal": false
+     },
+     {
+      "k": "pa",
+      "n": -100,
+      "dur": 1
+     },
+     {
+      "k": "pm",
+      "n": -100,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 3050,
+    "name": "Rage du Guerrier",
+    "pa": 6,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 6,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 31,
+      "dur": 4
+     }
+    ]
+   }
+  ],
+  "level": 101,
+  "res": {
+   "terre": 20,
+   "feu": 20,
+   "eau": 1,
+   "air": -9,
+   "neutre": 50
+  },
+  "caracs": {
+   "force": 100,
+   "intelligence": 100,
+   "chance": 580,
+   "agilite": 580,
+   "sagesse": 340,
+   "esquivePA": 7,
+   "esquivePM": 6,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "guerrier_koalak",
+  "archiEchelle": 1.0,
+  "ame": "34094"
+ },
+ "archi_koalak_farouche": {
+  "dofusId": 2514,
+  "name": "Koalaboi le Calorifère",
+  "hp": 7500,
+  "speed": 106,
+  "radius": 23,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_koalak_farouche",
+  "color": "#ffd27a",
+  "xp": 368,
+  "spells": [
+   {
+    "id": 752,
+    "name": "Sarbakane",
+    "pa": 4,
+    "po": [
+     2,
+     7
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 41,
+      "max": 60,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 753,
+    "name": "Soufflette de Kaliptus",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 31,
+      "max": 40,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 3052,
+    "name": "Invisibilité Farouche",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 8,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pm",
+      "n": 2,
+      "dur": 3
+     }
+    ]
+   },
+   {
+    "id": 3053,
+    "name": "Invisibilité Farouche d'Autrui",
+    "pa": 2,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 6,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   }
+  ],
+  "level": 104,
+  "res": {
+   "terre": 20,
+   "feu": 1,
+   "eau": 1,
+   "air": 20,
+   "neutre": 30
+  },
+  "caracs": {
+   "force": 100,
+   "intelligence": 100,
+   "chance": 100,
+   "agilite": 700,
+   "sagesse": 250,
+   "esquivePA": 4,
+   "esquivePM": 19,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "koalak_farouche",
+  "archiEchelle": 1.0,
+  "ame": "33932"
+ },
+ "archi_maitre_koalak": {
+  "dofusId": 2531,
+  "name": "Maître Koantik le Théoricien",
+  "hp": 10000,
+  "speed": 106,
+  "radius": 24,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_maitre_koalak",
+  "color": "#ffd27a",
+  "xp": 372,
+  "spells": [
+   {
+    "id": 762,
+    "name": "Frappe du Maître",
+    "pa": 5,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "C2",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 101,
+      "max": 120,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 763,
+    "name": "Réconciliation",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 2,
+    "anim": 0,
+    "zone": "X1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 51,
+      "max": 80
+     }
+    ]
+   },
+   {
+    "id": 3431,
+    "name": "Transposition du Maître",
+    "pa": 3,
+    "po": [
+     1,
+     10
+    ],
+    "relance": 4,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [],
+    "gfx": 1621
+   }
+  ],
+  "level": 108,
+  "res": {
+   "terre": 0,
+   "feu": 60,
+   "eau": 0,
+   "air": 0,
+   "neutre": -15
+  },
+  "caracs": {
+   "force": 100,
+   "intelligence": 500,
+   "chance": 300,
+   "agilite": 1100,
+   "sagesse": 200,
+   "esquivePA": 5,
+   "esquivePM": 8,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "maitre_koalak",
+  "archiEchelle": 1.0,
+  "ame": "34082"
+ },
+ "archi_chevaucheur_koalak": {
+  "dofusId": 2429,
+  "name": "Koamag'oel le Défiguré",
+  "hp": 9250,
+  "speed": 106,
+  "radius": 36,
+  "mass": 5.1,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_chevaucheur_koalak",
+  "color": "#ffd27a",
+  "xp": 368,
+  "spells": [
+   {
+    "id": 756,
+    "name": "Choc Frontal",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 757,
+    "name": "Correction",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 16,
+      "max": 25,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -3,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 758,
+    "name": "Prévention",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 6,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 102,
+  "res": {
+   "terre": 39,
+   "feu": -48,
+   "eau": 20,
+   "air": 60,
+   "neutre": 30
+  },
+  "caracs": {
+   "force": 100,
+   "intelligence": 100,
+   "chance": 100,
+   "agilite": 1100,
+   "sagesse": 250,
+   "esquivePA": 5,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "chevaucheur_koalak",
+  "archiEchelle": 1.0,
+  "ame": "34058"
+ },
+ "archi_momie_koalak": {
+  "dofusId": 2534,
+  "name": "Momikonos la Bandelette",
+  "hp": 9750,
+  "speed": 106,
+  "radius": 27,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_momie_koalak",
+  "color": "#ffd27a",
+  "xp": 372,
+  "spells": [
+   {
+    "id": 759,
+    "name": "Malédiction de la Momie",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 4,
+    "zone": "C63",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 16,
+      "max": 20,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 760,
+    "name": "Clepsydre",
+    "pa": 5,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "X3",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 31,
+      "max": 40,
+      "steal": true
+     },
+     {
+      "k": "pa",
+      "n": -2,
+      "dur": 0
+     }
+    ]
+   },
+   {
+    "id": 761,
+    "name": "Bandelette Ancestrale",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 1,
+    "zone": "X3",
+    "allies": true,
+    "effects": []
+   }
+  ],
+  "level": 106,
+  "res": {
+   "terre": -15,
+   "feu": 20,
+   "eau": 60,
+   "air": -40,
+   "neutre": 70
+  },
+  "caracs": {
+   "force": 100,
+   "intelligence": 500,
+   "chance": 600,
+   "agilite": 300,
+   "sagesse": 500,
+   "esquivePA": 12,
+   "esquivePM": 16,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "momie_koalak",
+  "archiEchelle": 1.0,
+  "ame": "34083"
+ },
+ "archi_fossoyeur_koalak": {
+  "dofusId": 2482,
+  "name": "Fossamoel le Juteux",
+  "hp": 9000,
+  "speed": 106,
+  "radius": 21,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_fossoyeur_koalak",
+  "color": "#ffd27a",
+  "xp": 368,
+  "spells": [
+   {
+    "id": 754,
+    "name": "Enterrement",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 7,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pm",
+      "n": 3,
+      "dur": 2
+     }
+    ]
+   },
+   {
+    "id": 755,
+    "name": "Motte de terre",
+    "pa": 4,
+    "po": [
+     1,
+     4
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 31,
+      "max": 45,
+      "steal": false
+     },
+     {
+      "k": "puissance",
+      "n": -21,
+      "dur": 4
+     }
+    ]
+   }
+  ],
+  "level": 101,
+  "res": {
+   "terre": 60,
+   "feu": 30,
+   "eau": -9,
+   "air": 30,
+   "neutre": 20
+  },
+  "caracs": {
+   "force": 600,
+   "intelligence": 100,
+   "chance": 100,
+   "agilite": 900,
+   "sagesse": 150,
+   "esquivePA": 4,
+   "esquivePM": 19,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "fossoyeur_koalak",
+  "archiEchelle": 1.0,
+  "ame": "33915"
+ },
+ "archi_fauchalak": {
+  "dofusId": 2567,
+  "name": "Faufoll la Joyeuse",
+  "hp": 10000,
+  "speed": 106,
+  "radius": 36,
+  "mass": 5.1,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_fauchalak",
+  "color": "#ffd27a",
+  "xp": 372,
+  "spells": [
+   {
+    "id": 779,
+    "name": "Malédiction Koalak",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "C63",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pm",
+      "n": -3,
+      "dur": 1
+     },
+     {
+      "k": "pa",
+      "n": -3,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 780,
+    "name": "Fauche",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 781,
+    "name": "Renfort du Cimetière Primitif",
+    "pa": 4,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 10,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "invoque",
+      "monster": "chevaucheur_koalak"
+     },
+     {
+      "k": "invoque",
+      "monster": "fossoyeur_koalak"
+     },
+     {
+      "k": "invoque",
+      "monster": "maitre_koalak"
+     },
+     {
+      "k": "invoque",
+      "monster": "momie_koalak"
+     }
+    ]
+   },
+   {
+    "id": 3049,
+    "name": "Libération Koalak",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 2,
+    "anim": 1,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "repousse",
+      "n": 3
+     }
+    ]
+   }
+  ],
+  "level": 108,
+  "res": {
+   "terre": 20,
+   "feu": 0,
+   "eau": 30,
+   "air": 0,
+   "neutre": 40
+  },
+  "caracs": {
+   "force": 100,
+   "intelligence": 500,
+   "chance": 300,
+   "agilite": 1300,
+   "sagesse": 200,
+   "esquivePA": 6,
+   "esquivePM": 28,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "fauchalak",
+  "archiEchelle": 1.0,
+  "ame": "33970"
+ },
+ "archi_bitouf_des_plaines": {
+  "dofusId": 2547,
+  "name": "Toufou le Benêt",
+  "hp": 8500,
+  "speed": 106,
+  "radius": 34,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_bitouf_des_plaines",
+  "color": "#ffd27a",
+  "xp": 364,
+  "spells": [
+   {
+    "id": 944,
+    "name": "Vrüt vrüt",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 4534,
+    "name": "Plumeau Cécitant",
+    "pa": 2,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 11,
+      "max": 15,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 97,
+  "res": {
+   "terre": -9,
+   "feu": -13,
+   "eau": 1,
+   "air": 1,
+   "neutre": 15
+  },
+  "caracs": {
+   "force": 540,
+   "intelligence": 540,
+   "chance": 540,
+   "agilite": 540,
+   "sagesse": 320,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "bitouf_des_plaines",
+  "archiEchelle": 1.0,
+  "ame": "33951"
+ },
+ "archi_craqueleur_poli": {
+  "dofusId": 2561,
+  "name": "Crathdogue le Cruel",
+  "hp": 8250,
+  "speed": 106,
+  "radius": 36,
+  "mass": 5.1,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_craqueleur_poli",
+  "color": "#ffd27a",
+  "xp": 364,
+  "spells": [
+   {
+    "id": 945,
+    "name": "Polissage",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 31,
+      "max": 40,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 1029,
+    "name": "Pierre qui roule n'amasse pas mousse",
+    "pa": 3,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [],
+    "gfx": 885
+   },
+   {
+    "id": 1122,
+    "name": "Je vous en prie",
+    "pa": 3,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     },
+     {
+      "k": "pa",
+      "n": -1,
+      "dur": 1
+     }
+    ]
+   }
+  ],
+  "level": 96,
+  "res": {
+   "terre": 35,
+   "feu": 5,
+   "eau": -30,
+   "air": 15,
+   "neutre": 11
+  },
+  "caracs": {
+   "force": 460,
+   "intelligence": 460,
+   "chance": 460,
+   "agilite": 460,
+   "sagesse": 380,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "craqueleur_poli",
+  "archiEchelle": 1.0,
+  "ame": "34085"
+ },
+ "archi_craqueboule_poli": {
+  "dofusId": 2556,
+  "name": "Craquetou le Fissuré",
+  "hp": 8000,
+  "speed": 106,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_craqueboule_poli",
+  "color": "#ffd27a",
+  "xp": 364,
+  "spells": [
+   {
+    "id": 951,
+    "name": "Rocaille",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 4532,
+    "name": "Glotte",
+    "pa": 4,
+    "po": [
+     2,
+     8
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 200,
+      "pct": true,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 4533,
+    "name": "Tourniquet",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "*5",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 31,
+      "max": 40,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 93,
+  "res": {
+   "terre": 15,
+   "feu": -15,
+   "eau": 15,
+   "air": 35,
+   "neutre": 11
+  },
+  "caracs": {
+   "force": 400,
+   "intelligence": 400,
+   "chance": 400,
+   "agilite": 400,
+   "sagesse": 250,
+   "esquivePA": 4,
+   "esquivePM": 14,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "craqueboule_poli",
+  "archiEchelle": 1.0,
+  "ame": "33960"
+ },
+ "archi_maitre_zoth": {
+  "dofusId": 2578,
+  "name": "Don Kizoth l'Obstiné",
+  "hp": 13000,
+  "speed": 106,
+  "radius": 30,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_maitre_zoth",
+  "color": "#ffd27a",
+  "xp": 380,
+  "spells": [
+   {
+    "id": 1092,
+    "name": "Bataille pour la terre des Zoths",
+    "pa": 7,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 41,
+      "max": 60,
+      "steal": false
+     },
+     {
+      "k": "pa",
+      "n": -10,
+      "dur": 0
+     }
+    ]
+   },
+   {
+    "id": 1093,
+    "name": "Incitation",
+    "pa": 5,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   }
+  ],
+  "level": 126,
+  "res": {
+   "terre": 50,
+   "feu": 3,
+   "eau": -37,
+   "air": 24,
+   "neutre": 21
+  },
+  "caracs": {
+   "force": 1000,
+   "intelligence": 1000,
+   "chance": 1000,
+   "agilite": 1000,
+   "sagesse": 550,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "maitre_zoth",
+  "archiEchelle": 1.0,
+  "ame": "33971"
+ },
+ "archi_gamine_zoth": {
+  "dofusId": 2566,
+  "name": "Gastroth la Contagieuse",
+  "hp": 11500,
+  "speed": 106,
+  "radius": 24,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_gamine_zoth",
+  "color": "#ffd27a",
+  "xp": 376,
+  "spells": [
+   {
+    "id": 1088,
+    "name": "Tyrannie",
+    "pa": 6,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 26,
+      "max": 35,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 1089,
+    "name": "Gaminerie",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 5,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 101,
+      "max": 150
+     }
+    ]
+   },
+   {
+    "id": 4259,
+    "name": "Transgaminerie",
+    "pa": 3,
+    "po": [
+     1,
+     10
+    ],
+    "relance": 4,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "pm",
+      "n": 3,
+      "dur": 1
+     }
+    ],
+    "gfx": 1621
+   }
+  ],
+  "level": 117,
+  "res": {
+   "terre": -29,
+   "feu": 17,
+   "eau": 40,
+   "air": 10,
+   "neutre": 20
+  },
+  "caracs": {
+   "force": 900,
+   "intelligence": 900,
+   "chance": 900,
+   "agilite": 900,
+   "sagesse": 250,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "gamine_zoth",
+  "archiEchelle": 1.0,
+  "ame": "33969"
+ },
+ "archi_guerrier_zoth": {
+  "dofusId": 2569,
+  "name": "Guerumoth le Collant",
+  "hp": 12000,
+  "speed": 106,
+  "radius": 30,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_guerrier_zoth",
+  "color": "#ffd27a",
+  "xp": 376,
+  "spells": [
+   {
+    "id": 1090,
+    "name": "Héchaud Fourrée",
+    "pa": 6,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 6,
+      "max": 10,
+      "steal": false
+     },
+     {
+      "k": "dommages",
+      "n": 200,
+      "dur": 2
+     }
+    ],
+    "gfx": 21003
+   },
+   {
+    "id": 1091,
+    "name": "Mêlée",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 2,
+    "zone": "C3",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 100,
+      "dur": 2
+     },
+     {
+      "k": "pm",
+      "n": 2,
+      "dur": 2
+     }
+    ]
+   }
+  ],
+  "level": 120,
+  "res": {
+   "terre": 15,
+   "feu": 48,
+   "eau": 20,
+   "air": -20,
+   "neutre": -5
+  },
+  "caracs": {
+   "force": 1100,
+   "intelligence": 1100,
+   "chance": 1100,
+   "agilite": 1100,
+   "sagesse": 600,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "guerrier_zoth",
+  "archiEchelle": 1.0,
+  "ame": "34100"
+ },
+ "archi_disciple_zoth": {
+  "dofusId": 2562,
+  "name": "Diskord le Belliqueux",
+  "hp": 11000,
+  "speed": 106,
+  "radius": 26,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_disciple_zoth",
+  "color": "#ffd27a",
+  "xp": 376,
+  "spells": [
+   {
+    "id": 1086,
+    "name": "Supplice",
+    "pa": 5,
+    "po": [
+     1,
+     10
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 16,
+      "max": 25,
+      "steal": false
+     },
+     {
+      "k": "pm",
+      "n": -2,
+      "dur": 1
+     }
+    ],
+    "gfx": 879
+   },
+   {
+    "id": 1087,
+    "name": "Zothomaï",
+    "pa": 5,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 26,
+      "max": 40,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 1
+     }
+    ]
+   }
+  ],
+  "level": 114,
+  "res": {
+   "terre": 20,
+   "feu": -28,
+   "eau": 15,
+   "air": 42,
+   "neutre": 20
+  },
+  "caracs": {
+   "force": 900,
+   "intelligence": 900,
+   "chance": 900,
+   "agilite": 900,
+   "sagesse": 500,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "disciple_zoth",
+  "archiEchelle": 1.0,
+  "ame": "33965"
+ },
+ "archi_sergent_zoth": {
+  "dofusId": 2587,
+  "name": "Seripoth l'Ennemi",
+  "hp": 12500,
+  "speed": 106,
+  "radius": 33,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_sergent_zoth",
+  "color": "#ffd27a",
+  "xp": 380,
+  "spells": [
+   {
+    "id": 1094,
+    "name": "Kulbutage",
+    "pa": 5,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 26,
+      "max": 45,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 11,
+      "max": 20,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 1095,
+    "name": "Emprise",
+    "pa": 4,
+    "po": [
+     1,
+     10
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 123,
+  "res": {
+   "terre": 17,
+   "feu": 15,
+   "eau": 44,
+   "air": -25,
+   "neutre": 2
+  },
+  "caracs": {
+   "force": 900,
+   "intelligence": 900,
+   "chance": 900,
+   "agilite": 900,
+   "sagesse": 500,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "sergent_zoth",
+  "archiEchelle": 1.0,
+  "ame": "34103"
+ },
+ "archi_tourbassingue": {
+  "dofusId": 2361,
+  "name": "Tourbiket le Virevoletant",
+  "hp": 9000,
+  "speed": 106,
+  "radius": 18,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_tourbassingue",
+  "color": "#ffd27a",
+  "xp": 368,
+  "spells": [
+   {
+    "id": 1081,
+    "name": "Tourbe réparatrice",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 2,
+    "anim": 1,
+    "zone": "C2",
+    "allies": true,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 26,
+      "max": 30
+     }
+    ]
+   },
+   {
+    "id": 1082,
+    "name": "Tourbe Malveillante",
+    "pa": 5,
+    "po": [
+     1,
+     7
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 101,
+  "res": {
+   "terre": 25,
+   "feu": 43,
+   "eau": -17,
+   "air": -1,
+   "neutre": 30
+  },
+  "caracs": {
+   "force": 600,
+   "intelligence": 600,
+   "chance": 600,
+   "agilite": 600,
+   "sagesse": 350,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "tourbassingue",
+  "archiEchelle": 1.0,
+  "ame": "34101"
+ },
+ "archi_bourbassingue": {
+  "dofusId": 2363,
+  "name": "Bouliver le Géant",
+  "hp": 8250,
+  "speed": 106,
+  "radius": 28,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_bourbassingue",
+  "color": "#ffd27a",
+  "xp": 364,
+  "spells": [
+   {
+    "id": 1040,
+    "name": "Attraction boueuse",
+    "pa": 4,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "attire",
+      "n": 5
+     }
+    ],
+    "gfx": 888
+   },
+   {
+    "id": 1079,
+    "name": "Boue sirupeuse",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 16,
+      "max": 25,
+      "steal": true
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 16,
+      "max": 25,
+      "steal": true
+     }
+    ]
+   },
+   {
+    "id": 1080,
+    "name": "Bourbier",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "C3",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pm",
+      "n": -3,
+      "dur": 1
+     }
+    ]
+   }
+  ],
+  "level": 95,
+  "res": {
+   "terre": 45,
+   "feu": -21,
+   "eau": 25,
+   "air": 19,
+   "neutre": 23
+  },
+  "caracs": {
+   "force": 500,
+   "intelligence": 500,
+   "chance": 500,
+   "agilite": 500,
+   "sagesse": 300,
+   "esquivePA": 14,
+   "esquivePM": 14,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "bourbassingue",
+  "archiEchelle": 1.0,
+  "ame": "33859"
+ },
+ "archi_mufafah": {
+  "dofusId": 2580,
+  "name": "Mufguedin le Suprême",
+  "hp": 8000,
+  "speed": 106,
+  "radius": 28,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_mufafah",
+  "color": "#ffd27a",
+  "xp": 364,
+  "spells": [
+   {
+    "id": 952,
+    "name": "Rugissement Mufafesque",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 5,
+    "anim": 1,
+    "zone": "C5",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 20,
+      "dur": 3
+     },
+     {
+      "k": "pm",
+      "n": 2,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 1033,
+    "name": "Déchirure",
+    "pa": 5,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 61,
+      "max": 80,
+      "steal": true
+     }
+    ]
+   }
+  ],
+  "level": 94,
+  "res": {
+   "terre": -26,
+   "feu": 37,
+   "eau": 15,
+   "air": 13,
+   "neutre": 15
+  },
+  "caracs": {
+   "force": 280,
+   "intelligence": 280,
+   "chance": 280,
+   "agilite": 280,
+   "sagesse": 190,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "mufafah",
+  "archiEchelle": 1.0,
+  "ame": "33973"
+ },
+ "archi_kido": {
+  "dofusId": 2571,
+  "name": "Kido l'Âtre",
+  "hp": 8250,
+  "speed": 106,
+  "radius": 18,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_kido",
+  "color": "#ffd27a",
+  "xp": 364,
+  "spells": [
+   {
+    "id": 1034,
+    "name": "Clapet",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "L4",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 31,
+      "max": 40,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 4
+     }
+    ]
+   },
+   {
+    "id": 1035,
+    "name": "Cuicui d'Amour",
+    "pa": 3,
+    "po": [
+     1,
+     7
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 16,
+      "max": 20
+     },
+     {
+      "k": "soin",
+      "min": 21,
+      "max": 25
+     }
+    ],
+    "gfx": 886
+   }
+  ],
+  "level": 95,
+  "res": {
+   "terre": -15,
+   "feu": 35,
+   "eau": 5,
+   "air": 16,
+   "neutre": 15
+  },
+  "caracs": {
+   "force": 460,
+   "intelligence": 460,
+   "chance": 460,
+   "agilite": 460,
+   "sagesse": 280,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "kido",
+  "archiEchelle": 1.0,
+  "ame": "34104"
+ },
+ "archi_kilibriss": {
+  "dofusId": 2572,
+  "name": "Kilimanj'haro le Grimpeur",
+  "hp": 8500,
+  "speed": 106,
+  "radius": 36,
+  "mass": 5.1,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_kilibriss",
+  "color": "#ffd27a",
+  "xp": 364,
+  "spells": [
+   {
+    "id": 1036,
+    "name": "Brisskote",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 2,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 41,
+      "max": 60,
+      "steal": true
+     },
+     {
+      "k": "pm",
+      "n": -4,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 1037,
+    "name": "Briss Deuniss",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 4535,
+    "name": "Brissolette",
+    "pa": 5,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 3,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 26,
+      "max": 35,
+      "steal": false
+     }
+    ],
+    "gfx": 20801
+   }
+  ],
+  "level": 98,
+  "res": {
+   "terre": 30,
+   "feu": 1,
+   "eau": 27,
+   "air": -17,
+   "neutre": 37
+  },
+  "caracs": {
+   "force": 460,
+   "intelligence": 460,
+   "chance": 460,
+   "agilite": 460,
+   "sagesse": 380,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "kilibriss",
+  "archiEchelle": 1.0,
+  "ame": "34105"
+ },
+ "archi_le_ouassingue_entourbe": {
+  "dofusId": 2575,
+  "name": "Ouashouash l'Exubérant",
+  "hp": 7750,
+  "speed": 106,
+  "radius": 18,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_le_ouassingue_entourbe",
+  "color": "#ffd27a",
+  "xp": 360,
+  "spells": [
+   {
+    "id": 527,
+    "name": "Équarrissage",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 22,
+      "max": 26,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 3308,
+    "name": "Abnégation",
+    "pa": 2,
+    "po": [
+     0,
+     5
+    ],
+    "relance": 4,
+    "anim": 9,
+    "zone": "C2",
+    "allies": true,
+    "effects": [],
+    "gfx": 1620
+   },
+   {
+    "id": 3309,
+    "name": "Permutation",
+    "pa": 3,
+    "po": [
+     1,
+     10
+    ],
+    "relance": 8,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [],
+    "gfx": 1621
+   },
+   {
+    "id": 3310,
+    "name": "Reformation",
+    "pa": 4,
+    "po": [
+     0,
+     4
+    ],
+    "relance": 8,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 261,
+      "max": 280
+     }
+    ],
+    "gfx": 20106
+   }
+  ],
+  "level": 92,
+  "res": {
+   "terre": 46,
+   "feu": 61,
+   "eau": 66,
+   "air": 61,
+   "neutre": 66
+  },
+  "caracs": {
+   "force": 440,
+   "intelligence": 440,
+   "chance": 440,
+   "agilite": 440,
+   "sagesse": 270,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "le_ouassingue_entourbe",
+  "archiEchelle": 1.0,
+  "ame": "34087"
+ },
+ "archi_sarkapwane": {
+  "dofusId": 2590,
+  "name": "Sarkastik l'Incompris",
+  "hp": 11000,
+  "speed": 106,
+  "radius": 22,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_sarkapwane",
+  "color": "#ffd27a",
+  "xp": 380,
+  "spells": [
+   {
+    "id": 16717,
+    "name": "Crache eau",
+    "pa": 3,
+    "po": [
+     3,
+     8
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 30,
+      "max": 34,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 30,
+      "max": 34,
+      "steal": false
+     }
+    ],
+    "missile": 5724
+   },
+   {
+    "id": 16718,
+    "name": "Kwap",
+    "pa": 3,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 36,
+      "max": 42,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 36,
+      "max": 42,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 16721,
+    "name": "Invocation de Bombombre",
+    "pa": 3,
+    "po": [
+     3,
+     9
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "C2",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 16914,
+    "name": "Kwarakiri",
+    "pa": 1,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 3,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 122,
+  "res": {
+   "terre": 20,
+   "feu": 5,
+   "eau": 5,
+   "air": 30,
+   "neutre": 20
+  },
+  "caracs": {
+   "force": 836,
+   "intelligence": 836,
+   "chance": 836,
+   "agilite": 836,
+   "sagesse": 398,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "sarkapwane",
+  "archiEchelle": 1.0,
+  "ame": "34122"
+ },
+ "archi_ishigro_pake": {
+  "dofusId": 2598,
+  "name": "Bonpake le Chavireur",
+  "hp": 12250,
+  "speed": 106,
+  "radius": 36,
+  "mass": 5.1,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_ishigro_pake",
+  "color": "#ffd27a",
+  "xp": 380,
+  "spells": [
+   {
+    "id": 16692,
+    "name": "Tsunamishi",
+    "pa": 4,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "avance",
+      "n": 4
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 27,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 2
+     }
+    ],
+    "gfx": 5791
+   },
+   {
+    "id": 16694,
+    "name": "Élévation du Jardin de Pierres",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 2,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 30,
+      "max": 34,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 16695,
+    "name": "Ishi Nuken",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 6,
+      "max": 8,
+      "steal": false
+     },
+     {
+      "k": "pa",
+      "n": -1,
+      "dur": 1
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 6,
+      "max": 8,
+      "steal": false
+     },
+     {
+      "k": "pa",
+      "n": -1,
+      "dur": 1
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 6,
+      "max": 8,
+      "steal": false
+     },
+     {
+      "k": "pa",
+      "n": -1,
+      "dur": 1
+     }
+    ],
+    "gfx": 5853
+   }
+  ],
+  "level": 122,
+  "res": {
+   "terre": 40,
+   "feu": 20,
+   "eau": -15,
+   "air": -30,
+   "neutre": 15
+  },
+  "caracs": {
+   "force": 836,
+   "intelligence": 836,
+   "chance": 836,
+   "agilite": 836,
+   "sagesse": 398,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "ishigro_pake",
+  "archiEchelle": 1.0,
+  "ame": "33983"
+ },
+ "archi_tetonuki": {
+  "dofusId": 2414,
+  "name": "Tétonée la Plantureuse",
+  "hp": 12250,
+  "speed": 106,
+  "radius": 36,
+  "mass": 5.1,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_tetonuki",
+  "color": "#ffd27a",
+  "xp": 380,
+  "spells": [
+   {
+    "id": 16697,
+    "name": "Tambourrin",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "C4",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 40,
+      "dur": 1
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 28,
+      "max": 31,
+      "steal": false
+     },
+     {
+      "k": "attire",
+      "n": 4
+     },
+     {
+      "k": "repousse",
+      "n": 4
+     }
+    ],
+    "gfx": 5900
+   },
+   {
+    "id": 16698,
+    "name": "Percusseins",
+    "pa": 4,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "C2",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 26,
+      "max": 29,
+      "steal": false
+     }
+    ],
+    "gfx": 5899
+   },
+   {
+    "id": 16769,
+    "name": "Karmamelon",
+    "pa": 2,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 122,
+  "res": {
+   "terre": 30,
+   "feu": 40,
+   "eau": -20,
+   "air": 5,
+   "neutre": 5
+  },
+  "caracs": {
+   "force": 836,
+   "intelligence": 836,
+   "chance": 836,
+   "agilite": 836,
+   "sagesse": 398,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "tetonuki",
+  "archiEchelle": 1.0,
+  "ame": "33881"
+ },
+ "archi_parashukoui": {
+  "dofusId": 2527,
+  "name": "Parapadkouï l'Émasculé",
+  "hp": 12250,
+  "speed": 106,
+  "radius": 21,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_parashukoui",
+  "color": "#ffd27a",
+  "xp": 380,
+  "spells": [
+   {
+    "id": 16699,
+    "name": "Valseuses",
+    "pa": 4,
+    "po": [
+     1,
+     4
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 27,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 16700,
+    "name": "Transpompoko",
+    "pa": 4,
+    "po": [
+     4,
+     8
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 29,
+      "max": 32,
+      "steal": false
+     },
+     {
+      "k": "pa",
+      "n": -100,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 16770,
+    "name": "Testirossa",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 20,
+      "max": 23,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 122,
+  "res": {
+   "terre": -10,
+   "feu": 15,
+   "eau": 20,
+   "air": 40,
+   "neutre": -5
+  },
+  "caracs": {
+   "force": 836,
+   "intelligence": 836,
+   "chance": 836,
+   "agilite": 836,
+   "sagesse": 398,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "parashukoui",
+  "archiEchelle": 1.0,
+  "ame": "33941"
+ },
+ "archi_lolojiki": {
+  "dofusId": 2434,
+  "name": "Tilolo la Bien Moulée",
+  "hp": 12250,
+  "speed": 106,
+  "radius": 33,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_lolojiki",
+  "color": "#ffd27a",
+  "xp": 380,
+  "spells": [
+   {
+    "id": 16703,
+    "name": "Poterie Tanuki",
+    "pa": 4,
+    "po": [
+     1,
+     12
+    ],
+    "relance": 2,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 22,
+      "max": 25,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 16706,
+    "name": "Kaolin",
+    "pa": 3,
+    "po": [
+     6,
+     10
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 16,
+      "max": 19,
+      "steal": false
+     }
+    ],
+    "gfx": 5792
+   },
+   {
+    "id": 16767,
+    "name": "Terre Glaise",
+    "pa": 4,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "+2",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 12,
+      "max": 14,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 12,
+      "max": 14,
+      "steal": false
+     }
+    ],
+    "gfx": 5808
+   }
+  ],
+  "level": 122,
+  "res": {
+   "terre": 25,
+   "feu": -20,
+   "eau": 40,
+   "air": -5,
+   "neutre": 25
+  },
+  "caracs": {
+   "force": 836,
+   "intelligence": 836,
+   "chance": 836,
+   "agilite": 836,
+   "sagesse": 398,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "lolojiki",
+  "archiEchelle": 1.0,
+  "ame": "33889"
+ },
+ "archi_kokom": {
+  "dofusId": 2592,
+  "name": "Koko la Violente",
+  "hp": 12250,
+  "speed": 106,
+  "radius": 25,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_kokom",
+  "color": "#ffd27a",
+  "xp": 380,
+  "spells": [
+   {
+    "id": 16721,
+    "name": "Invocation de Bombombre",
+    "pa": 3,
+    "po": [
+     3,
+     9
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "C2",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 16722,
+    "name": "Kom koko",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "T1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 18,
+      "max": 21,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 18,
+      "max": 21,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 18,
+      "max": 21,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 18,
+      "max": 21,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "id": 16723,
+    "name": "Attirance du concombre",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 2,
+    "zone": "C63",
+    "allies": false,
+    "effects": [
+     {
+      "k": "attire",
+      "n": 0
+     },
+     {
+      "k": "attire",
+      "n": 1
+     },
+     {
+      "k": "attire",
+      "n": 2
+     },
+     {
+      "k": "attire",
+      "n": 3
+     },
+     {
+      "k": "attire",
+      "n": 4
+     },
+     {
+      "k": "attire",
+      "n": 5
+     },
+     {
+      "k": "attire",
+      "n": 6
+     },
+     {
+      "k": "attire",
+      "n": 7
+     },
+     {
+      "k": "attire",
+      "n": 8
+     },
+     {
+      "k": "attire",
+      "n": 1
+     },
+     {
+      "k": "attire",
+      "n": 2
+     },
+     {
+      "k": "attire",
+      "n": 3
+     },
+     {
+      "k": "attire",
+      "n": 4
+     },
+     {
+      "k": "attire",
+      "n": 5
+     },
+     {
+      "k": "attire",
+      "n": 6
+     },
+     {
+      "k": "attire",
+      "n": 7
+     },
+     {
+      "k": "attire",
+      "n": 8
+     }
+    ]
+   },
+   {
+    "id": 16914,
+    "name": "Kwarakiri",
+    "pa": 1,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 3,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 122,
+  "res": {
+   "terre": -5,
+   "feu": 30,
+   "eau": 30,
+   "air": 5,
+   "neutre": -5
+  },
+  "caracs": {
+   "force": 836,
+   "intelligence": 836,
+   "chance": 836,
+   "agilite": 836,
+   "sagesse": 398,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "kokom",
+  "archiEchelle": 1.0,
+  "ame": "33980"
+ },
+ "archi_akakwa": {
+  "dofusId": 2591,
+  "name": "Akaka le Souillé",
+  "hp": 14750,
+  "speed": 106,
+  "radius": 20,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_akakwa",
+  "color": "#ffd27a",
+  "xp": 380,
+  "spells": [
+   {
+    "id": 16724,
+    "name": "Kwapoeira",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "C2",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 39,
+      "max": 46,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 39,
+      "max": 46,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 16721,
+    "name": "Invocation de Bombombre",
+    "pa": 3,
+    "po": [
+     3,
+     9
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "C2",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 16725,
+    "name": "Akabond",
+    "pa": 3,
+    "po": [
+     1,
+     3
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "L63",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 31,
+      "max": 36,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 16914,
+    "name": "Kwarakiri",
+    "pa": 1,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 3,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 122,
+  "res": {
+   "terre": 30,
+   "feu": 20,
+   "eau": 15,
+   "air": -5,
+   "neutre": 30
+  },
+  "caracs": {
+   "force": 836,
+   "intelligence": 836,
+   "chance": 836,
+   "agilite": 836,
+   "sagesse": 398,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "akakwa",
+  "archiEchelle": 1.0,
+  "ame": "34123"
+ },
+ "archi_betto": {
+  "dofusId": 2510,
+  "name": "Bebetto l'Intellectuel",
+  "hp": 17250,
+  "speed": 106,
+  "radius": 29,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_betto",
+  "color": "#ffd27a",
+  "xp": 380,
+  "spells": [
+   {
+    "id": 16721,
+    "name": "Invocation de Bombombre",
+    "pa": 3,
+    "po": [
+     3,
+     9
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "C2",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 16728,
+    "name": "Pioche-concombre",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "G1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 43,
+      "max": 50,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 43,
+      "max": 50,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 16729,
+    "name": "Komatomi",
+    "pa": 3,
+    "po": [
+     3,
+     12
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 27,
+      "max": 32,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 27,
+      "max": 32,
+      "steal": false
+     },
+     {
+      "k": "attire",
+      "n": 1
+     }
+    ],
+    "gfx": 5733
+   },
+   {
+    "id": 16914,
+    "name": "Kwarakiri",
+    "pa": 1,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 3,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "level": 122,
+  "res": {
+   "terre": 5,
+   "feu": -5,
+   "eau": 40,
+   "air": 20,
+   "neutre": 5
+  },
+  "caracs": {
+   "force": 836,
+   "intelligence": 836,
+   "chance": 836,
+   "agilite": 836,
+   "sagesse": 398,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "betto",
+  "archiEchelle": 1.0,
+  "ame": "34102"
+ },
+ "archi_bambouto": {
+  "dofusId": 2548,
+  "name": "Bambouské le Camouflé",
+  "hp": 9250,
+  "speed": 106,
+  "radius": 36,
+  "mass": 5.1,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_bambouto",
+  "color": "#ffd27a",
+  "xp": 368,
+  "spells": [
+   {
+    "id": 16916,
+    "name": "Bambouffe",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "Q2",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 26,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 26,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 26,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 26,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 16917,
+    "name": "Photosynthèse",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "G2",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 16915,
+    "name": "Presse Tige",
+    "pa": 2,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 16,
+      "max": 20,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 16,
+      "max": 20,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 16,
+      "max": 20,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 16,
+      "max": 20,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 1
+     }
+    ]
+   }
+  ],
+  "level": 102,
+  "res": {
+   "terre": 19,
+   "feu": 19,
+   "eau": 14,
+   "air": 17,
+   "neutre": 20
+  },
+  "caracs": {
+   "force": 708,
+   "intelligence": 708,
+   "chance": 708,
+   "agilite": 708,
+   "sagesse": 340,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "bambouto",
+  "archiEchelle": 1.0,
+  "ame": "33952"
+ },
+ "archi_floristile": {
+  "dofusId": 2392,
+  "name": "Floriste la Cannibale",
+  "hp": 10000,
+  "speed": 106,
+  "radius": 19,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_floristile",
+  "color": "#ffd27a",
+  "xp": 368,
+  "spells": [
+   {
+    "id": 16919,
+    "name": "Nez Bulleux",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "C2",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 26,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 26,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 26,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 26,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 16918,
+    "name": "Pistirage",
+    "pa": 4,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "attire",
+      "n": 7
+     },
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 16,
+      "max": 20,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 16,
+      "max": 20,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 16,
+      "max": 20,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 16,
+      "max": 20,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 16920,
+    "name": "Pétaclier",
+    "pa": 2,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "desenvoute",
+      "n": 1
+     }
+    ]
+   }
+  ],
+  "level": 102,
+  "res": {
+   "terre": 17,
+   "feu": 18,
+   "eau": 19,
+   "air": 10,
+   "neutre": 21
+  },
+  "caracs": {
+   "force": 708,
+   "intelligence": 708,
+   "chance": 708,
+   "agilite": 708,
+   "sagesse": 340,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "floristile",
+  "archiEchelle": 1.0,
+  "ame": "34059"
+ },
+ "archi_bulbuisson": {
+  "dofusId": 2415,
+  "name": "Bulsavon le Gonflé",
+  "hp": 9750,
+  "speed": 106,
+  "radius": 18,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_bulbuisson",
+  "color": "#ffd27a",
+  "xp": 368,
+  "spells": [
+   {
+    "id": 16927,
+    "name": "Bulbronce",
+    "pa": 3,
+    "po": [
+     1,
+     5
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 16929,
+    "name": "Nectarissement",
+    "pa": 2,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 16,
+      "max": 18,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 16,
+      "max": 18,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 16,
+      "max": 18,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 16,
+      "max": 18,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 16928,
+    "name": "Yuccanon",
+    "pa": 3,
+    "po": [
+     1,
+     2
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 17,
+      "max": 20,
+      "steal": true
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 17,
+      "max": 20,
+      "steal": true
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 17,
+      "max": 20,
+      "steal": true
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 17,
+      "max": 20,
+      "steal": true
+     }
+    ]
+   }
+  ],
+  "level": 102,
+  "res": {
+   "terre": 12,
+   "feu": 20,
+   "eau": 19,
+   "air": 17,
+   "neutre": 14
+  },
+  "caracs": {
+   "force": 708,
+   "intelligence": 708,
+   "chance": 708,
+   "agilite": 708,
+   "sagesse": 340,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "bulbuisson",
+  "archiEchelle": 1.0,
+  "ame": "34062"
+ },
+ "archi_grenufar": {
+  "dofusId": 2593,
+  "name": "Grenuche la Gentille",
+  "hp": 10500,
+  "speed": 106,
+  "radius": 18,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_grenufar",
+  "color": "#ffd27a",
+  "xp": 368,
+  "spells": [
+   {
+    "id": 16940,
+    "name": "Plongeon",
+    "pa": 2,
+    "po": [
+     2,
+     7
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "Q1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 16,
+      "max": 18,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 16,
+      "max": 18,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 16,
+      "max": 18,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 16,
+      "max": 18,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 16943,
+    "name": "Bactrasoin",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 2,
+    "anim": 3,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 16942,
+    "name": "Amphibaffe",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 21,
+      "max": 25,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 21,
+      "max": 25,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 21,
+      "max": 25,
+      "steal": false
+     },
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 21,
+      "max": 25,
+      "steal": false
+     }
+    ],
+    "gfx": 5748
+   }
+  ],
+  "level": 102,
+  "res": {
+   "terre": 25,
+   "feu": 25,
+   "eau": 25,
+   "air": 25,
+   "neutre": 20
+  },
+  "caracs": {
+   "force": 708,
+   "intelligence": 708,
+   "chance": 708,
+   "agilite": 708,
+   "sagesse": 340,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "elite": true,
+  "archiDe": "grenufar",
+  "archiEchelle": 1.0,
+  "ame": "33981"
  }
 }

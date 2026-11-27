@@ -35,7 +35,7 @@ if im:
     f.save(f'{D}/carte_fondu.webp', 'WEBP', quality=80, method=6)
 
 plan = {'monde': NOM, 'carte': carte,
-        'maps': [[m['x'], m['y'], m['sub'], 2 if m.get('v06') else 1 if m.get('essai') else 0] for m in sorted(dehors, key=lambda m: (m['y'], m['x']))],
+        'maps': [[m['x'], m['y'], m['sub'], 3 if m.get('v07') else 2 if m.get('v06') else 1 if m.get('essai') else 0] for m in sorted(dehors, key=lambda m: (m['y'], m['x']))],
         'reperes': M.get('reperes', [])}
 
 # --- intérieurs à plusieurs salles (13A) : salles reliées par des portes (zones.json), une composante = un plan ---

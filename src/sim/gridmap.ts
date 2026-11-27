@@ -52,6 +52,8 @@ export interface WorldMapEntry {
   essai?: number;
   /** Carte de la 0.6 (régions 60-90) : on n'y marche que si la 0.6 est ouverte (V06_PUBLIC ou partie de test, WorldGrid.ouvrirV06). */
   v06?: number;
+  /** Carte de la 0.7 (régions 90-120) : on n'y marche que si la 0.7 est ouverte (V07_PUBLIC ou partie de test, WorldGrid.ouvrirV07). */
+  v07?: number;
   /** Intérieur à ciel ouvert (Temple Céleste) : le ciel reste derrière. */
   ciel?: number;
   /** Décor partagé entre cartes (world_export.py PARTAGE=1) : pages d'atlas communes utilisées par cette carte. */
@@ -101,7 +103,7 @@ export class GridMap {
     this.mov = new Uint8Array(this.cols * this.rows);
     const w = data as Partial<WorldData>;
     if (w.movCartes && w.maps && w.origin) {   // grand monde : carte par carte (les cases libres restent dans l'ordre de la grille)
-      for (const m of w.maps) if (!m.essai && !m.v06) for (const c of this.casesCarte(m)) this.mov[c] = 1;
+      for (const m of w.maps) if (!m.essai && !m.v06 && !m.v07) for (const c of this.casesCarte(m)) this.mov[c] = 1;
       for (let c = 0; c < this.mov.length; c++) if (this.mov[c]) this.free.push(c);
     } else {
       const mov = data.mov ?? '';
@@ -273,6 +275,8 @@ export class WorldGrid extends GridMap {
   ouvrirEssai() { for (const m of this.world.maps) if (m.essai && !m.v06) this.ouvrir(this.casesCarte(m)); }
   /** 0.6 ouverte (V06_PUBLIC ou partie de test) : ses régions deviennent marchables. */
   ouvrirV06() { for (const m of this.world.maps) if (m.v06) this.ouvrir(this.casesCarte(m)); }
+  /** 0.7 ouverte (V07_PUBLIC ou partie de test) : ses régions deviennent marchables. */
+  ouvrirV07() { for (const m of this.world.maps) if (m.v07) this.ouvrir(this.casesCarte(m)); }
   ouvrir(cases: number[]) {
     for (const c of cases) {
       if (c < 0 || c >= this.mov.length || this.mov[c] === 1) continue;

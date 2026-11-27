@@ -772,3 +772,22 @@ Toutes sont refaites avec `HD=2` : planche dessinée 2 fois plus grand, `meta.hd
 - Monstres (squelettes 285, 4994, 537, 545, 3640 rapportés du PC dans `cache-dofus/bones-061/`) : planches à SCALE 2.5, 1.5 pour Raul Mops
   (`am/scales.txt`), puis `amakna04/ajout.py`, `monster_spells.py`, `monster_stats.py` (en ne gardant que les nouveaux), `archimonstres.py`,
   `drops_ajout.py`, `xp_monstres.py`, `icones_ajout.py`. Muldos sauvages : squelette 3640 du look, couleurs passées en COULEURS.
+
+## Régions de la 0.7 (partie de test, ligne « 0.7 : » 1A-1E + 2A-2C, 27 nov. 2026)
+- `regions07/liste.py <tables>` -> `regions07/liste.json` : 569 cartes du dehors (Otomaï 454 457 471 468 + Village côtier 466, Cania nord 55 69 523,
+  Koalaks haut 230 275, Pandala 942 941 944 + Village de Pandala 951, Champs de glace 602). Les deux villages portent le Zaap et le port officiels
+  des îles ; le Zaap de Pandala est DANS la taverne de [20,-29] (carte 207619076, une salle) : exportée comme intérieur `taverne_pandala_1`
+  en (-60, 84), porte case 298, checkpoint calculé à la main depuis sa particule ZAAP_ (`particules_amakna.py` prend aussi les cartes v07). Cartes `v07: 1` (WorldGrid.ouvrirV07), sous-zones
+  `v07: true` (`regions07/sous_zones.py <tables> <fr.bin>`, Gobrechaun et Boufmouth légendaire hors des groupes).
+- Export comme Sufokia (`FOND_COULEUR=1 PARTAGE=1`, bords, `COURANTE=1 batiments.py`, `decor_par_carte.py`), puis `regions_monde.py joindre`,
+  `monde_continent.py fusion`, drapeau v07, `reperes.py`, `particules.py` + `amakna04/particules_amakna.py`, `amakna04/raccord_doubles.py`, `regions07/doubles07.py` (doubles entre deux
+  cartes de la liste, bâtiments sans grande image), `amakna04/zaaps_amakna.py` (Zaaps Village côtier, Village de Pandala, Cimetière primitif), `regions_monde.py scinder`,
+  `regions07/carte07.py` (carte M sans tout redessiner), `plan_carte.py` (4e champ = 3 pour la 0.7), `envoi.mjs`.
+- Musiques : `regions07/sons07.py <Musiques.bank> <fsb5> .` : Otomaï = musique des donjons de la jungle, Pandala = donjons « asiatiques »
+  (pas de morceau d'exploration propre dans Dofus 3) ; musiques de COMBAT officielles par région (`combat_<région>_*`, champ `combat` du lieu).
+- Récoltes : relevés dofusdb des 569 cartes ajoutés, `regions07/recoltes07.py <cartes> <tables> <fr.bin>`. Ressources sans dessin ni objet
+  encore (Riz, Bambou, Pandouille, Silicate, Maïs, Belladone…) : à faire avec la suite de la 0.7.
+- Monstres : squelettes dans `cache-dofus/bones-07/` (420 venu de bones-quetes), planches SCALE 2.5 (1.6 Kilibriss, Ali Grothor ; 1.2 Troolligark),
+  puis la chaîne habituelle. `tools/contenu/quete_ocre.py` range les âmes de la 0.7 dans des pages à part (`v07`), les pages publiques ne bougent pas.
+- Bateaux (`zones.json > portes`, `voyage`) : Sufokia [15,28] case 453 ↔ Village côtier [-44,21] case 189 (quête « Cap sur Otomaï »),
+  Madrestam [10,-5] case 342 ↔ Akwadala [21,-20] case 468 (« Cap sur Pandala »). Écrans de voyage `otomai`, `pandala`, `sufokia`.

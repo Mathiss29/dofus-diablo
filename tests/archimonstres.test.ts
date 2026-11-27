@@ -63,7 +63,7 @@ describe('archimonstres d\'Astrub (version 0.3 : 15B)', () => {
 
   it('« Archis : » 6A : une âme officielle par archimonstre (« Âme capturée : <nom> »), jamais mangée par un familier', () => {
     const l = Object.entries(M).filter(([, d]) => d.archiDe);
-    expect(l.length).toBe(144);   // + 4 archis du Rivage sufokien (0.6.1)
+    expect(l.length).toBe(181);   // + 4 archis du Rivage sufokien (0.6.1), + 37 de la 0.7
     for (const [k, d] of l) {
       const r = ITEMS.resources[d.ame!];
       expect(r, k).toBeDefined();

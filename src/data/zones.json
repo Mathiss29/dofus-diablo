@@ -2358,6 +2358,266 @@
       6
      ],
      "region": "Baie de Sufokia"
+    },
+    "454": {
+     "name": "Plaines herbeuses",
+     "level": 100,
+     "monsters": [
+      "bitouf_des_plaines",
+      "craqueleur_poli",
+      "craqueboule_poli",
+      "mufafah",
+      "kido",
+      "kilibriss"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v07": true,
+     "region": "Île d'Otomaï"
+    },
+    "457": {
+     "name": "Tourbière sans fond",
+     "level": 100,
+     "monsters": [
+      "tourbassingue",
+      "bourbassingue",
+      "le_ouassingue_entourbe",
+      "nenufor_tilotus"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v07": true,
+     "region": "Île d'Otomaï"
+    },
+    "471": {
+     "name": "Tourbière nauséabonde",
+     "level": 110,
+     "monsters": [
+      "tourbassingue",
+      "bourbassingue",
+      "le_ouassingue_entourbe",
+      "ali_grothor"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v07": true,
+     "region": "Île d'Otomaï"
+    },
+    "468": {
+     "name": "Village des Zoths",
+     "level": 120,
+     "monsters": [
+      "maitre_zoth",
+      "gamine_zoth",
+      "guerrier_zoth",
+      "disciple_zoth",
+      "sergent_zoth"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v07": true,
+     "region": "Île d'Otomaï"
+    },
+    "55": {
+     "name": "Pénates du Corbac",
+     "level": 100,
+     "monsters": [
+      "corbac",
+      "corbac_apprivoise",
+      "buveur",
+      "renarbo"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v07": true,
+     "region": "Cania"
+    },
+    "69": {
+     "name": "Bois de Litneg",
+     "level": 110,
+     "monsters": [
+      "chafer",
+      "rib",
+      "chafer_invisible",
+      "troollaraj",
+      "chafer_lancier",
+      "chafer_archer",
+      "chafer_fantassin",
+      "padgref_demoel",
+      "kruorre_le_chafer_hai",
+      "troolligark",
+      "troolleole",
+      "troollogram",
+      "malediction_de_cra"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v07": true,
+     "region": "Cania"
+    },
+    "523": {
+     "name": "Cirque de Cania",
+     "level": 120,
+     "monsters": [
+      "truchmuche",
+      "truchideur",
+      "truchtine",
+      "truchon",
+      "fojumo"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v07": true,
+     "region": "Cania"
+    },
+    "230": {
+     "name": "Cimetière primitif",
+     "level": 110,
+     "monsters": [
+      "maitre_koalak",
+      "chevaucheur_koalak",
+      "momie_koalak",
+      "fossoyeur_koalak"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v07": true,
+     "region": "Montagne des Koalaks"
+    },
+    "275": {
+     "name": "Vallée de la Morh'Kitu",
+     "level": 110,
+     "monsters": [
+      "koalak_sanguin",
+      "warko_violet",
+      "guerrier_koalak",
+      "koalak_farouche",
+      "fauchalak"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v07": true,
+     "region": "Montagne des Koalaks"
+    },
+    "942": {
+     "name": "Plantala",
+     "level": 100,
+     "monsters": [
+      "bambouto",
+      "floristile",
+      "bulbuisson",
+      "grenufar"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v07": true,
+     "region": "Île de Pandala"
+    },
+    "941": {
+     "name": "Akwadala",
+     "level": 120,
+     "monsters": [
+      "sarkapwane",
+      "kokom",
+      "akakwa",
+      "betto"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v07": true,
+     "region": "Île de Pandala"
+    },
+    "944": {
+     "name": "Terrdala",
+     "level": 120,
+     "monsters": [
+      "jerart_dupaindur",
+      "ishigro_pake",
+      "tetonuki",
+      "parashukoui",
+      "lolojiki"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v07": true,
+     "region": "Île de Pandala"
+    },
+    "602": {
+     "name": "Champs de glace",
+     "level": 110,
+     "monsters": [
+      "boufmouth",
+      "boufmouth_de_guerre",
+      "bouftonmouth",
+      "bouflouth"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v07": true,
+     "region": "Frigost"
+    },
+    "466": {
+     "name": "Village côtier",
+     "level": 10,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v07": true,
+     "region": "Île d'Otomaï"
+    },
+    "951": {
+     "name": "Village de Pandala",
+     "level": 100,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      3,
+      6
+     ],
+     "v07": true,
+     "region": "Île de Pandala"
     }
    },
    "checkpoints": [
@@ -2576,6 +2836,42 @@
       51604.5
      ],
      "sub": 32
+    },
+    {
+     "name": "Zaap Cimetière primitif",
+     "map": [
+      -12,
+      19
+     ],
+     "zaap": [
+      -9822,
+      45520.0
+     ],
+     "sub": 230
+    },
+    {
+     "name": "Zaap Village côtier",
+     "map": [
+      -46,
+      18
+     ],
+     "zaap": [
+      -50500,
+      44660.0
+     ],
+     "sub": 466
+    },
+    {
+     "name": "Zaap Village de Pandala",
+     "map": [
+      -60,
+      84
+     ],
+     "zaap": [
+      -67700,
+      101420.0
+     ],
+     "sub": 951
     }
    ],
    "portes": [
@@ -4348,6 +4644,53 @@
      ],
      "nom": "Fabricant de skis",
      "i06": 1
+    },
+    {
+     "a": [
+      "15_28",
+      453
+     ],
+     "b": [
+      "-44_21",
+      189
+     ],
+     "nom": "Bateau pour l'île d'Otomaï",
+     "lieux": ["Sufokia", "l'île d'Otomaï"],
+     "quete": "otomai_passage",
+     "marque": true,
+     "voyage": [
+      "sufokia",
+      "otomai"
+     ]
+    },
+    {
+     "a": [
+      "10_-5",
+      342
+     ],
+     "b": [
+      "21_-20",
+      468
+     ],
+     "nom": "Bateau pour l'île de Pandala",
+     "lieux": ["le Port de Madrestam", "l'île de Pandala"],
+     "quete": "pandala_passage",
+     "marque": true,
+     "voyage": [
+      "madrestam",
+      "pandala"
+     ]
+    },
+    {
+     "a": [
+      "20_-29",
+      298
+     ],
+     "b": [
+      "taverne_pandala_1",
+      511
+     ],
+     "nom": "Taverne du Zaap de Pandala"
     }
    ],
    "donjons": [
