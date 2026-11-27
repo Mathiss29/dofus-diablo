@@ -41,8 +41,8 @@ describe('donjons de la 0.7 (ligne « 0.7 : » 4A-4G)', () => {
 
   it('monstres des vagues et boss existent avec leur planche ; les boss ont leur âme ; clés chez Goultard (0.7 visible)', () => {
     const o = GAME_DATA.zones.astrub.open!;
-    expect((o.donjonsV07 ?? []).map(d => d.nom).sort()).toEqual([...DONJONS].sort());
-    for (const d of o.donjonsV07 ?? []) {
+    expect((o.donjonsV07 ?? []).map(d => d.nom).sort()).toEqual([...DONJONS, 'Laboratoire caché'].sort());
+    for (const d of (o.donjonsV07 ?? []).filter(x => !x.bossForce)) {
       for (const m of [...d.vagues!.flatMap(v => v.m), ...d.bossVague!]) {
         expect(GAME_DATA.monsters[m], `${d.nom} : ${m}`).toBeDefined();
         expect(LOOKS[GAME_DATA.monsters[m].look ?? m], `${d.nom} : planche de ${m}`).toBeDefined();

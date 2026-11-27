@@ -54468,6 +54468,12 @@
    "icon": 84257,
    "level": 120,
    "cle": "Serre du Royalmouth"
+  },
+  "cle_labo_cache": {
+   "name": "Clé du Laboratoire caché",
+   "icon": 84246,
+   "level": 110,
+   "cle": "Laboratoire caché"
   }
  },
  "drops": {
@@ -77029,7 +77035,13 @@
     },
     "chasse": true
    }
-  ]
+  ],
+  "kilibriss_du_laboratoire": [],
+  "bitouf_des_plaines_du_laboratoire": [],
+  "craqueboule_poli_du_laboratoire": [],
+  "craqueleur_poli_du_laboratoire": [],
+  "kido_du_laboratoire": [],
+  "mufafah_du_laboratoire": []
  },
  "recipes": [
   {

@@ -25,6 +25,7 @@ import { initiativeBonus, removalChance } from './caracs';
 import { planWave } from './waves';
 import { Arene, ARENE } from './arene';
 import { Guerre } from './guerre';
+import { Siege } from './siege07';
 import { MondeVivant, VIVANT, bonusWeekEnd, type BonusWeekEnd, type VueVivant } from './mondeVivant';
 import PASSANTS from '../data/passants.json';
 import V06 from '../data/v06.json';
@@ -35,6 +36,7 @@ import { DecoHavreSac, gagnerMeuble } from './deco';
 import { hache } from './contrats';
 import { DECO, MEUBLES, meubleDeRecette, raresDuTheme, type SacVu, type SorteSpeciale } from './meubles';
 import { COFFRE_FUYARD, defCoffreFuyard, piloterCoffre } from './coffreFuyard';
+import { GOBRECHAUN, defGobrechaun, gobrechaunVaincu, piloterGobrechaun } from './gobrechaun';
 import { ARENE_AMES, CombatAmes, DEFIS, ameDeLaSemaine, semaineDe, toutesAmes } from './areneAmes';
 import { portailPas, tenterPortail, PORTAIL_TRESOR, type PortailTresor, type VisiteTresor } from './salleTresor';
 import { defAffixes, elitesPas, poserAffixes, tirerAffixes } from './elites';
@@ -384,6 +386,8 @@ export class World {
   /** Arène du donjon où l'on se bat (maquette « Donjons en vagues »), null ailleurs. */
   /** Guerre des Cawottes (0.4, île des Wabbits) : partie de test seulement tant que la 0.4 est cachée. */
   guerre: Guerre | null = null;
+  /** Siège des Zoths (0.7) : avec la 0.7 visible. */
+  siege: Siege | null = null;
   /** 0.5 « monde vivant » (src/sim/mondeVivant.ts) : boss du monde, invasions, petits événements (monde d'Astrub). */
   vivant: MondeVivant | null = null;
   /** Coop, chez l'invité : l'état du monde vivant reçu de l'hôte (il ne fait pas tourner la partie). */
@@ -476,6 +480,7 @@ export class World {
     if (open && this.v06Ouvert) this.worldGrid?.ouvrirV06();   // 0.6 cachée : ses régions seulement en partie de test
     if (open) { this.buildPortes(); this.buildRecoltes(); this.buildPostes(); }
     if (open?.guerre && this.essaiOuvert && this.map instanceof WorldGrid && open.guerre.champs.every(c => this.map instanceof WorldGrid && this.map.mapByTag(c.tag))) this.guerre = new Guerre(this, open.guerre.champs);
+    if (open?.siege07 && this.v07Ouvert && this.map instanceof WorldGrid && this.map.mapByTag(open.siege07.tag)) this.siege = new Siege(this, open.siege07);
     if (open && this.map instanceof WorldGrid && opts.zone === 'astrub' && !opts.sansGroupes) this.vivant = new MondeVivant(this);   // aussi dans le monde du groupe sur le serveur (« En ligne : » 4D)
     if (open && opts.arrivee) this.arriver(opts.arrivee);
     if (open) this.sortieHavreSac(opts);
@@ -1224,6 +1229,8 @@ export class World {
   }
   /** Multi : le butin du coffre d'un joueur (commeJoueur), que lui seul voit et ramasse. */
   poserButinDe(b: Butin, x: number, y: number) { this.poserButin(b, x, y, this.player.id); }
+  /** Des kamas au sol, pour qui les ramasse (le Gobrechaun qui fuit, 0.7). */
+  semerKamas(n: number, x: number, y: number) { if (n > 0) this.poserButin({ ressources: [], objets: [], kamas: n }, x, y); }
   /** Le coffre s'ouvre : son butin jaillit là où il était. */
   ouvrirCoffreDonjon(b: Butin | null, x: number, y: number) {
     if (b) this.poserButin(b, x, y);
@@ -1468,6 +1475,12 @@ export class World {
       const c = this.spawnMonster(CF.monstre, q.x, q.y, defCoffreFuyard(dcf, this.niveauEn(q.x, q.y)));
       c.fuyard = true;
     }
+    // 0.7 (15A) : rarement, le Gobrechaun attend près d'un groupe des Plaines herbeuses (un seul en vie à la fois)
+    const GB = GOBRECHAUN, dgb = this.opts.data.monsters[GB.monstre];
+    if (dgb && !g.fixe && this.v07Ouvert && wg.mapByTag(g.map)?.sub === GB.sub && !this.monsters.some(o => o.gobrechaun && !o.dead) && this.rng.next() < GB.chance * (this.test?.archis ? 10 : 1)) {
+      const a = this.rng.range(0, Math.PI * 2), q = wg.nearestFree(pos.x + Math.cos(a) * 130, pos.y + Math.sin(a) * 130, free);
+      this.spawnMonster(GB.monstre, q.x, q.y, defGobrechaun(dgb)).gobrechaun = true;
+    }
     // 0.6 (21A) : parfois un autel de combat près du groupe, un par carte
     if (!g.fixe && this.players[0]?.v06 && !this.autels.some(a => a.carte === g.map) && this.rng.next() < AUTELS.chance * (this.test?.archis ? 10 : 1)) {
       const a = this.rng.range(0, Math.PI * 2), q = wg.nearestFree(pos.x + Math.cos(a) * 160, pos.y + Math.sin(a) * 160, free);
@@ -1514,6 +1527,7 @@ export class World {
     this.updateArene(dt);
     this.combatAmes?.update(dt);
     this.guerre?.update(dt);
+    this.siege?.update(dt);
     this.vivant?.update(dt);
     if (!this.opts.groupesPartout) this.poserAutourDesJoueurs();
     for (const g of this.groups) {
@@ -1608,7 +1622,8 @@ export class World {
     p.dead = false; p.hp = p.maxHp; p.x = this.checkpoint.x; p.y = this.checkpoint.y; p.kx = p.ky = 0; p.z = 0;
     // Guerre des Cawottes (10D) : mort sur l'île pendant une attaque = relevé au bord du champ, l'attaque continue
     const bord = this.guerre?.attaque && !this.guerre.attaque.fini && this.guerre.surIle().includes(p) ? this.guerre.bordDuChamp() : null;
-    if (bord) { p.x = bord.x; p.y = bord.y; }
+    const place = !bord ? this.siege?.releve(p) : null;
+    if (bord ?? place) { const q = (bord ?? place)!; p.x = q.x; p.y = q.y; }
     p.state = 'free'; p.skill = null; p.invuln = 2; p.rage = 0; p.setAnim('idle');
     this.over = false;
     this.emit({ k: 'respawn' });
@@ -1707,9 +1722,11 @@ export class World {
       if (m.saigneT > 0 && !m.dead) this.saigner(m, dt);
       if ((m.infecteT > 0 || m.poisonT > 0 || m.ronceT > 0 || m.seveT > 0) && !m.dead) majMonstreSadida(this, m, dt);   // Sadida
       if (m.e06) pasMonstre06(this, m, dt);   // sorts 61-90 (0.6) : Noa, Floraison, Corruption, immobilisé…
-      if (m.fuyard && piloterCoffre(this, m, dt)) continue;   // 0.6 (22A) : le Coffre Malveillant détale
+      if (m.fuyard && piloterCoffre(this, m, dt)) continue;
+      if (m.gobrechaun && piloterGobrechaun(this, m, dt)) continue;   // 0.7 (15A) : le lutin au trésor   // 0.6 (22A) : le Coffre Malveillant détale
       if (this.zone.open && m.state === 'idle' && !m.dead && this.players.every(q => Math.abs(m.x - q.x) + Math.abs(m.y - q.y) > World.SOMMEIL)) { m.regenCalme(dt); continue; }
       if (m.guerre && this.guerre?.attaque?.piloter(m, dt)) continue;
+      if (m.siege && this.siege?.piloter(m, dt)) continue;
       if (m.arene && this.arene?.piloter(m, dt)) continue;
       if (m.evenement >= 0 && this.vivant?.piloter(m, dt)) continue;
       m.update(dt, this.cibleDe(m), this);
@@ -2216,6 +2233,7 @@ export class World {
     const p = this.player;
     p.soigner(p.cls.healOnKill + p.legendary('vampire'));
     if (!this.vivant?.monstreVaincu(m)) { this.dropLoot(m); if (m.champion) this.dropLoot(m); if (this.player.autel?.effet === 'fortune') this.dropLoot(m); if (m.fuyard) for (let i = 1; i < COFFRE_FUYARD.butins; i++) this.dropLoot(m); if (m.dore) this.dropLoot(m); if (m.corrompu) this.dropLoot(m); if (m.relache && m.def.archiDe) this.rareDArchi(m); }
+    if (m.gobrechaun) { this.dropLoot(m); gobrechaunVaincu(this, m); }   // 0.7 (15A) : double butin et la clé du Laboratoire caché
     if (m.fuyard) tenterPortail(this, m);   // 0.6 (22B) : une fois sur 20, un portail vers la Salle au trésor   // coffre qui fuit : butin ×5   // Djim : le Champion donne deux fois ; autel de Fortune   // boss du monde : son coffre est donné par le monde vivant (4A)
     if ((m.def.archiDe || (m.def.boss && m.def.ame)) && !m.relache) this.capturer(m);
     const alm = (this.almanax?.effet === 'xp' ? 1 + ALMANAX.xp : 1) * (1 + p.beni('xp')) * (1 + this.bonusDuWeekEnd('xp'));   // 15C, Magasin 6D, 9B (week-end)

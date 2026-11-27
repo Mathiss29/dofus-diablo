@@ -1,5 +1,5 @@
 # export07.py mondes_dir [apercu_dir|-] [noms]   (lancé depuis le dossier de travail : tex/ = <gfx>.png, cartes/ = map_<id>.json)
-# Les arènes des 7 donjons de la 0.7 (ligne « 0.7 : » 4A-4G, 27 nov. 2026 ; Koulosse en 3 étages, 5A) mises en vraies
+# Les arènes des 7 donjons de la 0.7 et du Laboratoire caché (6C) (ligne « 0.7 : » 4A-4G, 27 nov. 2026 ; Koulosse en 3 étages, 5A) mises en vraies
 # cartes du jeu, comme arenes.py et arenes04/export04.py : sol en une image, décor en atlas posé case par case, cases marchables.
 # Rangées sous le monde d'Astrub (ligne y = 98), cartes `v07: 1` (marchables seulement si V07_PUBLIC ou en partie de test).
 # Le monde doit être JOINT avant (regions_monde.py joindre) puis scindé après (regions_monde.py scinder).
@@ -17,7 +17,8 @@ DJ = {'koulosse_1': ('arene_koulosse_1', (-4, 98), 107218944, 808), 'koulosse_2'
       'koulosse_3': ('arene_koulosse_3', (4, 98), 107216896, 808), 'corbac': ('arene_corbac', (8, 98), 159121666, 211),
       'rasboul': ('arene_rasboul', (12, 98), 22809602, 470), 'damadrya': ('arene_damadrya', (16, 98), 208670720, 946),
       'skeunk': ('arene_skeunk', (20, 98), 107484160, 254), 'blop': ('arene_blop_multicolore', (24, 98), 166990850, 796),
-      'royalmouth': ('arene_royalmouth', (28, 98), 55052290, 617)}
+      'royalmouth': ('arene_royalmouth', (28, 98), 55052290, 617),
+      'labo': ('arene_labo_cache', (32, 98), 90179584, 473)}   # 6C : Laboratoire caché (clé du Gobrechaun)
 W, H, OX, OY, COLS, ROWS, NS = C['W'], C['H'], C['OX'], C['OY'], C['COLS'], C['ROWS'], C['NS']
 MW, MH, CX, CY, BOX = C['MW'], C['MH'], C['CX'], C['CY'], C['BOX']
 BT0 = {}

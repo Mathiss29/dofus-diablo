@@ -26,6 +26,7 @@ import { MEUBLES, type SacVu } from '../sim/meubles';
 import { AreneView } from './areneView';
 import { BrumeNuit } from './brume';
 import { GuerreView } from './guerreView';
+import { SiegeView } from './siegeView';
 import { GUERRE } from '../sim/guerre';
 import { SCEAUX } from '../sim/campagne';
 import { chrono } from '../sim/quests';
@@ -243,6 +244,7 @@ export class ZoneScene extends Phaser.Scene {
   private vivantView: VivantView | null = null;
   private brume: BrumeNuit | null = null;
   private guerreView: GuerreView | null = null;
+  private siegeView: SiegeView | null = null;
   /** Boss enfui dans son trou (« Wabbits : 8B »), pour la bannière de fin qui suit. */
   private fuite: { suite: string; premier: boolean; name: string } | null = null;
   /** « Wabbits : 10D » : le Wa Wabbit est sorti du Wobot cassé (bandeau de fin) ; aides du Wa Wobot déjà montrées. */
@@ -488,6 +490,7 @@ export class ZoneScene extends Phaser.Scene {
       if (this.world.zone.open?.donjons?.some(d => d.arene)) { const av = this.areneView = new AreneView(this, this.world); this.events.once('shutdown', () => { av.destroy(); if (this.areneView === av) this.areneView = null; }); }
       if (this.world.zone.open?.subareas['163']) { const b = this.brume = new BrumeNuit(this, this.world); this.events.once('shutdown', () => { b.destroy(); if (this.brume === b) this.brume = null; }); }
       if (this.world.vivant) { const vv = this.vivantView = new VivantView(this, this.world); this.events.once('shutdown', () => { vv.destroy(); if (this.vivantView === vv) this.vivantView = null; }); }
+      if (this.world.siege) { const sv = this.siegeView = new SiegeView(this, this.world); this.events.once('shutdown', () => { sv.destroy(); if (this.siegeView === sv) this.siegeView = null; }); }
       if (this.world.guerre) { const gv = this.guerreView = new GuerreView(this, this.world); this.events.once('shutdown', () => { gv.destroy(); if (this.guerreView === gv) this.guerreView = null; }); }
       if (this.world.postes.length) { const av = this.atelierView = new AtelierView(this, this.world, `${ASSETS}/ui/reperes`); this.events.once('shutdown', () => { av.destroy(); if (this.atelierView === av) this.atelierView = null; }); }
       if (this.world.recoltes.length) { const rv = this.recolteView = new RecolteView(this, this.world); this.events.once('shutdown', () => { rv.destroy(); if (this.recolteView === rv) this.recolteView = null; }); }
@@ -1930,6 +1933,8 @@ export class ZoneScene extends Phaser.Scene {
         return [`Tué par ${r.tueur}`, 'combat', { recap: r.html }];
       }
       case 'guerreDebut': return [`Guerre des cawottes : ${e.champ} est attaqué (${e.vagues} vagues)`, 'evenement'];
+      case 'siegeDebut': return [`${e.nom} : défends la Pierre du village pendant ${Math.round(e.duree / 60)} min`, 'evenement'];
+      case 'siegeFin': return [e.coffre ? `${e.nom} : le village a tenu (${e.pierre} / 100), coffre en ${e.coffre}` : `${e.nom} : le village est tombé`];
       case 'guerreFin': return [e.coffre ? `${e.champ} défendu : ${e.sauvees} / ${e.total} cawottes, +${e.gain} Cawottes` : `${e.champ} ravagé : toutes les cawottes ont été volées`];
       case 'bossMondeAnnonce': { const bm = bossAnnonce(this.world), c = bm && this.world.worldGrid?.mapByTag(bm.carte) ? centreCarte(this.world, bm.carte) : null; return [`Boss du monde : ${e.nom} à ${e.heure}, ${e.lieu}`, 'evenement', c ? { aller: { x: c[0], y: c[1], nom: e.nom } } : undefined]; }
       case 'bossMondeArrive': return [`Boss du monde : ${e.nom} est arrivé, ${e.lieu}`, 'evenement', { aller: { x: e.x, y: e.y, nom: e.nom } }];
@@ -2045,6 +2050,17 @@ export class ZoneScene extends Phaser.Scene {
         case 'invasionCoffre': this.chime('epique'); this.hud.loot('Coffre d\'invasion ouvert', '#b9a3e8'); this.sauver(); this.windows?.refresh(); break;
         case 'evenementDebut': this.hud.banner(`${e.nom}\n${e.lieu}`, 2000, e.sorte === 'defense'); Son.jouer(MANIFESTE.ui.checkpoint, 'interface', { vol: 0.7 }); break;
         case 'evenementFin': if (e.reussi) { this.hud.banner(e.nom, 1600); this.sauver(); this.windows?.refresh(); } else this.hud.toast(e.nom, 2200); break;
+        // Siège des Zoths (0.7, 6A)
+        case 'siegeDebut': this.hud.banner(`Les Zoths attaquent !\nTiens la Pierre du village pendant ${Math.round(e.duree / 60)} min`, 2400, true); Son.jouer(MANIFESTE.ui.objectif, 'interface', { vol: 0.8 }); break;
+        case 'siegeVague': if (e.n > 1) this.hud.banner(`Vague ${e.n} / ${e.total}`, 800); break;
+        case 'siegePierre': if (e.reste <= 30) this.hud.toast(`La Pierre du village faiblit : ${e.reste} / 100`); break;
+        case 'siegeFin': {
+          const C = { or: 'Coffre en or', argent: 'Coffre en argent', bronze: 'Coffre en bronze' };
+          this.hud.banner(e.coffre ? `Le village a tenu !\nPierre ${e.pierre} / 100 · ${C[e.coffre]}` : 'Le village est tombé\nLes Zoths ont brisé la Pierre', 3000, !e.coffre);
+          if (e.coffre === 'or') this.chime('epique');
+          this.sauver(); this.windows?.refresh();
+          break;
+        }
         case 'guerreReplantee': this.hud.toast('Kiafin rattrapé : la cawotte est replantée'); break;
         case 'guerreFin': {
           const C = { or: 'Coffre en or', argent: 'Coffre en argent', bronze: 'Coffre en bronze' };
@@ -2069,6 +2085,9 @@ export class ZoneScene extends Phaser.Scene {
             this.hud.banner(`${this.perso.nom} est mort\nMode Hardcore : Entrée pour revenir à l'accueil`, 0, true);
           } else if (this.world.guerre?.attaque && !this.world.guerre.attaque.fini && this.world.guerre.surIle().includes(this.world.player)) {
             this.hud.banner(`Vaincu\nRetour au bord du champ dans ${GUERRE.retour} s`, GUERRE.retour * 1000, true);
+            this.time.delayedCall(GUERRE.retour * 1000, () => { if (this.world.player.dead && this.world.over) this.world.respawnPlayer(); });
+          } else if (this.world.siege?.releve(this.world.player)) {
+            this.hud.banner(`Vaincu\nRetour sur la place dans ${GUERRE.retour} s`, GUERRE.retour * 1000, true);
             this.time.delayedCall(GUERRE.retour * 1000, () => { if (this.world.player.dead && this.world.over) this.world.respawnPlayer(); });
           } else if (this.world.zone.open) this.hud.banner(`Vaincu\nEntrée : retour à ${this.world.checkpointName}`, 0, true);
           else this.hud.banner(`Vaincu à la vague ${e.wave}\nEntrée pour recommencer`, 0, true);
@@ -2802,6 +2821,7 @@ export class ZoneScene extends Phaser.Scene {
     if (this.world.arene && this.world.arene.dedale >= 0) this.worldView?.setDedale(this.world.arene.dedale);   // 0.6 (10A)
     this.vivantView?.update(this.game.loop.delta / 1000);
     this.guerreView?.update(this.game.loop.delta / 1000);
+    this.siegeView?.update(this.game.loop.delta / 1000);
     this.brume?.update(this.game.loop.delta / 1000);
     this.questView?.update();
     this.passantsView?.update();

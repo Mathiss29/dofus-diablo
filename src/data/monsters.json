@@ -62681,5 +62681,557 @@
    "fuite": 0,
    "retraitPA": 0
   }
+ },
+ "kilibriss_du_laboratoire": {
+  "dofusId": 5703,
+  "name": "Kilibriss du laboratoire",
+  "hp": 4750,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "kilibriss",
+  "color": "#d8d0b8",
+  "spells": [
+   {
+    "id": 1036,
+    "name": "Brisskote",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 2,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 41,
+      "max": 60,
+      "steal": true
+     },
+     {
+      "k": "pm",
+      "n": -4,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 1037,
+    "name": "Briss Deuniss",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": []
+   },
+   {
+    "id": 4535,
+    "name": "Brissolette",
+    "pa": 5,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 3,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 26,
+      "max": 35,
+      "steal": false
+     }
+    ],
+    "gfx": 20801
+   }
+  ],
+  "level": 98,
+  "res": {
+   "terre": 20,
+   "feu": -9,
+   "eau": 17,
+   "air": -27,
+   "neutre": 27
+  },
+  "caracs": {
+   "force": 180,
+   "intelligence": 180,
+   "chance": 180,
+   "agilite": 180,
+   "sagesse": 280,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "xp": 91
+ },
+ "bitouf_des_plaines_du_laboratoire": {
+  "dofusId": 5704,
+  "name": "Bitouf des Plaines du laboratoire",
+  "hp": 4750,
+  "speed": 95,
+  "radius": 32,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "bitouf_des_plaines",
+  "color": "#d8d0b8",
+  "spells": [
+   {
+    "id": 944,
+    "name": "Vrüt vrüt",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 4534,
+    "name": "Plumeau Cécitant",
+    "pa": 2,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 11,
+      "max": 15,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 97,
+  "res": {
+   "terre": -19,
+   "feu": -23,
+   "eau": -9,
+   "air": -9,
+   "neutre": 5
+  },
+  "caracs": {
+   "force": 220,
+   "intelligence": 220,
+   "chance": 220,
+   "agilite": 220,
+   "sagesse": 220,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "xp": 91
+ },
+ "craqueboule_poli_du_laboratoire": {
+  "dofusId": 5705,
+  "name": "Craqueboule Poli du laboratoire",
+  "hp": 4250,
+  "speed": 95,
+  "radius": 20,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "craqueboule_poli",
+  "color": "#d8d0b8",
+  "spells": [
+   {
+    "id": 951,
+    "name": "Rocaille",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   },
+   {
+    "id": 4532,
+    "name": "Glotte",
+    "pa": 4,
+    "po": [
+     2,
+     8
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 200,
+      "pct": true,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 4533,
+    "name": "Tourniquet",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "*5",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 31,
+      "max": 40,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "level": 93,
+  "res": {
+   "terre": 5,
+   "feu": -25,
+   "eau": 5,
+   "air": 25,
+   "neutre": 1
+  },
+  "caracs": {
+   "force": 150,
+   "intelligence": 150,
+   "chance": 150,
+   "agilite": 150,
+   "sagesse": 150,
+   "esquivePA": 0,
+   "esquivePM": 10,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "xp": 91
+ },
+ "craqueleur_poli_du_laboratoire": {
+  "dofusId": 5706,
+  "name": "Craqueleur Poli du laboratoire",
+  "hp": 4500,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "craqueleur_poli",
+  "color": "#d8d0b8",
+  "spells": [
+   {
+    "id": 945,
+    "name": "Polissage",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 31,
+      "max": 40,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 1029,
+    "name": "Pierre qui roule n'amasse pas mousse",
+    "pa": 3,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 3,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [],
+    "gfx": 885
+   },
+   {
+    "id": 1122,
+    "name": "Je vous en prie",
+    "pa": 3,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pm",
+      "n": -1,
+      "dur": 1
+     },
+     {
+      "k": "pa",
+      "n": -1,
+      "dur": 1
+     }
+    ]
+   }
+  ],
+  "level": 96,
+  "res": {
+   "terre": 25,
+   "feu": -5,
+   "eau": -40,
+   "air": 5,
+   "neutre": 1
+  },
+  "caracs": {
+   "force": 180,
+   "intelligence": 180,
+   "chance": 180,
+   "agilite": 180,
+   "sagesse": 280,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "xp": 91
+ },
+ "kido_du_laboratoire": {
+  "dofusId": 5707,
+  "name": "Kido du laboratoire",
+  "hp": 4500,
+  "speed": 95,
+  "radius": 16,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "kido",
+  "color": "#d8d0b8",
+  "spells": [
+   {
+    "id": 1034,
+    "name": "Clapet",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "L4",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 31,
+      "max": 40,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 4
+     }
+    ]
+   },
+   {
+    "id": 1035,
+    "name": "Cuicui d'Amour",
+    "pa": 3,
+    "po": [
+     1,
+     7
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 16,
+      "max": 20
+     },
+     {
+      "k": "soin",
+      "min": 21,
+      "max": 25
+     }
+    ],
+    "gfx": 886
+   }
+  ],
+  "level": 95,
+  "res": {
+   "terre": -25,
+   "feu": 25,
+   "eau": -5,
+   "air": 6,
+   "neutre": 5
+  },
+  "caracs": {
+   "force": 180,
+   "intelligence": 180,
+   "chance": 180,
+   "agilite": 180,
+   "sagesse": 180,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "xp": 91
+ },
+ "mufafah_du_laboratoire": {
+  "dofusId": 5708,
+  "name": "Mufafah du laboratoire",
+  "hp": 4500,
+  "speed": 95,
+  "radius": 26,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "mufafah",
+  "color": "#d8d0b8",
+  "spells": [
+   {
+    "id": 952,
+    "name": "Rugissement Mufafesque",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 5,
+    "anim": 1,
+    "zone": "C5",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 20,
+      "dur": 3
+     },
+     {
+      "k": "pm",
+      "n": 2,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 1033,
+    "name": "Déchirure",
+    "pa": 5,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 61,
+      "max": 80,
+      "steal": true
+     }
+    ]
+   }
+  ],
+  "level": 94,
+  "res": {
+   "terre": -36,
+   "feu": 27,
+   "eau": 5,
+   "air": 3,
+   "neutre": 5
+  },
+  "caracs": {
+   "force": 90,
+   "intelligence": 90,
+   "chance": 90,
+   "agilite": 90,
+   "sagesse": 90,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "xp": 91
  }
 }

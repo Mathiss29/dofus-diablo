@@ -67,6 +67,8 @@ export class Monster extends Entity {
   corrompu = false;
   /** Coffre Malveillant qui détale (0.6, 22A) : temps de fuite restant (0 : pas encore repéré). */
   fuyard = false; fuiteT = 0;
+  /** 0.7 (15A) : le Gobrechaun qui détale (src/sim/gobrechaun.ts) ; minuterie des kamas semés. */
+  gobrechaun = false; semisT = 0;
   /** 0.6 (22B) : monstre doré de la Salle au trésor (butin en plus). */
   dore = false;
   dirX = 1; dirY = 0;
@@ -133,6 +135,8 @@ export class Monster extends Entity {
   relache = false;
   /** Guerre des Cawottes : Wabbit d'une attaque (src/sim/guerre.ts le mène vers les cawottes). */
   guerre = false;
+  /** Siège des Zoths (0.7) : Zoth d'une vague (src/sim/siege07.ts le mène vers la plaque). */
+  siege = false;
   intouchable = false;
   /** 0.5 « monde vivant » : boss du monde (clé de src/data/monde_vivant.json), Gelée Royale qui brille (1B), envahisseur (5B),
    *  monstre d'un petit événement (id, -1 : aucun). */

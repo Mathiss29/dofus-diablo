@@ -807,3 +807,9 @@ Toutes sont refaites avec `HD=2` : planche dessinée 2 fois plus grand, `meta.hd
   chaîne habituelle (`ajout.py`, `monster_spells.py`, `monster_stats.py` en ne gardant que les nouveaux, `archis_ames.py`, `drops_ajout.py`,
   `icones_ajout.py`), boss marqués à la main, XP par la courbe de `xp_monstres.py`.
 - Mécaniques dans `src/sim/arene07.ts` (A07) : étages du Koulosse, grimoires du Corbac, couleur du Blop Multicolore, Skeunk voleur.
+- Siège des Zoths (6A) : `arenes07/siege07.py` range dans `zones.json` (`astrub.open.siege07`) la plaque de la place du Village des Zoths
+  (carte -50_17, case 311) et 3 passerelles d'arrivée (cases à 15-19 pas de la plaque). Règles dans `src/sim/siege07.ts` (SIEGE).
+- Laboratoire caché (6C) : les 5 salles officielles (sous-zone 473, sous [-55,4], `mapdata_assets_world_344`) en arène `arene_labo_cache`
+  (32, 98) par `compo07.py` (`labo`) et `export07.py labo` ; 6 monstres « du laboratoire » (5703-5708) sur la planche de ceux des
+  Plaines herbeuses (`look`), XP de ceux-ci. Porte sur -55_4, clé `cle_labo_cache` (icône de la clé du Tynril, 84246) que lâche
+  le Gobrechaun (`src/sim/gobrechaun.ts`, 15A), jamais vendue ; dans l'arène le Gobrechaun est le boss (`bossForce`).

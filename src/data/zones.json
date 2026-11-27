@@ -2702,6 +2702,18 @@
      ],
      "v07": true,
      "region": "Frigost"
+    },
+    "473": {
+     "name": "Laboratoire caché",
+     "level": 110,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      0,
+      0
+     ],
+     "v07": true,
+     "region": "Île d'Otomaï"
     }
    },
    "checkpoints": [
@@ -4865,6 +4877,19 @@
      ],
      "nom": "Serre du Royalmouth",
      "cle": "11174",
+     "marque": true
+    },
+    {
+     "a": [
+      "-55_4",
+      286
+     ],
+     "b": [
+      "arene_labo_cache",
+      0
+     ],
+     "nom": "Laboratoire caché",
+     "cle": "cle_labo_cache",
      "marque": true
     }
    ],
@@ -17390,8 +17415,93 @@
       "boufmouth_de_guerre",
       "boufmouth_de_guerre"
      ]
+    },
+    {
+     "nom": "Laboratoire caché",
+     "salles": {},
+     "arene": {
+      "tag": "arene_labo_cache",
+      "arrivee": 14259020,
+      "entrees": [
+       14251619,
+       14249790,
+       14288588
+      ],
+      "boss": 14188796,
+      "sortie": 14199884,
+      "coffre": 14199886
+     },
+     "vagues": [
+      {
+       "m": [
+        "kilibriss_du_laboratoire",
+        "bitouf_des_plaines_du_laboratoire",
+        "craqueboule_poli_du_laboratoire",
+        "craqueleur_poli_du_laboratoire",
+        "kido_du_laboratoire",
+        "mufafah_du_laboratoire",
+        "kilibriss_du_laboratoire",
+        "bitouf_des_plaines_du_laboratoire",
+        "craqueboule_poli_du_laboratoire",
+        "craqueleur_poli_du_laboratoire",
+        "kido_du_laboratoire",
+        "mufafah_du_laboratoire"
+       ]
+      },
+      {
+       "m": [
+        "craqueleur_poli_du_laboratoire",
+        "kido_du_laboratoire",
+        "mufafah_du_laboratoire",
+        "kilibriss_du_laboratoire",
+        "bitouf_des_plaines_du_laboratoire",
+        "craqueboule_poli_du_laboratoire",
+        "craqueleur_poli_du_laboratoire",
+        "kido_du_laboratoire",
+        "mufafah_du_laboratoire",
+        "kilibriss_du_laboratoire",
+        "bitouf_des_plaines_du_laboratoire",
+        "craqueboule_poli_du_laboratoire"
+       ]
+      },
+      {
+       "m": [
+        "kilibriss_du_laboratoire",
+        "bitouf_des_plaines_du_laboratoire",
+        "craqueboule_poli_du_laboratoire",
+        "craqueleur_poli_du_laboratoire",
+        "kido_du_laboratoire",
+        "mufafah_du_laboratoire",
+        "kilibriss_du_laboratoire",
+        "bitouf_des_plaines_du_laboratoire",
+        "craqueboule_poli_du_laboratoire",
+        "craqueleur_poli_du_laboratoire",
+        "kido_du_laboratoire",
+        "mufafah_du_laboratoire",
+        "kilibriss_du_laboratoire",
+        "bitouf_des_plaines_du_laboratoire"
+       ]
+      }
+     ],
+     "bossVague": [
+      "gobrechaun",
+      "kilibriss_du_laboratoire",
+      "kido_du_laboratoire"
+     ],
+     "bossForce": "gobrechaun"
     }
-   ]
+   ],
+   "siege07": {
+    "nom": "Siège des Zoths",
+    "tag": "-50_17",
+    "sub": 468,
+    "coeur": 8172391,
+    "entrees": [
+     8168678,
+     8200116,
+     8190858
+    ]
+   }
   }
  },
  "havresac": {

@@ -40,7 +40,7 @@ describe('Astrub (0.2a)', () => {
     // 0.7 (cachée) : 569 cartes du dehors (Otomaï, Cania nord, Koalaks haut, Pandala, Champs de glace, tools/extraction/regions07) + la taverne du Zaap de Pandala
     expect(astrub.maps.filter(m => m.v07 && !m.inside).length).toBe(569);
     expect(astrub.maps.filter(m => m.v07 && m.inside).map(m => m.tag).sort()).toEqual(['taverne_pandala_1',
-      'arene_koulosse_1', 'arene_koulosse_2', 'arene_koulosse_3', 'arene_corbac', 'arene_rasboul', 'arene_damadrya', 'arene_skeunk', 'arene_blop_multicolore', 'arene_royalmouth'].sort());
+      'arene_koulosse_1', 'arene_koulosse_2', 'arene_koulosse_3', 'arene_corbac', 'arene_rasboul', 'arene_damadrya', 'arene_skeunk', 'arene_blop_multicolore', 'arene_royalmouth', 'arene_labo_cache'].sort());
     expect(astrub.maps.filter(m => m.v07).every(m => wg.freeByMap.get(m.tag)!.length === 0)).toBe(true);
     wg.ouvrirEssai(); wg.ouvrirV06(); wg.ouvrirV07();
     expect(astrub.origin).toEqual([-88, -93]);
