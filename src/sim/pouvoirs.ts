@@ -13,6 +13,8 @@ export const NIVEAU_OBJETS_02 = 25;
 export const V04_PUBLIC = true;
 /** 0.6 « du 60 au 90 » (maquette 2026-11-13, 15B : sortie publique d'un coup) : tout reste en partie de test d'ici là. */
 export const V06_PUBLIC = true;
+/** 0.7 « du 90 au 120 » (ligne « 0.7 : » 18A) : régions, donjons et contenu en partie de test, puis public d'un coup. */
+export const V07_PUBLIC = false;
 /** Quête principale « Le Carnet des Fêlures » (maquette Campagne, 11B : tout d'un bloc, caché en partie de test jusqu'au bout). */
 export const CAMPAGNE_PUBLIC = false;
 export const NIVEAU_OBJETS_03 = 40;

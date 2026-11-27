@@ -27,7 +27,9 @@ describe('Zaaps du monde (maquette « Zaap : » 1A 2A 3A 4A 5A+5D 6A 7A 8A 9A)',
       // 0.6 (partie de test) : Bourgade de Frigost, Plaines Rocheuses, Routes Rocailleuses
       'Zaap La Bourgade [-78,-41]', 'Zaap Plaines Rocheuses [-17,-47]', 'Zaap Routes Rocailleuses [-20,-20]',
       // 0.6.1 (publique) : Baie de Sufokia
-      'Zaap Rivage sufokien [10,22]', 'Zaap Sufokia [13,26]'].sort());
+      'Zaap Rivage sufokien [10,22]', 'Zaap Sufokia [13,26]',
+      // 0.7 (partie de test) : Cimetière primitif des Koalaks, Village côtier d'Otomaï, Village de Pandala (Zaap dans la taverne, intérieur en (-60, 84))
+      'Zaap Cimetière primitif [-12,19]', 'Zaap Village côtier [-46,18]', 'Zaap Village de Pandala [-60,84]'].sort());
     expect(monde('astrub').zone.open!.checkpoints).toHaveLength(V06_PUBLIC ? 18 : 15);   // 0.4 publique : les Zaaps d'Amakna pour tous (+ ceux de la 0.6)
     for (const z of ['incarnam', 'astrub']) {
       const w = monde(z, { test: {} as never }), wg = w.worldGrid!;
@@ -35,7 +37,8 @@ describe('Zaaps du monde (maquette « Zaap : » 1A 2A 3A 4A 5A+5D 6A 7A 8A 9A)',
         const q = w.devantZaap(c.name), a = w.zaapsIci().find(o => o.name === c.name)!;
         expect(q, c.name).not.toBeNull();
         expect(w.map.walkable(q!.x, q!.y)).toBe(true);
-        expect(wg.mapAt(q!.x, q!.y)?.tag, c.name).toBe(c.map.join('_'));
+        const ici = wg.mapAt(q!.x, q!.y);
+        expect([ici?.x, ici?.y], c.name).toEqual(c.map);
         expect(Math.hypot(q!.x - a.x, q!.y - a.y), c.name).toBeLessThan(World.ZAAP_PORTEE);
       }
     }

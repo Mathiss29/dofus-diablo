@@ -14,7 +14,7 @@ import { jouerMain } from './ecaflip';
 import { ajouterPieces, CLE_COFFRE, enSurcharge, ouvrirCoffre, piecesMonstre, piecesObjet, seuilsCoffre } from './enutrof';
 import { briser, chanceRune, coutKamas, coutRelance, orbeConvient, potionConvient, POTIONS, regenerer, relancerLigne, REGLES_V2, dureeCommande, estimerCommande, executerCommande, forger, fusionVers, FUSION_N, runeCommande, RUNES, SIGNATURE, type Commande, type CommandeFM, type Estimation } from './forgemagie';
 import { chocNoa, mortSorts06, pasMonstre06 } from './sorts06';
-import { CAMPAGNE_PUBLIC, V03_PUBLIC, V04_PUBLIC, V06_PUBLIC, niveauObjetsMax, slotAPouvoirConnu } from './pouvoirs';
+import { CAMPAGNE_PUBLIC, V03_PUBLIC, V04_PUBLIC, V06_PUBLIC, V07_PUBLIC, niveauObjetsMax, slotAPouvoirConnu } from './pouvoirs';
 import { fxImpression, imprimable, nouveauPourCodex, prixImpression } from './codex';
 import { legendaryPower, FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, kamasDefaire, noteObjet, rollItem, STAT_NAMES, type EquipSlot, type Item, type ItemDef, type ItemsData, type Rarity, type RecipeDef, type Stat } from './items';
 import { Player } from './player';
@@ -395,6 +395,8 @@ export class World {
   get essaiOuvert(): boolean { return V04_PUBLIC || !!this.opts.test; }
   /** Régions de la 0.6 (Abraknydes, Koalaks, Cania, Porcos, Bourgade) : publiques dès que V06_PUBLIC est vrai, sinon partie de test. */
   get v06Ouvert(): boolean { return V06_PUBLIC || !!this.opts.test; }
+  /** Régions de la 0.7 (Otomaï, Cania nord, Koalaks haut, Pandala, Champs de glace) : partie de test tant que V07_PUBLIC est faux. */
+  get v07Ouvert(): boolean { return V07_PUBLIC || !!this.opts.test; }
 
   private reperesCache: { wg: WorldGrid; l: Repere[] } | null = null;
   /** Repères montrés en jeu (carte, minicarte, lieux à découvrir) : officiels sans ceux qui ne mènent à rien, plus nos bateaux et routes. */
@@ -402,7 +404,7 @@ export class World {
     const wg = this.worldGrid;
     if (!wg) return [];
     if (this.reperesCache?.wg !== wg) {
-      const ouverte = (t: string) => { const m = wg.mapByTag(t); return !(m?.essai && !this.essaiOuvert) && !(m?.v06 && !this.v06Ouvert); };
+      const ouverte = (t: string) => { const m = wg.mapByTag(t); return !(m?.essai && !this.essaiOuvert) && !(m?.v06 && !this.v06Ouvert) && !(m?.v07 && !this.v07Ouvert); };
       this.reperesCache = { wg, l: reperesJeu(wg.world.reperes ?? [], this.zone.open, ouverte, id => this.opts.quetes?.quetes[id]?.nom ?? 'une quête') };
     }
     return this.reperesCache.l;
@@ -429,6 +431,10 @@ export class World {
     if (!V06_PUBLIC && !opts.test && sz6 && Object.values(sz6).some(s => s.v06))
       this.zone = { ...this.zone, open: { ...this.zone.open!, subareas: Object.fromEntries(Object.entries(sz6).filter(([, s]) => !s.v06)),
         checkpoints: this.zone.open!.checkpoints.filter(c => !sz6[String(c.sub)]?.v06) } };
+    const sz7 = this.zone.open?.subareas;   // 0.7 cachée : ses sous-zones et ses Zaaps seulement en partie de test
+    if (!V07_PUBLIC && !opts.test && sz7 && Object.values(sz7).some(s => s.v07))
+      this.zone = { ...this.zone, open: { ...this.zone.open!, subareas: Object.fromEntries(Object.entries(sz7).filter(([, s]) => !s.v07)),
+        checkpoints: this.zone.open!.checkpoints.filter(c => !sz7[String(c.sub)]?.v07) } };
     this.map = opts.map;
     this.test = opts.test ? { ...opts.test } : null;
     let start = this.map.nearestFree(GridMap.OFFSET_Y, GridMap.OFFSET_Y);
@@ -451,6 +457,7 @@ export class World {
     this.player.v03 = V03_PUBLIC || !!opts.test;
     this.player.v04 = V04_PUBLIC || !!opts.test;
     this.player.v06 = V06_PUBLIC || !!opts.test;
+    this.player.v07 = V07_PUBLIC || !!opts.test;
     this.player.campagne = CAMPAGNE_PUBLIC || !!opts.test;
     if (opts.items) {
       this.player.items = opts.items;
@@ -462,6 +469,7 @@ export class World {
       // sac vide au départ (Mathis, 2026-11-06) : l'équipement vient du tutoriel (panoplie de l'Intrépide, Arc de Chasse du Crâ)
     }
     if (open) this.ouvrirCouloirs();
+    if (open && this.v07Ouvert) this.worldGrid?.ouvrirV07();   // 0.7 cachée : ses régions seulement en partie de test
     if (open && this.v06Ouvert) this.worldGrid?.ouvrirV06();   // 0.6 cachée : ses régions seulement en partie de test
     if (open) { this.buildPortes(); this.buildRecoltes(); this.buildPostes(); }
     if (open?.guerre && this.essaiOuvert && this.map instanceof WorldGrid && open.guerre.champs.every(c => this.map instanceof WorldGrid && this.map.mapByTag(c.tag))) this.guerre = new Guerre(this, open.guerre.champs);
@@ -495,7 +503,7 @@ export class World {
     if (!cls) throw new Error(`Classe inconnue : ${classId}`);
     const h = this.players[0], n = this.players.length, f = this.map.nearestFree(h.x + h.radius * 3 * (n % 2 ? 1 : -1) * Math.ceil(n / 2), h.y + h.radius * 2 * (n - 1));
     const q = new Player(this.nextId++, f.x, f.y, cls);
-    q.v03 = h.v03; q.v04 = h.v04; q.v06 = h.v06; q.campagne = h.campagne;
+    q.v03 = h.v03; q.v04 = h.v04; q.v06 = h.v06; q.v07 = h.v07; q.campagne = h.campagne;
     q.monde.checkpoint = { ...h.monde.checkpoint }; q.monde.checkpointName = h.monde.checkpointName; q.monde.avant = { x: q.x, y: q.y };
     if (this.opts.items) q.items = this.opts.items;
     this.players.push(q);
@@ -765,6 +773,7 @@ export class World {
       if (d.v03 && !this.player.v03) continue;
       if (wg.mapByTag(d.a[0])?.essai && !this.essaiOuvert) continue;   // 0.4 cachée : portes d'Amakna en partie de test
       if ((wg.mapByTag(d.a[0])?.v06 || wg.mapByTag(d.b[0])?.v06) && !this.v06Ouvert) continue;   // 0.6 cachée (bateau de Frigost…)
+      if ((wg.mapByTag(d.a[0])?.v07 || wg.mapByTag(d.b[0])?.v07) && !this.v07Ouvert) continue;   // 0.7 cachée (bateaux d'Otomaï et de Pandala…)
       const dj = ancienne.get(d.b[0]);
       if (ancienne.has(d.a[0]) || chaine.has(d.a[0])) continue;
       if (dj && !d.zone && wg.mapByTag(d.a[0])) {
@@ -2608,6 +2617,7 @@ export class World {
       if (!wg.mapByTag(tag) || !R.ressources[item]) continue;
       if (wg.mapByTag(tag)!.essai && !this.essaiOuvert) continue;   // 0.4 cachée : récoltes d'Amakna en partie de test
       if (wg.mapByTag(tag)!.v06 && !this.v06Ouvert) continue;
+      if (wg.mapByTag(tag)!.v07 && !this.v07Ouvert) continue;
       const q = wg.cellToWorld(wg.cellOf(tag, cell));
       this.recoltes.push({ id: this.nextId++, tag, x: q.x, y: q.y, item, dore: this.rng.next() < RECOLTE.dore, repousse: 0,
         gfx, dessin: dx || dy ? { x: dx!, y: dy! } : undefined, miroir: miroir === 1 });

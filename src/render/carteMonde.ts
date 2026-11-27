@@ -27,8 +27,8 @@ import MV from '../data/monde_vivant.json';
 
 interface CarteRepere { ox: number; oy: number; cw: number; ch: number; w?: number; h?: number }
 interface Salle { tag: string; img: string; u: [number, number]; du: [number, number] }
-/** 4e champ de plan.json › maps : 1 = cartes de la 0.4 (partie de test tant que V04_PUBLIC est faux), 2 = régions de la 0.6 (V06_PUBLIC). */
-function fermee(essai: number, w: { essaiOuvert: boolean; v06Ouvert: boolean }): boolean { return essai === 1 ? !w.essaiOuvert : essai === 2 ? !w.v06Ouvert : false; }
+/** 4e champ de plan.json › maps : 1 = cartes de la 0.4 (partie de test tant que V04_PUBLIC est faux), 2 = régions de la 0.6 (V06_PUBLIC), 3 = régions de la 0.7 (V07_PUBLIC). */
+function fermee(essai: number, w: { essaiOuvert: boolean; v06Ouvert: boolean; v07Ouvert: boolean }): boolean { return essai === 1 ? !w.essaiOuvert : essai === 2 ? !w.v06Ouvert : essai === 3 ? !w.v07Ouvert : false; }
 interface PlanMonde { monde: string; carte: CarteRepere; maps: [number, number, number, number][]; reperes: Repere[]; plans?: Record<string, Salle[]> }
 interface Peinte { nom: string; img: string; w: number; h: number; k: number; ox: number; oy: number; mw: number; mh: number }
 interface Region { lab: string; ver: string; niv?: string; cases: [number, number][] }
@@ -661,7 +661,7 @@ export class CarteMonde {
     const tags = new Set(cases.map(k => `${k[0]}_${k[1]}`));
     const res = [...new Set(((RECOLTES as unknown as Record<string, [string, number, string][]>)[zone] ?? []).filter(e2 => tags.has(e2[0])).map(e2 => RECOLTES.ressources[e2[2]]?.nom).filter(Boolean))];
     const donjons = P.reperes.filter(x => x.c === 6 && tags.has(x.t)).map(x => x.n);
-    b.innerHTML = `<h4>${esc(d.name)}</h4><div>Niveau ${d.level}${d.region ? ` · ${esc(d.region)}` : ''}${essai ? ` · <span class="el">Bientôt (${ferme?.[3] === 2 ? '0.6' : '0.4'})</span>` : ''}</div>
+    b.innerHTML = `<h4>${esc(d.name)}</h4><div>Niveau ${d.level}${d.region ? ` · ${esc(d.region)}` : ''}${essai ? ` · <span class="el">Bientôt (${ferme?.[3] === 3 ? '0.7' : ferme?.[3] === 2 ? '0.6' : '0.4'})</span>` : ''}</div>
       ${d.monsters.length ? `<div class="l"><b>Monstres</b> : ${d.monsters.map(nomM).map(esc).join(', ')}</div>` : ''}
       ${d.elite ? `<div class="l el">Élite : ${esc(nomM(d.elite))}</div>` : ''}
       ${archis.length ? `<div class="l el">Archimonstre${archis.length > 1 ? 's' : ''} (${archis.filter(a => w.player.ames.includes(a)).length} / ${archis.length} capturés) : ${archis.slice(0, 4).map(a => esc(nomM(a)) + (w.player.ames.includes(a) ? ' ✔' : '')).join(', ')}${archis.length > 4 ? '…' : ''}</div>` : ''}

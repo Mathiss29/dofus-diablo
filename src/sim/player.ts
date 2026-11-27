@@ -287,6 +287,8 @@ export class Player extends Entity {
   v04 = false;
   /** 0.6 visible (partie de test tant que V06_PUBLIC est faux). */
   v06 = false;
+  /** 0.7 visible (partie de test tant que V07_PUBLIC est faux). */
+  v07 = false;
   /** Campagne « Le Carnet des Fêlures » visible (partie de test tant que CAMPAGNE_PUBLIC est faux). */
   campagne = false;
   /** Sorts 61-90 (Iop, Crâ, Osamodas, Sacrieur) : effets en cours lancés par ce perso (src/sim/sorts61.ts). */

@@ -156,7 +156,34 @@
   "sufokia_ville": {
    "calme": "musique/sufokia_ville_calme.mp3",
    "renfort": "musique/sufokia_ville_renfort.mp3"
-  }
+  },
+  "otomai": {
+   "calme": "musique/otomai_calme.mp3",
+   "renfort": "musique/otomai_renfort.mp3"
+  },
+  "pandala": {
+   "calme": "musique/pandala_calme.mp3"
+  },
+  "combat_otomai_intro": "musique/combat_otomai_intro.mp3",
+  "combat_otomai_centrale": "musique/combat_otomai_centrale.mp3",
+  "combat_otomai_victoire": "musique/combat_otomai_victoire.mp3",
+  "combat_otomai_defaite": "musique/combat_otomai_defaite.mp3",
+  "combat_pandala_intro": "musique/combat_pandala_intro.mp3",
+  "combat_pandala_centrale": "musique/combat_pandala_centrale.mp3",
+  "combat_pandala_victoire": "musique/combat_pandala_victoire.mp3",
+  "combat_pandala_defaite": "musique/combat_pandala_defaite.mp3",
+  "combat_cania_intro": "musique/combat_cania_intro.mp3",
+  "combat_cania_centrale": "musique/combat_cania_centrale.mp3",
+  "combat_cania_victoire": "musique/combat_cania_victoire.mp3",
+  "combat_cania_defaite": "musique/combat_cania_defaite.mp3",
+  "combat_koalaks_intro": "musique/combat_koalaks_intro.mp3",
+  "combat_koalaks_centrale": "musique/combat_koalaks_centrale.mp3",
+  "combat_koalaks_victoire": "musique/combat_koalaks_victoire.mp3",
+  "combat_koalaks_defaite": "musique/combat_koalaks_defaite.mp3",
+  "combat_frigost_intro": "musique/combat_frigost_intro.mp3",
+  "combat_frigost_centrale": "musique/combat_frigost_centrale.mp3",
+  "combat_frigost_victoire": "musique/combat_frigost_victoire.mp3",
+  "combat_frigost_defaite": "musique/combat_frigost_defaite.mp3"
  },
  "ambiances": {
   "incarnam_vent": "ambiance/incarnam_vent.mp3",
@@ -3552,6 +3579,121 @@
    "fondNuit": [
     "grillons_nuit"
    ]
+  },
+  "454": {
+   "musique": "otomai",
+   "fond": [
+    "foret"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ],
+   "combat": "otomai"
+  },
+  "457": {
+   "musique": "otomai",
+   "fond": [
+    "foret"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ],
+   "combat": "otomai"
+  },
+  "471": {
+   "musique": "otomai",
+   "fond": [
+    "foret"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ],
+   "combat": "otomai"
+  },
+  "468": {
+   "musique": "otomai",
+   "fond": [
+    "foret"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ],
+   "combat": "otomai"
+  },
+  "55": {
+   "musique": "cania_3",
+   "fond": [
+    "montagne_vent"
+   ],
+   "combat": "cania"
+  },
+  "69": {
+   "musique": "cania_1",
+   "fond": [
+    "foret"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ],
+   "combat": "cania"
+  },
+  "523": {
+   "musique": "cania_2",
+   "fond": [
+    "montagne_vent"
+   ],
+   "combat": "cania"
+  },
+  "230": {
+   "musique": "koalaks",
+   "fond": [
+    "foret"
+   ],
+   "fondNuit": [
+    "cimetiere_nuit"
+   ],
+   "combat": "koalaks"
+  },
+  "275": {
+   "musique": "koalaks",
+   "fond": [
+    "montagne_vent"
+   ],
+   "combat": "koalaks"
+  },
+  "942": {
+   "musique": "pandala",
+   "fond": [
+    "foret"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ],
+   "combat": "pandala"
+  },
+  "941": {
+   "musique": "pandala",
+   "fond": [
+    "mer"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ],
+   "combat": "pandala"
+  },
+  "944": {
+   "musique": "pandala",
+   "fond": [
+    "montagne_vent"
+   ],
+   "combat": "pandala"
+  },
+  "602": {
+   "musique": "frigost",
+   "fond": [
+    "froid"
+   ],
+   "combat": "frigost"
   }
  }
 }

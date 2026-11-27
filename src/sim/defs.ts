@@ -278,6 +278,8 @@ export interface SubAreaDef {
   essai?: boolean;
   /** Sous-zone de la 0.6 : n'existe que si la 0.6 est ouverte (V06_PUBLIC ou partie de test), comme ses cartes (WorldGrid.ouvrirV06). */
   v06?: boolean;
+  /** Sous-zone de la 0.7 : n'existe que si la 0.7 est ouverte (V07_PUBLIC ou partie de test), comme ses cartes (WorldGrid.ouvrirV07). */
+  v07?: boolean;
   /** Région affichée (bandeau, haut de l'écran) quand ce n'est pas le nom de la zone : « Amakna » dans le monde d'Astrub. */
   region?: string;
   /** « Wabbits : 12A » : la nuit (heure du PC), groupes de cette taille (l'îlot des Tombeaux se réveille). */
