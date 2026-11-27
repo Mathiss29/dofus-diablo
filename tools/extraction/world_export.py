@@ -308,6 +308,11 @@ for (x, y), md in sorted(maps.items(), key=lambda t: (t[0][1], t[0][0])):
     bx1 = x1m if nb['r'] else max([x1m] + [ex + im.width for im, ex, _ in sol_els])
     by1 = y1m if nb['b'] else max([y1m] + [ey + im.height for im, _, ey in sol_els])
     sol = Image.new('RGBA', (bx1 - bx0, by1 - by0))
+    # FOND_COULEUR=1 : couleur de fond de la carte (backgroundColor) sous son rectangle, comme Dofus (Sufokia : la mer bleue entre
+    # les blocs de la cité, sinon des trous noirs). Seulement si la couleur n'est pas noire.
+    if os.environ.get('FOND_COULEUR') == '1':
+        v = md['backgroundColor']['value'] & 0xFFFFFF
+        if v: sol.paste(((v >> 16) & 255, (v >> 8) & 255, v & 255, 255), (x0m - bx0, y0m - by0, x1m - bx0, y1m - by0))
     # (pas dans le Temple Céleste : ses pierres flottantes animées y laissaient des taches noires, sa couleur de fond)
     bgv = md['backgroundColor']['value']; clair = ((bgv >> 16 & 255) + (bgv >> 8 & 255) + (bgv & 255)) / 3 > 140
     if eaux and not extra[(x, y)].get('ciel') and not clair:   # (fond clair, Château Ensablé : faisait des taches pâles sur la mer)   # couleur de fond de la carte sous le lac (là où sont ses ellipses, un peu élargies pour boucher les trous)

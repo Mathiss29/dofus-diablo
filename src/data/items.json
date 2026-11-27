@@ -53018,6 +53018,115 @@
    "name": "Potion Hiri-Kara",
    "icon": 12814,
    "level": 20
+  },
+  "379": {
+   "name": "Pince de Crabe",
+   "icon": 47051,
+   "level": 46
+  },
+  "2303": {
+   "name": "Carapace vide de Crabe",
+   "icon": 107453,
+   "level": 46
+  },
+  "2583": {
+   "name": "Œil de Raul Mops",
+   "icon": 109589,
+   "level": 46
+  },
+  "8681": {
+   "name": "Peau de Raul Mops",
+   "icon": 59627,
+   "level": 46
+  },
+  "13728": {
+   "name": "Paupière d'Étoile",
+   "icon": 15815,
+   "level": 46
+  },
+  "18470": {
+   "name": "Poudre d'étoile de mer d'Asse",
+   "icon": 24080,
+   "level": 10
+  },
+  "2302": {
+   "name": "Langue d'Étoile",
+   "icon": 15452,
+   "level": 46
+  },
+  "8517": {
+   "name": "Moumoule",
+   "icon": 15756,
+   "level": 30
+  },
+  "8518": {
+   "name": "Moumoules frites",
+   "icon": 69135,
+   "level": 30
+  },
+  "13847": {
+   "name": "Perle d'Âme",
+   "icon": 94029,
+   "level": 1
+  },
+  "792": {
+   "name": "Muqueuse de Moumoule",
+   "icon": 15162,
+   "level": 46
+  },
+  "33521": {
+   "name": "Moustache de muldo indigo",
+   "icon": 15299,
+   "level": 60
+  },
+  "33525": {
+   "name": "Bave de muldo",
+   "icon": 15293,
+   "level": 60
+  },
+  "33523": {
+   "name": "Moustache de muldo ébène",
+   "icon": 15297,
+   "level": 60
+  },
+  "33520": {
+   "name": "Moustache de muldo orchidée",
+   "icon": 15300,
+   "level": 60
+  },
+  "33522": {
+   "name": "Moustache de muldo pourpre",
+   "icon": 15298,
+   "level": 60
+  },
+  "33524": {
+   "name": "Moustache de muldo doré",
+   "icon": 15296,
+   "level": 60
+  },
+  "34093": {
+   "name": "Âme capturée : Craraboss le Féérique",
+   "icon": 85003,
+   "level": 50,
+   "ame": "archi_crabe"
+  },
+  "34035": {
+   "name": "Âme capturée : Rauligo le Sale",
+   "icon": 85003,
+   "level": 50,
+   "ame": "archi_raul_mops"
+  },
+  "33888": {
+   "name": "Âme capturée : Étoilette la Bouchée",
+   "icon": 85003,
+   "level": 50,
+   "ame": "archi_etoile_mer_asse"
+  },
+  "34068": {
+   "name": "Âme capturée : Moumoute la Douce",
+   "icon": 85003,
+   "level": 50,
+   "ame": "archi_moumoule"
   }
  },
  "drops": {
@@ -70366,6 +70475,386 @@
    {
     "item": "16830",
     "chance": 1.0
+   }
+  ],
+  "crabe": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "379",
+    "chance": 48.0
+   },
+   {
+    "item": "17130",
+    "chance": 48.0,
+    "metier": {
+     "id": 41,
+     "min": 50
+    },
+    "chasse": true
+   },
+   {
+    "item": "2303",
+    "chance": 8.04
+   },
+   {
+    "item": "16824",
+    "chance": 1.0
+   }
+  ],
+  "raul_mops": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "2553",
+    "chance": 100.0,
+    "cond": "quete"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "2583",
+    "chance": 48.0
+   },
+   {
+    "item": "17130",
+    "chance": 48.0,
+    "metier": {
+     "id": 41,
+     "min": 50
+    },
+    "chasse": true
+   },
+   {
+    "item": "8681",
+    "chance": 8.04
+   },
+   {
+    "item": "16824",
+    "chance": 1.0
+   }
+  ],
+  "etoile_mer_asse": [
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "13728",
+    "chance": 48.0
+   },
+   {
+    "item": "17130",
+    "chance": 48.0,
+    "metier": {
+     "id": 41,
+     "min": 50
+    },
+    "chasse": true
+   },
+   {
+    "item": "18470",
+    "chance": 36.0,
+    "cond": "quete"
+   },
+   {
+    "item": "2302",
+    "chance": 8.04
+   },
+   {
+    "item": "16824",
+    "chance": 1.0
+   }
+  ],
+  "moumoule": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "8517",
+    "chance": 100.0
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "8518",
+    "chance": 48.0
+   },
+   {
+    "item": "17130",
+    "chance": 48.0,
+    "metier": {
+     "id": 41,
+     "min": 50
+    },
+    "chasse": true
+   },
+   {
+    "item": "13847",
+    "chance": 24.0
+   },
+   {
+    "item": "792",
+    "chance": 8.04
+   },
+   {
+    "item": "16824",
+    "chance": 1.0
+   }
+  ],
+  "muldo_indigo_sauvage": [
+   {
+    "item": "17134",
+    "chance": 42.0,
+    "metier": {
+     "id": 41,
+     "min": 70
+    },
+    "chasse": true
+   },
+   {
+    "item": "33521",
+    "chance": 42.0
+   },
+   {
+    "item": "33525",
+    "chance": 7.1
+   },
+   {
+    "item": "16824",
+    "chance": 1.0
+   }
+  ],
+  "muldo_ebene_sauvage": [
+   {
+    "item": "17134",
+    "chance": 42.0,
+    "metier": {
+     "id": 41,
+     "min": 70
+    },
+    "chasse": true
+   },
+   {
+    "item": "33523",
+    "chance": 42.0
+   },
+   {
+    "item": "33525",
+    "chance": 7.1
+   },
+   {
+    "item": "16824",
+    "chance": 1.0
+   }
+  ],
+  "muldo_orchidee_sauvage": [
+   {
+    "item": "33520",
+    "chance": 42.0
+   },
+   {
+    "item": "17134",
+    "chance": 42.0,
+    "metier": {
+     "id": 41,
+     "min": 70
+    },
+    "chasse": true
+   },
+   {
+    "item": "33525",
+    "chance": 7.1
+   },
+   {
+    "item": "16824",
+    "chance": 1.0
+   }
+  ],
+  "muldo_pourpre_sauvage": [
+   {
+    "item": "33522",
+    "chance": 42.0
+   },
+   {
+    "item": "17134",
+    "chance": 42.0,
+    "metier": {
+     "id": 41,
+     "min": 70
+    },
+    "chasse": true
+   },
+   {
+    "item": "33525",
+    "chance": 7.1
+   },
+   {
+    "item": "16824",
+    "chance": 1.0
+   }
+  ],
+  "muldo_dore_sauvage": [
+   {
+    "item": "33524",
+    "chance": 42.0
+   },
+   {
+    "item": "17134",
+    "chance": 42.0,
+    "metier": {
+     "id": 41,
+     "min": 70
+    },
+    "chasse": true
+   },
+   {
+    "item": "33525",
+    "chance": 7.1
+   },
+   {
+    "item": "16824",
+    "chance": 1.0
+   }
+  ],
+  "archi_crabe": [
+   {
+    "item": "379",
+    "chance": 96.0
+   },
+   {
+    "item": "17130",
+    "chance": 96.0,
+    "metier": {
+     "id": 41,
+     "min": 50
+    },
+    "chasse": true
+   },
+   {
+    "item": "2303",
+    "chance": 8.04
+   },
+   {
+    "item": "16824",
+    "chance": 2.0
+   }
+  ],
+  "archi_raul_mops": [
+   {
+    "item": "2553",
+    "chance": 100.0,
+    "cond": "quete"
+   },
+   {
+    "item": "17130",
+    "chance": 96.0,
+    "metier": {
+     "id": 41,
+     "min": 50
+    },
+    "chasse": true
+   },
+   {
+    "item": "2583",
+    "chance": 96.0
+   },
+   {
+    "item": "8681",
+    "chance": 8.04
+   },
+   {
+    "item": "16824",
+    "chance": 2.0
+   }
+  ],
+  "archi_etoile_mer_asse": [
+   {
+    "item": "13728",
+    "chance": 96.0
+   },
+   {
+    "item": "17130",
+    "chance": 96.0,
+    "metier": {
+     "id": 41,
+     "min": 50
+    },
+    "chasse": true
+   },
+   {
+    "item": "18470",
+    "chance": 72.0,
+    "cond": "quete"
+   },
+   {
+    "item": "2302",
+    "chance": 8.04
+   },
+   {
+    "item": "16824",
+    "chance": 2.0
+   }
+  ],
+  "archi_moumoule": [
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "8517",
+    "chance": 100.0
+   },
+   {
+    "item": "8518",
+    "chance": 96.0
+   },
+   {
+    "item": "17130",
+    "chance": 96.0,
+    "metier": {
+     "id": 41,
+     "min": 50
+    },
+    "chasse": true
+   },
+   {
+    "item": "13847",
+    "chance": 48.0
+   },
+   {
+    "item": "792",
+    "chance": 8.04
+   },
+   {
+    "item": "16824",
+    "chance": 2.0
    }
   ]
  },

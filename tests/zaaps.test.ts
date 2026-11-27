@@ -25,8 +25,10 @@ describe('Zaaps du monde (maquette « Zaap : » 1A 2A 3A 4A 5A+5D 6A 7A 8A 9A)',
       'Zaap Montagne des Craqueleurs [-5,-8]', 'Zaap Plaine des Scarafeuilles [-1,24]', 'Zaap Port de Madrestam [7,-4]', 'Zaap Village d\'Amakna [-2,0]', 'Zaap Île de la Cawotte [25,-4]',
       'Zaap Plaine des Porkass [-5,-23]', 'Zaap Village des Dopeuls [-34,-8]', 'Zaap Plage de la Tortue [35,12]',
       // 0.6 (partie de test) : Bourgade de Frigost, Plaines Rocheuses, Routes Rocailleuses
-      'Zaap La Bourgade [-78,-41]', 'Zaap Plaines Rocheuses [-17,-47]', 'Zaap Routes Rocailleuses [-20,-20]'].sort());
-    expect(monde('astrub').zone.open!.checkpoints).toHaveLength(V06_PUBLIC ? 16 : 13);   // 0.4 publique : les Zaaps d'Amakna pour tous (+ ceux de la 0.6)
+      'Zaap La Bourgade [-78,-41]', 'Zaap Plaines Rocheuses [-17,-47]', 'Zaap Routes Rocailleuses [-20,-20]',
+      // 0.6.1 (publique) : Baie de Sufokia
+      'Zaap Rivage sufokien [10,22]', 'Zaap Sufokia [13,26]'].sort());
+    expect(monde('astrub').zone.open!.checkpoints).toHaveLength(V06_PUBLIC ? 18 : 15);   // 0.4 publique : les Zaaps d'Amakna pour tous (+ ceux de la 0.6)
     for (const z of ['incarnam', 'astrub']) {
       const w = monde(z, { test: {} as never }), wg = w.worldGrid!;
       for (const c of w.zone.open!.checkpoints) {

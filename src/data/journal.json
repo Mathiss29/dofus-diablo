@@ -2359,6 +2359,37 @@
           "Manette : le vibreur de l'appli marche même si le navigateur ne connaît pas les manettes."
         ]
       }
+    },
+    {
+      "date": "2026-11-27",
+      "titre": "La Baie de Sufokia s'ouvre",
+      "resume": "Mise à jour 0.6.1 : la cité de Sufokia, son rivage et le Bassin des Muldos, au sud d'Amakna, à pied.",
+      "capture": "assets/journal/2026-11-27.webp",
+      "legende": "La cité de Sufokia, 27 novembre 2026.",
+      "lignes": {
+        "Le monde": [
+          {
+            "titre": "La Baie de Sufokia",
+            "phrase": "La cité sur l'eau, le Rivage sufokien et le Bassin des Muldos s'ouvrent au sud d'Amakna.",
+            "details": "121 cartes reliées à pied à la côte, avec deux Zaaps, les récoltes officielles et la musique de Sufokia.",
+            "icone": "carte",
+            "etiquettes": [
+              "Baie de Sufokia",
+              "Version 0.6.1"
+            ]
+          },
+          {
+            "titre": "Crabes, Moumoules et Muldos sauvages",
+            "phrase": "9 monstres officiels de la baie, avec leurs vrais sorts, leur butin et 4 archimonstres.",
+            "details": "Crabe, Raul Mops, Étoile de la Mer d'Asse et Moumoule sur le rivage, cinq Muldos sauvages dans le Bassin.",
+            "icone": "bestiaire",
+            "etiquettes": [
+              "Rivage sufokien",
+              "Bassin des Muldos"
+            ]
+          }
+        ]
+      }
     }
   ]
 }

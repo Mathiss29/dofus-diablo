@@ -24,9 +24,9 @@ function passerPortail(w: World, clic = true) {
 }
 
 describe('Astrub (0.2a)', () => {
-  it('359 cartes du dehors + les 642 d\'Amakna, les 58 de l\'île des Wabbits et les 169 de Cania sud et de Moon (0.4, sur la grille du continent), chacune avec des cases marchables', () => {
+  it('359 cartes du dehors + les 642 d\'Amakna, les 58 de l\'île des Wabbits, les 169 de Cania sud et de Moon (0.4) et les 121 de la Baie de Sufokia (0.6.1), sur la grille du continent, chacune avec des cases marchables', () => {
     const wg = new WorldGrid(astrub);
-    expect(astrub.maps.filter(m => !m.inside).length).toBe(359 + 642 + 58 + 5 + 169 + 838);
+    expect(astrub.maps.filter(m => !m.inside).length).toBe(359 + 642 + 58 + 5 + 169 + 838 + 121);   // + Baie de Sufokia (122 cartes moins l'îlot [26,22] sans voisine), publique (tools/extraction/sufokia061)
     // 0.6 (cachée) : les 838 cartes du dehors des 5 régions, fermées hors partie de test (tools/extraction/regions06)
     expect(astrub.maps.filter(m => m.v06 && !m.inside).length).toBe(838);
     expect(astrub.maps.filter(m => m.v06 && m.inside).length).toBe(6 + 47);   // les 5 arènes des donjons de la 0.6 et la Salle au trésor (tools/extraction/arenes06) + 47 intérieurs utiles (regions06/interieurs06.py)

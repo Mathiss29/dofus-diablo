@@ -43,7 +43,7 @@ const JOUABLES = new Set(Object.keys(GAME_DATA.classes).filter(k => !EN_ESSAI.ha
 const PLUS_TARD: Record<string, string> = { ouginak: 'En essai : partie de test' };
 const plusTard = (cle: string) => PLUS_TARD[cle] ?? 'Prévue après la 1.0';
 /** Version affichée et textes de l'accueil (Accueil 12A) : ils racontent la zone de la version, pas le moteur. */
-const VERSION = '0.6';
+const VERSION = '0.6.1';
 /** Écran d'accueil v2 (« Accueil : » 3B, 2026-11-13) : un slogan et une seule ligne « Nouveau » par version ; le détail est dans le Journal.
  *  Le ruban et le bandeau du monde vivant (3A) se calculent à l'heure de Paris (voir vivantHtml). */
 const TEXTE = {

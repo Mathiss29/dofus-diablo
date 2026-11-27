@@ -148,6 +148,14 @@
   "foret_malsaine": {
    "calme": "musique/foret_malsaine_calme.mp3",
    "renfort": "musique/foret_malsaine_renfort.mp3"
+  },
+  "sufokia": {
+   "calme": "musique/sufokia_calme.mp3",
+   "renfort": "musique/sufokia_renfort.mp3"
+  },
+  "sufokia_ville": {
+   "calme": "musique/sufokia_ville_calme.mp3",
+   "renfort": "musique/sufokia_ville_renfort.mp3"
   }
  },
  "ambiances": {
@@ -3518,6 +3526,31 @@
    "musique": "frigost_bourgade",
    "fond": [
     "froid"
+   ]
+  },
+  "32": {
+   "musique": "sufokia_ville",
+   "fond": [
+    "mer"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
+   ]
+  },
+  "490": {
+   "musique": "sufokia",
+   "fond": [
+    "mer"
+   ]
+  },
+  "1119": {
+   "musique": "sufokia",
+   "fond": [
+    "amakna_campagne",
+    "mer"
+   ],
+   "fondNuit": [
+    "grillons_nuit"
    ]
   }
  }
