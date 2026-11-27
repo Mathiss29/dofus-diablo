@@ -54339,6 +54339,135 @@
    "name": "Tanche",
    "icon": 41415,
    "level": 180
+  },
+  "33725": {
+   "name": "Âme capturée : Maître Corbac",
+   "icon": 85004,
+   "level": 110,
+   "ame": "maitre_corbac"
+  },
+  "33719": {
+   "name": "Âme capturée : Koulosse",
+   "icon": 85004,
+   "level": 100,
+   "ame": "koulosse"
+  },
+  "33735": {
+   "name": "Âme capturée : Skeunk",
+   "icon": 85004,
+   "level": 120,
+   "ame": "skeunk"
+  },
+  "33730": {
+   "name": "Âmes capturées : Blop Multicolore Royal & Blops Royaux",
+   "icon": 85004,
+   "level": 120,
+   "ame": "blop_multicolore_royal"
+  },
+  "33734": {
+   "name": "Âme capturée : Royalmouth",
+   "icon": 85004,
+   "level": 120,
+   "ame": "royalmouth"
+  },
+  "33724": {
+   "name": "Âme capturée : Damadrya",
+   "icon": 85004,
+   "level": 110,
+   "ame": "damadrya"
+  },
+  "33729": {
+   "name": "Âme capturée : Silf le Rasboul Majeur",
+   "icon": 85004,
+   "level": 110,
+   "ame": "silf_le_rasboul_majeur"
+  },
+  "2448": {
+   "name": "Cervelle de Bouftou des Cavernes",
+   "icon": 15492,
+   "level": 96
+  },
+  "7905": {
+   "name": "Laine du Boufcoul",
+   "icon": 57001,
+   "level": 96
+  },
+  "7906": {
+   "name": "Corne du Boufcoul",
+   "icon": 47009,
+   "level": 96
+  },
+  "8321": {
+   "name": "Poil de Capsaaloocke",
+   "icon": 54664,
+   "level": 110
+  },
+  "8324": {
+   "name": "Cuir de Capsaaloocke",
+   "icon": 56656,
+   "level": 110
+  },
+  "15426": {
+   "name": "Œuf Végétal",
+   "icon": 126020,
+   "level": 1
+  },
+  "13167": {
+   "name": "Plume du Rasboul Majeur",
+   "icon": 53650,
+   "level": 100
+  },
+  "8798": {
+   "name": "Queue emplumée du Rasboul Majeur",
+   "icon": 65001,
+   "level": 110
+  },
+  "7269": {
+   "name": "Pollen de Bulbiflore",
+   "icon": 164668,
+   "level": 110
+  },
+  "7908": {
+   "name": "Clef de la Caverne du Koulosse",
+   "icon": 84005,
+   "level": 100,
+   "cle": "Caverne du Koulosse"
+  },
+  "7926": {
+   "name": "Clef de la Bibliothèque du Maître Corbac",
+   "icon": 84008,
+   "level": 110,
+   "cle": "Bibliothèque du Maître Corbac"
+  },
+  "8972": {
+   "name": "Clef du Goulet du Rasboul",
+   "icon": 84243,
+   "level": 110,
+   "cle": "Goulet du Rasboul"
+  },
+  "12735": {
+   "name": "Clef de la Bambusaie de Damadrya",
+   "icon": 84783,
+   "level": 110,
+   "cle": "Bambusaie de Damadrya"
+  },
+  "8073": {
+   "name": "Clef du Repaire de Skeunk",
+   "icon": 84011,
+   "level": 120,
+   "cle": "Repaire de Skeunk"
+  },
+  "9254": {
+   "name": "Clef de l'antre du Blop Multicolore",
+   "icon": 84253,
+   "level": 120,
+   "cle": "Antre du Blop Multicolore Royal"
+  },
+  "11174": {
+   "name": "Clef de la serre du Royalmouth",
+   "icon": 84257,
+   "level": 120,
+   "cle": "Serre du Royalmouth"
   }
  },
  "drops": {
@@ -76517,6 +76646,388 @@
     "item": "20796",
     "chance": 1.0,
     "cond": "evenement"
+   }
+  ],
+  "bouftou_des_cavernes": [
+   {
+    "item": "17140",
+    "chance": 36.0,
+    "metier": {
+     "id": 41,
+     "min": 100
+    },
+    "chasse": true
+   },
+   {
+    "item": "2448",
+    "chance": 2.0
+   },
+   {
+    "item": "16819",
+    "chance": 1.0
+   }
+  ],
+  "boufcoul": [
+   {
+    "item": "7905",
+    "chance": 72.0
+   },
+   {
+    "item": "7906",
+    "chance": 36.0
+   },
+   {
+    "item": "17140",
+    "chance": 36.0,
+    "metier": {
+     "id": 41,
+     "min": 100
+    },
+    "chasse": true
+   },
+   {
+    "item": "16819",
+    "chance": 1.0
+   }
+  ],
+  "capsaaloocke": [
+   {
+    "item": "7024",
+    "chance": 34.0
+   },
+   {
+    "item": "17142",
+    "chance": 34.0,
+    "metier": {
+     "id": 41,
+     "min": 110
+    },
+    "chasse": true
+   },
+   {
+    "item": "8321",
+    "chance": 34.0
+   },
+   {
+    "item": "8324",
+    "chance": 5.64
+   },
+   {
+    "item": "16834",
+    "chance": 1.0
+   }
+  ],
+  "silf_le_rasboul_majeur": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "10919",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "15426",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "12233",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "10917",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "10918",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "13167",
+    "chance": 34.0
+   },
+   {
+    "item": "13526",
+    "chance": 6.0,
+    "cond": "quete"
+   },
+   {
+    "item": "8798",
+    "chance": 5.64
+   },
+   {
+    "item": "16826",
+    "chance": 3.0
+   },
+   {
+    "item": "17143",
+    "chance": 1.69,
+    "metier": {
+     "id": 41,
+     "min": 110
+    },
+    "chasse": true
+   },
+   {
+    "item": "20136",
+    "chance": 0.4,
+    "cond": "evenement"
+   }
+  ],
+  "bulbiflore": [
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "23360",
+    "chance": 42.0,
+    "cond": "quete"
+   },
+   {
+    "item": "17142",
+    "chance": 34.0,
+    "metier": {
+     "id": 41,
+     "min": 110
+    },
+    "chasse": true
+   },
+   {
+    "item": "7269",
+    "chance": 34.0
+   },
+   {
+    "item": "23311",
+    "chance": 5.64
+   },
+   {
+    "item": "7291",
+    "chance": 5.64
+   },
+   {
+    "item": "20796",
+    "chance": 1.1
+   },
+   {
+    "item": "16831",
+    "chance": 1.0
+   }
+  ],
+  "poupee_emeraude": [
+   {
+    "item": "17144",
+    "chance": 31.0,
+    "metier": {
+     "id": 41,
+     "min": 120
+    },
+    "chasse": true
+   }
+  ],
+  "rono_le_renarbo": [
+   {
+    "item": "7024",
+    "chance": 34.0
+   },
+   {
+    "item": "17142",
+    "chance": 34.0,
+    "metier": {
+     "id": 41,
+     "min": 110
+    },
+    "chasse": true
+   },
+   {
+    "item": "8250",
+    "chance": 34.0
+   },
+   {
+    "item": "1670",
+    "chance": 5.64
+   },
+   {
+    "item": "16834",
+    "chance": 1.0
+   }
+  ],
+  "horace_le_corbac_apprivoise": [
+   {
+    "item": "8252",
+    "chance": 34.0
+   },
+   {
+    "item": "7024",
+    "chance": 34.0
+   },
+   {
+    "item": "17142",
+    "chance": 34.0,
+    "metier": {
+     "id": 41,
+     "min": 110
+    },
+    "chasse": true
+   },
+   {
+    "item": "2058",
+    "chance": 5.64
+   },
+   {
+    "item": "16834",
+    "chance": 1.0
+   }
+  ],
+  "kapotie_le_buveur": [
+   {
+    "item": "21171",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "21618",
+    "chance": 100.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "7024",
+    "chance": 34.0
+   },
+   {
+    "item": "8249",
+    "chance": 34.0
+   },
+   {
+    "item": "17142",
+    "chance": 34.0,
+    "metier": {
+     "id": 41,
+     "min": 110
+    },
+    "chasse": true
+   },
+   {
+    "item": "2493",
+    "chance": 5.64
+   },
+   {
+    "item": "16834",
+    "chance": 1.0
+   }
+  ],
+  "buveur_de_sang": [
+   {
+    "item": "8249",
+    "chance": 34.0
+   },
+   {
+    "item": "17142",
+    "chance": 34.0,
+    "metier": {
+     "id": 41,
+     "min": 110
+    },
+    "chasse": true
+   },
+   {
+    "item": "7024",
+    "chance": 34.0
+   },
+   {
+    "item": "2493",
+    "chance": 5.64
+   },
+   {
+    "item": "16834",
+    "chance": 1.0
+   }
+  ],
+  "corbac_chef": [
+   {
+    "item": "2060",
+    "chance": 34.0
+   },
+   {
+    "item": "17142",
+    "chance": 34.0,
+    "metier": {
+     "id": 41,
+     "min": 110
+    },
+    "chasse": true
+   },
+   {
+    "item": "7024",
+    "chance": 34.0
+   },
+   {
+    "item": "10972",
+    "chance": 12.0,
+    "cond": "evenement"
+   },
+   {
+    "item": "2059",
+    "chance": 5.64
+   },
+   {
+    "item": "16834",
+    "chance": 1.0
+   }
+  ],
+  "corbac_dresse": [
+   {
+    "item": "7024",
+    "chance": 34.0
+   },
+   {
+    "item": "17142",
+    "chance": 34.0,
+    "metier": {
+     "id": 41,
+     "min": 110
+    },
+    "chasse": true
+   },
+   {
+    "item": "8252",
+    "chance": 34.0
+   },
+   {
+    "item": "2058",
+    "chance": 5.64
+   },
+   {
+    "item": "16834",
+    "chance": 1.0
+   }
+  ],
+  "poupee_affamee": [
+   {
+    "item": "17144",
+    "chance": 31.0,
+    "metier": {
+     "id": 41,
+     "min": 120
+    },
+    "chasse": true
    }
   ]
  },

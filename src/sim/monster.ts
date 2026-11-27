@@ -113,6 +113,8 @@ export class Monster extends Entity {
   marque = 0; marqueJusqua = -1; glaceCoups: number[] = []; gelA = -99; staseA = -99;
   /** Dommages subis × subis pendant subisT s (Cuirasse Laineuse : 0,7). */
   subis = 1; subisT = 0;
+  /** 0.7 (5C) : le Blop Multicolore Royal ne craint que cet élément (arene07.ts, facteurCouleur). */
+  seulElement: Element | null = null;
   /** Boss (maquette « Danger ») : attaque signature en cours (4A) et sa relance, Furieux sous 50 % des PV (5A), entrée annoncée (7A). */
   sig = false; sigCd = 0; sigF: FormeSig | null = null;
   furieux = false; intro = false;

@@ -5,6 +5,7 @@ import type { DonjonDef, Element } from './defs';
 import { RARITIES, type Rarity } from './items';
 import { CASE, type Monster } from './monster';
 import { choisir06, coup06, poserDedale, preparer06, update06, A06, type Choix06, type Oeuf06, type Toile06 } from './arene06';
+import { apparu07, coup07, etages07, piloter07, preparer07, update07, type Grimoire07, type Sort07 } from './arene07';
 import { REGLES_IDOLES, scoreIdoles } from './idoles';
 import { apparuTresor, defTresor, poolTresor } from './salleTresor';
 import type { World } from './world';
@@ -91,7 +92,9 @@ export class Arene {
   rareteCoffre: Rarity | null = null;
   /** Temps avant que le butin jaillisse, une fois le coffre touché. */
   private eclat = -1;
-  readonly pts: { arrivee: Pt; entrees: Pt[]; boss: Pt; sortie: Pt; coffre: Pt };
+  pts: { arrivee: Pt; entrees: Pt[]; boss: Pt; sortie: Pt; coffre: Pt };
+  /** Carte de l'arène où l'on est (0.7, 5A : l'étage du Koulosse). */
+  tagC: string;
   private pool: string[];
   private depart: Pt;
   /** « Wabbits : 8B + 9A » : trou où le boss s'est enfui ; joueurs pour qui c'est la première victoire (le trou les mène à la suite). */
@@ -123,15 +126,28 @@ export class Arene {
   /** 10A : dédale tiré à l'entrée (n° dans arene.murs), -1 sans dédale. */
   dedale = -1;
   tRacines = A06.racine.premier;
+  /** 0.7 (5A-5D, arene07.ts) : étage atteint (Koulosse), grimoires du Corbac et sorts annoncés, couleur du Blop (-1 : aucune),
+   *  potion volée par Skeunk (joueur, temps de fuite qui reste, point où il file). */
+  etage = 0;
+  grimoires: Grimoire07[] = [];
+  sorts07: Sort07[] = [];
+  tGrimoires = 0;
+  couleur = -1;
+  tCouleur = 0;
+  vol: { id: number; t: number; x: number; y: number } | null = null;
+  tVol = 0;
 
   constructor(readonly w: World, readonly d: DonjonDef, reprise: number) {
     const wg = w.worldGrid!, a = d.arene!, at = (c: number) => wg.cellToWorld(c);
     this.pts = { arrivee: at(a.arrivee), entrees: a.entrees.map(at), boss: at(a.boss), sortie: at(a.sortie), coffre: at(a.coffre) };
+    this.tagC = a.tag;
+    if (d.etages?.length) reprise = 1;   // 5A : le Koulosse reprend à l'étage 1
     this.total = d.vagues?.length ?? 0;
     this.pool = [];
     this.vague = Math.max(0, Math.min(this.total + 1, reprise) - 1);   // la vague atteinte recommence (monstres remis à neuf)
     this.depart = { ...this.pts.arrivee };
     preparer06(this, d, this.depart);
+    preparer07(this);
     poserDedale(this);
     const cv = w.player.cleDonjon?.choix;   // reprise : le Royal déjà choisi
     if (reprise > 1 && cv != null && d.choix?.[cv]) { this.variante = cv; this.choix = null; }
@@ -156,7 +172,13 @@ export class Arene {
   /** 4C : un monstre qui sort d'un œuf, compté dans la vague en cours. */
   renfort(type: string, x: number, y: number) { this.arrivees.push({ ...this.libre(x, y), type, t: 0.3, vague: this.vague }); }
   /** Coup d'un joueur (applyHits) : toiles brûlées, œufs qui éclosent. */
-  coup(touche: (o: { x: number; y: number; radius: number }) => boolean, element: Element) { if (this.demarre) coup06(this, touche, element); }
+  coup(touche: (o: { x: number; y: number; radius: number }) => boolean, element: Element) { if (this.demarre) { coup06(this, touche, element); coup07(this, touche); } }
+  /** 5A : on change d'étage (arène suivante du Koulosse). */
+  changerPoints(p: { tag: string; arrivee: Pt; entrees: Pt[]; boss: Pt; sortie: Pt; coffre: Pt }) {
+    const { tag, ...pts } = p; this.pts = pts; this.tagC = tag; this.depart = { ...pts.arrivee };
+  }
+  /** Monstres de la vague en cours encore debout ou annoncés. */
+  restants() { return this.membres.filter(m => !m.dead).length + this.arrivees.filter(a => a.vague === this.vague).length; }
 
   /** Monstres de l'arène encore en vie. */
   vivants() { return this.tous.filter(m => !m.dead).length; }
@@ -188,8 +210,10 @@ export class Arene {
     this.updateWobot(dt);
     this.updateTambours();
     update06(this, dt);
+    update07(this, dt);
     if (this.vague > this.total) return;   // la vague du boss finit quand il tombe
-    const reste = this.membres.filter(m => !m.dead).length + this.arrivees.filter(a => a.vague === this.vague).length;
+    if (etages07(this)) return;   // 5A : Koulosse : on vide l'étage avant de descendre
+    const reste = this.restants();
     if (reste <= ARENE.reste || this.tVague >= ARENE.delai) this.lancerVague();
   }
 
@@ -218,7 +242,7 @@ export class Arene {
     });
   }
   private annoncer(type: string, x: number, y: number, t: number) {
-    const wg = this.w.worldGrid!, q = wg.walkable(x, y) ? { x, y } : wg.nearestFree(x, y, wg.freeByMap.get(this.d.arene!.tag)!);
+    const wg = this.w.worldGrid!, q = wg.walkable(x, y) ? { x, y } : wg.nearestFree(x, y, wg.freeByMap.get(this.tagC)!);
     this.arrivees.push({ type, x: q.x, y: q.y, t, vague: this.vague });
   }
   private apparaitre(a: Attente) {
@@ -230,7 +254,7 @@ export class Arene {
     if (this.d.tresor) apparuTresor(this, m);
     if (a.vague < 0) this.renforts.push(m); else this.membres.push(m);
     if (m.def.boss && this.d.fixe) m.fixe = true;   // 0.6 (8A) : l'Ancestral ne quitte pas son estrade
-    if (m.def.boss && !this.boss) { this.boss = m; w.emit({ k: 'impact', hitstop: 0.05, shake: 0.012, big: true }); }
+    if (m.def.boss && !this.boss) { this.boss = m; w.emit({ k: 'impact', hitstop: 0.05, shake: 0.012, big: true }); apparu07(this, m); }
   }
 
   /** 8C : à 66 % puis 33 % de ses PV, le boss appelle une vague et reste intouchable tant qu'elle vit. */
@@ -263,7 +287,7 @@ export class Arene {
   }
   private libre(x: number, y: number) {
     const wg = this.w.worldGrid!;
-    return wg.walkable(x, y) ? { x, y } : wg.nearestFree(x, y, wg.freeByMap.get(this.d.arene!.tag)!);
+    return wg.walkable(x, y) ? { x, y } : wg.nearestFree(x, y, wg.freeByMap.get(this.tagC)!);
   }
 
   /** « Kanniboul : 3B » : aura continue, tant qu'un joueur de tambour est debout le boss a +bonus % de Dommages. */
@@ -377,6 +401,7 @@ export class Arene {
   }
   /** Avant l'IA ordinaire : true = l'arène mène ce monstre (le Kiafin qui court donner l'alarme). */
   piloter(m: Monster, dt: number): boolean {
+    if (piloter07(this, m, dt)) return true;   // 5D : Skeunk file avec la potion
     // 10D : le Wa Wabbit sorti du Wobot cassé file vers une entrée et disparaît, pour de bon
     if (this.epilogue?.m === m) {
       const E = this.epilogue.e;
@@ -417,7 +442,7 @@ export class Arene {
       w.emit({ k: 'bossFuite', id: b.id, name: b.def.name, x: b.x, y: b.y, suite: this.d.fuite.suite, premiers: [...this.premiers] });
     }
     for (const m of this.tous) if (!m.dead) { m.dead = true; m.t = 0.6; }
-    this.tampons = []; this.tir = null; this.wouste = null;
+    this.tampons = []; this.tir = null; this.wouste = null; this.grimoires = []; this.sorts07 = []; this.vol = null;
     // 10D : la fin de l'histoire, le Wa Wabbit sort du Wobot cassé et s'enfuit (sans combat, sans butin)
     const W = this.d.wobot, D = W && w.opts.data.monsters[W.epilogue];
     if (W && D && this.boss) {

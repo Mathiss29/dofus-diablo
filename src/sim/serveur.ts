@@ -7,7 +7,7 @@ export { NO_INPUT, type PlayerInput } from './input';
 export { COOP, Emetteur, entreeInvite, classeDe, garderUneFois } from './miroir';
 export { exporterJoueur, restaurerJoueur } from './sauvegarde';
 export { ordreValide, jouerOrdre } from './ordres';
-export { V04_PUBLIC, V06_PUBLIC } from './pouvoirs';
+export { V04_PUBLIC, V06_PUBLIC, V07_PUBLIC } from './pouvoirs';
 export { BOUTIQUE_OGRINES, apparatDuMois, prixOgrines, rangAbo } from './boutiqueOgrines';
 export { VERIF, verifierSauvegarde } from './verifSauvegarde';
 export { VIVANT, rendezVous } from './mondeVivant';

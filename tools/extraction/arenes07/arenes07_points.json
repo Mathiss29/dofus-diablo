@@ -1,0 +1,110 @@
+{
+ "koulosse_1": {
+  "tag": "arene_koulosse_1",
+  "arrivee": 14258516,
+  "entrees": [
+   14252960,
+   14252985,
+   14288084
+  ],
+  "boss": 14188292,
+  "sortie": 14199380,
+  "coffre": 14199382
+ },
+ "koulosse_2": {
+  "tag": "arene_koulosse_2",
+  "arrivee": 14258572,
+  "entrees": [
+   14253016,
+   14253041,
+   14288140
+  ],
+  "boss": 14188348,
+  "sortie": 14199436,
+  "coffre": 14199438
+ },
+ "koulosse_3": {
+  "tag": "arene_koulosse_3",
+  "arrivee": 14258628,
+  "entrees": [
+   14253072,
+   14253097,
+   14288196
+  ],
+  "boss": 14188404,
+  "sortie": 14199492,
+  "coffre": 14199494
+ },
+ "corbac": {
+  "tag": "arene_corbac",
+  "arrivee": 14258684,
+  "entrees": [
+   14253128,
+   14253153,
+   14288252
+  ],
+  "boss": 14188460,
+  "sortie": 14199548,
+  "coffre": 14199550
+ },
+ "rasboul": {
+  "tag": "arene_rasboul",
+  "arrivee": 14258740,
+  "entrees": [
+   14253184,
+   14253209,
+   14288308
+  ],
+  "boss": 14188516,
+  "sortie": 14199604,
+  "coffre": 14199606
+ },
+ "damadrya": {
+  "tag": "arene_damadrya",
+  "arrivee": 14258796,
+  "entrees": [
+   14253240,
+   14253265,
+   14288364
+  ],
+  "boss": 14188572,
+  "sortie": 14199660,
+  "coffre": 14199662
+ },
+ "skeunk": {
+  "tag": "arene_skeunk",
+  "arrivee": 14258852,
+  "entrees": [
+   14253296,
+   14253321,
+   14288420
+  ],
+  "boss": 14188628,
+  "sortie": 14199716,
+  "coffre": 14199718
+ },
+ "blop": {
+  "tag": "arene_blop_multicolore",
+  "arrivee": 14258908,
+  "entrees": [
+   14253352,
+   14253377,
+   14288476
+  ],
+  "boss": 14188684,
+  "sortie": 14199772,
+  "coffre": 14199774
+ },
+ "royalmouth": {
+  "tag": "arene_royalmouth",
+  "arrivee": 14258964,
+  "entrees": [
+   14253408,
+   14253432,
+   14288532
+  ],
+  "boss": 14188740,
+  "sortie": 14199828,
+  "coffre": 14199830
+ }
+}

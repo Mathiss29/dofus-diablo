@@ -14,6 +14,7 @@ import { jouerMain } from './ecaflip';
 import { ajouterPieces, CLE_COFFRE, enSurcharge, ouvrirCoffre, piecesMonstre, piecesObjet, seuilsCoffre } from './enutrof';
 import { briser, chanceRune, coutKamas, coutRelance, orbeConvient, potionConvient, POTIONS, regenerer, relancerLigne, REGLES_V2, dureeCommande, estimerCommande, executerCommande, forger, fusionVers, FUSION_N, runeCommande, RUNES, SIGNATURE, type Commande, type CommandeFM, type Estimation } from './forgemagie';
 import { chocNoa, mortSorts06, pasMonstre06 } from './sorts06';
+import { facteurCouleur } from './arene07';
 import { CAMPAGNE_PUBLIC, V03_PUBLIC, V04_PUBLIC, V06_PUBLIC, V07_PUBLIC, niveauObjetsMax, slotAPouvoirConnu } from './pouvoirs';
 import { fxImpression, imprimable, nouveauPourCodex, prixImpression } from './codex';
 import { legendaryPower, FAMILIER_MAX, FAMILIER_XP, familierNiveau, familierStats, METIER_XP, PEPITE, RARITIES, kamasDefaire, noteObjet, rollItem, STAT_NAMES, type EquipSlot, type Item, type ItemDef, type ItemsData, type Rarity, type RecipeDef, type Stat } from './items';
@@ -174,7 +175,7 @@ export interface WorldOptions {
   /** Métiers de récolte (src/data/recoltes.json) : ressources et leurs emplacements par monde. */
   recoltes?: RecoltesData;
   /** Boutiques des PNJ (src/data/boutique.json) : articles et prix en Pépites. */
-  boutiques?: Record<string, { id: string; prix: number; /** vendu seulement en 0.3 */ v03?: boolean; /** en 0.4 (clés d'Amakna) */ v04?: boolean; /** en 0.6 (clés de ses donjons) */ v06?: boolean;
+  boutiques?: Record<string, { id: string; prix: number; /** vendu seulement en 0.3 */ v03?: boolean; /** en 0.4 (clés d'Amakna) */ v04?: boolean; /** en 0.6 (clés de ses donjons) */ v06?: boolean; /** en 0.7 */ v07?: boolean;
     /** payé dans cette monnaie au lieu des Pépites (« kamas » = p.kamas ; Tiwa Cawoteuw : Cawottes) */ monnaie?: string; /** apparence (collection) au lieu d'un objet */ apparat?: boolean;
     /** vendu seulement après une victoire dans ce donjon (« Wabbits : 9C ») */ apres?: string }[]>;
   /** Objets d'apparat officiels (src/data/apparat.json) ; plus aucun ne s'achète (« Apparats : »). */
@@ -423,6 +424,8 @@ export class World {
     if ((V04_PUBLIC || opts.test) && dt?.length) this.zone = { ...this.zone, open: { ...this.zone.open!, donjons: [...(this.zone.open!.donjons ?? []), ...dt] } };
     const d6 = this.zone.open?.donjonsV06;   // 0.6 cachée : ses donjons seulement en partie de test
     if ((V06_PUBLIC || opts.test) && d6?.length) this.zone = { ...this.zone, open: { ...this.zone.open!, donjons: [...(this.zone.open!.donjons ?? []), ...d6] } };
+    const d7 = this.zone.open?.donjonsV07;   // 0.7 cachée : ses donjons seulement en partie de test
+    if ((V07_PUBLIC || opts.test) && d7?.length) this.zone = { ...this.zone, open: { ...this.zone.open!, donjons: [...(this.zone.open!.donjons ?? []), ...d7] } };
     const sz = this.zone.open?.subareas;   // 0.4 cachée : les sous-zones d'Amakna (monstres, butin, contrats) seulement en partie de test
     if (!V04_PUBLIC && !opts.test && sz && Object.values(sz).some(s => s.essai))
       this.zone = { ...this.zone, open: { ...this.zone.open!, subareas: Object.fromEntries(Object.entries(sz).filter(([, s]) => !s.essai)),
@@ -1078,7 +1081,7 @@ export class World {
   /** Le joueur est dans une salle de ce donjon. */
   dansDonjon(nom: string): boolean {
     const d = this.zone.open?.donjons?.find(x => x.nom === nom), tag = this.worldGrid?.mapAt(this.player.x, this.player.y)?.tag;
-    return !!d && !!tag && (tag in d.salles || tag === d.arene?.tag || !!this.couloirs(d)?.tags.includes(tag));
+    return !!d && !!tag && (tag in d.salles || tag === d.arene?.tag || !!d.etages?.some(e => e.tag === tag) || !!this.couloirs(d)?.tags.includes(tag));
   }
   /** Partie de test : les couloirs des donjons en couloirs s'ouvrent à la marche, et salles, couloirs et arène se voient
    *  ensemble depuis l'intérieur (WorldView). En partie publique, rien : l'arène reste fermée, comme avant. */
@@ -1125,7 +1128,7 @@ export class World {
       return;
     }
     // parti autrement que par le portail (Rappel…) : l'arène se vide
-    if (!this.passage && !p.dead && this.worldGrid!.mapAt(p.x, p.y)?.tag !== a.d.arene!.tag) { a.abandonner(); this.arene = null; return; }
+    if (!this.passage && !p.dead && this.worldGrid!.mapAt(p.x, p.y)?.tag !== a.tagC) { a.abandonner(); this.arene = null; return; }   // 0.7 (5A) : l'étage du Koulosse
     a.update(dt);
   }
   /** Partie de test (F1) : droit dans l'arène de ce tag, comme par la porte du gardien. Faux si ce n'est pas une arène. */
@@ -2018,7 +2021,7 @@ export class World {
       const first = m.struck ? 1 : 1 + initiativeBonus(p.initiative); m.struck = true;
       const flat = (crit ? p.stat('dommagesCritiques') : 0) + (def.knock > 0 ? p.stat('dommagesPoussee') : 0);
       const vs = def.vsSummon && (m.summoner || (def.vsElite && (m.def.elite || m.def.boss))) ? def.vsSummon : 1;
-      const vu = (m.vulnT > 0 ? 1 + m.vuln / 100 : 1) * m.subis;   // dommages subis augmentés (Bond) ou réduits (Cuirasse Laineuse)
+      const vu = (m.vulnT > 0 ? 1 + m.vuln / 100 : 1) * m.subis * facteurCouleur(m, el);   // dommages subis augmentés (Bond) ou réduits (Cuirasse Laineuse) ; 0.7 : Blop Multicolore
       // Légendaires de classe : Marque du chasseur (les autres coups), Œil d'aigle (par case de distance)
       const pc = (m.marqueJusqua > this.time && !def.marque ? 1 + m.marque / 100 : 1)
         * (def.vsGros && (m.def.elite || m.def.boss) ? 1 + def.vsGros / 100 : 1) * (def.vsInfecte && m.infecteT > 0 ? 1 + def.vsInfecte / 100 : 1) * (def.plus ? 1 + def.plus / 100 : 1) * (def.vsBouclier && m.bouclier > 0 ? def.vsBouclier : 1)
@@ -2570,7 +2573,7 @@ export class World {
   }
   private morsure(m: Monster) {
     const p = this.player, el = this.elementFamilier(), res = Math.min(50, m.def.res?.[el] ?? 0);
-    const dmg = Math.max(1, Math.round(p.damage(World.MORSURE.jet, el) * this.rng.range(0.9, 1.1) * (1 - res / 100) * m.subis));
+    const dmg = Math.max(1, Math.round(p.damage(World.MORSURE.jet, el) * this.rng.range(0.9, 1.1) * (1 - res / 100) * m.subis * facteurCouleur(m, el)));
     m.hp -= dmg; m.flash = 0.09; m.calmeT = 0; m.struck = true;
     this.emit({ k: 'hit', target: 'monster', id: m.id, x: m.x, y: m.y, z: m.radius * 2 + 10, amount: dmg, crit: false, element: el, sort: 'familier' });
     if (m.hp <= 0) this.killMonster(m);
@@ -3088,7 +3091,7 @@ export class World {
   /** Achat dans une boutique (src/data/boutique.json), payé dans la monnaie de l'article : kamas pour l'utile (Magasin 5B), Cawottes chez Tiwa Cawoteuw, sinon Pépites.
    *  Un article « apparat » rejoint la collection d'apparences, une fois pour toutes. */
   acheter(boutique: string, id: string, n = 1): boolean {
-    const a = this.opts.boutiques?.[boutique]?.find(x => x.id === id && (!x.v03 || this.player.v03) && (!x.v04 || this.player.v04) && (!x.v06 || this.player.v06)), p = this.player;
+    const a = this.opts.boutiques?.[boutique]?.find(x => x.id === id && (!x.v03 || this.player.v03) && (!x.v04 || this.player.v04) && (!x.v06 || this.player.v06) && (!x.v07 || this.player.v07)), p = this.player;
     if (!a || (a.apres && !((this.quetes?.donjons[a.apres]?.v ?? 0) > 0))) return false;
     if (a.apparat) n = 1;
     return this.payer(a.prix * n, a.monnaie ?? PEPITE, () => {
@@ -3110,7 +3113,7 @@ export class World {
   }
   // --- Magasin du Bastion (maquette « Magasin : » 3A+3B 4C) ---------------------
   private ctxMagasin(): CtxMagasin {
-    return { boutiques: (this.opts.boutiques ?? {}) as CtxMagasin['boutiques'], v03: this.player.v03, v04: this.player.v04, v06: this.player.v06 };
+    return { boutiques: (this.opts.boutiques ?? {}) as CtxMagasin['boutiques'], v03: this.player.v03, v04: this.player.v04, v06: this.player.v06, v07: this.player.v07 };
   }
   /** Les achats du jour de ce joueur (remis à zéro à minuit). */
   achatsDuJour() { const p = this.player; return (p.magasin = achatsDuJour(p.magasin, this.opts.aujourdhui ?? '')); }
@@ -3711,7 +3714,7 @@ export class World {
     const p = b.owner;
     if (m.intouchable) return 0;
     const el = p.resolveElement(element), res = Math.min(50, m.def.res?.[el] ?? 0);
-    const vu = (m.vulnT > 0 ? 1 + m.vuln / 100 : 1) * m.subis;
+    const vu = (m.vulnT > 0 ? 1 + m.vuln / 100 : 1) * m.subis * facteurCouleur(m, el);
     const dmg = Math.max(1, Math.round(p.damage(jet, element) * this.rng.range(0.9, 1.1) * (1 - res / 100) * vu));
     m.hp -= dmg; m.flash = 0.09; m.calmeT = 0; m.struck = true; m.agresseur = b.id;
     if (m.state === 'idle' || m.state === 'return') this.aggroGroup(m);

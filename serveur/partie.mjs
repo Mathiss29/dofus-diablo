@@ -65,8 +65,8 @@ export function arenesDisponibles(S) {
   const L = [];
   for (const z of MONDES) if (S.mondes[z]) {
     const o = S.GAME_DATA.zones[z]?.open;
-    // les donjons de la 0.4 et de la 0.6, publics (« En ligne : » 4C), comme dans World
-    const tous = [...(o?.donjons ?? []), ...(S.V04_PUBLIC ? o?.donjonsTest ?? [] : []), ...(S.V06_PUBLIC ? o?.donjonsV06 ?? [] : [])];
+    // les donjons de la 0.4, de la 0.6 et de la 0.7, publics (« En ligne : » 4C), comme dans World
+    const tous = [...(o?.donjons ?? []), ...(S.V04_PUBLIC ? o?.donjonsTest ?? [] : []), ...(S.V06_PUBLIC ? o?.donjonsV06 ?? [] : []), ...(S.V07_PUBLIC ? o?.donjonsV07 ?? [] : [])];
     const carte = new Set((S.mondes[z].maps ?? []).map(m => m.tag));
     for (const d of tous) if (d.arene?.tag && !d.tresor && carte.has(d.arene.tag) && !L.some(x => x.tag === d.arene.tag)) L.push({ tag: d.arene.tag, nom: d.nom, zone: z });
   }

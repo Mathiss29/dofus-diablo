@@ -84,7 +84,7 @@ export function nomDeparts(l: Depart[], nomQuete: (id: string) => string = id =>
 export function reperesJeu(reperes: readonly Repere[], open: OpenDef | undefined, ouverte?: (tag: string) => boolean,
   nomQuete?: (id: string) => string): Repere[] {
   const portes = open?.portes ?? [], depuis = new Set(portes.map(d => d.a[0]));
-  const donjons = new Set([...(open?.donjons ?? []), ...(open?.donjonsTest ?? []), ...(open?.donjonsV06 ?? [])].map(d => d.nom));
+  const donjons = new Set([...(open?.donjons ?? []), ...(open?.donjonsTest ?? []), ...(open?.donjonsV06 ?? []), ...(open?.donjonsV07 ?? [])].map(d => d.nom));
   const l: Repere[] = [];
   for (const r of reperes) {
     const f = famille(r);

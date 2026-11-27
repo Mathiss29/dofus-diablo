@@ -832,6 +832,12 @@ export const LOOKS: Record<string, Look> = {
   bulbuisson: { atlas: 'bulbuisson', scale: 0.64, map: MONSTER_MAP(12/25, 'AnimAttaque0', { 0: 12/25, 1: 12/25 }), height: 125, multi: true },
   grenufar: { atlas: 'grenufar', scale: 0.64, map: MONSTER_MAP(13/21, 'AnimAttaque0', { 0: 13/21, 1: 11/21 }), height: 79, multi: true },
   damadrya: { atlas: 'damadrya', scale: 0.64, map: MONSTER_MAP(12/27, 'AnimAttaque0', { 0: 12/27, 1: 12/32 }), height: 351, multi: true },
+  bouftou_des_cavernes: { atlas: 'bouftou_des_cavernes', scale: 0.64, map: MONSTER_MAP(10/22, 'AnimAttaque0', { 0: 10/22, 1: 9/32 }), height: 161, multi: true },
+  boufcoul: { atlas: 'boufcoul', scale: 0.64, map: MONSTER_MAP(9/32, 'AnimAttaque0', { 0: 9/32, 1: 10/22 }), height: 137, multi: true },
+  capsaaloocke: { atlas: 'capsaaloocke', scale: 1.6, map: MONSTER_MAP(21/34, 'AnimAttaque0', { 0: 21/34, 1: 14/41 }), height: 95, multi: true },
+  silf_le_rasboul_majeur: { atlas: 'silf_le_rasboul_majeur', scale: 0.9, map: MONSTER_MAP(8/21, 'AnimAttaque0', { 0: 8/21, 1: 23/37 }), height: 132, multi: true },
+  bulbiflore: { atlas: 'bulbiflore', scale: 0.64, map: MONSTER_MAP(13/36, 'AnimAttaque0', { 0: 13/36, 1: 8/27 }), height: 84, multi: true },
+  poupee_emeraude: { atlas: 'poupee_emeraude', scale: 1.28, map: MONSTER_MAP(10/21, 'AnimAttaque0', { 0: 10/21, 1: 12/26 }), height: 50, multi: true },
 };
 
 /** Archimonstres d'Astrub (0.3, 15B ; tools/contenu/archimonstres.py) : dans Dofus, un archimonstre a le dessin de son monstre

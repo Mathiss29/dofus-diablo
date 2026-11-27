@@ -1,3 +1,4 @@
+import { facteurCouleur } from './arene07';
 import type { Element, SpellDef } from './defs';
 import type { Bete } from './bete';
 import type { Monster } from './monster';
@@ -108,7 +109,7 @@ export function infecter(m: Monster, w: World, t?: number) {
 export function empoisonner(p: Player, m: Monster, brut: number, element: Element, w: World) {
   if (m.dead || m.intouchable || brut <= 0) return;
   const el = p.resolveElement(element), res = Math.min(50, m.def.res?.[el] ?? 0);
-  const vu = (m.vulnT > 0 ? 1 + m.vuln / 100 : 1) * m.subis, t = R(p)?.poison ?? 3;
+  const vu = (m.vulnT > 0 ? 1 + m.vuln / 100 : 1) * m.subis * facteurCouleur(m, el), t = R(p)?.poison ?? 3;
   const total = p.damage(brut, element) * (1 - res / 100) * vu;
   if (m.poisonT <= 0) w.emit({ k: 'status', x: m.x, y: m.y - 46, text: 'Empoisonné', color: '#7fd35a' });
   m.poison = Math.max(m.poisonT > 0 ? m.poison : 0, total / t); m.poisonT = t; m.poisonEl = el;
