@@ -20,11 +20,12 @@ for z in Z.values():
         for m in s.get('monsters', []) + ([s['elite']] if s.get('elite') else []):
             niv[m] = min(niv.get(m, 999), s['level'])
             if not s.get('v07'): pub.add(m)
+boss07 = {d['bossVague'][0] for z in Z.values() for d in (z.get('open') or {}).get('donjonsV07', []) if d.get('bossVague')}   # boss des donjons de la 0.7
 ames, ames07 = [], []
 for k, d in M.items():
     if not d.get('ame'): continue
     n = niv.get(d['archiDe']) if d.get('archiDe') else d.get('level')
-    v07 = d.get('v07') or (d.get('archiDe') and d['archiDe'] in niv and d['archiDe'] not in pub)
+    v07 = d.get('v07') or k in boss07 or (d.get('archiDe') and d['archiDe'] in niv and d['archiDe'] not in pub)
     (ames07 if v07 else ames).append((n or d.get('level') or 1, 0 if d.get('archiDe') else 1, k))
 def pages(l):
     if not l: return []

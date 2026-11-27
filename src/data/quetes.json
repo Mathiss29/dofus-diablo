@@ -4697,6 +4697,90 @@
     "sac": "epique"
    }
   },
+  "otomai_passage": {
+   "type": "secondaire",
+   "pnj": "marin_otomai",
+   "rendre": "marin_otomai",
+   "serie": "Otomaï",
+   "nom": "Cap sur Otomaï",
+   "niveau": 95,
+   "requiert": [],
+   "v07": true,
+   "texte": "Le marin d'Otomaï devait rapporter des fioles à l'alchimiste de l'île, mais les Porcos ont pillé sa cargaison sur la route de Sufokia. Va la reprendre dans leur Territoire, puis reviens embarquer.",
+   "etapes": [
+    {
+     "nom": "La cargaison volée",
+     "bulle": "Les Porcos se sont servis dans mes caisses. Toutes les fioles sont dans leur Territoire, au nord d'Amakna.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 25 monstres du Territoire des Porcos",
+       "n": 25,
+       "sousZone": 11
+      }
+     ]
+    },
+    {
+     "nom": "Paré à l'embarquement",
+     "bulle": "Les fioles sont à bord, presque toutes. Viens, on lève l'ancre avant que la marée tourne.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Parler au marin d'Otomaï",
+       "pnj": "marin_otomai"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 30000,
+    "kamas": 5000,
+    "pepites": 50,
+    "sac": "epique"
+   }
+  },
+  "pandala_passage": {
+   "type": "secondaire",
+   "pnj": "passeur_pandala",
+   "rendre": "passeur_pandala",
+   "serie": "Pandala",
+   "nom": "Cap sur Pandala",
+   "niveau": 95,
+   "requiert": [],
+   "v07": true,
+   "texte": "Le passeur pandawa n'emmène personne les mains vides : Pandala prépare sa fête et réclame des œufs de Dragoeuf pour les feux d'artifice. Va les chercher, puis reviens au port.",
+   "etapes": [
+    {
+     "nom": "Des œufs pour la fête",
+     "bulle": "Les Dragoss gardent leurs œufs de près, au Village des Dragoeufs. Sois plus têtu qu'eux.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 25 monstres du Village des Dragoeufs",
+       "n": 25,
+       "sousZone": 315
+      }
+     ]
+    },
+    {
+     "nom": "Paré à l'embarquement",
+     "bulle": "Ça sent l'œuf et la poudre. Parfait. Monte, Pandala t'attend.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Parler au passeur pandawa",
+       "pnj": "passeur_pandala"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 30000,
+    "kamas": 5000,
+    "pepites": 50,
+    "sac": "epique"
+   }
+  },
   "moisson_1": {
    "type": "secondaire",
    "serie": "L'éternelle moisson",
@@ -5194,7 +5278,7 @@
    "requiert": [
     "moisson_8"
    ],
-   "texte": "Une nouvelle page du registre de l'Assistante d'Otomaï : 18 archimonstres, de niveau 100 à 110. Le Bestiaire (onglet Archimonstres) et la carte du monde montrent où les trouver.",
+   "texte": "Une nouvelle page du registre de l'Assistante d'Otomaï : 21 archimonstres et 1 boss de donjon, de niveau 100 à 110. Le Bestiaire (onglet Archimonstres) et la carte du monde montrent où les trouver.",
    "etapes": [
     {
      "nom": "Page 9 du registre",
@@ -5202,7 +5286,7 @@
      "objectifs": [
       {
        "t": "ames",
-       "texte": "Capturer et montrer 18 âmes (18 archimonstres)",
+       "texte": "Capturer et montrer 22 âmes (21 archimonstres et 1 boss de donjon)",
        "monstres": [
         "archi_bambouto",
         "archi_bitouf_des_plaines",
@@ -5218,10 +5302,14 @@
         "archi_le_ouassingue_entourbe",
         "archi_mufafah",
         "archi_tourbassingue",
+        "koulosse",
         "archi_chevaucheur_koalak",
         "archi_fauchalak",
         "archi_fossoyeur_koalak",
-        "archi_guerrier_koalak"
+        "archi_guerrier_koalak",
+        "archi_koalak_farouche",
+        "archi_koalak_sanguin",
+        "archi_maitre_koalak"
        ]
       }
      ]
@@ -5252,7 +5340,7 @@
    "requiert": [
     "moisson_9"
    ],
-   "texte": "Une nouvelle page du registre de l'Assistante d'Otomaï : 19 archimonstres, de niveau 110 à 120. Le Bestiaire (onglet Archimonstres) et la carte du monde montrent où les trouver.",
+   "texte": "Une nouvelle page du registre de l'Assistante d'Otomaï : 16 archimonstres et 6 boss de donjon, de niveau 110 à 120. Le Bestiaire (onglet Archimonstres) et la carte du monde montrent où les trouver.",
    "etapes": [
     {
      "nom": "Page 10 du registre",
@@ -5260,14 +5348,14 @@
      "objectifs": [
       {
        "t": "ames",
-       "texte": "Capturer et montrer 19 âmes (19 archimonstres)",
+       "texte": "Capturer et montrer 22 âmes (16 archimonstres et 6 boss de donjon)",
        "monstres": [
-        "archi_koalak_farouche",
-        "archi_koalak_sanguin",
-        "archi_maitre_koalak",
         "archi_momie_koalak",
         "archi_troollaraj",
         "archi_warko_violet",
+        "damadrya",
+        "maitre_corbac",
+        "silf_le_rasboul_majeur",
         "archi_akakwa",
         "archi_betto",
         "archi_disciple_zoth",
@@ -5280,7 +5368,10 @@
         "archi_parashukoui",
         "archi_sarkapwane",
         "archi_sergent_zoth",
-        "archi_tetonuki"
+        "archi_tetonuki",
+        "blop_multicolore_royal",
+        "royalmouth",
+        "skeunk"
        ]
       }
      ]
@@ -5327,90 +5418,6 @@
    "recompense": {
     "xp": 48000,
     "dofus": "7754"
-   }
-  },
-  "otomai_passage": {
-   "type": "secondaire",
-   "pnj": "marin_otomai",
-   "rendre": "marin_otomai",
-   "serie": "Otomaï",
-   "nom": "Cap sur Otomaï",
-   "niveau": 95,
-   "requiert": [],
-   "v07": true,
-   "texte": "Le marin d'Otomaï devait rapporter des fioles à l'alchimiste de l'île, mais les Porcos ont pillé sa cargaison sur la route de Sufokia. Va la reprendre dans leur Territoire, puis reviens embarquer.",
-   "etapes": [
-    {
-     "nom": "La cargaison volée",
-     "bulle": "Les Porcos se sont servis dans mes caisses. Toutes les fioles sont dans leur Territoire, au nord d'Amakna.",
-     "objectifs": [
-      {
-       "t": "vaincre",
-       "texte": "Vaincre 25 monstres du Territoire des Porcos",
-       "n": 25,
-       "sousZone": 11
-      }
-     ]
-    },
-    {
-     "nom": "Paré à l'embarquement",
-     "bulle": "Les fioles sont à bord, presque toutes. Viens, on lève l'ancre avant que la marée tourne.",
-     "objectifs": [
-      {
-       "t": "parler",
-       "texte": "Parler au marin d'Otomaï",
-       "pnj": "marin_otomai"
-      }
-     ]
-    }
-   ],
-   "recompense": {
-    "xp": 30000,
-    "kamas": 5000,
-    "pepites": 50,
-    "sac": "epique"
-   }
-  },
-  "pandala_passage": {
-   "type": "secondaire",
-   "pnj": "passeur_pandala",
-   "rendre": "passeur_pandala",
-   "serie": "Pandala",
-   "nom": "Cap sur Pandala",
-   "niveau": 95,
-   "requiert": [],
-   "v07": true,
-   "texte": "Le passeur pandawa n'emmène personne les mains vides : Pandala prépare sa fête et réclame des œufs de Dragoeuf pour les feux d'artifice. Va les chercher, puis reviens au port.",
-   "etapes": [
-    {
-     "nom": "Des œufs pour la fête",
-     "bulle": "Les Dragoss gardent leurs œufs de près, au Village des Dragoeufs. Sois plus têtu qu'eux.",
-     "objectifs": [
-      {
-       "t": "vaincre",
-       "texte": "Vaincre 25 monstres du Village des Dragoeufs",
-       "n": 25,
-       "sousZone": 315
-      }
-     ]
-    },
-    {
-     "nom": "Paré à l'embarquement",
-     "bulle": "Ça sent l'œuf et la poudre. Parfait. Monte, Pandala t'attend.",
-     "objectifs": [
-      {
-       "t": "parler",
-       "texte": "Parler au passeur pandawa",
-       "pnj": "passeur_pandala"
-      }
-     ]
-    }
-   ],
-   "recompense": {
-    "xp": 30000,
-    "kamas": 5000,
-    "pepites": 50,
-    "sac": "epique"
    }
   }
  },

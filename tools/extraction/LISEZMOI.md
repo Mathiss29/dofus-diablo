@@ -791,3 +791,19 @@ Toutes sont refaites avec `HD=2` : planche dessinée 2 fois plus grand, `meta.hd
   puis la chaîne habituelle. `tools/contenu/quete_ocre.py` range les âmes de la 0.7 dans des pages à part (`v07`), les pages publiques ne bougent pas.
 - Bateaux (`zones.json > portes`, `voyage`) : Sufokia [15,28] case 453 ↔ Village côtier [-44,21] case 189 (quête « Cap sur Otomaï »),
   Madrestam [10,-5] case 342 ↔ Akwadala [21,-20] case 468 (« Cap sur Pandala »). Écrans de voyage `otomai`, `pandala`, `sufokia`.
+
+## Donjons de la 0.7 (partie de test, ligne « 0.7 : » 4A-4G + 5A-5D, 27 nov. 2026)
+- Salles officielles (table dungeons 30, 3, 41, 125, 46, 49, 54) sorties avec `map_dump.py` depuis `cache-dofus/chemin200/cartes.0*.tar`,
+  textures comme les régions de la 0.7. Dossier de travail avec `cartes/` et `tex/`.
+- `arenes07/compo07.py` : la cour ronde de la 0.6 (`compo06.py`), sol des salles officielles recopié autour de la salle du boss, anneau,
+  4 abris et décor des bords en pièces du donjon. `python3 compo07.py pieces` choisit les groupes de taille moyenne (une fois par
+  pièce, `pieces07.json`), `planche` écrit `vues/pieces_<donjon>.jpg`, `CHOIX` = numéros retenus sur ces planches ; `apercu` pour voir.
+  Koulosse (5A) : trois arènes (étages 1 à 3, salles d'entrée, du milieu et du fond).
+- `regions_monde.py joindre`, `arenes07/export07.py public/assets/mondes [apercu|-] [noms]` (arènes en y = 98 sous Astrub, cartes `v07: 1` ;
+  pas de case marchable sur le vide, points ramenés sur la case marchable la plus proche), `arenes07/donjons07.py` (sous-zones, `donjonsV07`,
+  portes, clés chez Goultard, `etages` du Koulosse), `regions_monde.py scinder`, `envoi.mjs`.
+- Monstres (squelettes 575, 3660, 484, 485, 5756, 498, 487 rapportés du PC dans `cache-dofus/bones-07/`) : planches SCALE 2.5
+  (1.0 pour Capsaaloocke, trop grand), Corbacs nommés et Poupée Affamée sur la planche de leur squelette (`look` d'un monstre existant),
+  chaîne habituelle (`ajout.py`, `monster_spells.py`, `monster_stats.py` en ne gardant que les nouveaux, `archis_ames.py`, `drops_ajout.py`,
+  `icones_ajout.py`), boss marqués à la main, XP par la courbe de `xp_monstres.py`.
+- Mécaniques dans `src/sim/arene07.ts` (A07) : étages du Koulosse, grimoires du Corbac, couleur du Blop Multicolore, Skeunk voleur.

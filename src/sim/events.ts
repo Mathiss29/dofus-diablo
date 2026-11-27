@@ -83,6 +83,8 @@ export type SimEvent =
    *  boss = arrivée du boss), palier du boss (8C), boss vaincu (temps, nouveau record ; portail et coffre, 13A). */
   | { k: 'areneDebut'; nom: string; boss: string | null; vagues: number; cle: string | null; reprise: number }
   | { k: 'areneVague'; n: number; total: number; nom: string | null; boss: string | null }
+  /** 0.7 (5A) : on descend à l'étage n du Koulosse (sur total). */
+  | { k: 'areneEtage'; n: number; total: number }
   | { k: 'arenePalier'; id: number; name: string; n: number; renforts?: string | null; awmuwe?: boolean }
   /** « Wabbits : 7C » : un Kiafin court donner l'alarme (n = 0), ou l'a donnée (n renforts arrivent). */
   | { k: 'areneAlarme'; id: number; x: number; y: number; n: number }

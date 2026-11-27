@@ -50,7 +50,7 @@ describe('repères de la carte : chaque repère mène quelque part', () => {
     // aucun repère de transport sans vrai départ
     for (const r of l) if (famille(r) === 'transport') expect(dep.some(d => d.t === r.t), `${r.n} (${r.t}) ne mène nulle part`).toBe(true);
     // donjons : seulement les nôtres, chacun avec son repère s'il a une entrée dehors
-    const donjons = [...(open.donjons ?? []), ...(open.donjonsTest ?? []), ...(open.donjonsV06 ?? [])].map(d => d.nom);
+    const donjons = [...(open.donjons ?? []), ...(open.donjonsTest ?? []), ...(open.donjonsV06 ?? []), ...(open.donjonsV07 ?? [])].map(d => d.nom);
     for (const r of l) if (famille(r) === 'donjon') expect(donjons, `donjon ${r.n} (${r.t})`).toContain(r.n);
     for (const n of donjons) {
       const entree = (open.portes ?? []).find(d => d.nom === n && /^-?\d+_-?\d+$/.test(d.a[0]));

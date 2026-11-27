@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { ISO } from '../sim/iso';
 import { RARITIES, RARITY_COLORS } from '../sim/items';
+import { COULEURS_BLOP } from '../sim/arene07';
 import type { World } from '../sim/world';
 import { dossier, v } from './assetUrl';
 import { textureUneFois } from './uneFois';
@@ -41,6 +42,8 @@ export class AreneView {
   /** 0.6 (« Arènes : » 2D, 6B) : cercles de choix des Blops Royaux et toiles au sol, sous les télégraphes ; noms des cercles. */
   private sol06: Phaser.GameObjects.Graphics;
   private noms06: Phaser.GameObjects.Text[] = [];
+  /** 0.7 (5B-5D) : grimoires volants du Corbac, couleur du Blop Multicolore, potion volée par Skeunk. */
+  private g07: Phaser.GameObjects.Graphics;
   /** 0.6 (22B) : portail doré du Coffre Malveillant, dans le monde. */
   private tresor: Phaser.GameObjects.Graphics;
   private tresorNom: Phaser.GameObjects.Text;
@@ -57,6 +60,7 @@ export class AreneView {
     // planches chargées d'avance : le coffre doit être prêt à la mort du boss
     for (const c of Object.values(COFFRES)) this.planche(c.atlas);
     this.sol06 = scene.add.graphics().setDepth(SOL + 40);
+    this.g07 = scene.add.graphics();
     this.tresor = scene.add.graphics().setBlendMode(Phaser.BlendModes.ADD).setVisible(false);
     this.tresorNom = scene.add.text(0, 0, '', { fontFamily: 'Rowdies, Lexend, sans-serif', fontSize: '15px', color: '#ffe08a', stroke: '#000', strokeThickness: 4, align: 'center' })
       .setOrigin(0.5, 1).setVisible(false);
@@ -101,6 +105,36 @@ export class AreneView {
       g.fillStyle(0xe8e4ff, 0.08 * fin).fillEllipse(s.x, s.y, rx * 2, ry * 2);
     }
   }
+  /** 5B : livre ouvert qui flotte et luit (fermé : posé, éteint) ; 5C : anneau de la couleur du Blop ; 5D : fiole au-dessus de Skeunk. */
+  private dessiner07() {
+    const a = this.world.arene, g = this.g07.clear();
+    if (!a) return;
+    let prof = 0;
+    for (const [i, l] of a.grimoires.entries()) {
+      const s = ISO.toScreen(l.x, l.y), h = l.ouvert ? 60 + 8 * Math.sin(this.tw * 2.5 + i) : 8;
+      prof = Math.max(prof, s.y + 1);
+      g.fillStyle(0x000000, 0.3).fillEllipse(s.x, s.y, 46, 20);
+      if (l.ouvert) g.fillStyle(0xb48cff, 0.22 + 0.1 * Math.sin(this.tw * 4 + i)).fillCircle(s.x, s.y - h, 34);
+      const y = s.y - h, c = l.ouvert ? 0x6a3fa8 : 0x3a2a44, p = l.ouvert ? 0xf4ecd4 : 0x8a8070;
+      g.fillStyle(c, 1).fillTriangle(s.x, y + 6, s.x - 26, y - 6, s.x - 26, y + 14).fillTriangle(s.x, y + 6, s.x + 26, y - 6, s.x + 26, y + 14);
+      if (l.ouvert) g.fillStyle(p, 1).fillTriangle(s.x, y + 2, s.x - 22, y - 8, s.x - 22, y + 8).fillTriangle(s.x, y + 2, s.x + 22, y - 8, s.x + 22, y + 8);
+      g.lineStyle(2, l.ouvert ? 0xe0c8ff : 0x5a4a60, 0.9).lineBetween(s.x, y + 6, s.x, y - 2);
+    }
+    const b = a.boss;
+    if (b && !b.dead && a.couleur >= 0) {
+      const s = ISO.toScreen(b.x, b.y), col = Phaser.Display.Color.HexStringToColor(COULEURS_BLOP[a.couleur].couleur).color, k = 0.5 + 0.5 * Math.sin(this.tw * 4);
+      g.lineStyle(5, col, 0.55 + 0.35 * k).strokeEllipse(s.x, s.y, b.radius * 4 + 10 * k, b.radius * 2 + 5 * k);
+      g.fillStyle(col, 0.18).fillEllipse(s.x, s.y, b.radius * 4, b.radius * 2);
+      prof = Math.max(prof, s.y);
+    }
+    if (b && !b.dead && a.vol) {
+      const s = ISO.toScreen(b.x, b.y), y = s.y - b.radius * 2 - 70 + 4 * Math.sin(this.tw * 6);
+      g.fillStyle(0xff4a5a, 0.9).fillCircle(s.x, y, 10).fillRect(s.x - 4, y - 18, 8, 10);
+      g.lineStyle(2, 0xffffff, 0.8).strokeCircle(s.x, y, 10);
+      prof = Math.max(prof, s.y + 1);
+    }
+    g.setDepth(prof + 300);
+  }
   /** Carapace = demi-dôme d'acier autour du Wa Wobot, qui se fissure à mesure qu'on la frappe ; Tamponneur = anneau qui se vide. */
   private dessinerWobot(dt: number) {
     const g = this.wobot.clear();
@@ -134,12 +168,13 @@ export class AreneView {
     g.setDepth(prof + 300);
   }
   private planche(a: string) { return textureUneFois(this.scene, a, l => l.multiatlas(a, v(`${SP}/${a}.json`), dossier(`${SP}/`))); }
-  destroy() { this.tresor.destroy(); this.tresorNom.destroy(); this.sol06.destroy(); this.noms06.forEach(t => t.destroy()); this.wobot.destroy(); this.trou.destroy(); this.trouNom.destroy(); this.portail.destroy(); this.lueur.destroy(); this.coffre?.destroy(); this.nom.destroy(); }
+  destroy() { this.g07.destroy(); this.tresor.destroy(); this.tresorNom.destroy(); this.sol06.destroy(); this.noms06.forEach(t => t.destroy()); this.wobot.destroy(); this.trou.destroy(); this.trouNom.destroy(); this.portail.destroy(); this.lueur.destroy(); this.coffre?.destroy(); this.nom.destroy(); }
 
   update(dt: number) {
     const a = this.world.arene, vu = !!a?.fini;
     this.dessinerWobot(dt);
     this.dessiner06();
+    this.dessiner07();
     this.dessinerTresor();
     this.portail.setVisible(vu); this.nom.setVisible(vu); this.lueur.setVisible(vu);
     // trou du boss enfui : visible seulement pour qui il mène encore quelque part

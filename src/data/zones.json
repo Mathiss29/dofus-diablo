@@ -2618,6 +2618,90 @@
      ],
      "v07": true,
      "region": "Île de Pandala"
+    },
+    "808": {
+     "name": "Caverne du Koulosse",
+     "level": 100,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      0,
+      0
+     ],
+     "v07": true,
+     "region": "Montagne des Koalaks"
+    },
+    "211": {
+     "name": "Bibliothèque du Maître Corbac",
+     "level": 110,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      0,
+      0
+     ],
+     "v07": true,
+     "region": "Cania"
+    },
+    "470": {
+     "name": "Goulet du Rasboul",
+     "level": 110,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      0,
+      0
+     ],
+     "v07": true,
+     "region": "Île d'Otomaï"
+    },
+    "946": {
+     "name": "Bambusaie de Damadrya",
+     "level": 110,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      0,
+      0
+     ],
+     "v07": true,
+     "region": "Île de Pandala"
+    },
+    "254": {
+     "name": "Repaire de Skeunk",
+     "level": 120,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      0,
+      0
+     ],
+     "v07": true,
+     "region": "Montagne des Koalaks"
+    },
+    "796": {
+     "name": "Antre du Blop Multicolore Royal",
+     "level": 120,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      0,
+      0
+     ],
+     "v07": true,
+     "region": "Cania"
+    },
+    "617": {
+     "name": "Serre du Royalmouth",
+     "level": 120,
+     "monsters": [],
+     "groupsPerMap": 0,
+     "groupSize": [
+      0,
+      0
+     ],
+     "v07": true,
+     "region": "Frigost"
     }
    },
    "checkpoints": [
@@ -4691,6 +4775,97 @@
       511
      ],
      "nom": "Taverne du Zaap de Pandala"
+    },
+    {
+     "a": [
+      "-17_8",
+      287
+     ],
+     "b": [
+      "arene_koulosse_1",
+      0
+     ],
+     "nom": "Caverne du Koulosse",
+     "cle": "7908",
+     "marque": true
+    },
+    {
+     "a": [
+      "-15_-62",
+      287
+     ],
+     "b": [
+      "arene_corbac",
+      0
+     ],
+     "nom": "Bibliothèque du Maître Corbac",
+     "cle": "7926",
+     "marque": true
+    },
+    {
+     "a": [
+      "-51_9",
+      287
+     ],
+     "b": [
+      "arene_rasboul",
+      0
+     ],
+     "nom": "Goulet du Rasboul",
+     "cle": "8972",
+     "marque": true
+    },
+    {
+     "a": [
+      "26_-30",
+      287
+     ],
+     "b": [
+      "arene_damadrya",
+      0
+     ],
+     "nom": "Bambusaie de Damadrya",
+     "cle": "12735",
+     "marque": true
+    },
+    {
+     "a": [
+      "-20_10",
+      287
+     ],
+     "b": [
+      "arene_skeunk",
+      0
+     ],
+     "nom": "Repaire de Skeunk",
+     "cle": "8073",
+     "marque": true
+    },
+    {
+     "a": [
+      "-14_-43",
+      284
+     ],
+     "b": [
+      "arene_blop_multicolore",
+      0
+     ],
+     "nom": "Antre du Blop Multicolore Royal",
+     "cle": "9254",
+     "marque": true
+    },
+    {
+     "a": [
+      "-84_-49",
+      440
+     ],
+     "b": [
+      "arene_royalmouth",
+      0
+     ],
+     "nom": "Serre du Royalmouth",
+     "cle": "11174",
+     "marque": true
     }
    ],
    "donjons": [
@@ -16671,6 +16846,549 @@
       "dragon_cochon",
       "don_duss_ang",
       "don_dorgan"
+     ]
+    }
+   ],
+   "donjonsV07": [
+    {
+     "nom": "Caverne du Koulosse",
+     "salles": {},
+     "arene": {
+      "tag": "arene_koulosse_1",
+      "arrivee": 14258516,
+      "entrees": [
+       14252960,
+       14252985,
+       14288084
+      ],
+      "boss": 14188292,
+      "sortie": 14199380,
+      "coffre": 14199382
+     },
+     "vagues": [
+      {
+       "m": [
+        "bouftou_des_cavernes",
+        "boufcoul",
+        "bouftou_des_cavernes",
+        "boufcoul",
+        "bouftou_des_cavernes",
+        "boufcoul",
+        "bouftou_des_cavernes",
+        "boufcoul",
+        "bouftou_des_cavernes",
+        "boufcoul",
+        "bouftou_des_cavernes",
+        "boufcoul"
+       ]
+      },
+      {
+       "m": [
+        "boufcoul",
+        "bouftou_des_cavernes",
+        "boufcoul",
+        "bouftou_des_cavernes",
+        "boufcoul",
+        "bouftou_des_cavernes",
+        "boufcoul",
+        "bouftou_des_cavernes",
+        "boufcoul",
+        "bouftou_des_cavernes",
+        "boufcoul",
+        "bouftou_des_cavernes"
+       ]
+      },
+      {
+       "m": [
+        "bouftou_des_cavernes",
+        "boufcoul",
+        "bouftou_des_cavernes",
+        "boufcoul",
+        "bouftou_des_cavernes",
+        "boufcoul",
+        "bouftou_des_cavernes",
+        "boufcoul",
+        "bouftou_des_cavernes",
+        "boufcoul",
+        "bouftou_des_cavernes",
+        "boufcoul",
+        "bouftou_des_cavernes",
+        "boufcoul"
+       ]
+      }
+     ],
+     "bossVague": [
+      "koulosse",
+      "boufcoul",
+      "boufcoul"
+     ],
+     "etages": [
+      {
+       "tag": "arene_koulosse_2",
+       "arrivee": 14258572,
+       "entrees": [
+        14253016,
+        14253041,
+        14288140
+       ],
+       "boss": 14188348,
+       "sortie": 14199436,
+       "coffre": 14199438
+      },
+      {
+       "tag": "arene_koulosse_3",
+       "arrivee": 14258628,
+       "entrees": [
+        14253072,
+        14253097,
+        14288196
+       ],
+       "boss": 14188404,
+       "sortie": 14199492,
+       "coffre": 14199494
+      }
+     ]
+    },
+    {
+     "nom": "Bibliothèque du Maître Corbac",
+     "salles": {},
+     "arene": {
+      "tag": "arene_corbac",
+      "arrivee": 14258684,
+      "entrees": [
+       14253128,
+       14253153,
+       14288252
+      ],
+      "boss": 14188460,
+      "sortie": 14199548,
+      "coffre": 14199550
+     },
+     "vagues": [
+      {
+       "m": [
+        "buveur_de_sang",
+        "corbac_chef",
+        "corbac_dresse",
+        "capsaaloocke",
+        "buveur_de_sang",
+        "corbac_chef",
+        "corbac_dresse",
+        "capsaaloocke",
+        "buveur_de_sang",
+        "corbac_chef",
+        "corbac_dresse",
+        "capsaaloocke"
+       ]
+      },
+      {
+       "m": [
+        "capsaaloocke",
+        "buveur_de_sang",
+        "corbac_chef",
+        "corbac_dresse",
+        "capsaaloocke",
+        "buveur_de_sang",
+        "corbac_chef",
+        "corbac_dresse",
+        "capsaaloocke",
+        "buveur_de_sang",
+        "corbac_chef",
+        "corbac_dresse"
+       ]
+      },
+      {
+       "m": [
+        "corbac_dresse",
+        "capsaaloocke",
+        "buveur_de_sang",
+        "corbac_chef",
+        "corbac_dresse",
+        "capsaaloocke",
+        "buveur_de_sang",
+        "corbac_chef",
+        "corbac_dresse",
+        "capsaaloocke",
+        "buveur_de_sang",
+        "corbac_chef",
+        "corbac_dresse",
+        "capsaaloocke"
+       ]
+      }
+     ],
+     "bossVague": [
+      "maitre_corbac",
+      "rono_le_renarbo",
+      "horace_le_corbac_apprivoise",
+      "kapotie_le_buveur"
+     ],
+     "grimoires": 3
+    },
+    {
+     "nom": "Goulet du Rasboul",
+     "salles": {},
+     "arene": {
+      "tag": "arene_rasboul",
+      "arrivee": 14258740,
+      "entrees": [
+       14253184,
+       14253209,
+       14288308
+      ],
+      "boss": 14188516,
+      "sortie": 14199604,
+      "coffre": 14199606
+     },
+     "vagues": [
+      {
+       "m": [
+        "bitouf_des_plaines",
+        "craqueleur_poli",
+        "craqueboule_poli",
+        "mufafah",
+        "kido",
+        "kilibriss",
+        "bitouf_des_plaines",
+        "craqueleur_poli",
+        "craqueboule_poli",
+        "mufafah",
+        "kido",
+        "kilibriss"
+       ]
+      },
+      {
+       "m": [
+        "mufafah",
+        "kido",
+        "kilibriss",
+        "bitouf_des_plaines",
+        "craqueleur_poli",
+        "craqueboule_poli",
+        "mufafah",
+        "kido",
+        "kilibriss",
+        "bitouf_des_plaines",
+        "craqueleur_poli",
+        "craqueboule_poli"
+       ]
+      },
+      {
+       "m": [
+        "bitouf_des_plaines",
+        "craqueleur_poli",
+        "craqueboule_poli",
+        "mufafah",
+        "kido",
+        "kilibriss",
+        "bitouf_des_plaines",
+        "craqueleur_poli",
+        "craqueboule_poli",
+        "mufafah",
+        "kido",
+        "kilibriss",
+        "bitouf_des_plaines",
+        "craqueleur_poli"
+       ]
+      }
+     ],
+     "bossVague": [
+      "silf_le_rasboul_majeur",
+      "kilibriss",
+      "kido"
+     ]
+    },
+    {
+     "nom": "Bambusaie de Damadrya",
+     "salles": {},
+     "arene": {
+      "tag": "arene_damadrya",
+      "arrivee": 14258796,
+      "entrees": [
+       14253240,
+       14253265,
+       14288364
+      ],
+      "boss": 14188572,
+      "sortie": 14199660,
+      "coffre": 14199662
+     },
+     "vagues": [
+      {
+       "m": [
+        "bambouto",
+        "floristile",
+        "bulbuisson",
+        "bulbiflore",
+        "grenufar",
+        "bambouto",
+        "floristile",
+        "bulbuisson",
+        "bulbiflore",
+        "grenufar",
+        "bambouto",
+        "floristile"
+       ]
+      },
+      {
+       "m": [
+        "bulbiflore",
+        "grenufar",
+        "bambouto",
+        "floristile",
+        "bulbuisson",
+        "bulbiflore",
+        "grenufar",
+        "bambouto",
+        "floristile",
+        "bulbuisson",
+        "bulbiflore",
+        "grenufar"
+       ]
+      },
+      {
+       "m": [
+        "floristile",
+        "bulbuisson",
+        "bulbiflore",
+        "grenufar",
+        "bambouto",
+        "floristile",
+        "bulbuisson",
+        "bulbiflore",
+        "grenufar",
+        "bambouto",
+        "floristile",
+        "bulbuisson",
+        "bulbiflore",
+        "grenufar"
+       ]
+      }
+     ],
+     "bossVague": [
+      "damadrya",
+      "bulbiflore",
+      "bulbuisson"
+     ]
+    },
+    {
+     "nom": "Repaire de Skeunk",
+     "salles": {},
+     "arene": {
+      "tag": "arene_skeunk",
+      "arrivee": 14258852,
+      "entrees": [
+       14253296,
+       14253321,
+       14288420
+      ],
+      "boss": 14188628,
+      "sortie": 14199716,
+      "coffre": 14199718
+     },
+     "vagues": [
+      {
+       "m": [
+        "koalak_sanguin",
+        "warko_violet",
+        "guerrier_koalak",
+        "koalak_farouche",
+        "fauchalak",
+        "poupee_emeraude",
+        "poupee_affamee",
+        "koalak_sanguin",
+        "warko_violet",
+        "guerrier_koalak",
+        "koalak_farouche",
+        "fauchalak"
+       ]
+      },
+      {
+       "m": [
+        "koalak_farouche",
+        "fauchalak",
+        "poupee_emeraude",
+        "poupee_affamee",
+        "koalak_sanguin",
+        "warko_violet",
+        "guerrier_koalak",
+        "koalak_farouche",
+        "fauchalak",
+        "poupee_emeraude",
+        "poupee_affamee",
+        "koalak_sanguin"
+       ]
+      },
+      {
+       "m": [
+        "poupee_affamee",
+        "koalak_sanguin",
+        "warko_violet",
+        "guerrier_koalak",
+        "koalak_farouche",
+        "fauchalak",
+        "poupee_emeraude",
+        "poupee_affamee",
+        "koalak_sanguin",
+        "warko_violet",
+        "guerrier_koalak",
+        "koalak_farouche",
+        "fauchalak",
+        "poupee_emeraude"
+       ]
+      }
+     ],
+     "bossVague": [
+      "skeunk",
+      "poupee_affamee",
+      "poupee_emeraude"
+     ],
+     "voleur": true
+    },
+    {
+     "nom": "Antre du Blop Multicolore Royal",
+     "salles": {},
+     "arene": {
+      "tag": "arene_blop_multicolore",
+      "arrivee": 14258908,
+      "entrees": [
+       14253352,
+       14253377,
+       14288476
+      ],
+      "boss": 14188684,
+      "sortie": 14199772,
+      "coffre": 14199774
+     },
+     "vagues": [
+      {
+       "m": [
+        "blopignon",
+        "tronkoblop",
+        "blop_coco_royal",
+        "blop_griotte_royal",
+        "blop_indigo_royal",
+        "blop_reinette_royal",
+        "blopignon",
+        "tronkoblop",
+        "blop_coco_royal",
+        "blop_griotte_royal",
+        "blop_indigo_royal",
+        "blop_reinette_royal"
+       ]
+      },
+      {
+       "m": [
+        "blop_griotte_royal",
+        "blop_indigo_royal",
+        "blop_reinette_royal",
+        "blopignon",
+        "tronkoblop",
+        "blop_coco_royal",
+        "blop_griotte_royal",
+        "blop_indigo_royal",
+        "blop_reinette_royal",
+        "blopignon",
+        "tronkoblop",
+        "blop_coco_royal"
+       ]
+      },
+      {
+       "m": [
+        "blopignon",
+        "tronkoblop",
+        "blop_coco_royal",
+        "blop_griotte_royal",
+        "blop_indigo_royal",
+        "blop_reinette_royal",
+        "blopignon",
+        "tronkoblop",
+        "blop_coco_royal",
+        "blop_griotte_royal",
+        "blop_indigo_royal",
+        "blop_reinette_royal",
+        "blopignon",
+        "tronkoblop"
+       ]
+      }
+     ],
+     "bossVague": [
+      "blop_multicolore_royal",
+      "tronkoblop",
+      "blopignon"
+     ],
+     "couleurs": true
+    },
+    {
+     "nom": "Serre du Royalmouth",
+     "salles": {},
+     "arene": {
+      "tag": "arene_royalmouth",
+      "arrivee": 14258964,
+      "entrees": [
+       14253408,
+       14253432,
+       14288532
+      ],
+      "boss": 14188740,
+      "sortie": 14199828,
+      "coffre": 14199830
+     },
+     "vagues": [
+      {
+       "m": [
+        "boufmouth",
+        "boufmouth_de_guerre",
+        "bouftonmouth",
+        "boufmouth",
+        "boufmouth_de_guerre",
+        "bouftonmouth",
+        "boufmouth",
+        "boufmouth_de_guerre",
+        "bouftonmouth",
+        "boufmouth",
+        "boufmouth_de_guerre",
+        "bouftonmouth"
+       ]
+      },
+      {
+       "m": [
+        "boufmouth",
+        "boufmouth_de_guerre",
+        "bouftonmouth",
+        "boufmouth",
+        "boufmouth_de_guerre",
+        "bouftonmouth",
+        "boufmouth",
+        "boufmouth_de_guerre",
+        "bouftonmouth",
+        "boufmouth",
+        "boufmouth_de_guerre",
+        "bouftonmouth"
+       ]
+      },
+      {
+       "m": [
+        "boufmouth",
+        "boufmouth_de_guerre",
+        "bouftonmouth",
+        "boufmouth",
+        "boufmouth_de_guerre",
+        "bouftonmouth",
+        "boufmouth",
+        "boufmouth_de_guerre",
+        "bouftonmouth",
+        "boufmouth",
+        "boufmouth_de_guerre",
+        "bouftonmouth",
+        "boufmouth",
+        "boufmouth_de_guerre"
+       ]
+      }
+     ],
+     "bossVague": [
+      "royalmouth",
+      "boufmouth_de_guerre",
+      "boufmouth_de_guerre"
      ]
     }
    ]

@@ -356,6 +356,14 @@ export interface DonjonDef { nom: string; salles: Record<string, string[][]>;
   /** 0.6 (22B) : Salle au trésor du Coffre Malveillant : on y entre par le portail qu'il laisse (pas de porte ni de clé), au niveau
    *  de la sous-zone d'où l'on vient ; '?' = monstres dorés de cette sous-zone ; la sortie ramène là où était le portail. */
   tresor?: boolean;
+  /** 0.7 (5A) : Koulosse en étages : arènes des étages suivants ; une vague par étage, on descend quand la vague est vide (arene07.ts). */
+  etages?: AreneDef[];
+  /** 0.7 (5B) : grimoires volants du Maître Corbac : en fermer ce nombre l'étourdit (arene07.ts). */
+  grimoires?: number;
+  /** 0.7 (5C) : le Blop Multicolore Royal change de couleur et ne craint que l'élément de sa couleur. */
+  couleurs?: boolean;
+  /** 0.7 (5D) : Skeunk vole une charge de potion et fuit. */
+  voleur?: boolean;
   /** Donjon en couloirs (maquette « Couloirs : 1C 2B 3A 4A », tools/extraction/couloirs.py), partie de test seulement :
    *  ses vraies salles dans l'ordre, reliées par des couloirs (cartes `tags`), puis l'arène au bout, sans porte.
    *  Groupes officiels dans les salles, `nErrants` monstres seuls dans chaque couloir (2B) ; les vagues partent à l'entrée de l'arène. */
@@ -387,6 +395,8 @@ export interface OpenDef {
   donjonsTest?: DonjonDef[];
   /** Donjons de la 0.6 (maquette « Arènes : ») : publics avec V06_PUBLIC, sinon partie de test. */
   donjonsV06?: DonjonDef[];
+  /** Donjons de la 0.7 (ligne « 0.7 : » 4A-4G, tools/extraction/arenes07/) : publics avec V07_PUBLIC, sinon partie de test. */
+  donjonsV07?: DonjonDef[];
   /** Guerre des Cawottes (île des Wabbits, 0.4) : les quatre champs (tools/extraction/wabbits04/champs.py). */
   guerre?: { champs: ChampDef[] };
   /** Ateliers officiels (table hints de Dofus 3, maquette Métiers 10A) : cartes (tags) où l'on fabrique pour ces métiers. */

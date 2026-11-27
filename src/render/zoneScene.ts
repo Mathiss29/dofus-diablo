@@ -1992,6 +1992,10 @@ export class ZoneScene extends Phaser.Scene {
           if (e.boss) this.hud.banner(`${M[e.boss].name}\narrive !`, 1600, true);
           else this.hud.banner(e.nom ? `Vague ${e.n} / ${e.total}\n${e.nom} en nombre !` : `Vague ${e.n} / ${e.total}`, 900);
           break;
+        case 'areneEtage':   // 0.7 (5A) : Koulosse, on descend d'un étage (fondu au noir comme une porte)
+          this.cameras.main.fadeIn(600, 0, 0, 0);
+          this.hud.banner(`Étage ${e.n} / ${e.total}\nOn descend dans la caverne`, 1100);
+          break;
         case 'arenePalier':
           // « Wabbits : 8A » : paliers propres au boss (Cawottes Woyales à casser, Awmuwe Woyale)
           if (e.renforts) this.hud.banner(`${e.name}\nIl plante des ${M[e.renforts]?.name ?? 'renforts'}s : casse-les !`, 1600, true);

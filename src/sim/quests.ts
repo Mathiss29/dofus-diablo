@@ -1172,7 +1172,7 @@ export class Quetes {
       if ((o.t === 'parler' || o.t === 'aller') && o.pnj) return this.data.pnj[o.pnj]?.zone ?? 'incarnam';
       if ('sousZone' in o && o.sousZone != null) { const z = Object.keys(Z).find(k => Z[k].open?.subareas?.[String(o.sousZone)]); if (z) return z; }
       if (o.t === 'activer') { const z = Object.keys(Z).find(k => Z[k].open?.checkpoints?.some(cp => cp.name === o.zaap)); if (z) return z; }
-      if (o.t === 'donjon') { const z = Object.keys(Z).find(k => [...(Z[k].open?.donjons ?? []), ...((Z[k].open as { donjonsTest?: { nom: string }[] } | undefined)?.donjonsTest ?? []), ...((Z[k].open as { donjonsV06?: { nom: string }[] } | undefined)?.donjonsV06 ?? [])].some(d => d.nom === o.donjon)); if (z) return z; }
+      if (o.t === 'donjon') { const z = Object.keys(Z).find(k => [...(Z[k].open?.donjons ?? []), ...((Z[k].open as { donjonsTest?: { nom: string }[] } | undefined)?.donjonsTest ?? []), ...((Z[k].open as { donjonsV06?: { nom: string }[] } | undefined)?.donjonsV06 ?? []), ...((Z[k].open as { donjonsV07?: { nom: string }[] } | undefined)?.donjonsV07 ?? [])].some(d => d.nom === o.donjon)); if (z) return z; }
     }
     return e.pnj ? this.data.pnj[e.pnj]?.zone ?? 'incarnam' : null;
   }

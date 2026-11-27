@@ -3143,7 +3143,14 @@
   "draegnerys": "boss_magique",
   "reine_nyee": "boss_lugubre",
   "abraknyde_ancestral": "boss_lugubre",
-  "dragon_cochon": "boss_bestial"
+  "dragon_cochon": "boss_bestial",
+  "koulosse": "boss_souterrain",
+  "maitre_corbac": "boss_magique",
+  "silf_le_rasboul_majeur": "boss_bestial",
+  "damadrya": "boss_feerique",
+  "skeunk": "boss_lugubre",
+  "blop_multicolore_royal": "boss_feerique",
+  "royalmouth": "boss_bestial"
  },
  "donjon": {
   "fermeture": "ambiance/AMB_MeS_Grille_Fermeture.mp3",
