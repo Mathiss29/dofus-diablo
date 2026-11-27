@@ -42,10 +42,14 @@ export interface EffetsSadida {
   /** Cigüe : les Infectés touchés gardent leur Infection 3 s de plus. */
   maintient?: boolean;
   plante?: boolean;
+  /** Arbre Feuillu (0.7) : l'Arbre planté est Feuillu tout de suite, et tous tes Arbres le deviennent. */
+  feuillus?: boolean;
   /** Charges du sort [nombre, secondes pour en regagner une] (Arbre, 3A). */
   charges?: [number, number];
   /** Poupée née d'un Arbre (clé de betes.json) ; Groute (Puissance Sylvestre) : née d'un Feuillu. */
   poupee?: string; groute?: string;
+  /** La Folle Transmutée (0.7) : la Poupée naît au point visé, sans Arbre, et laisse un Arbre à sa place au bout de n s. */
+  sansArbre?: number;
   /** Poison continu : dégâts officiels (× 1,5) étalés sur ReglesSadida.poison s, au lieu d'un coup. */
   poison?: number;
   /** Sève Paralysante : la cible n'esquive plus les retraits de PM pendant n s. */
@@ -367,8 +371,14 @@ function propagationPossible(p: Player, w: World, r: ReglesSadida): boolean {
 export function impactSadida(p: Player, id: string, d: SpellDef, tx: number, ty: number, size: number, hit: HitDef, c: CtxSadida, gm: number, w: World) {
   const S = d.sadida!, r = R(p)!, IT = dureeInfection(p), IMAX = r.infection.max + p.pcv('pc-sadida-C');
   const zone = size > 0 ? w.monsters.filter(m => !m.dead && m.state !== 'spawn' && Math.hypot(m.x - tx, m.y - ty) <= size + m.radius) : [];
-  if (S.plante) { planter(p, tx, ty, w, false, S.arbreDeVie); return; }
+  if (S.plante) { planter(p, tx, ty, w, !!S.feuillus, S.arbreDeVie); if (S.feuillus) for (const a of arbresDe(p, w)) rendreFeuillu(a, w); return; }
   if (S.don) { donNaturel(p, S.don, tx, ty, gm, w); return; }
+  if (S.poupee && S.sansArbre) {
+    vivantes(w).find(b => b.owner === p && b.base === S.poupee)?.mourir(w);
+    const b = w.invoquer(p, S.poupee, S.poupee, tx, ty);
+    if (b) { b.horsCompte = true; b.sadi = { feuillu: false, t: 0, calme: 0, age: w.time }; b.finT = S.sansArbre; }
+    return;
+  }
   if (S.poupee) { fairePoupee(p, S.poupee, tx, ty, false, w); return; }
   if (S.groute) { fairePoupee(p, S.groute, tx, ty, true, w); return; }
   // Sacrifice Vaudou sur une de tes Poupées : elle se sacrifie, soigne les alliés et frappe les ennemis autour (Infecte)

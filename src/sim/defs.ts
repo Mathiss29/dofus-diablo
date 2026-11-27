@@ -72,6 +72,8 @@ export interface SpellDef {
   dofusId?: number;
   /** Sort de la 0.6 (sorts 61-90) : connu seulement si la 0.6 est visible pour ce perso (Player.v06 : partie de test ou V06_PUBLIC). */
   v06?: boolean;
+  /** Sort de la 0.7 (sorts 91-120) : connu seulement si la 0.7 est visible pour ce perso (Player.v07). */
+  v07?: boolean;
   /** Sort sur soi : ne touche aucun ennemi (Tirs Éloignés). */
   self?: boolean;
   /** Bonus sur le lanceur (tours officiels × 3 s) : Dommages de l'Épée Divine, Portée des Tirs Éloignés. */
@@ -164,6 +166,8 @@ export interface SpellDef {
   s06?: import('./sorts06').Effets06;
   /** Sorts 61-90 du Iop, du Crâ, de l'Osamodas et du Sacrieur (0.6), joués par src/sim/sorts61.ts. */
   e61?: import('./sorts61').Effets61;
+  /** Sorts 91-120 des dix classes (0.7), joués par src/sim/sorts07.ts. */
+  e07?: import('./sorts07').Effets07;
 }
 /** Auto-attaque d'un type d'arme : un sort sans coût dont les dommages viennent de l'arme portée. */
 export interface WeaponProfile extends Omit<SpellDef, 'name' | 'icon' | 'element' | 'dmg' | 'cooldown' | 'anim'> {

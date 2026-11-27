@@ -813,3 +813,11 @@ Toutes sont refaites avec `HD=2` : planche dessinée 2 fois plus grand, `meta.hd
   (32, 98) par `compo07.py` (`labo`) et `export07.py labo` ; 6 monstres « du laboratoire » (5703-5708) sur la planche de ceux des
   Plaines herbeuses (`look`), XP de ceux-ci. Porte sur -55_4, clé `cle_labo_cache` (icône de la clé du Tynril, 84246) que lâche
   le Gobrechaun (`src/sim/gobrechaun.ts`, 15A), jamais vendue ; dans l'arène le Gobrechaun est le boss (`bossForce`).
+- Sorts 91-120 (8A) : les 60 variantes des paires officielles (6 par classe, deuxième sort de chaque paire du niveau 1 à 20) dans
+  `classes.json` avec `v07: true`, chacune calquée sur le sort de sa paire (minutage, effet visuel), PA et portée du grade, dommages = moyenne
+  du premier grade × 1,5. Effets nouveaux dans `src/sim/sorts07.ts` (`e07`). Effets officiels : `spell_fx.py <tables> <Bones>` avec les
+  69 gfx des scripts (60 rapportés du PC). Invocations (`monster_planche.py`, SCALE 2,5, FORMAT=AVIF) : Stratège Iop 4816 `iop_stratege`,
+  Balise Tactique 8153 `cra_balise_tactique`, Musette Animée 4524 `enu_musette`, Fiole 7585 `eni_fiole` (BOX=-80,-130,80,30).
+  Gestes manquants (Osamodas 205/221, Sacrieur 1107, Enutrof 311, Sadida 1002/1006, Ouginak 1821) : `EXTRA=AnimAttaqueNNN squelette_export.py`
+  dans un dossier à part, puis `fusion_anims.py <neuf> <publié> AnimAttaqueNNN,…` ne verse que ces animations dans `anims_<classe>.json` (morceaux et nœuds renumérotés ;
+  les textures `os_*.webp` sortent identiques, rien à renvoyer).

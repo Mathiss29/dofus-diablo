@@ -20,6 +20,7 @@ def legacy(raw):
     for k in ('targetGfxId', 'targetGfxId2'):
         if kv.get(k): seq.append({'type': 'target', 'gfxId': int(kv[k])})
     if kv.get('casterGfxId'): seq.append({'type': 'caster', 'gfxId': int(kv['casterGfxId'])})
+    if kv.get('trailGfxId'): seq.append({'type': 'target', 'gfxId': int(kv['trailGfxId'])})   # Griffe Joueuse : traînée jusqu'à la cible
     return seq
 
 def scripts_of(spell, SC):

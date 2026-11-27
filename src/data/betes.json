@@ -1679,5 +1679,69 @@
    }
   ],
   "_doc": "Roquet de l'Ouginak (monstre officiel 5865, os 9183, Lance-roquet) : Accrocs officiel (vol de vie Neutre). Bête permanente dès le niveau 15 (« Classes : 16B »), revient 10 s après sa mort ; mord la Proie de son maître en priorité (src/sim/ouginak.ts)."
+ },
+ "iop_stratege": {
+  "dofusId": 5130,
+  "name": "Stratège Iop",
+  "look": 4816,
+  "atlas": "iop_stratege",
+  "rang": 1,
+  "element": "neutre",
+  "suivant": null,
+  "pv": 0.6,
+  "sorts": [],
+  "passif": true,
+  "_doc": "Stratège Iop (Conquête, sort 13148, monstre 5130, os 4816) : ne frappe pas, suit le Iop et attire les coups des monstres proches, 9 s (3 tours)."
+ },
+ "cra_balise_tactique": {
+  "dofusId": 8347,
+  "name": "Balise Tactique",
+  "look": 8153,
+  "atlas": "cra_balise_tactique",
+  "rang": 1,
+  "element": "neutre",
+  "suivant": null,
+  "pv": 0.25,
+  "sorts": [],
+  "passif": true,
+  "balise": {
+   "soin": 0,
+   "periode": 99,
+   "portee": 0,
+   "sansEchange": true
+  },
+  "_doc": "Balise Tactique du Crâ (sort 32467, monstre 8347, os 8153) : immobile 9 s (3 tours) ; à la pose, attire les ennemis autour d'elle (sorts07.ts > aimante)."
+ },
+ "enu_musette": {
+  "dofusId": 5838,
+  "name": "Musette Animée",
+  "look": 4524,
+  "atlas": "enu_musette",
+  "rang": 1,
+  "element": "neutre",
+  "suivant": null,
+  "pv": 0.5,
+  "sorts": [],
+  "passif": true,
+  "_doc": "Musette Animée (sort 13354, monstre 5838, os 4524) : comme le Sac Animé, ne frappe pas et attire les coups des monstres proches, 6 s (2 tours)."
+ },
+ "eni_fiole": {
+  "dofusId": 7371,
+  "name": "Fiole",
+  "look": 7585,
+  "atlas": "eni_fiole",
+  "rang": 1,
+  "element": "neutre",
+  "suivant": null,
+  "pv": 0.3,
+  "sorts": [],
+  "passif": true,
+  "balise": {
+   "soin": 0.05,
+   "periode": 3,
+   "portee": 4,
+   "sansEchange": true
+  },
+  "_doc": "Fiole de l'Eniripsa (Mot Alchimique, sort 25802, monstre 7371, os 7585) : immobile 12 s, soigne de 5 % des PV max les alliés en vue à 4 cases, à la pose puis toutes les 3 s."
  }
 }

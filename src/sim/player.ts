@@ -35,6 +35,7 @@ import { aboie, arriveeBond, avantImpactOuginak, bondGratuit, porteeBondOuginak,
 import { arbrePassage, avantImpactSadida, impactSadida, majSadida, partagerDon, sentierDeRonces } from './sadida';
 import { avantImpactEcaflip, chateauBrise, impactEcaflip, majEcaflip, neuviemeVie, type Carte, type MainGagnante } from './ecaflip';
 import { impactSorts06, pasJoueur06 } from './sorts06';
+import { avantImpact07, impact07, maj07, type Etat07 } from './sorts07';
 import { impactEnutrof, majEnutrof, perteCoffre, recordsVides, type LigneCoffre, type RecordsCoffre, type VitrineCoffre } from './enutrof';
 import type { Butin } from './butin';
 import { DANGER } from './danger';
@@ -261,7 +262,7 @@ export class Player extends Entity {
   get pairs(): PaireSorts[] { return SORTS[this.cls.sorts] ?? []; }
   /** Identifiant du sort jouable correspondant à un sort officiel (null : pas encore jouable). */
   keyOf(dofusId: number): SkillId | null {
-    for (const [k, d] of Object.entries(this.cls.spells)) if (d.dofusId === dofusId && (!d.v06 || this.v06)) return k;
+    for (const [k, d] of Object.entries(this.cls.spells)) if (d.dofusId === dofusId && (!d.v06 || this.v06) && (!d.v07 || this.v07)) return k;
     return null;
   }
   /** Fiche officielle d'un sort de la classe. */
@@ -296,6 +297,8 @@ export class Player extends Entity {
   campagne = false;
   /** Sorts 61-90 (Iop, Crâ, Osamodas, Sacrieur) : effets en cours lancés par ce perso (src/sim/sorts61.ts). */
   e61: Etat61 | null = null;
+  /** Sorts 91-120 (0.7) : Condamnés, états de l'Enutrof (src/sim/sorts07.ts). */
+  e07: Etat07 | null = null;
   /** 0.6 (6D) : cartes où ce perso a déjà vaincu un groupe, par zone ; la première fois sur une carte, +50 % d'XP. */
   chasse: Record<string, string[]> = {};
   /** 0.6 (24A) : boss vaincus d'affilée sans Légendaire de boss, par type de boss (la chance monte à chaque essai). */
@@ -363,7 +366,7 @@ export class Player extends Entity {
   get ctxPouvoirs(): CtxPouvoirs {
     const connus: number[] = [], aVenir: { dofusId: number; niveau: number }[] = [];
     for (const [k, d] of Object.entries(this.cls.spells)) {
-      if (!d.dofusId || (d.v06 && !this.v06)) continue;
+      if (!d.dofusId || (d.v06 && !this.v06) || (d.v07 && !this.v07)) continue;
       if (this.knows(k)) { connus.push(d.dofusId); continue; }
       const o = this.official(k), n = o ? this.requiredLevel(o) : 0;
       if (o && n > this.level) aVenir.push({ dofusId: d.dofusId, niveau: n });
@@ -392,7 +395,7 @@ export class Player extends Entity {
   knows(id: SkillId): boolean {
     const d = this.cls.spells[id];
     if (!d?.dofusId) return !!d;
-    if (d.v06 && !this.v06) return false;
+    if ((d.v06 && !this.v06) || (d.v07 && !this.v07)) return false;
     const i = this.pairs.findIndex(p => p.some(s => s.id === d.dofusId));
     if (i < 0) return true;
     const s = this.pairs[i][this.variants[i] ?? 0];
@@ -1033,6 +1036,7 @@ export class Player extends Entity {
     if (this.donT > 0) this.donT = Math.max(0, this.donT - dt);
     if (this.poinconT > 0) pasJoueur06(this, dt, world);
     if (this.e61) maj61(this, dt, world);
+    if (this.e07) maj07(this, dt);
     if (this.renvoiT > 0) this.renvoiT -= dt;
     if (this.mutil) {   // Mutilation : re-sacrifie toutes les `periode` s et gagne un cran de Puissance
       const M = this.cls.spells.mutilation?.mutilation;
@@ -1307,6 +1311,7 @@ export class Player extends Entity {
       const eca = this.cls.poker ? avantImpactEcaflip(this, d, world) : null;   // Écaflip : Main gagnante, Dames, dé du Yams, élément de Tromperie
       if (eca) mult *= eca.mult;
       if (d.e61) mult *= avantImpact61(this, s.id, d, s.tx, s.ty, s.gm, world);   // Épée du Destin, Flèche Dévorante, Bain de Sang
+      if (d.e07) mult *= avantImpact07(this, d, s.tx, s.ty, world);   // Épée du Jugement, Muselière (0.7)
       if (d.ouginak && this.cls.ouginak && !mv) mult *= avantImpactOuginak(this, s.id, d, s, world);   // Ouginak : bond sur la Proie, cumul sur la Proie
       const base = d.dmgPV ? this.hp * d.dmgPV : d.dmg * s.gm;
       const attire = d.attire && { px: ((this.souffrance >= 6 && d.souffrance6?.attire) || d.attire.cases) * CASE, vers: d.attire.vers };
@@ -1376,6 +1381,7 @@ export class Player extends Entity {
       if (s.id === 'arme') this.frenesie(hits, world);
       this.apresImpactClasse(s.id, s.sx, s.sy, s.tx, s.ty, hit, s.gm, size, world);
       if (d.e61) impact61(this, s.id, d, s.tx, s.ty, world);
+      if (d.e07 || this.e07?.echos.length) impact07(this, s.id, d, s.tx, s.ty, size, hit, s.gm, world);   // sorts 91-120 (0.7)
       if (this.e61?.baliseVisee) echangeBalise61(this, world);   // Balise de Survie frappée : on échange de place avec elle
       const pt = hz.shape === 'point';
       if (d.self && surL && hz.shape === 'circle') size = hz.radius * area + zb;   // Forgelance Désarmé : l'effet se voit autour de la Lance
