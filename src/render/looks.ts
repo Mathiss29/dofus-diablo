@@ -66,6 +66,9 @@ const WEAPON_MAP: Record<string, AnimSlice> = {
 // les données de sorts (spellscripts -> casterAnimation) : Épée Céleste = AnimAttaque801,
 // Bond = AnimAttaque811, Colère de Iop = AnimAttaque800, attaque sans arme = AnimArme0.
 // Planche refaite avec tools/extraction/iop_planche.sh (toutes les animations utiles en une passe).
+// Sorts 91-120 (0.7) : animations officielles du lanceur (spellscripts -> casterAnimation), une ligne par classe plus bas.
+const G07 = (o: Record<string, number>): Record<string, AnimSlice> => Object.fromEntries(Object.entries(o).map(([k, n]) => [k, { anim: `AnimAttaque${n}`, from: 0, to: 0.65 }]));
+
 const IOP_MAP: Record<string, AnimSlice> = {
   ...WEAPON_MAP,
   idle: { anim: 'AnimStatiqueExplo0', loop: true, fps: 20 },
@@ -100,6 +103,7 @@ const IOP_MAP: Record<string, AnimSlice> = {
   tempete: { anim: 'AnimAttaque801', from: 6 / 32, to: 1 },
   endurance: { anim: 'AnimAttaque801', from: 6 / 32, to: 1 },
   epee_iop: { anim: 'AnimAttaque803', from: 0, to: 0.6 },
+  ...G07({ fracture: 802, menace: 806, accumulation: 806, epee_jugement: 808, conquete: 806, agitation: 806 }),
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   colere_charge: { anim: 'AnimAttaque800', from: 0, to: 21 / 32 },
   colere_hit: { anim: 'AnimAttaque800', from: 21 / 32, to: 1 },
@@ -141,6 +145,7 @@ const CRA_MAP: Record<string, AnimSlice> = {
   tirs_puissants: { anim: 'AnimAttaque902', from: 0, to: 0.6 },
   oeil_pour_oeil: { anim: 'AnimAttaque902', from: 0, to: 0.6 },
   balise_survie: { anim: 'AnimAttaque904', from: 0, to: 0.7 },
+  ...G07({ eclatante: 912, harcelante: 911, evasive: 918, carreaux: 917, balise_tactique: 904, tir_percant: 902 }),
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };
@@ -178,6 +183,7 @@ const OSA_MAP: Record<string, AnimSlice> = {
   crapipaud: { anim: 'AnimAttaque204', from: 0, to: 0.7 },
   dragonnet: { anim: 'AnimAttaque204', from: 0, to: 0.7 },
   esprit_glouton: { anim: 'AnimAttaque204', from: 0, to: 0.7 },
+  ...G07({ crocs_mulou: 221, deplumage: 221, coeur_sauvage: 221, bave_crapaud: 204, cravache: 213, griffes_chtigre: 205 }),
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };
@@ -215,6 +221,7 @@ const SAC_MAP: Record<string, AnimSlice> = {
   libation: { anim: 'AnimAttaque1100', from: 0, to: 0.65 },
   berserk: { anim: 'AnimAttaque1116', from: 0, to: 0.65 },
   punition: { anim: 'AnimAttaque1109', from: 0, to: 0.65 },
+  ...G07({ furie: 1106, decimation: 1106, nervosite: 1101, douleur_cuisante: 1101, perfusion: 1101, pacte_sang: 1107 }),
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };
@@ -241,6 +248,7 @@ const FL_MAP: Record<string, AnimSlice> = {
     // sorts 61-90 (0.6) : Terre du Milieu 2012, Chevalerie 2010, Jormun 2002, Poinçon 2000, Noa 2005 ; Éclipse n'a pas d'animation officielle (2010)
     terre_milieu: 2012, chevalerie: 2010, jormun: 2002, poincon: 2000, noa: 2005, eclipse: 2010,
   }).map(([k, n]) => [k, { anim: `AnimAttaque${n}`, from: 0, to: 0.65 }])),
+  ...G07({ maelstrom: 2010, lance_cyclone: 2000, octave: 2008, soulevement: 2003, parade: 2003, galanterie: 2008 }),
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };
@@ -262,6 +270,7 @@ const ENI_MAP: Record<string, AnimSlice> = {
     // sorts 61-90 (0.6) : Chapardage 707, Mot Fleuri 700, Pinceau Tribal 709, Cryothérapie 700
     chapardage: 707, fleuri: 700, pinceau: 709, cryotherapie: 700,
   }).map(([k, n]) => [k, { anim: `AnimAttaque${n}`, from: 0, to: 0.65 }])),
+  ...G07({ malicieux: 709, assourdissant: 707, sanglots: 702, onguent: 708, mot_alchimique: 700, mot_declin: 704 }),
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };
@@ -284,6 +293,7 @@ const ENU_MAP: Record<string, AnimSlice> = {
     // sorts 61-90 (0.6) : Pelle des Anciens et Péremption 305, Corruption 309, Retraite Anticipée 306
     pelle_anciens: 305, peremption: 305, corruption: 309, retraite: 306,
   }).map(([k, n]) => [k, { anim: `AnimAttaque${n}`, from: 0, to: 0.65 }])),
+  ...G07({ monnaie_sonnante: 300, orpaillage: 305, eboulement: 311, coup_grisou: 305, musette_animee: 302, deambulation: 305 }),
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };
@@ -304,6 +314,7 @@ const ECA_MAP: Record<string, AnimSlice> = {
     // sorts 61-90 (0.6) : Esprit Félin 605, Odorat 601, Coussinets et Félintion 602, Seconde Chance 603, Bluff 613
     esprit_felin: 605, odorat: 601, coussinets: 602, felintion: 602, seconde_chance: 603, bluff: 613,
   }).map(([k, n]) => [k, { anim: `AnimAttaque${n}`, from: 0, to: 0.65 }])),
+  ...G07({ lapement: 603, langue_rapeuse: 603, griffe_joueuse: 602, fanfaronnade: 602, redistribution: 613, entrechat: 605 }),
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };
@@ -326,6 +337,7 @@ const OUGI_MAP: Record<string, AnimSlice> = {
   }).map(([k, n]) => [k, { anim: `AnimAttaque${n}`, from: 0, to: 0.65 }])),
   bete: { anim: 'AnimAttaque1815', from: 0, to: 1 },
   bond_bete: { anim: 'AnimDash', from: 0, to: 0.55 },
+  ...G07({ machoire: 1802, museliere: 1805, radius: 1802, depecage: 1821, gibier: 1804, pistage: 1812 }),
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };
@@ -345,6 +357,7 @@ const SADI_MAP: Record<string, AnimSlice> = {
     puissance_sylvestre: 1003, sacrifice_vaudou: 1003, passage: 1008,
     arbre_de_vie: 1000, la_gonflable: 1003, tremblement: 1008, inoculation: 1001, don_naturel: 1003, la_surpuissante: 1003,
   }).map(([k, n]) => [k, { anim: `AnimAttaque${n}`, from: 0, to: 0.65 }])),
+  ...G07({ ronce_insolente: 1001, montee_seve: 1006, feu_brousse: 1002, vent_empoisonne: 1001, arbre_feuillu: 1000, folle_transmutee: 1002 }),
   hit: { anim: 'AnimHit', from: 0, to: 1 },
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };
@@ -396,6 +409,12 @@ export const LOOKS: Record<string, Look> = {
   eni_lapino: { atlas: 'eni_lapino', scale: 0.55, map: MONSTER_MAP(13 / 37, 'AnimAttaque0', { 0: 13 / 37, 1: 10 / 29, 2: 28 / 31 }), height: 80, multi: true },
   eni_fee: { atlas: 'eni_fee', scale: 0.45, map: MONSTER_MAP(23 / 37), height: 60, multi: true },
   eni_feu_follet: { atlas: 'eni_feu_follet', scale: 0.45, map: MONSTER_MAP(23 / 37), height: 60, multi: true },
+  // Invocations des sorts 91-120 (0.7, monster_planche.py SCALE 2,5) : Stratège Iop (os 4816), Balise Tactique (os 8153),
+  // Musette Animée (os 4524), Fiole de l'Eniripsa (os 7585, BOX=-80,-130,80,30)
+  iop_stratege: { atlas: 'iop_stratege', scale: 0.5, map: { ...FIXE_MAP, run: { anim: 'AnimStatique' } }, height: 90, multi: true },
+  cra_balise_tactique: { atlas: 'cra_balise_tactique', scale: 0.55, map: { ...MONSTER_MAP(4 / 32), soin: { anim: 'AnimAttaque0', from: 0, to: 1 } }, height: 90, multi: true },
+  enu_musette: { atlas: 'enu_musette', scale: 0.5, map: MONSTER_MAP(23 / 42, 'AnimAttaque0', { 0: 23 / 42, 1: 18 / 36 }), height: 70, multi: true },
+  eni_fiole: { atlas: 'eni_fiole', scale: 0.55, map: { ...FIXE_MAP, soin: { anim: 'AnimStatique' } }, height: 60, multi: true },
   // Lance Immortelle plantée (monster_planche.py, os 7139, animations rangées dans le squelette) : décor du Forgelance Désarmé
   forgelance_lance: { atlas: 'forgelance_lance', scale: 0.4, map: MONSTER_MAP(13 / 60), height: 90, multi: true },
   // Épées du Sacrieur (monster_planche.py, os 8378 et 8376, SCALE 2,5) : invocations alliées (maquette Sacrieur 7A)

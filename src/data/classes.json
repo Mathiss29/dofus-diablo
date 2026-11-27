@@ -723,6 +723,181 @@
     "fx": "line",
     "rage": "radius",
     "v06": true
+   },
+   "fracture": {
+    "name": "Fracture",
+    "dofusId": 13139,
+    "icon": 11852,
+    "element": "air",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Érode les cibles et occasionne des dommages Air en zone.",
+    "duration": 0.36,
+    "impactAt": 0.13,
+    "cancelAt": 0.22,
+    "hitstop": 0.06,
+    "shake": 0.005,
+    "fx": "line",
+    "hit": {
+     "shape": "line",
+     "length": 216.0,
+     "width": 36
+    },
+    "dmg": 41,
+    "knock": 0,
+    "erosion": 0.13,
+    "rage": "erosion",
+    "v07": true
+   },
+   "menace": {
+    "name": "Menace",
+    "dofusId": 13130,
+    "icon": 11862,
+    "element": "eau",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Attire la cible et occasionne des dommages Eau aux ennemis.",
+    "duration": 0.36,
+    "impactAt": 0.13,
+    "cancelAt": 0.22,
+    "hitstop": 0.06,
+    "shake": 0.005,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 168.0,
+     "radius": 30
+    },
+    "dmg": 33,
+    "knock": 0,
+    "attire": {
+     "cases": 2,
+     "vers": "lanceur"
+    },
+    "v07": true
+   },
+   "accumulation": {
+    "name": "Accumulation",
+    "dofusId": 13138,
+    "icon": 11856,
+    "element": "terre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Terre.\n\nSur le lanceur : augmente les dommages du sort.",
+    "duration": 0.36,
+    "impactAt": 0.13,
+    "cancelAt": 0.22,
+    "hitstop": 0.06,
+    "shake": 0.005,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 216.0,
+     "radius": 30
+    },
+    "dmg": 31,
+    "knock": 0,
+    "stack": {
+     "per": 0.25,
+     "max": 3,
+     "time": 9
+    },
+    "rage": "stack",
+    "v07": true
+   },
+   "epee_jugement": {
+    "name": "Épée du Jugement",
+    "dofusId": 13117,
+    "icon": 11861,
+    "element": "eau",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Applique un bouclier sur le lanceur, occasionne des dommages Eau et applique l'état Condamné sur la cible :\n• Occasionne des dommages Eau plus importants à retardement sur la cible.\n\nLe bouclier est plus important et le retardement est réinitialisé sur une cible Condamnée.\n\nSur le lanceur : applique un bouclier.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 216.0,
+     "radius": 30
+    },
+    "dmg": 42,
+    "knock": 0,
+    "shield": {
+     "part": 0.1,
+     "t": 6
+    },
+    "rage": "shield",
+    "e07": {
+     "condamne": {
+      "mult": 1.5,
+      "t": 6
+     }
+    },
+    "v07": true
+   },
+   "conquete": {
+    "name": "Conquête",
+    "dofusId": 13148,
+    "icon": 11857,
+    "element": "neutre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Invoque un Stratège Iop qui peut renvoyer 50% des dommages qu'il subit en zone autour de lui.\nLe renvoi de dommages n'affecte pas le lanceur.\n\nLe Stratège Iop réduit de 50% les dommages immédiats alliés.\n\nIl ne peut y avoir qu'un seul Stratège Iop par équipe. Si le Stratège Iop est encore présent et que celui-ci est ré-invoqué, l'ancien est détruit pour laisser place au nouveau.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 264.0,
+     "radius": 0
+    },
+    "dmg": 0,
+    "knock": 0,
+    "invoque": "iop_stratege",
+    "invocDuree": 9,
+    "rage": "summon",
+    "v07": true
+   },
+   "agitation": {
+    "name": "Agitation",
+    "dofusId": 13143,
+    "icon": 11853,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Augmente les PM de l'allié ciblé et le rend Intaclable.\nAugmente également sa Puissance pour chaque PM utilisé.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 264.0,
+     "radius": 30
+    },
+    "dmg": 0,
+    "knock": 0,
+    "self": true,
+    "rage": "buff",
+    "e61": {
+     "renfort": {
+      "mods": {
+       "pm": 2,
+       "puissance": 30
+      },
+      "t": 6
+     }
+    },
+    "v07": true
    }
   },
   "mobility": "bond",
@@ -1459,6 +1634,188 @@
     "invoque": "balise_survie",
     "invocDuree": 6,
     "v06": true
+   },
+   "eclatante": {
+    "name": "Flèche Éclatante",
+    "dofusId": 32449,
+    "icon": 15403,
+    "element": "feu",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Vole de la vie dans l'élément Feu aux ennemis et repousse les cibles depuis le centre en zone.",
+    "duration": 0.38,
+    "impactAt": 0.12,
+    "cancelAt": 0.18,
+    "hitstop": 0.04,
+    "shake": 0.004,
+    "fx": "burst",
+    "hit": {
+     "shape": "projectile",
+     "speed": 1100,
+     "range": 264.0,
+     "width": 16,
+     "explode": 48
+    },
+    "dmg": 29,
+    "knock": 342,
+    "pushDmg": true,
+    "lifesteal": 0.5,
+    "rage": "lifesteal",
+    "v07": true
+   },
+   "harcelante": {
+    "name": "Flèche Harcelante",
+    "dofusId": 32708,
+    "icon": 11888,
+    "element": "air",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Réduit les soins reçus par la cible et lui applique un poison Air de début de tour.",
+    "duration": 0.36,
+    "impactAt": 0.12,
+    "cancelAt": 0.18,
+    "hitstop": 0.04,
+    "shake": 0.004,
+    "fx": "burst",
+    "hit": {
+     "shape": "projectile",
+     "speed": 1100,
+     "range": 408.0,
+     "width": 16
+    },
+    "dmg": 21,
+    "knock": 0,
+    "e61": {
+     "antiSoin": {
+      "n": 0.3,
+      "t": 6
+     }
+    },
+    "e07": {
+     "poison": {
+      "part": 0.6,
+      "t": 6
+     }
+    },
+    "v07": true
+   },
+   "evasive": {
+    "name": "Flèche Évasive",
+    "dofusId": 32531,
+    "icon": 15411,
+    "element": "eau",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Applique des effets selon la position du lanceur par rapport à la cible et occasionne des dommages Eau aux ennemis :\n• Éloigne le lanceur de la cible et retire des PM aux ennemis s'il est en mêlée.\n• Repousse la cible et retire des PA aux ennemis si le lanceur est à distance.",
+    "duration": 0.4,
+    "impactAt": 0.14,
+    "cancelAt": 0.22,
+    "hitstop": 0.04,
+    "shake": 0.004,
+    "fx": "burst",
+    "hit": {
+     "shape": "projectile",
+     "speed": 1100,
+     "range": 264.0,
+     "width": 16
+    },
+    "dmg": 33,
+    "knock": 0,
+    "selfKnock": 96,
+    "pmLoss": 1,
+    "rage": "selfKnock",
+    "v07": true
+   },
+   "carreaux": {
+    "name": "Carreaux Destructeurs",
+    "dofusId": 32459,
+    "icon": 15408,
+    "element": "terre",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Terre et retire des dommages aux ennemis et repousse les cibles en zone.\nLes dommages de zone ne sont pas dégressifs.",
+    "duration": 0.42,
+    "impactAt": 0.16,
+    "cancelAt": 0.22,
+    "hitstop": 0.04,
+    "shake": 0.008,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 168.0,
+     "radius": 72
+    },
+    "dmg": 49,
+    "knock": 342,
+    "affaiblit": {
+     "n": 15,
+     "t": 6
+    },
+    "rage": "radius",
+    "v07": true
+   },
+   "balise_tactique": {
+    "name": "Balise Tactique",
+    "dofusId": 32467,
+    "icon": 15415,
+    "element": "neutre",
+    "pa": 1,
+    "cooldown": 0,
+    "desc": "Invoque une Balise statique qui peut appliquer des effets en zone autour d'elle selon ce qu'elle subit :\n• Elle attire les cibles si un allié lui occasionne des dommages à distance ou la pousse.\n• Elle pousse les cibles si un allié lui occasionne des dommages en mêlée ou de poussée.\n\nLa balise est détruite 3 tours après son invocation.\n\nAugmente également la Puissance du lanceur pour chaque ennemi dans la ligne de vue de la case ciblée.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 312.0,
+     "radius": 0
+    },
+    "dmg": 0,
+    "knock": 0,
+    "invoque": "cra_balise_tactique",
+    "invocDuree": 9,
+    "rage": "summon",
+    "e07": {
+     "aimante": {
+      "rayon": 3,
+      "cases": 2,
+      "puissance": 15,
+      "t": 6
+     }
+    },
+    "v07": true
+   },
+   "tir_percant": {
+    "name": "Tir Perçant",
+    "dofusId": 32471,
+    "icon": 15427,
+    "element": "neutre",
+    "pa": 1,
+    "cooldown": 0,
+    "desc": "Érode la cible et augmente les dommages qu'elle subit jusqu'à la prochaine attaque.",
+    "duration": 0.4,
+    "impactAt": 0.2,
+    "hitstop": 0,
+    "shake": 0,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 216.0,
+     "radius": 30
+    },
+    "dmg": 0,
+    "knock": 0,
+    "self": true,
+    "e07": {
+     "marque": {
+      "n": 20,
+      "t": 6
+     }
+    },
+    "v07": true
    }
   },
   "mobility": "pas_chasse",
@@ -2137,6 +2494,181 @@
      }
     },
     "v06": true
+   },
+   "crocs_mulou": {
+    "name": "Crocs du Mulou",
+    "dofusId": 31113,
+    "icon": 14270,
+    "element": "terre",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Terre aux ennemis et augmente les dommages en mêlée du lanceur et des alliés en zone.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 216.0,
+     "radius": 60
+    },
+    "dmg": 56,
+    "knock": 0,
+    "lifesteal": 0.25,
+    "buff": {
+     "stat": "dommages",
+     "n": 10,
+     "t": 6
+    },
+    "rage": "lifesteal",
+    "v07": true
+   },
+   "deplumage": {
+    "name": "Déplumage",
+    "dofusId": 31137,
+    "icon": 14718,
+    "element": "air",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Air et réduit les Résistances Poussée des ennemis en zone.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 264.0,
+     "radius": 60
+    },
+    "dmg": 51,
+    "knock": 0,
+    "lifesteal": 0.25,
+    "rage": "lifesteal",
+    "e07": {
+     "marque": {
+      "n": 10,
+      "t": 6
+     }
+    },
+    "v07": true
+   },
+   "coeur_sauvage": {
+    "name": "Cœur Sauvage",
+    "dofusId": 31140,
+    "icon": 14503,
+    "element": "feu",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Feu aux ennemis et augmente les soins reçus du lanceur et des alliés en zone.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 312.0,
+     "radius": 60
+    },
+    "dmg": 53,
+    "knock": 0,
+    "lifesteal": 0.4,
+    "rage": "lifesteal",
+    "v07": true
+   },
+   "bave_crapaud": {
+    "name": "Bave du Crapaud",
+    "dofusId": 31139,
+    "icon": 12845,
+    "element": "eau",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Eau et retire des Dommages aux ennemis en zone.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 216.0,
+     "radius": 72
+    },
+    "dmg": 50,
+    "knock": 0,
+    "lifesteal": 0.25,
+    "affaiblit": {
+     "n": 15,
+     "t": 6
+    },
+    "rage": "lifesteal",
+    "v07": true
+   },
+   "cravache": {
+    "name": "Cravache",
+    "dofusId": 31136,
+    "icon": 14268,
+    "element": "meilleur",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Attire les cibles vers le centre et occasionne des dommages dans le meilleur élément du lanceur aux ennemis en zone.\nTéléporte les cibles symétriquement par rapport au centre si la case centrale est occupée.\n\nN'affecte pas directement le lanceur.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "line",
+    "hit": {
+     "shape": "point",
+     "range": 216.0,
+     "radius": 72
+    },
+    "dmg": 15,
+    "knock": 0,
+    "attire": {
+     "cases": 1,
+     "vers": "centre"
+    },
+    "lifesteal": 0.25,
+    "rage": "lifesteal",
+    "v07": true
+   },
+   "griffes_chtigre": {
+    "name": "Griffes du Chtigre",
+    "dofusId": 31134,
+    "icon": 14437,
+    "element": "feu",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Feu et réduit les soins reçus par la cible.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.005,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 216.0,
+     "radius": 30
+    },
+    "dmg": 33,
+    "knock": 0,
+    "lifesteal": 0.25,
+    "e61": {
+     "antiSoin": {
+      "n": 0.3,
+      "t": 6
+     }
+    },
+    "rage": "lifesteal",
+    "v07": true
    }
   },
   "mobility": "saute_granouille",
@@ -2822,6 +3354,182 @@
      }
     },
     "v06": true
+   },
+   "furie": {
+    "name": "Furie",
+    "dofusId": 12723,
+    "icon": 11949,
+    "element": "air",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Air en zone et augmente les dommages finaux du lanceur.\nLes dommages n'affectent pas le lanceur.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 120.0,
+     "radius": 60
+    },
+    "dmg": 39,
+    "knock": 0,
+    "buff": {
+     "stat": "dommages",
+     "n": 10,
+     "t": 6
+    },
+    "v07": true
+   },
+   "decimation": {
+    "name": "Décimation",
+    "dofusId": 12731,
+    "icon": 11947,
+    "element": "terre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Terre et augmente les dommages subis par les cibles en zone.\nN'affecte pas le lanceur.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 72.0,
+     "radius": 60
+    },
+    "dmg": 37,
+    "knock": 0,
+    "e07": {
+     "marque": {
+      "n": 10,
+      "t": 6
+     }
+    },
+    "v07": true
+   },
+   "nervosite": {
+    "name": "Nervosité",
+    "dofusId": 12727,
+    "icon": 11927,
+    "element": "eau",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Eau en zone et augmente les chances de Critique du lanceur.\nLes dommages n'affectent pas le lanceur.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 216.0,
+     "radius": 96
+    },
+    "dmg": 38,
+    "knock": 0,
+    "buff": {
+     "stat": "critique",
+     "n": 5,
+     "t": 6
+    },
+    "v07": true
+   },
+   "douleur_cuisante": {
+    "name": "Douleur Cuisante",
+    "dofusId": 12730,
+    "icon": 11932,
+    "element": "feu",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Feu en zone et augmente la Puissance du lanceur.\nLes dommages n'affectent pas le lanceur.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 264.0,
+     "radius": 96
+    },
+    "dmg": 34,
+    "knock": 0,
+    "buff": {
+     "stat": "puissance",
+     "n": 45,
+     "t": 6
+    },
+    "v07": true
+   },
+   "perfusion": {
+    "name": "Perfusion",
+    "dofusId": 12758,
+    "icon": 11957,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Transfère une partie de la vie du lanceur à ses alliés en zone et leur applique l'état Perfusion :\n• Les alliés dans l'état Perfusion sont soignés d'une partie des dommages occasionnés au lanceur.\n\nLe transfert n'est pas appliqué si le lanceur est en Souffrance 6 ou plus.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 216.0,
+     "radius": 96
+    },
+    "dmg": 0,
+    "knock": 0,
+    "self": true,
+    "e07": {
+     "transfert": {
+      "part": 0.1,
+      "rayon": 2
+     }
+    },
+    "v07": true
+   },
+   "pacte_sang": {
+    "name": "Pacte de Sang",
+    "dofusId": 12762,
+    "icon": 11977,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Augmente la Vitalité et la Puissance du lanceur.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "circle",
+     "radius": 60
+    },
+    "dmg": 0,
+    "knock": 0,
+    "self": true,
+    "e61": {
+     "renfort": {
+      "mods": {
+       "puissance": 75
+      },
+      "vitalite": 0.2,
+      "t": 9,
+      "seul": true
+     }
+    },
+    "v07": true
    }
   },
   "mobility": "ravage",
@@ -3618,6 +4326,166 @@
       "rayon": 144
      }
     }
+   },
+   "maelstrom": {
+    "name": "Maelstrom",
+    "dofusId": 23747,
+    "icon": 12592,
+    "element": "feu",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Échange de position avec la cible et occasionne des dommages Feu aux ennemis en zone.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "line",
+    "hit": {
+     "shape": "point",
+     "range": 216.0,
+     "radius": 72
+    },
+    "dmg": 41,
+    "knock": 0,
+    "echange": true,
+    "v07": true
+   },
+   "lance_cyclone": {
+    "name": "Lance-cyclone",
+    "dofusId": 23729,
+    "icon": 12594,
+    "element": "air",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Invoque la Lance, rapproche le lanceur vers elle, occasionne des dommages Air aux ennemis et repousse les cibles en zone.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.009,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 264.0,
+     "radius": 96
+    },
+    "dmg": 39,
+    "knock": 342,
+    "lance": {
+     "plante": true
+    },
+    "v07": true
+   },
+   "octave": {
+    "name": "Octave",
+    "dofusId": 23391,
+    "icon": 12611,
+    "element": "eau",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Éloigne le lanceur de la cible et occasionne des dommages Eau aux ennemis.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "line",
+    "hit": {
+     "shape": "line",
+     "length": 168.0,
+     "width": 34
+    },
+    "dmg": 21,
+    "knock": 0,
+    "selfKnock": 96,
+    "v07": true
+   },
+   "soulevement": {
+    "name": "Soulèvement",
+    "dofusId": 23731,
+    "icon": 12612,
+    "element": "terre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Téléporte les cibles symétriquement par rapport au lanceur et occasionne des dommages Terre aux ennemis en zone.\nLes dommages de zone ne sont pas dégressifs.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 72.0,
+     "radius": 72
+    },
+    "dmg": 38,
+    "knock": 342,
+    "v07": true
+   },
+   "parade": {
+    "name": "Parade",
+    "dofusId": 23386,
+    "icon": 12604,
+    "element": "meilleur",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Rappelle immédiatement la Lance et de nouveau à la fin du tour du lanceur en remplaçant la Garde par la Parade :\n• Rend le lanceur Indéplaçable.\n• Réduit les dommages subis en mêlée.\n• Occasionne des dommages dans son meilleur élément et repousse son attaquant s'il subit des dommages en mêlée.\n\nLa Parade est retirée après la première attaque subie en mêlée.\nLes effets d'interception et de partage de dommages sont incompatibles avec le sort.",
+    "duration": 0.34,
+    "impactAt": 0.2,
+    "cancelAt": 0.3,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "circle",
+     "radius": 72
+    },
+    "dmg": 34,
+    "knock": 342,
+    "lance": {
+     "rappel": true
+    },
+    "renvoi": {
+     "part": 0.5,
+     "t": 6
+    },
+    "v07": true
+   },
+   "galanterie": {
+    "name": "Galanterie",
+    "dofusId": 23314,
+    "icon": 12607,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Éloigne le lanceur de la cible, attire la cible et soigne le lanceur et l'allié ciblé.\n\nRappelle également la Lance si elle est ciblée.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "line",
+    "hit": {
+     "shape": "point",
+     "range": 168.0,
+     "radius": 30
+    },
+    "dmg": 0,
+    "knock": 0,
+    "attire": {
+     "cases": 3,
+     "vers": "lanceur"
+    },
+    "selfKnock": 96,
+    "e07": {
+     "soin": {
+      "part": 0.06,
+      "rayon": 1
+     }
+    },
+    "v07": true
    }
   },
   "mobility": "saut",
@@ -4291,6 +5159,173 @@
       "part": 1.5
      }
     }
+   },
+   "malicieux": {
+    "name": "Mot Malicieux",
+    "dofusId": 25878,
+    "icon": 12893,
+    "element": "air",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Air et applique l'état Malice sur la cible :\n• Retire de la Puissance à la cible pour chaque PM qu'elle utilise (cumulable 10 fois).",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 360.0,
+     "radius": 30
+    },
+    "dmg": 38,
+    "knock": 0,
+    "affaiblit": {
+     "n": 10,
+     "t": 9
+    },
+    "v07": true
+   },
+   "assourdissant": {
+    "name": "Cri Assourdissant",
+    "dofusId": 25857,
+    "icon": 12892,
+    "element": "feu",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Feu et retire des PA.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 264.0,
+     "radius": 30
+    },
+    "dmg": 31,
+    "knock": 0,
+    "paLoss": 2,
+    "v07": true
+   },
+   "sanglots": {
+    "name": "Sanglots",
+    "dofusId": 25872,
+    "icon": 12883,
+    "element": "eau",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Eau à la cible et soigne les alliés selon les dommages occasionnés en zone autour d'elle.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 264.0,
+     "radius": 96
+    },
+    "dmg": 30,
+    "knock": 0,
+    "soinVol": 1,
+    "v07": true
+   },
+   "onguent": {
+    "name": "Onguent Ancestral",
+    "dofusId": 25869,
+    "icon": 12881,
+    "element": "terre",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Terre aux ennemis ou soigne les alliés.\nRéduit également les soins reçus par l'ennemi ciblé ou augmente ceux par l'allié ciblé.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "line",
+    "hit": {
+     "shape": "point",
+     "range": 264.0,
+     "radius": 30
+    },
+    "dmg": 48,
+    "knock": 0,
+    "soin": 48,
+    "e61": {
+     "antiSoin": {
+      "n": 0.3,
+      "t": 6
+     }
+    },
+    "v07": true
+   },
+   "mot_alchimique": {
+    "name": "Mot Alchimique",
+    "dofusId": 25802,
+    "icon": 12886,
+    "element": "terre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Invoque une Fiole vide statique qui peut être remplie d'un élément avec l'{{spell,25931,1::Alchi-Rhétorique}}.\nLorsqu'elle est attaquée par un allié, il consomme son contenu pour que le lanceur le soigne et augmente les caractéristiques selon le contenu.\nLorsqu'elle est détruite, elle occasionne des dommages selon son contenu aux ennemis et aux autres Fioles du lanceur en zone.\n\nSur une Fiole pleine du lanceur : consomme le contenu de la Fiole.\nSur une Fiole vide du lanceur : détruit la Fiole et rembourse le coût en PA.\n\nUtiliser le sort sur une Fiole rembourse l'utilisation du sort dans le tour.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 264.0,
+     "radius": 0
+    },
+    "dmg": 15,
+    "knock": 0,
+    "invoque": "eni_fiole",
+    "invocDuree": 12,
+    "rage": "summon",
+    "v07": true
+   },
+   "mot_declin": {
+    "name": "Mot de Déclin",
+    "dofusId": 25746,
+    "icon": 12898,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Réduit la durée des effets sur l'ennemi ciblé, lui réduit ses soins reçus et lui applique l'état Moqué.\nLe cumul est partagé entre les Moqueries.\n\nSur une case libre : invoque un Feu de Déclin.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 264.0,
+     "radius": 30
+    },
+    "dmg": 0,
+    "knock": 0,
+    "purge": true,
+    "moque": {
+     "k": "accablant",
+     "t": 6,
+     "feu": "feu_accablant",
+     "ralenti": 0.25
+    },
+    "e61": {
+     "antiSoin": {
+      "n": 0.3,
+      "t": 6
+     }
+    },
+    "v07": true
    }
   },
   "mobility": "envol",
@@ -4986,6 +6021,179 @@
       "t": 3
      }
     }
+   },
+   "monnaie_sonnante": {
+    "name": "Monnaie Sonnante",
+    "dofusId": 13353,
+    "icon": 12219,
+    "element": "air",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Air et applique l'état Monnaie Sonnante sur l'ennemi ciblé :\n• Occasionne des dommages Air si la cible subit une tentative de retrait de PA.\n\nLes dommages peuvent être déclenchés 4 fois tant que l'état est actif.\nL'état est retiré dès la limite atteinte.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 168.0,
+     "radius": 30
+    },
+    "dmg": 38,
+    "knock": 0,
+    "e07": {
+     "echo": {
+      "n": 4,
+      "t": 9,
+      "part": 0.35
+     }
+    },
+    "v07": true
+   },
+   "orpaillage": {
+    "name": "Orpaillage",
+    "dofusId": 13363,
+    "icon": 12216,
+    "element": "eau",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Eau et applique l'état Orpaillage sur l'ennemi ciblé :\n• Occasionne des dommages Eau si la cible subit une tentative de retrait de PM.\n\nLes dommages peuvent être déclenchés 4 fois tant que l'état est actif.\nL'état est retiré dès la limite atteinte.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 216.0,
+     "radius": 30
+    },
+    "dmg": 37,
+    "knock": 0,
+    "e07": {
+     "echo": {
+      "n": 4,
+      "t": 9,
+      "part": 0.35
+     }
+    },
+    "v07": true
+   },
+   "eboulement": {
+    "name": "Éboulement",
+    "dofusId": 13352,
+    "icon": 12217,
+    "element": "terre",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Terre et applique l'état Éboulement sur l'ennemi ciblé :\n• Occasionne des dommages Terre si la cible subit un retrait de Portée.\n\nLes dommages peuvent être déclenchés 4 fois tant que l'état est actif.\nL'état est retiré dès la limite atteinte.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 264.0,
+     "radius": 30
+    },
+    "dmg": 40,
+    "knock": 0,
+    "e07": {
+     "echo": {
+      "n": 4,
+      "t": 9,
+      "part": 0.35
+     }
+    },
+    "v07": true
+   },
+   "coup_grisou": {
+    "name": "Coup de Grisou",
+    "dofusId": 13368,
+    "icon": 14385,
+    "element": "feu",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Feu aux ennemis en zone et applique l'état Coup de Grisou sur la cible :\n• Occasionne des dommages Feu aux ennemis en zone autour de la cible si elle est soignée.\n\nLes dommages peuvent être déclenchés 4 fois tant que l'état est actif.\nL'état est retiré dès la limite atteinte.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 360.0,
+     "radius": 96
+    },
+    "dmg": 41,
+    "knock": 0,
+    "e07": {
+     "echo": {
+      "n": 4,
+      "t": 9,
+      "part": 0.35,
+      "zone": 2
+     }
+    },
+    "v07": true
+   },
+   "musette_animee": {
+    "name": "Musette Animée",
+    "dofusId": 13354,
+    "icon": 14239,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Invoque une Musette Animée maîtrisable qui partage les dommages entre tous les alliés situés dans sa zone d'invocation.\nLa Musette Animée est détruite 2 tours après son invocation.\n\nLorsqu'elle est attaquée par un allié, ce dernier est soigné.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 216.0,
+     "radius": 0
+    },
+    "dmg": 0,
+    "knock": 0,
+    "invoque": "enu_musette",
+    "invocDuree": 6,
+    "rage": "summon",
+    "v07": true
+   },
+   "deambulation": {
+    "name": "Déambulation",
+    "dofusId": 13356,
+    "icon": 12220,
+    "element": "neutre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Réduit la durée des effets sur la cible et échange sa position avec le Sac Animé ou la Musette Animée du lanceur.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 264.0,
+     "radius": 30
+    },
+    "dmg": 0,
+    "knock": 0,
+    "self": true,
+    "echange": true,
+    "purge": true,
+    "v07": true
    }
   },
   "coffre": {
@@ -5909,6 +7117,195 @@
       ]
      }
     }
+   },
+   "lapement": {
+    "name": "Lapement",
+    "dofusId": 12873,
+    "icon": 12946,
+    "element": "terre",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Terre et retire aléatoirement des PM ou des PA en zone.\nN'affecte pas le lanceur.\n\n• Pile : l'aléatoire est supprimé pour retirer des PM.\n• Face : l'aléatoire est supprimé pour retirer des PA.\n\nPioche un Roi de Carreau.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 216.0,
+     "radius": 60
+    },
+    "dmg": 41,
+    "knock": 0,
+    "pmLoss": 1,
+    "paLoss": 1,
+    "ecaflip": {
+     "carte": [
+      3,
+      2
+     ]
+    },
+    "v07": true
+   },
+   "langue_rapeuse": {
+    "name": "Langue Râpeuse",
+    "dofusId": 12855,
+    "icon": 12307,
+    "element": "feu",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Soigne les alliés et occasionne des dommages Feu aux ennemis en zone.\nN'affecte pas le lanceur.\n\nPioche un Roi de Cœur.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 264.0,
+     "radius": 60
+    },
+    "dmg": 38,
+    "knock": 0,
+    "ecaflip": {
+     "carte": [
+      2,
+      2
+     ]
+    },
+    "e07": {
+     "soin": {
+      "part": 0.05,
+      "rayon": 1.25
+     }
+    },
+    "v07": true
+   },
+   "griffe_joueuse": {
+    "name": "Griffe Joueuse",
+    "dofusId": 12849,
+    "icon": 12313,
+    "element": "eau",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Eau et réduit les Résistances Critiques en zone.\n\nPioche un Roi de Trèfle.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "line",
+    "hit": {
+     "shape": "line",
+     "length": 264.0,
+     "width": 36
+    },
+    "dmg": 40,
+    "knock": 0,
+    "ecaflip": {
+     "carte": [
+      1,
+      2
+     ]
+    },
+    "e07": {
+     "marque": {
+      "n": 10,
+      "t": 6
+     }
+    },
+    "v07": true
+   },
+   "fanfaronnade": {
+    "name": "Fanfaronnade",
+    "dofusId": 12878,
+    "icon": 13460,
+    "element": "air",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Air en zone.\nN'affecte pas le lanceur.\n\nLes dommages du sort sont augmentés pour chaque attirance, poussée, échange de position ou téléportation effectué par le lanceur.\nLes effets sont retirés après utilisation du sort.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 264.0,
+     "radius": 60
+    },
+    "dmg": 38,
+    "knock": 0,
+    "ecaflip": {
+     "carte": [
+      0,
+      2
+     ]
+    },
+    "v07": true
+   },
+   "redistribution": {
+    "name": "Redistribution",
+    "dofusId": 12877,
+    "icon": 13418,
+    "element": "neutre",
+    "pa": 1,
+    "cooldown": 0,
+    "desc": "Joue la Main et Pioche 4 Cartes aléatoires du Poker d'Ecaflip.\n\nLe coût en PA du sort est remboursé.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "land",
+    "hit": {
+     "shape": "circle",
+     "radius": 1
+    },
+    "dmg": 0,
+    "knock": 0,
+    "ecaflip": {
+     "pioche": 4,
+     "rembourse": true
+    },
+    "self": true,
+    "v07": true
+   },
+   "entrechat": {
+    "name": "Entrechat",
+    "dofusId": 12865,
+    "icon": 12322,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Téléporte le lanceur sur la case ciblée ou échange de position avec la cible.\nAugmente la Fuite du lanceur et de ses alliés en zone.",
+    "duration": 0.3,
+    "impactAt": 0.28,
+    "hitstop": 0.03,
+    "shake": 0.004,
+    "fx": "land",
+    "hit": {
+     "shape": "circle",
+     "radius": 60
+    },
+    "dmg": 0,
+    "knock": 0,
+    "move": {
+     "kind": "leap",
+     "maxRange": 120.0,
+     "height": 40
+    },
+    "ecaflip": {
+     "bondAllie": {
+      "k": 0.2,
+      "t": 3
+     }
+    },
+    "v07": true
    }
   }
  },
@@ -6661,6 +8058,183 @@
     "sadida": {
      "passage": 8
     }
+   },
+   "ronce_insolente": {
+    "name": "Ronce Insolente",
+    "dofusId": 13521,
+    "icon": 13176,
+    "element": "terre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Réduit la durée des effets sur la cible et occasionne des dommages Terre aux ennemis.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 312.0,
+     "radius": 30
+    },
+    "dmg": 40,
+    "knock": 0,
+    "purge": true,
+    "sadida": {
+     "infecte": true,
+     "relais": true,
+     "propage": true
+    },
+    "v07": true
+   },
+   "montee_seve": {
+    "name": "Montée de Sève",
+    "dofusId": 13563,
+    "icon": 12731,
+    "element": "eau",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Vole de la vie dans l'élément Eau aux ennemis et soigne les alliés (hors lanceur) selon les dommages occasionnés en zone.\n\nSur des Arbres : les transforme également en Arbres Feuillus.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 312.0,
+     "radius": 60
+    },
+    "dmg": 38,
+    "knock": 0,
+    "lifesteal": 0.5,
+    "sadida": {
+     "relais": true,
+     "propage": true,
+     "feuillit": true
+    },
+    "e07": {
+     "soinDegats": 0.5
+    },
+    "v07": true
+   },
+   "feu_brousse": {
+    "name": "Feu de Brousse",
+    "dofusId": 13568,
+    "icon": 13073,
+    "element": "feu",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Feu et retire des PM aux ennemis et applique l'état Feu de Brousse sur les Arbres et les ennemis en zone :\n• À la fin du tour de la cible, occasionne des dommages Feu aux ennemis en zone autour d'elle.\n• Peut occasionner des dommages aux Arbres.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 312.0,
+     "radius": 60
+    },
+    "dmg": 41,
+    "knock": 0,
+    "pmLoss": 1,
+    "sadida": {
+     "relais": true,
+     "propage": true
+    },
+    "e07": {
+     "poison": {
+      "part": 0.5,
+      "t": 6
+     }
+    },
+    "v07": true
+   },
+   "vent_empoisonne": {
+    "name": "Vent Empoisonné",
+    "dofusId": 13529,
+    "icon": 13387,
+    "element": "air",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Infecte la cible et lui applique un poison Air de début de tour.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 360.0,
+     "radius": 30
+    },
+    "dmg": 0,
+    "knock": 0,
+    "sadida": {
+     "infecte": true,
+     "relais": true,
+     "poison": 27
+    },
+    "v07": true
+   },
+   "arbre_feuillu": {
+    "name": "Arbre Feuillu",
+    "dofusId": 13560,
+    "icon": 12724,
+    "element": "neutre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Plante un Arbre Feuillu.\nTous les Arbres invoqués par le lanceur se transforment immédiatement en Arbres Feuillus.\n\nIl ne peut y avoir que 6 Arbres par équipe. Le septième Arbre planté entraîne la mort du premier.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 360.0,
+     "radius": 0
+    },
+    "dmg": 0,
+    "knock": 0,
+    "sadida": {
+     "plante": true,
+     "feuillus": true
+    },
+    "v07": true
+   },
+   "folle_transmutee": {
+    "name": "La Folle Transmutée",
+    "dofusId": 13515,
+    "icon": 13264,
+    "element": "neutre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Invoque une Poupée maîtrisable qui peut Infecter et appliquer un poison Air de début de tour.\n\nLa Poupée est remplacée par un Arbre 3 tours après son invocation.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "land",
+    "hit": {
+     "shape": "point",
+     "range": 168.0,
+     "radius": 0
+    },
+    "dmg": 0,
+    "knock": 0,
+    "sadida": {
+     "poupee": "sadi_folle",
+     "sansArbre": 9
+    },
+    "v07": true
    }
   }
  },
@@ -7421,6 +8995,180 @@
     "ouginak": {
      "bond": true
     }
+   },
+   "machoire": {
+    "name": "Mâchoire",
+    "dofusId": 13787,
+    "icon": 12061,
+    "element": "feu",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Augmente l'Esquive PM du lanceur et des alliés, retire de l'Esquive PM et occasionne des dommages Feu aux ennemis en zone.\n\nAugmente la Rage.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 264.0,
+     "radius": 96
+    },
+    "dmg": 36,
+    "knock": 0,
+    "pmLoss": 1,
+    "ouginak": {
+     "rage": 1
+    },
+    "v07": true
+   },
+   "museliere": {
+    "name": "Muselière",
+    "dofusId": 13793,
+    "icon": 12069,
+    "element": "terre",
+    "pa": 5,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Terre.\nAugmente les dommages du sort pour chaque ennemi au contact du lanceur avant d'appliquer les effets si la cible est la Proie.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 120.0,
+     "radius": 30
+    },
+    "dmg": 47,
+    "knock": 0,
+    "e07": {
+     "contact": {
+      "par": 0.2
+     }
+    },
+    "v07": true
+   },
+   "radius": {
+    "name": "Radius",
+    "dofusId": 13799,
+    "icon": 12063,
+    "element": "eau",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Échange de position avec la cible et occasionne des dommages Eau aux ennemis.\n\nAugmente la Rage (nécessite une cible).",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 120.0,
+     "radius": 30
+    },
+    "dmg": 41,
+    "knock": 0,
+    "echange": true,
+    "ouginak": {
+     "rage": 1
+    },
+    "v07": true
+   },
+   "depecage": {
+    "name": "Dépeçage",
+    "dofusId": 13804,
+    "icon": 12085,
+    "element": "air",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Réduit les soins reçus par la cible et occasionne des dommages Air.\n\nAugmente la Rage (nécessite une cible).",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 216.0,
+     "radius": 30
+    },
+    "dmg": 54,
+    "knock": 0,
+    "ouginak": {
+     "rage": 1
+    },
+    "e61": {
+     "antiSoin": {
+      "n": 0.3,
+      "t": 6
+     }
+    },
+    "v07": true
+   },
+   "gibier": {
+    "name": "Gibier",
+    "dofusId": 13786,
+    "icon": 12060,
+    "element": "neutre",
+    "pa": 1,
+    "cooldown": 0,
+    "desc": "Applique l'état Proie sur l'ennemi ciblé et augmente les dommages qu'il subit.\n\nFixe le temps de relance du sort à 0 si la Proie est achevée.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 264.0,
+     "radius": 30
+    },
+    "dmg": 0,
+    "knock": 0,
+    "ouginak": {
+     "proie": true
+    },
+    "e07": {
+     "marque": {
+      "n": 15,
+      "t": 9
+     }
+    },
+    "v07": true
+   },
+   "pistage": {
+    "name": "Pistage",
+    "dofusId": 13806,
+    "icon": 12066,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Repousse la cible et rapproche le lanceur vers elle.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "fx": "line",
+    "hit": {
+     "shape": "point",
+     "range": 120.0,
+     "radius": 30
+    },
+    "dmg": 0,
+    "knock": 342,
+    "e07": {
+     "rapproche": {
+      "cases": 2
+     }
+    },
+    "v07": true
    }
   }
  }

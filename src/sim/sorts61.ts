@@ -323,7 +323,7 @@ export const dommages61 = (p: Player): number => (p.e61?.berserk ? 1 + p.e61.ber
 /** Balise de Survie (Crâ) : un sort du lanceur visé sur sa Balise (point visé au lancer, les flèches partent du lanceur),
  *  s'il la voit, les fait échanger de place au moment du coup. */
 export function viseBalise61(p: Player, aim: { x: number; y: number }, world: World) {
-  const b = world.betes.find(x => !x.dead && x.owner === p && x.def.balise && x.state !== 'spawn' && Math.hypot(x.x - aim.x, x.y - aim.y) <= x.radius + CASE * 0.6);
+  const b = world.betes.find(x => !x.dead && x.owner === p && x.def.balise && !x.def.balise.sansEchange && x.state !== 'spawn' && Math.hypot(x.x - aim.x, x.y - aim.y) <= x.radius + CASE * 0.6);
   if (b) etat(p).baliseVisee = b.id; else if (p.e61) p.e61.baliseVisee = 0;
 }
 export function echangeBalise61(p: Player, world: World) {

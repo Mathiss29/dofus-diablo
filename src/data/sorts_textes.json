@@ -55,7 +55,7 @@
     "Cumul"
    ],
    "accroche": "Charge ta lame.",
-   "texte": "Frappe une cible à 4 cases. Lancé sur toi-même, il ne frappe pas mais renforce ses prochains coups pendant quelques secondes."
+   "texte": "Frappe une cible jusqu'à 4 cases en Terre. Chaque lancer renforce le suivant de 25 % (3 fois, 9 s)."
   },
   "13110": {
    "role": "gros",
@@ -74,7 +74,7 @@
     "Bouclier"
    ],
    "accroche": "Condamné, puis jugé.",
-   "texte": "Frappe une cible en dommages Eau et la Condamne 6 s : ton prochain Jugement sur elle frappe bien plus fort. Tu gagnes un bouclier, plus gros sur une cible Condamnée."
+   "texte": "Frappe une cible en dommages Eau, te donne un bouclier et la Condamne 6 s : ton prochain Jugement sur elle frappe 50 % plus fort."
   },
   "13108": {
    "role": "ctrl",
@@ -93,7 +93,7 @@
     "Allié"
    ],
    "accroche": "Un stratège à tes côtés.",
-   "texte": "Invoque un Stratège Iop qui renvoie la moitié des dommages qu'il subit autour de lui et réduit de moitié les dommages reçus par les alliés proches. Un seul à la fois."
+   "texte": "Invoque un Stratège Iop pendant 9 s : il te suit et attire sur lui les coups des monstres proches."
   },
   "13107": {
    "role": "dep",
@@ -112,7 +112,7 @@
     "Renforce"
    ],
    "accroche": "Bouge, frappe.",
-   "texte": "L'allié visé court plus vite et ne peut plus être bloqué pendant 6 s ; chaque déplacement lui donne un peu de Puissance."
+   "texte": "L'allié visé, ou toi, gagne 2 PM et 30 de Puissance pendant 6 s."
   },
   "13123": {
    "role": "base",
@@ -472,7 +472,7 @@
     "Affaiblit"
    ],
    "accroche": "Ça dépend d'où tu tires.",
-   "texte": "Collé à la cible : tu bondis en arrière et elle perd des PM. De loin : elle est repoussée et perd des PA."
+   "texte": "Flèche Eau jusqu'à 5 cases : tu bondis de 2 cases en arrière et la cible perd 1 PM."
   },
   "32443": {
    "role": "gros",
@@ -511,7 +511,7 @@
     "Distance"
    ],
    "accroche": "Une balise qui réagit.",
-   "texte": "Pose une Balise pendant 9 s : tire-lui dessus de loin et elle attire les ennemis autour, frappe-la au contact et elle les repousse."
+   "texte": "Pose une Balise pendant 9 s : elle attire vers elle les ennemis à 3 cases, et tu gagnes de la Puissance pour chacun."
   },
   "32465": {
    "role": "soutien",
@@ -529,7 +529,7 @@
     "Affaiblit"
    ],
    "accroche": "Trouve la faille.",
-   "texte": "Ne fait pas de dommages : ronge les PV max de la cible et augmente les dommages de la prochaine attaque qu'elle reçoit."
+   "texte": "Ne fait pas de dommages : la cible et ses voisins subissent 20 % de dommages en plus pendant 6 s."
   },
   "32444": {
    "role": "zone",
@@ -861,7 +861,7 @@
     "Renforce"
    ],
    "accroche": "Les crocs de la meute.",
-   "texte": "Mord une zone jusqu'à 4 cases en dommages Terre et renforce les coups au contact des alliés pris dedans pendant 6 s."
+   "texte": "Mord une zone jusqu'à 4 cases en dommages Terre et augmente tes dommages pendant 6 s."
   },
   "31111": {
    "role": "base",
@@ -881,7 +881,7 @@
     "Affaiblit"
    ],
    "accroche": "Plumé, il vole mieux.",
-   "texte": "Frappe une zone jusqu'à 5 cases en dommages Air : les ennemis touchés résistent moins aux poussées pendant 6 s."
+   "texte": "Frappe une zone jusqu'à 5 cases en dommages Air : les ennemis touchés subissent 10 % de dommages en plus pendant 6 s."
   },
   "31135": {
    "role": "base",
@@ -902,7 +902,7 @@
     "Soin"
    ],
    "accroche": "Un cœur qui bat pour tous.",
-   "texte": "Frappe une zone jusqu'à 6 cases en dommages Feu et augmente les soins reçus par toi et les alliés pris dedans."
+   "texte": "Frappe une zone jusqu'à 6 cases en dommages Feu et te rend une grosse part des dommages faits."
   },
   "31132": {
    "role": "base",
@@ -944,7 +944,7 @@
     "Meilleur élément"
    ],
    "accroche": "Tout le monde au milieu.",
-   "texte": "Claque une zone jusqu'à 4 cases et attire les ennemis vers son centre. Si le centre est pris, ils passent de l'autre côté."
+   "texte": "Claque une zone jusqu'à 4 cases et attire les ennemis vers son centre."
   },
   "31115": {
    "role": "invoc",
@@ -1360,7 +1360,7 @@
     "Autour de toi"
    ],
    "accroche": "Ton sang pour eux.",
-   "texte": "Donne une part de tes PV aux alliés proches (pas en Souffrance 6 ou plus). Pendant 6 s, chaque coup que tu reçois les soigne aussi."
+   "texte": "Donne 10 % de tes PV aux alliés à 2 cases, partagés entre eux (pas en Souffrance 6 ou plus)."
   },
   "12737": {
    "role": "gros",
@@ -1716,7 +1716,7 @@
     "Lance"
    ],
    "accroche": "Tourbillon de lance.",
-   "texte": "Plante la Lance entre 2 et 5 cases, bondis jusqu'à elle et repousse en Air les ennemis autour."
+   "texte": "Plante la Lance entre 2 et 5 cases et repousse en Air les ennemis autour."
   },
   "23754": {
    "role": "base",
@@ -1753,7 +1753,7 @@
     "Zone"
    ],
    "accroche": "Le sol se soulève.",
-   "texte": "Frappe au contact une zone à pleine force en Terre et fait passer les ennemis touchés de l'autre côté de toi."
+   "texte": "Frappe au contact une zone en Terre et repousse les ennemis touchés."
   },
   "23801": {
    "role": "soutien",
@@ -1772,7 +1772,7 @@
     "Meilleur élément"
    ],
    "accroche": "La parade parfaite.",
-   "texte": "Rappelle la Lance : pendant 6 s, rien ne te déplace et tu encaisses moins au contact. Le premier ennemi qui te frappe de près est contré et repoussé."
+   "texte": "Rappelle la Lance et frappe autour de toi en repoussant ; pendant 6 s, tu renvoies la moitié des dommages reçus au contact."
   },
   "23824": {
    "role": "dep",
@@ -1793,7 +1793,7 @@
     "Attire"
    ],
    "accroche": "La galanterie avant tout.",
-   "texte": "Tu recules d'un pas, tu attires la cible et vous soignes tous les deux si c'est un allié. Sur la Lance : la rappelle."
+   "texte": "Tu recules d'un pas, tu attires la cible et vous êtes soignés, toi et les alliés tout près d'elle."
   },
   "23432": {
    "role": "zone",
@@ -2159,7 +2159,7 @@
     "Affaiblit"
    ],
    "accroche": "La malice s'installe.",
-   "texte": "Frappe une cible jusqu'à 7 cases en dommages Air : pendant 6 s, chaque pas qu'elle fait lui retire de la Puissance."
+   "texte": "Frappe une cible jusqu'à 7 cases en dommages Air : elle fait 10 % de dommages en moins pendant 9 s."
   },
   "25858": {
    "role": "zone",
@@ -2217,7 +2217,7 @@
     "Affaiblit"
    ],
    "accroche": "Le remède ou le poison.",
-   "texte": "Sur un ennemi : dommages Terre et moins de soins reçus. Sur un allié : le soigne et augmente ses soins reçus pendant 6 s."
+   "texte": "Sur un ennemi : dommages Terre et moins de soins reçus pendant 6 s. Sur un allié : le soigne."
   },
   "25795": {
    "role": "invoc",
@@ -2236,7 +2236,7 @@
     "Distance"
    ],
    "accroche": "Une fiole à remplir.",
-   "texte": "Pose une Fiole jusqu'à 5 cases. Remplis-la avec tes mots : un allié qui la frappe en boit l'effet, et si elle casse, elle explose sur les ennemis."
+   "texte": "Pose une Fiole jusqu'à 5 cases pendant 12 s : toutes les 3 s, elle soigne les alliés qu'elle voit à 4 cases."
   },
   "25742": {
    "role": "soutien",
@@ -2585,7 +2585,7 @@
     "Cumul"
    ],
    "accroche": "Ça sonne à chaque fois.",
-   "texte": "Frappe une cible jusqu'à 3 cases en Air et la marque 9 s : chaque fois qu'on lui retire des PA, elle reprend un coup Air (4 fois)."
+   "texte": "Frappe une cible jusqu'à 3 cases en Air et la marque 9 s : chacun de tes autres sorts qui la touche la refrappe en Air (4 fois)."
   },
   "13340": {
    "role": "base",
@@ -2603,7 +2603,7 @@
     "Cumul"
    ],
    "accroche": "De l'or dans la boue.",
-   "texte": "Frappe une cible jusqu'à 4 cases en Eau et la marque 9 s : chaque fois qu'on lui retire des PM, elle reprend un coup Eau (4 fois)."
+   "texte": "Frappe une cible jusqu'à 4 cases en Eau et la marque 9 s : chacun de tes autres sorts qui la touche la refrappe en Eau (4 fois)."
   },
   "13331": {
    "role": "zone",
@@ -2620,7 +2620,7 @@
     "Cumul"
    ],
    "accroche": "Ça s'éboule.",
-   "texte": "Frappe une cible jusqu'à 5 cases en Terre et la marque 9 s : chaque retrait de Portée la frappe de nouveau en Terre (4 fois)."
+   "texte": "Frappe une cible jusqu'à 5 cases en Terre et la marque 9 s : chacun de tes autres sorts qui la touche la refrappe en Terre (4 fois)."
   },
   "13366": {
    "role": "base",
@@ -2639,7 +2639,7 @@
     "Cumul"
    ],
    "accroche": "Gare au grisou.",
-   "texte": "Frappe une zone jusqu'à 7 cases en Feu et marque la cible 9 s : chaque soin qu'elle reçoit fait exploser du Feu autour d'elle (4 fois)."
+   "texte": "Frappe une zone jusqu'à 7 cases en Feu et marque la cible 9 s : chacun de tes autres sorts qui la touche fait exploser du Feu autour d'elle (4 fois)."
   },
   "13328": {
    "role": "invoc",
@@ -2657,7 +2657,7 @@
     "Bouclier"
    ],
    "accroche": "On partage tout.",
-   "texte": "Invoque une Musette Animée pendant 6 s : les dommages reçus par les alliés autour d'elle sont répartis entre tous."
+   "texte": "Invoque une Musette Animée pendant 6 s : elle attire sur elle les coups des monstres proches."
   },
   "13342": {
    "role": "soutien",
@@ -2676,7 +2676,7 @@
     "Invocation"
    ],
    "accroche": "Une petite promenade.",
-   "texte": "Raccourcit les effets sur la cible et l'échange de place avec ton Sac ou ta Musette."
+   "texte": "Raccourcit les effets sur la cible et échange ta place avec elle."
   },
   "13334": {
    "role": "soutien",
@@ -3001,7 +3001,7 @@
     "Contrôle"
    ],
    "accroche": "Un coup de langue qui coûte cher.",
-   "texte": "Dommages Terre en zone jusqu'à 4 cases, qui retirent au hasard des PM ou des PA. Pile retire des PM, Face des PA ; pioche un Roi de Carreau."
+   "texte": "Dommages Terre en zone jusqu'à 4 cases, qui retirent 1 PM et 1 PA. Pioche un Roi de Carreau."
   },
   "29680": {
    "role": "base",
@@ -3038,7 +3038,7 @@
     "Affaiblit"
    ],
    "accroche": "Ses griffes visent les points faibles.",
-   "texte": "Dommages Eau en ligne jusqu'à 5 cases, qui baissent les Résistances Critiques des cibles. Pioche un Roi de Trèfle."
+   "texte": "Dommages Eau en ligne jusqu'à 5 cases : les cibles subissent 10 % de dommages en plus pendant 6 s. Pioche un Roi de Trèfle."
   },
   "12841": {
    "role": "base",
@@ -3056,7 +3056,7 @@
     "Cumul"
    ],
    "accroche": "Plus on bouge, plus on frappe.",
-   "texte": "Dommages Air en zone jusqu'à 5 cases, plus forts pour chaque poussée, attirance, échange ou téléportation faite avant. Le compte repart à zéro après."
+   "texte": "Dommages Air en zone jusqu'à 5 cases. Pioche un Roi de Pique."
   },
   "12843": {
    "role": "soutien",
@@ -3072,7 +3072,7 @@
     "Autour de toi"
    ],
    "accroche": "On rebat les cartes.",
-   "texte": "Joue toute ta Main puis pioche 4 cartes au hasard. PA remboursés."
+   "texte": "Pioche 4 cartes au hasard. PA remboursés."
   },
   "12844": {
    "role": "dep",
@@ -3090,7 +3090,7 @@
     "Allié"
    ],
    "accroche": "Un pas de danse, une place volée.",
-   "texte": "Téléporte-toi jusqu'à 2 cases ou échange de place avec la cible, et tes alliés autour se dégagent mieux des monstres."
+   "texte": "Bondis jusqu'à 2 cases, et tes alliés autour courent plus vite pendant 3 s."
   },
   "12864": {
    "role": "base",
@@ -3451,7 +3451,7 @@
     "Ralentit"
    ],
    "accroche": "Le feu court d'herbe en herbe.",
-   "texte": "Frappe en Feu et retire des PM dans la zone ; les ennemis touchés brûlent ensuite ceux qui les entourent."
+   "texte": "Frappe en Feu et retire des PM dans la zone ; les ennemis touchés brûlent ensuite en continu pendant 6 s."
   },
   "13577": {
    "role": "base",
@@ -4035,7 +4035,7 @@
     "Mêlée"
    ],
    "accroche": "Pris dans la nasse.",
-   "texte": "Gros coup de Terre au contact. Sur la Proie, plus fort pour chaque ennemi collé à toi."
+   "texte": "Gros coup de Terre au contact, plus fort pour chaque ennemi collé à toi."
   },
   "13799": {
    "role": "dep",
@@ -4062,7 +4062,7 @@
     "Affaiblit"
    ],
    "accroche": "Le gibier de choix.",
-   "texte": "Marque un ennemi comme Proie : il prend plus de dommages. Achever la Proie recharge le sort."
+   "texte": "Marque un ennemi comme Proie : lui et ses voisins prennent 15 % de dommages en plus pendant 9 s."
   },
   "13806": {
    "role": "dep",

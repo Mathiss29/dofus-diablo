@@ -17,6 +17,10 @@ import { LOOKS } from '../src/render/looks';
 const SANS_EFFET_OFFICIEL: Record<string, string> = {
   bond: 'Iop : aucun gfx dans ses spellscripts (le saut est dans le geste)',
   balise_survie: 'Crâ : aucun gfx officiel',
+  balise_tactique: 'Crâ : aucun gfx officiel (0.7)',
+  pacte_sang: 'Sacrieur : aucun gfx officiel (0.7)',
+  musette_animee: 'Enutrof : aucun gfx officiel (0.7)',
+  deambulation: 'Enutrof : aucun gfx officiel (0.7)',
   discipline: 'Osamodas : gfx 8708/8709 faits uniquement de masques, non rendables',
   attirance: 'Sacrieur : gfx 8355/8356 faits uniquement de masques, non rendables',
   mutilation: 'Sacrieur : aucun gfx officiel',

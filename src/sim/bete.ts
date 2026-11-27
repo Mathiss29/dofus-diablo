@@ -30,7 +30,7 @@ export interface BeteDef {
     gonflable?: ReglesGonflable; surpuissante?: ReglesSurpuissante; fourbe?: ReglesFourbe };
   /** Balise de Survie du Crâ (0.6) : immobile ; toutes les `periode` s (dès sa pose), soigne de `soin` (part des PV max)
    *  les alliés qu'elle voit à `portee` cases, comme au début de chacun de ses tours dans Dofus. */
-  balise?: { soin: number; periode: number; portee: number };
+  balise?: { soin: number; periode: number; portee: number; /** Balise Tactique, Fiole (0.7) : on n'échange pas de place en la frappant. */ sansEchange?: boolean };
 }
 export interface ReglesBetes {
   /** Part des dommages officiels (× 1,5 comme les sorts du joueur, puis × degats) ; PA par seconde et réserve (6A). */
@@ -178,6 +178,7 @@ export class Bete extends Entity {
     }
     if (this.finT > 0 && (this.finT -= dt) <= 0) {   // Horde sauvage : la bête repart
       world.emit({ k: 'status', x: this.x, y: this.y - 40, text: 'Repart', color: '#a89fb6' });
+      if (this.def.sadida) beteSadidaMorte(this, world);   // La Folle Transmutée : un Arbre à sa place
       this.dead = true; this.t = 0; return;
     }
     if (this.def.balise) { this.majBalise(dt, world); return; }
