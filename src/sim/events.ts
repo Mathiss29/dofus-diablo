@@ -118,6 +118,10 @@ export type SimEvent =
   | { k: 'guerreFuite'; id: number; x: number; y: number }
   | { k: 'guerreReplantee'; x: number; y: number }
   | { k: 'guerreFin'; champ: string; sauvees: number; total: number; coffre: 'or' | 'argent' | 'bronze' | null; gain: number; temps: number; record: boolean }
+  | { k: 'siegeDebut'; nom: string; duree: number }
+  | { k: 'siegeVague'; n: number; total: number }
+  | { k: 'siegePierre'; reste: number; x: number; y: number }
+  | { k: 'siegeFin'; nom: string; coffre: 'or' | 'argent' | 'bronze' | null; pierre: number; temps: number }
   | { k: 'bossDown'; monster: string }
   | { k: 'playerDeath'; wave: number }
   | { k: 'potion'; x: number; y: number; amount: number }
@@ -139,6 +143,7 @@ export type SimEvent =
   | { k: 'autel'; effet: string; dieu: string; nom: string }
   /** 0.6 (22A) : un Coffre Malveillant se met à détaler. */
   | { k: 'coffreFuyard'; x: number; y: number }
+  | { k: 'gobrechaun'; x: number; y: number }
   | { k: 'tresorPortail'; x: number; y: number }
   /** 0.6 (19-20) : palier de renommée atteint ; sanctuaire des Douze trouvé. */
   | { k: 'renommee'; region: string; palier: number; texte: string }

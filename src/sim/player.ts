@@ -11,6 +11,7 @@ import { CHATIMENTS, PC_PAR_ID } from './pouvoirsClasse';
 import { DOFUS, EMPLACEMENTS_DOFUS, PASSIFS, PORTABLE, TROPHEES } from './dofus';
 import type { CleDonjon } from './arene';
 import { guerreVide, type EtatGuerre } from './guerre';
+import { siegeVide, type EtatSiege } from './siege07';
 import { vivantVide, type EtatVivant } from './mondeVivant';
 import { dmgArme, type CommandeFM } from './forgemagie';
 import { Entity } from './entity';
@@ -138,6 +139,8 @@ export class Player extends Entity {
   renfortDonjon: string | null = null;
   /** Guerre des Cawottes (0.4) : attaques gagnées, en or, champs parfaits, Kiafin rattrapés, records par champ. */
   guerre: EtatGuerre = guerreVide();
+  /** Siège des Zoths (0.7) : dernier siège défendu (heure de Paris, s), sièges tenus, en or. */
+  siege07: EtatSiege = siegeVide();
   /** 0.5 « monde vivant » : boss du monde vaincus (titres), apparitions récompensées, invasions, Éclats, événements. */
   vivant: EtatVivant = vivantVide();
   /** Commande en cours chez Malek le Forgemage (maquette Forgemagie UI 9E) : l'objet lui est confié, il revient quand c'est fini. */

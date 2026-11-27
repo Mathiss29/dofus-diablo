@@ -1,4 +1,5 @@
 import type { ChampDef } from './guerre';
+import type { SiegeDef } from './siege07';
 /** Types des données de jeu (src/data/*.json). La simulation ne lit que ça. */
 import type { Stat } from './items';
 
@@ -358,6 +359,8 @@ export interface DonjonDef { nom: string; salles: Record<string, string[][]>;
   tresor?: boolean;
   /** 0.7 (5A) : Koulosse en étages : arènes des étages suivants ; une vague par étage, on descend quand la vague est vide (arene07.ts). */
   etages?: AreneDef[];
+  /** 0.7 (6C) : ce monstre est le boss de cette arène (le Gobrechaun dans le Laboratoire caché). */
+  bossForce?: string;
   /** 0.7 (5B) : grimoires volants du Maître Corbac : en fermer ce nombre l'étourdit (arene07.ts). */
   grimoires?: number;
   /** 0.7 (5C) : le Blop Multicolore Royal change de couleur et ne craint que l'élément de sa couleur. */
@@ -399,6 +402,8 @@ export interface OpenDef {
   donjonsV07?: DonjonDef[];
   /** Guerre des Cawottes (île des Wabbits, 0.4) : les quatre champs (tools/extraction/wabbits04/champs.py). */
   guerre?: { champs: ChampDef[] };
+  /** Siège des Zoths (0.7, 6A) : la place du Village des Zoths (tools/extraction/arenes07/siege07.py). */
+  siege07?: SiegeDef;
   /** Ateliers officiels (table hints de Dofus 3, maquette Métiers 10A) : cartes (tags) où l'on fabrique pour ces métiers. */
   ateliers?: AtelierDef[];
   /** Coffre partagé (0.3, 12A+12B) : où on l'ouvre (Havre-Sac, Banque d'Astrub). Sans case : la case la plus dégagée de la carte. */

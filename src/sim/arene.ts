@@ -247,7 +247,8 @@ export class Arene {
   }
   private apparaitre(a: Attente) {
     const w = this.w, k = pvGroupe(w.players.length), D0 = w.opts.data.monsters[a.type];
-    const D = D0 && this.d.tresor ? defTresor(w, D0, poolTresor(w).includes(a.type)) : D0;   // 0.6 (22B) : au niveau de la sous-zone d'où l'on vient
+    const D1 = D0 && this.d.bossForce === a.type ? { ...D0, boss: true } : D0;   // 0.7 (6C) : le Gobrechaun garde son trésor
+    const D = D1 && this.d.tresor ? defTresor(w, D1, poolTresor(w).includes(a.type)) : D1;   // 0.6 (22B) : au niveau de la sous-zone d'où l'on vient
     // à plusieurs : la fiche du monstre a plus de PV (il les garde même s'il rentre se calmer)
     const m = w.spawnMonster(a.type, a.x, a.y, k > 1 && D ? { ...D, hp: Math.round(D.hp * k), xp: D.xp ?? Math.round(D.hp / 5) } : D);
     m.arene = true; this.tous.push(m);

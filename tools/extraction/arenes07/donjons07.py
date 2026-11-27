@@ -42,6 +42,13 @@ DJ = {
     'royalmouth': dict(nom='Serre du Royalmouth', sub=617, niveau=120, region='Frigost', porte='-84_-49',
                        cle=('11174', 'Clef de la serre du Royalmouth', 84257, 120, 11000),
                        monstres=['boufmouth', 'boufmouth_de_guerre', 'bouftonmouth'], boss=['royalmouth', 'boufmouth_de_guerre', 'boufmouth_de_guerre']),
+    # 6C + 15A : Laboratoire caché d'Otomaï (sous-zone 473, sous [-55,4] des Plaines herbeuses) : pas de donjon officiel ni de clé ;
+    # on y entre avec la clé que lâche le Gobrechaun (src/sim/gobrechaun.ts), qui y garde son trésor (boss de l'arène, `bossForce`).
+    'labo': dict(nom='Laboratoire caché', sub=473, niveau=110, region="Île d'Otomaï", porte='-55_4',
+                 cle=('cle_labo_cache', 'Clé du Laboratoire caché', 84246, 110, None),
+                 monstres=['kilibriss_du_laboratoire', 'bitouf_des_plaines_du_laboratoire', 'craqueboule_poli_du_laboratoire',
+                           'craqueleur_poli_du_laboratoire', 'kido_du_laboratoire', 'mufafah_du_laboratoire'],
+                 boss=['gobrechaun', 'kilibriss_du_laboratoire', 'kido_du_laboratoire'], bossForce='gobrechaun'),
 }
 TAILLES = [12, 12, 14]   # 3 vagues (la suivante part quand il en reste 4) ; un peu plus que la 0.6 (90-100)
 # 5B-5D : mécaniques (src/sim/arene07.ts)
@@ -75,12 +82,13 @@ for k, d in DJ.items():
     S[str(d['sub'])] = {'name': d['nom'], 'level': d['niveau'], 'monsters': [], 'groupsPerMap': 0, 'groupSize': [0, 0], 'v07': True, 'region': d['region']}
     dd = {'nom': d['nom'], 'salles': {}, 'arene': dict(p), 'vagues': vagues(d['monstres']), 'bossVague': d['boss'], **MECA.get(k, {})}
     if d.get('etages'): dd['etages'] = [dict(PTS[e]) for e in d['etages']]
+    if d.get('bossForce'): dd['bossForce'] = d['bossForce']
     dv.append(dd)
     cid, cnom, icone, niv, prix = d['cle']
     I['resources'][cid] = {'name': cnom, 'icon': icone, 'level': niv, 'cle': d['nom']}
     portes.append({'a': [d['porte'], case_porte(d['porte'])], 'b': [tag, 0], 'nom': d['nom'], 'cle': cid, 'marque': True})
     g = B['goultard']
-    if not any(a['id'] == cid for a in g): g.append({'id': cid, 'prix': prix, 'v07': True, 'monnaie': 'kamas'})
+    if prix and not any(a['id'] == cid for a in g): g.append({'id': cid, 'prix': prix, 'v07': True, 'monnaie': 'kamas'})
 Z['astrub']['open']['portes'] = portes
 Z['astrub']['open']['donjonsV07'] = dv
 open(PZ, 'w', encoding='utf-8').write(json.dumps(Z, ensure_ascii=False, indent=1) + '\n')

@@ -878,6 +878,7 @@ export class Hud {
       case 'autel': this.loot(`Autel de ${e.dieu}  ·  ${e.nom}`, '#e8c25a'); break;
       case 'renommee': this.loot(`Renommée ${e.region} : palier ${e.palier}  ·  ${e.texte}`, '#b9e54b'); break;
       case 'sanctuaire': this.loot(`Sanctuaire de ${e.dieu}  ·  +${e.bonus} ${STAT_NAMES[e.carac as Stat] ?? e.carac}  (${e.n}/${e.total} en ${e.region})`, '#e8c25a'); break;
+      case 'gobrechaun': this.loot('Le Gobrechaun détale avec son trésor : abats-le pour sa clé !', '#f2d36b'); break;
       case 'coffreFuyard': this.loot('Un Coffre Malveillant détale : 15 secondes pour l\'abattre !', '#f2d36b'); break;
       case 'tresorPortail': this.loot('Un portail doré vers la Salle au trésor : 30 secondes pour y entrer !', '#f2d36b'); break;
       case 'massacre': this.toast(`Massacre ×${e.n}  ·  +${e.bonus} % XP`); break;
@@ -1223,11 +1224,13 @@ export class Hud {
     this.fpsTxt.setVisible(!!R?.compteurFps).setPosition(sansMini ? mx - 40 : mx + 6, my + 4);
     if (R?.compteurFps) this.fpsTxt.setText(`${Math.round(this.scene.game.loop.actualFps)} FPS`);
     const ar = world.arene, ga = !ar && world.guerre?.attaque && !world.guerre.attaque.fini && world.guerre.surIle().includes(p) ? world.guerre.attaque : null;
-    if (ga) this.areneTxt.setVisible(true).setPosition(mx + mw / 2, my + mh + 22).setText(`${ga.c.nom}\nVague ${ga.vague} / 5 · ${ga.restantes} / ${ga.cawottes.length} cawottes · ${chrono(ga.chrono)}`);
+    const sg = !ar && !ga && world.siege?.enCours && world.siege.defenseurs.includes(p.id) ? world.siege : null;
+    if (sg) this.areneTxt.setVisible(true).setPosition(mx + mw / 2, my + mh + 22).setText(`${sg.d.nom}\nVague ${sg.vague} · Pierre ${Math.ceil(sg.pierre)} / 100 · ${chrono(sg.reste)}`);
+    else if (ga) this.areneTxt.setVisible(true).setPosition(mx + mw / 2, my + mh + 22).setText(`${ga.c.nom}\nVague ${ga.vague} / 5 · ${ga.restantes} / ${ga.cawottes.length} cawottes · ${chrono(ga.chrono)}`);
     else this.areneTxt.setVisible(!!ar).setPosition(mx + mw / 2, my + mh + 22);
     if (ar) this.areneTxt.setText(ar.fini ? `Terminé en ${chrono(ar.chrono)}` : !ar.demarre ? `${ar.total} vagues + le boss` : ar.vague > ar.total ? `Boss · ${chrono(ar.chrono)}` : `Vague ${ar.vague} / ${ar.total} · ${chrono(ar.chrono)}`);
     const txtVivant = this.texteVivant(world);
-    this.vivantTxt.setVisible(!!txtVivant && !ar).setPosition(mx + mw / 2, my + mh + (ga ? 62 : 22));
+    this.vivantTxt.setVisible(!!txtVivant && !ar).setPosition(mx + mw / 2, my + mh + (ga || sg ? 62 : 22));
     if (txtVivant && !ar && this.vivantTxt.text !== txtVivant) this.vivantTxt.setText(txtVivant);
     // Colonne de menus : boutons carrés sombres en relief, comme le bandeau de Dofus 3
     // Boutons carrés sombres serrés les uns contre les autres ; ils rapetissent si l'écran est bas

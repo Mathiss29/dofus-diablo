@@ -9,6 +9,7 @@ import type { World } from './world';
 import type { CleDonjon } from './arene';
 import { lireAreneAmes } from './areneAmes';
 import type { EtatGuerre } from './guerre';
+import type { EtatSiege } from './siege07';
 import type { EtatVivant } from './mondeVivant';
 import type { CommandeFM } from './forgemagie';
 import type { EntreeCodex } from './codex';
@@ -55,6 +56,7 @@ export interface EtatJoueur {
   cleDonjon?: CleDonjon | null;
   /** Guerre des Cawottes (0.4) : attaques gagnées, en or, champs parfaits, Kiafin rattrapés, records. */
   guerre?: EtatGuerre;
+  siege07?: EtatSiege;
   /** 0.5 « monde vivant » : boss du monde vaincus, apparitions récompensées, invasions, Éclats, événements. */
   vivant?: EtatVivant;
   /** Commande chez Malek le Forgemage (Forgemagie UI 9E). */
@@ -95,7 +97,7 @@ export function exporterJoueur(w: World): EtatJoueur {
     bar: p.bar, variants: p.variants, learned: [...p.learned],
     x: p.x, y: p.y, retour: w.pointDeRetour, quetes: w.quetes?.exporter(), zone: w.opts.zone,
     apparats: p.apparats, apparat: p.apparat, codex: p.codex, codexOuvert: p.codexOuvert, ames: p.ames, areneAmes: p.areneAmes, menagerie: p.menagerie, familierOffert: p.familierOffert, aboJour: p.aboJour, style: p.style, tenues: p.tenues, placesTenue: p.placesTenue, prereglages: p.prereglages, almanaxJour: p.almanaxJour, magasin: p.magasin, sacEnPlus: p.sacEnPlus, benediction: p.benediction, repas: p.repas, elixir: p.elixir, parchemins: p.parchemins, ceinture: p.ceinture, dofus: p.dofus, trophees: p.trophees, recoltees: p.recoltees, dofusPortes: p.dofusPortes,
-    zaaps: p.zaaps, zonesVues: p.zonesVues, explore: p.explore, chasse: p.chasse, bossSansLeg: p.bossSansLeg, idoles: p.idoles, renommee: p.renommee, sanctuaires: p.sanctuaires, drapeaux: p.drapeaux, tombe: p.tombe, lieuxVus: p.lieuxVus, cleDonjon: p.cleDonjon, guerre: p.guerre, vivant: p.vivant, commandeFM: p.commandeFM, ...(w.retour ? { havreSac: w.retour } : {}),
+    zaaps: p.zaaps, zonesVues: p.zonesVues, explore: p.explore, chasse: p.chasse, bossSansLeg: p.bossSansLeg, idoles: p.idoles, renommee: p.renommee, sanctuaires: p.sanctuaires, drapeaux: p.drapeaux, tombe: p.tombe, lieuxVus: p.lieuxVus, cleDonjon: p.cleDonjon, guerre: p.guerre, siege07: p.siege07, vivant: p.vivant, commandeFM: p.commandeFM, ...(w.retour ? { havreSac: w.retour } : {}),
     ...(p.cls.coffre ? { coffreEnu: exporterCoffre(p) } : {}),
   });
 }
@@ -182,6 +184,11 @@ export function restaurerJoueur(w: World, e: EtatJoueur) {
     p.guerre = { gagnees: n(g.gagnees), or: n(g.or), kiafins: n(g.kiafins), parfaits: Array.isArray(g.parfaits) ? g.parfaits.filter(t => typeof t === 'string') : [],
       records: Object.fromEntries(Object.entries(g.records ?? {}).filter(([, r]) => r && Number.isFinite(r.sauvees) && Number.isFinite(r.temps)).map(([k, r]) => [k, { sauvees: n(r.sauvees), temps: n(r.temps) }])),
       malchance: Math.max(0, Number(g.malchance) || 0) };
+  }
+  const sg = s.siege07;
+  if (sg && typeof sg === 'object') {
+    const n = (v: unknown) => Math.max(0, Math.floor(Number(v)) || 0);
+    p.siege07 = { dernier: Number.isFinite(sg.dernier) ? Number(sg.dernier) : null, tenus: n(sg.tenus), or: n(sg.or) };
   }
   const vv = s.vivant;
   if (vv && typeof vv === 'object') {
