@@ -2308,6 +2308,56 @@
      "v06": true,
      "region": "Amakna",
      "interieur": true
+    },
+    "32": {
+     "name": "Sufokia",
+     "level": 10,
+     "monsters": [
+      "piou_violet",
+      "piou_vert",
+      "piou_bleu",
+      "piou_rose",
+      "piou_jaune"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "region": "Baie de Sufokia"
+    },
+    "490": {
+     "name": "Rivage sufokien",
+     "level": 40,
+     "monsters": [
+      "crabe",
+      "raul_mops",
+      "etoile_mer_asse",
+      "moumoule"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "region": "Baie de Sufokia"
+    },
+    "1119": {
+     "name": "Bassin des Muldos",
+     "level": 60,
+     "monsters": [
+      "muldo_indigo_sauvage",
+      "muldo_ebene_sauvage",
+      "muldo_orchidee_sauvage",
+      "muldo_pourpre_sauvage",
+      "muldo_dore_sauvage"
+     ],
+     "groupsPerMap": 2,
+     "groupSize": [
+      3,
+      6
+     ],
+     "region": "Baie de Sufokia"
     }
    },
    "checkpoints": [
@@ -2502,6 +2552,30 @@
       -6080.0
      ],
      "sub": 601
+    },
+    {
+     "name": "Zaap Rivage sufokien",
+     "map": [
+      10,
+      22
+     ],
+     "zaap": [
+      17010,
+      48100.0
+     ],
+     "sub": 490
+    },
+    {
+     "name": "Zaap Sufokia",
+     "map": [
+      13,
+      26
+     ],
+     "zaap": [
+      20837,
+      51604.5
+     ],
+     "sub": 32
     }
    ],
    "portes": [

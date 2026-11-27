@@ -755,3 +755,20 @@ Toutes sont refaites avec `HD=2` : planche dessinée 2 fois plus grand, `meta.hd
 - Forme Bestiale : pas de look officiel trouvé, on joue l'anim 1815 avec +15 % de taille et un halo rouge (rendu).
 - Roquet : planche monstre (`monster_planche`, os 9183), affiché à l'échelle 0,42.
 - Effets des sorts : 63 paquets bones (sorts jusqu'au 90) gardés dans `/mnt/project-files/cache-dofus/ouginak-bones/` ; `spell_fx.py` puis fusion à la main des seules entrées Ouginak dans `spellfx.json` (le script réécrit aussi d'autres classes).
+
+## Baie de Sufokia (0.6.1 publique, ligne « 0.7 : » 3B, 27 nov. 2026)
+- `sufokia061/liste.py` -> `sufokia061/liste.json` : 122 cartes du dehors (Sufokia 32, Rivage sufokien 490, Bassin des Muldos 1119 ; worldMap 1, l'îlot [26,22] sans voisine retiré après l'export ;
+  sans les copies en (0, 0), coordonnée doublée = bits 23-24 de `m_flags` les plus hauts). Voisine à pied de la côte sud d'Amakna : pas de bateau.
+- Textures : les petits gfx de sol (12, 18, 19, 330…) ne sont pas trouvés par le catalogue (clé « 1x/<gfx>.png ») : les sortir à part de
+  `mapgfx_1x_0_assets_all.bundle`, sinon l'herbe du Rivage a des trous. Export comme la 0.6, avec `FOND_COULEUR=1` (nouveau dans `world_export.py` :
+  couleur de fond officielle de la carte sous son rectangle, la mer bleue entre les blocs de la cité au lieu de trous noirs).
+- Après `monde_continent.py fusion` : `reperes.py` (table hints), `particules.py` + `amakna04/particules_amakna.py <sortie> sufokia061/liste.json`
+  et `amakna04/zaaps_amakna.py <cartes> sufokia061/liste.json` (ces deux outils prennent maintenant aussi les cartes publiques de la liste donnée :
+  Zaaps [10,22] et [13,26]), `regions_monde.py scinder` (région `baie_de_sufokia`), `sufokia061/carte061.py` (ajoute la baie à carte.webp sans
+  tout redessiner), `plan_carte.py`, `envoi.mjs`.
+- `sufokia061/sous_zones.py <tables> <fr.bin>` (sous-zones publiques), `sufokia061/sons061.py <Musiques.bank> <fsb5> .` (Sufokia_Explo et
+  Musique_Sufokia_Part2), `sufokia061/recoltes061.py <cartes> <tables> <fr.bin>` (relevés dofusdb ajoutés avant ; tables skillsdataroot et
+  jobsdataroot à sortir avec data_dump.py).
+- Monstres (squelettes 285, 4994, 537, 545, 3640 rapportés du PC dans `cache-dofus/bones-061/`) : planches à SCALE 2.5, 1.5 pour Raul Mops
+  (`am/scales.txt`), puis `amakna04/ajout.py`, `monster_spells.py`, `monster_stats.py` (en ne gardant que les nouveaux), `archimonstres.py`,
+  `drops_ajout.py`, `xp_monstres.py`, `icones_ajout.py`. Muldos sauvages : squelette 3640 du look, couleurs passées en COULEURS.

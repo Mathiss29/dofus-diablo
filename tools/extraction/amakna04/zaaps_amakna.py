@@ -13,7 +13,8 @@ L = json.load(open(sys.argv[2] if len(sys.argv) > 2 else f'{ICI}/liste.json'))
 maps = {m['tag']: m for m in M['maps'] if not m.get('inside')}
 deja = {tuple(c['map']) for c in o['checkpoints']}
 for r in M['reperes']:
-    if r['n'] != 'Zaap' or not (maps.get(r['t'], {}).get('essai') or maps.get(r['t'], {}).get('v06')): continue
+    dans_liste = r['t'].replace('_', ',') in L   # liste donnée (Baie de Sufokia, publique : ni essai ni v06)
+    if r['n'] != 'Zaap' or not (maps.get(r['t'], {}).get('essai') or maps.get(r['t'], {}).get('v06') or dans_liste): continue
     x, y = map(int, r['t'].split('_'))
     if (x, y) in deja: continue
     md = json.load(open(f"{cartes}/map_{L[f'{x},{y}'][0]}.json"))['mapData']

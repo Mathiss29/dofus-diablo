@@ -757,6 +757,15 @@ export const LOOKS: Record<string, Look> = {
   gelee_royale_fraise: { atlas: 'gelee_royale_fraise', scale: 1, map: MONSTER_MAP(12/41, 'AnimAttaque0', { 0: 12/41, 1: 24/45, 2: 16/37 }), height: 178, multi: true },
   gelee_royale_citron: { atlas: 'gelee_royale_citron', scale: 1, map: MONSTER_MAP(12/41, 'AnimAttaque0', { 0: 12/41, 1: 24/45, 2: 16/37 }), height: 178, multi: true },
   maitre_vampire: { atlas: 'maitre_vampire', scale: 1.39, map: MONSTER_MAP(13/26, 'AnimAttaque0', { 0: 13/26, 1: 4/36 }), height: 124, multi: true },
+  crabe: { atlas: 'crabe', scale: 0.93, map: MONSTER_MAP(19/41, 'AnimAttaque0', { 0: 19/41, 1: 19/41 }), height: 80, multi: true },
+  raul_mops: { atlas: 'raul_mops', scale: 1.28, map: MONSTER_MAP(9/39, 'AnimAttaque0', { 0: 9/39, 1: 9/36 }), height: 174, multi: true },
+  etoile_mer_asse: { atlas: 'etoile_mer_asse', scale: 0.64, map: MONSTER_MAP(21/49, 'AnimAttaque1', { 1: 21/49 }), height: 98, multi: true },
+  moumoule: { atlas: 'moumoule', scale: 0.83, map: MONSTER_MAP(12/18, 'AnimAttaque0', { 0: 12/18, 1: 15/28 }), height: 132, multi: true },
+  muldo_indigo_sauvage: { atlas: 'muldo_indigo_sauvage', scale: 0.74, map: MONSTER_MAP(7/18, 'AnimAttaque0', { 0: 7/18 }), height: 212, multi: true },
+  muldo_ebene_sauvage: { atlas: 'muldo_ebene_sauvage', scale: 0.74, map: MONSTER_MAP(7/18, 'AnimAttaque0', { 0: 7/18 }), height: 212, multi: true },
+  muldo_orchidee_sauvage: { atlas: 'muldo_orchidee_sauvage', scale: 0.74, map: MONSTER_MAP(7/18, 'AnimAttaque0', { 0: 7/18 }), height: 212, multi: true },
+  muldo_pourpre_sauvage: { atlas: 'muldo_pourpre_sauvage', scale: 0.74, map: MONSTER_MAP(7/18, 'AnimAttaque0', { 0: 7/18 }), height: 212, multi: true },
+  muldo_dore_sauvage: { atlas: 'muldo_dore_sauvage', scale: 0.74, map: MONSTER_MAP(7/18, 'AnimAttaque0', { 0: 7/18 }), height: 212, multi: true },
 };
 
 /** Archimonstres d'Astrub (0.3, 15B ; tools/contenu/archimonstres.py) : dans Dofus, un archimonstre a le dessin de son monstre

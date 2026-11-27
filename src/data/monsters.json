@@ -48273,5 +48273,1298 @@
    "fuite": 0,
    "retraitPA": 0
   }
+ },
+ "crabe": {
+  "dofusId": 63,
+  "name": "Crabe",
+  "hp": 1075,
+  "speed": 95,
+  "radius": 16,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "crabe",
+  "color": "#d8d0b8",
+  "xp": 89,
+  "level": 42,
+  "res": {
+   "terre": 21,
+   "feu": 21,
+   "eau": -24,
+   "air": 26,
+   "neutre": -9
+  },
+  "caracs": {
+   "force": 168,
+   "intelligence": 168,
+   "chance": 168,
+   "agilite": 168,
+   "sagesse": 126,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "spells": [
+   {
+    "id": 221,
+    "name": "Pince",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 25,
+      "max": 36,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 10243,
+    "name": "Violon Sel",
+    "pa": 3,
+    "po": [
+     2,
+     6
+    ],
+    "relance": 2,
+    "anim": 1,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pm",
+      "n": -2,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 10244,
+    "name": "Chancre",
+    "pa": 3,
+    "po": [
+     2,
+     6
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   }
+  ]
+ },
+ "raul_mops": {
+  "dofusId": 926,
+  "name": "Raul Mops",
+  "hp": 1075,
+  "speed": 95,
+  "radius": 34,
+  "mass": 3,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "raul_mops",
+  "color": "#d8d0b8",
+  "xp": 89,
+  "level": 42,
+  "res": {
+   "terre": -9,
+   "feu": 26,
+   "eau": 11,
+   "air": -9,
+   "neutre": 16
+  },
+  "caracs": {
+   "force": 168,
+   "intelligence": 168,
+   "chance": 168,
+   "agilite": 168,
+   "sagesse": 126,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "spells": [
+   {
+    "id": 987,
+    "name": "Harponnage",
+    "pa": 4,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "attire",
+      "n": 5
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 988,
+    "name": "Dispersion Sablée",
+    "pa": 1,
+    "po": [
+     4,
+     8
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "Q1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 11,
+      "max": 20,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 2
+     }
+    ]
+   },
+   {
+    "id": 989,
+    "name": "Brise",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   }
+  ]
+ },
+ "etoile_mer_asse": {
+  "dofusId": 927,
+  "name": "Étoile de la Mer d'Asse",
+  "hp": 1075,
+  "speed": 95,
+  "radius": 16,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "etoile_mer_asse",
+  "color": "#d8d0b8",
+  "xp": 89,
+  "level": 42,
+  "res": {
+   "terre": 26,
+   "feu": -9,
+   "eau": -9,
+   "air": 21,
+   "neutre": 6
+  },
+  "caracs": {
+   "force": 168,
+   "intelligence": 168,
+   "chance": 168,
+   "agilite": 168,
+   "sagesse": 126,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "spells": [
+   {
+    "id": 994,
+    "name": "Salage",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "*2",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 17,
+      "max": 24,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 10247,
+    "name": "Crachat de Sable",
+    "pa": 3,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 10248,
+    "name": "Soin Groupé",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 2,
+    "anim": 2,
+    "zone": "*2",
+    "allies": true,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 17,
+      "max": 24
+     }
+    ]
+   }
+  ]
+ },
+ "moumoule": {
+  "dofusId": 954,
+  "name": "Moumoule",
+  "hp": 1075,
+  "speed": 95,
+  "radius": 22,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "moumoule",
+  "color": "#d8d0b8",
+  "xp": 89,
+  "level": 42,
+  "res": {
+   "terre": 0,
+   "feu": 0,
+   "eau": 100,
+   "air": 0,
+   "neutre": 100
+  },
+  "caracs": {
+   "force": 168,
+   "intelligence": 168,
+   "chance": 168,
+   "agilite": 168,
+   "sagesse": 126,
+   "esquivePA": 0,
+   "esquivePM": 5,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "spells": [
+   {
+    "id": 767,
+    "name": "Ninjattaque",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 10245,
+    "name": "Bubulle",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "C3",
+    "allies": true,
+    "effects": [
+     {
+      "k": "subis",
+      "n": 120,
+      "dur": 0
+     }
+    ]
+   },
+   {
+    "id": 10246,
+    "name": "Coquille",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   }
+  ]
+ },
+ "muldo_indigo_sauvage": {
+  "dofusId": 4434,
+  "name": "Muldo indigo sauvage",
+  "hp": 2050,
+  "speed": 95,
+  "radius": 31,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "muldo_indigo_sauvage",
+  "color": "#d8d0b8",
+  "xp": 99,
+  "level": 62,
+  "res": {
+   "terre": 10,
+   "feu": 10,
+   "eau": -10,
+   "air": 10,
+   "neutre": 10
+  },
+  "caracs": {
+   "force": 192,
+   "intelligence": 192,
+   "chance": 192,
+   "agilite": 192,
+   "sagesse": 150,
+   "esquivePA": 0,
+   "esquivePM": 100,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "spells": [
+   {
+    "id": 6788,
+    "name": "Souille",
+    "pa": 4,
+    "po": [
+     3,
+     6
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ],
+    "gfx": 21212
+   },
+   {
+    "id": 6787,
+    "name": "Coup de Bouldo",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "desenvoute",
+      "n": 1
+     },
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "pa",
+      "n": -2,
+      "dur": 1
+     }
+    ]
+   }
+  ]
+ },
+ "muldo_ebene_sauvage": {
+  "dofusId": 4435,
+  "name": "Muldo ébène sauvage",
+  "hp": 2050,
+  "speed": 95,
+  "radius": 31,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "muldo_ebene_sauvage",
+  "color": "#d8d0b8",
+  "xp": 99,
+  "level": 62,
+  "res": {
+   "terre": -10,
+   "feu": 10,
+   "eau": 10,
+   "air": 10,
+   "neutre": 10
+  },
+  "caracs": {
+   "force": 192,
+   "intelligence": 192,
+   "chance": 192,
+   "agilite": 192,
+   "sagesse": 150,
+   "esquivePA": 0,
+   "esquivePM": 100,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "spells": [
+   {
+    "id": 6787,
+    "name": "Coup de Bouldo",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "desenvoute",
+      "n": 1
+     },
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "pa",
+      "n": -2,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 6788,
+    "name": "Souille",
+    "pa": 4,
+    "po": [
+     3,
+     6
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ],
+    "gfx": 21212
+   }
+  ]
+ },
+ "muldo_orchidee_sauvage": {
+  "dofusId": 4436,
+  "name": "Muldo orchidée sauvage",
+  "hp": 2050,
+  "speed": 95,
+  "radius": 31,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "muldo_orchidee_sauvage",
+  "color": "#d8d0b8",
+  "xp": 99,
+  "level": 62,
+  "res": {
+   "terre": 10,
+   "feu": 10,
+   "eau": 10,
+   "air": -10,
+   "neutre": 10
+  },
+  "caracs": {
+   "force": 192,
+   "intelligence": 192,
+   "chance": 192,
+   "agilite": 192,
+   "sagesse": 150,
+   "esquivePA": 0,
+   "esquivePM": 100,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "spells": [
+   {
+    "id": 6788,
+    "name": "Souille",
+    "pa": 4,
+    "po": [
+     3,
+     6
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ],
+    "gfx": 21212
+   },
+   {
+    "id": 6787,
+    "name": "Coup de Bouldo",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "desenvoute",
+      "n": 1
+     },
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "pa",
+      "n": -2,
+      "dur": 1
+     }
+    ]
+   }
+  ]
+ },
+ "muldo_pourpre_sauvage": {
+  "dofusId": 4437,
+  "name": "Muldo pourpre sauvage",
+  "hp": 2050,
+  "speed": 95,
+  "radius": 31,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "muldo_pourpre_sauvage",
+  "color": "#d8d0b8",
+  "xp": 99,
+  "level": 62,
+  "res": {
+   "terre": 10,
+   "feu": -10,
+   "eau": 10,
+   "air": 10,
+   "neutre": 10
+  },
+  "caracs": {
+   "force": 192,
+   "intelligence": 192,
+   "chance": 192,
+   "agilite": 192,
+   "sagesse": 150,
+   "esquivePA": 0,
+   "esquivePM": 100,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "spells": [
+   {
+    "id": 6788,
+    "name": "Souille",
+    "pa": 4,
+    "po": [
+     3,
+     6
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ],
+    "gfx": 21212
+   },
+   {
+    "id": 6787,
+    "name": "Coup de Bouldo",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "desenvoute",
+      "n": 1
+     },
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "pa",
+      "n": -2,
+      "dur": 1
+     }
+    ]
+   }
+  ]
+ },
+ "muldo_dore_sauvage": {
+  "dofusId": 4438,
+  "name": "Muldo doré sauvage",
+  "hp": 2050,
+  "speed": 95,
+  "radius": 31,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "muldo_dore_sauvage",
+  "color": "#d8d0b8",
+  "xp": 99,
+  "level": 62,
+  "res": {
+   "terre": 10,
+   "feu": 10,
+   "eau": 10,
+   "air": 10,
+   "neutre": -10
+  },
+  "caracs": {
+   "force": 192,
+   "intelligence": 192,
+   "chance": 192,
+   "agilite": 192,
+   "sagesse": 150,
+   "esquivePA": 0,
+   "esquivePM": 100,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "spells": [
+   {
+    "id": 6787,
+    "name": "Coup de Bouldo",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "desenvoute",
+      "n": 1
+     },
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     },
+     {
+      "k": "pa",
+      "n": -2,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 6788,
+    "name": "Souille",
+    "pa": 4,
+    "po": [
+     3,
+     6
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ],
+    "gfx": 21212
+   }
+  ]
+ },
+ "archi_crabe": {
+  "dofusId": 2327,
+  "name": "Craraboss le Féérique",
+  "hp": 2175,
+  "speed": 106,
+  "radius": 18,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_crabe",
+  "color": "#ffd27a",
+  "xp": 356,
+  "level": 42,
+  "res": {
+   "terre": 31,
+   "feu": 31,
+   "eau": -14,
+   "air": 36,
+   "neutre": 1
+  },
+  "caracs": {
+   "force": 436,
+   "intelligence": 436,
+   "chance": 436,
+   "agilite": 436,
+   "sagesse": 226,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "spells": [
+   {
+    "id": 221,
+    "name": "Pince",
+    "pa": 3,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "terre",
+      "min": 25,
+      "max": 36,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 10243,
+    "name": "Violon Sel",
+    "pa": 3,
+    "po": [
+     2,
+     6
+    ],
+    "relance": 2,
+    "anim": 1,
+    "zone": "X1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "pm",
+      "n": -2,
+      "dur": 1
+     }
+    ]
+   },
+   {
+    "id": 10244,
+    "name": "Chancre",
+    "pa": 3,
+    "po": [
+     2,
+     6
+    ],
+    "relance": 0,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   }
+  ],
+  "elite": true,
+  "archiDe": "crabe",
+  "archiEchelle": 1.0,
+  "ame": "34093"
+ },
+ "archi_raul_mops": {
+  "dofusId": 2351,
+  "name": "Rauligo le Sale",
+  "hp": 2175,
+  "speed": 106,
+  "radius": 36,
+  "mass": 5.1,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_raul_mops",
+  "color": "#ffd27a",
+  "xp": 356,
+  "level": 42,
+  "res": {
+   "terre": 1,
+   "feu": 36,
+   "eau": 21,
+   "air": 1,
+   "neutre": 26
+  },
+  "caracs": {
+   "force": 436,
+   "intelligence": 436,
+   "chance": 436,
+   "agilite": 436,
+   "sagesse": 226,
+   "esquivePA": 4,
+   "esquivePM": 4,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "spells": [
+   {
+    "id": 987,
+    "name": "Harponnage",
+    "pa": 4,
+    "po": [
+     1,
+     8
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "attire",
+      "n": 5
+     },
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 988,
+    "name": "Dispersion Sablée",
+    "pa": 1,
+    "po": [
+     4,
+     8
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "Q1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 11,
+      "max": 20,
+      "steal": false
+     },
+     {
+      "k": "repousse",
+      "n": 2
+     }
+    ]
+   },
+   {
+    "id": 989,
+    "name": "Brise",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "elite": true,
+  "archiDe": "raul_mops",
+  "archiEchelle": 0.833,
+  "ame": "34035"
+ },
+ "archi_etoile_mer_asse": {
+  "dofusId": 2431,
+  "name": "Étoilette la Bouchée",
+  "hp": 2175,
+  "speed": 106,
+  "radius": 18,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_etoile_mer_asse",
+  "color": "#ffd27a",
+  "xp": 178,
+  "level": 42,
+  "res": {
+   "terre": 26,
+   "feu": -9,
+   "eau": -9,
+   "air": 21,
+   "neutre": 6
+  },
+  "caracs": {
+   "force": 336,
+   "intelligence": 336,
+   "chance": 336,
+   "agilite": 336,
+   "sagesse": 252,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "spells": [
+   {
+    "id": 994,
+    "name": "Salage",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "*2",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 17,
+      "max": 24,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 10247,
+    "name": "Crachat de Sable",
+    "pa": 3,
+    "po": [
+     1,
+     6
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "air",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 10248,
+    "name": "Soin Groupé",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 2,
+    "anim": 2,
+    "zone": "*2",
+    "allies": true,
+    "effects": [
+     {
+      "k": "soin",
+      "min": 17,
+      "max": 24
+     }
+    ]
+   }
+  ],
+  "elite": true,
+  "archiDe": "etoile_mer_asse",
+  "archiEchelle": 1.1,
+  "ame": "33888"
+ },
+ "archi_moumoule": {
+  "dofusId": 2457,
+  "name": "Moumoute la Douce",
+  "hp": 2175,
+  "speed": 106,
+  "radius": 24,
+  "mass": 2.04,
+  "dmg": 22,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "archi_moumoule",
+  "color": "#ffd27a",
+  "xp": 356,
+  "level": 42,
+  "res": {
+   "terre": 10,
+   "feu": 10,
+   "eau": 110,
+   "air": 10,
+   "neutre": 110
+  },
+  "caracs": {
+   "force": 436,
+   "intelligence": 436,
+   "chance": 436,
+   "agilite": 436,
+   "sagesse": 226,
+   "esquivePA": 4,
+   "esquivePM": 9,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "spells": [
+   {
+    "id": 767,
+    "name": "Ninjattaque",
+    "pa": 4,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 21,
+      "max": 30,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 10245,
+    "name": "Bubulle",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 1,
+    "zone": "C3",
+    "allies": true,
+    "effects": [
+     {
+      "k": "subis",
+      "n": 120,
+      "dur": 0
+     }
+    ]
+   },
+   {
+    "id": 10246,
+    "name": "Coquille",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 2,
+    "zone": "P1",
+    "allies": false,
+    "effects": []
+   }
+  ],
+  "elite": true,
+  "archiDe": "moumoule",
+  "archiEchelle": 1.0,
+  "ame": "34068"
  }
 }
