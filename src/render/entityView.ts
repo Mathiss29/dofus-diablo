@@ -167,6 +167,8 @@ export class EntityView {
     if (e.anim === 'spawn') alpha = e.animT;
     if ((e as { state?: string }).state === 'return') alpha = 0.5;   // maquette « Aggro » 7A : il abandonne et rentre
     if (e.anim === 'die') alpha = e.animT < 0.7 ? 1 : 1 - (e.animT - 0.7) / 0.3;
+    const inv = (e as { sram?: { invisT: number; reveleT: number } | null }).sram;   // Sram : invisible, il n'est plus qu'une ombre pour les siens
+    if (inv && inv.invisT > 0) alpha *= inv.reveleT > 0 ? 0.75 : 0.35 + 0.06 * Math.sin(EntityView.temps * 5);
     if ((e as Monster).intouchable && (e as Monster).bossMonde) alpha *= 0.55 + 0.1 * Math.sin(EntityView.temps * 5);   // 0.5 (1B, 3C) : intouchable, il pâlit
     this.sprite.setScale((flip ? -L.scale : L.scale) * this.k * kc, sy).setAlpha(alpha);
     // posé pile sur un pixel de l'écran : il ne « bave » plus quand la caméra le suit (voir pixel.ts)

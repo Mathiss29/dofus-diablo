@@ -342,6 +342,27 @@ const OUGI_MAP: Record<string, AnimSlice> = {
   die: { anim: 'AnimMort', from: 0, to: 0.75 },
 };
 
+// Sram : squelette de la classe 4 (anims_4.json), animations officielles (spellscripts casterAnimation, maquette Sram) :
+// Truanderie 404, Sournoiserie et Fourberie 402, Arsenic 409, Cruauté, Double, Extorsion et Arnaque 403, Invisibilité 401,
+// Piège Sournois et Répulsif 411, Fangeux 417, Funeste 414, Immobilisation 400, Pillage 407, Peur 405 ;
+// Espace = pas de 4 cases (sort maison, geste 406 écourté).
+const SRAM_MAP: Record<string, AnimSlice> = {
+  ...WEAPON_MAP,
+  idle: { anim: 'AnimStatiqueExplo0', loop: true, fps: 20 },
+  run: { anim: 'AnimCourse', loop: true, fps: 32 },
+  attack1: { anim: 'AnimArme0', from: 3 / 28, to: 17 / 28 },
+  attack2: { anim: 'AnimArme0', from: 3 / 28, to: 17 / 28 },
+  attack3: { anim: 'AnimArme0', from: 3 / 28, to: 24 / 28 },
+  ...Object.fromEntries(Object.entries({
+    truanderie: 404, sournoiserie: 402, fourberie: 402, arsenic: 409, cruaute: 403, double: 403, extorsion: 403, arnaque: 403,
+    invisibilite: 401, piege_sournois: 411, piege_repulsif: 411, piege_fangeux: 417, piege_funeste: 414, piege_immobilisation: 400,
+    pillage: 407, peur: 405,
+  }).map(([k, n]) => [k, { anim: `AnimAttaque${n}`, from: 0, to: 0.65 }])),
+  pas_sram: { anim: 'AnimAttaque406', from: 0, to: 0.45 },
+  hit: { anim: 'AnimHit', from: 0, to: 1 },
+  die: { anim: 'AnimMort', from: 0, to: 0.75 },
+};
+
 // Sadida : squelette joueur n° 1 + skin 100/101 (corps), animations officielles (spellscripts casterAnimation, maquette Sadida) :
 // Arbre, Larme… 1000 / 1007 ; sorts d'attaque (Ronce, Buisson Ardent, Cigüe…) 1001 ; Poupées 1003 ; Tremblement et Passage racinaire 1008.
 const SADI_MAP: Record<string, AnimSlice> = {
@@ -386,6 +407,8 @@ export const LOOKS: Record<string, Look> = {
   sadida: { atlas: 'sadida', scale: 0.82, map: SADI_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
   // Ouginak : dessiné en direct depuis son squelette, comme les autres classes
   ouginak: { atlas: 'ouginak', scale: 0.82, map: OUGI_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
+  // Sram : dessiné en direct depuis son squelette, comme les autres classes (le Double aussi, avec le perso de son maître)
+  sram: { atlas: 'sram', scale: 0.82, map: SRAM_MAP, height: 120, ignoreZ: true, portraitZoom: 1.7, multi: true },
   // Roquet de l'Ouginak (monster_planche.py, os 9183, SCALE 2,5) : Lance-roquet, bête permanente (16B)
   oug_roquet: { atlas: 'oug_roquet', scale: 0.42, map: MONSTER_MAP(8 / 28, 'AnimAttaque0', { 0: 8 / 28 }), height: 60, multi: true },
   // Arbre et Poupées du Sadida (monster_planche.py, os 3163, 292, 417, 415, 3165 ; SCALE 1,6 pour l'Arbre et le Groute, 2,5 sinon)

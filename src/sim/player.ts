@@ -32,6 +32,7 @@ import { avantImpact61, dommages61, echangeBalise61, hit61, viseBalise61, impact
 import { SORTS, dmgMoyen, gradeAuNiveau, niveauRequis, type PaireSorts, type SortGrade, type SortOfficiel } from './sorts';
 import { porteeSort } from './apercu';
 import { aimanter, alchiRhetorique, apresCoupEniripsa, envol, impactEniripsa, majEniripsa } from './eniripsa';
+import { avantImpactSram, dommagesSram, impactSram, majSram, type EtatSram } from './sram';
 import { aboie, arriveeBond, avantImpactOuginak, bondGratuit, porteeBondOuginak, vitesseOuginak, zoneOuginak, coupRecuOuginak, impactOuginak, interditBete, majOuginak, porteeBete, subisOuginak, type EtatOuginak } from './ouginak';
 import { arbrePassage, avantImpactSadida, impactSadida, majSadida, partagerDon, sentierDeRonces } from './sadida';
 import { avantImpactEcaflip, chateauBrise, impactEcaflip, majEcaflip, neuviemeVie, type Carte, type MainGagnante } from './ecaflip';
@@ -247,6 +248,8 @@ export class Player extends Entity {
   sadiProp: number[] = []; sadiCible: number | null = null; sadiCibleT = 0;
   /** Ouginak : état (Proie, Roquet, cumuls), Forme Bestiale (3 crans de Rage, 2A) et secondes de l'animation de transformation (1A). */
   oug: EtatOuginak | null = null; ougBete = false; ougTransfoT = 0;
+  /** Sram : pièges, Invisibilité, vols, Double, Peur (src/sim/sram.ts) ; un allié rendu invisible en a un aussi. */
+  sram: EtatSram | null = null;
   /** Don Naturel (Sadida 5A) : secondes de partage des dommages, et le Sadida qui l'a donné. */
   donT = 0; donDe = -1;
   /** Dernier souffle (légendaire Sacrieur D) : dernière fois qu'il a sauvé le perso. */
@@ -618,7 +621,7 @@ export class Player extends Entity {
     const c = E[el] ? this.stat(E[el]) : this.stat('force');
     const flat = this.stat('dommages') + this.stat((`dommages${el[0].toUpperCase()}${el.slice(1)}`) as Stat);
     const S = this.cls.souffrance, n = S ? this.souffrance : 0;   // Souffrance : dommages finaux en plus
-    return Math.max(1, (base * (1 + Math.max(-50, c + this.stat('puissance')) / 100) + flat) * (n ? 1 + S!.finaux[n - 1] / 100 : 1) * dommages61(this) * (this.ougBete ? 1 + this.cls.ouginak!.bete.dommages : 1));   // Forme Bestiale : dommages finaux   // Berserk
+    return Math.max(1, (base * (1 + Math.max(-50, c + this.stat('puissance')) / 100) + flat) * (n ? 1 + S!.finaux[n - 1] / 100 : 1) * dommages61(this) * dommagesSram(this, el) * (this.ougBete ? 1 + this.cls.ouginak!.bete.dommages : 1));   // Forme Bestiale : dommages finaux   // Berserk
   }
   /** Partie de test (4A) : passe directement au niveau n. Tous les points sont rendus (5 par niveau) ; carac donnée = ils y vont tous (au coût officiel), le reste en Vitalité.
    *  Les objets d'un niveau trop haut retournent dans le sac, les sorts pas encore connus quittent la barre. */
@@ -994,7 +997,7 @@ export class Player extends Entity {
     const { x: tx, y: ty } = this.landing(id, aim, world);
     if (!def.invoque && !def.move) viseBalise61(this, aim, world);
     // Rage pleine : ce sort est renforcé (pas les déplacements)
-    const boosted = this.rageFull && def.move?.kind !== 'leap' && this.cls.rage.mode !== 'eveil' && this.cls.rage.mode !== 'bete';   // ni la Rage de l'Ouginak (Forme Bestiale)   // l'Éveil ne renforce pas les sorts
+    const boosted = this.rageFull && def.move?.kind !== 'leap' && this.cls.rage.mode !== 'eveil' && this.cls.rage.mode !== 'bete' && this.cls.rage.mode !== 'ruse';   // ni la Rage de l'Ouginak (Forme Bestiale)   // l'Éveil ne renforce pas les sorts
     if (boosted) { this.rage = 0; world.emit({ k: 'rageSpent', spell: id }); if (this.pcv('pc-eniripsa-J')) this.rage = this.cls.rage.max * this.pcv('pc-eniripsa-J') / 100; }   // Verbe intarissable
     // Grade officiel : coût, relance (tours × 3 s), dommages (grade atteint / grade 1), portée des flèches (cases × 48 px)
     const g = def.pm ? null : this.grade(id), g0 = this.official(id)?.grades[0];
@@ -1045,6 +1048,7 @@ export class Player extends Entity {
     if (this.cls.poker) majEcaflip(this, dt, world);
     if (this.sadiCibleT > 0) majSadida(this, dt);
     if (this.cls.ouginak) majOuginak(this, dt, world);
+    if (this.sram) majSram(this, dt, world);   // Sram : pièges, Invisibilité (aussi sur un allié)
     if (this.donT > 0) this.donT = Math.max(0, this.donT - dt);
     if (this.poinconT > 0) pasJoueur06(this, dt, world);
     if (this.e61) maj61(this, dt, world);
@@ -1348,7 +1352,9 @@ export class Player extends Entity {
       // Sadida : relais par un Feuillu (cercle de 2 cases), Larme qui rend Feuillu, Infectés d'avant le coup
       const sadi = d.sadida && this.cls.sadida && !mv ? avantImpactSadida(this, d, s, world) : null;
       if (sadi?.mult) hit.dmg *= sadi.mult;   // Cigüe mortelle
+      const sramSans = !!d.sram && !!this.cls.sram && !mv && avantImpactSram(this, s.id, d, { tx: s.tx, ty: s.ty, gm: s.gm }, world);   // Sram : piège posé, Invisibilité, Double, Peur
       if (d.self) { size = 60; }
+      else if (sramSans) { size = hz.shape === 'point' || hz.shape === 'circle' ? hz.radius : 0; }
       else if (sadi && hit.dmg <= 0 && !hit.pmLoss) { size = (sadi.r ?? rz) * area + zb; }   // Arbre, Poupées, soins : aucun coup
       else if (sadi && hz.shape === 'point') { size = (sadi.r ?? hz.radius) * area + zb; hits = world.hitCircle(s.tx, s.ty, size, hit, d.stun, this.facing); }
       else if (pasDeCoup) { size = rEni; }
@@ -1382,6 +1388,7 @@ export class Player extends Entity {
       if (d.enutrof) impactEnutrof(this, d, s.tx, s.ty, hits, world);
       if (sadi) impactSadida(this, s.id, d, s.tx, s.ty, size, hit, sadi, s.gm, world);
       if (d.ouginak && this.cls.ouginak) impactOuginak(this, s.id, d, s.tx, s.ty, size, hits, world);
+      if (d.sram && this.cls.sram && !sramSans) impactSram(this, d, s.tx, s.ty, size, hits, s.gm, world);
       if (d.ecaflip && this.cls.poker) impactEcaflip(this, s.id, d, s.tx, s.ty, hits, base * mult, world);
       if (d.s06) { const z = impactSorts06(this, s.id, d, s.tx, s.ty, hits, hit, world); if (z) size = z; }   // sorts 61-90 (0.6)
       if (d.envol) envol(this, s.sx, s.sy, s.tx, s.ty, world);   // Mot d'Envol : échange de place avec l'allié visé

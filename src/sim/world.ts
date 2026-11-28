@@ -69,6 +69,7 @@ import { CHASSE, OEUVRE, PIERRES, coutOeuvre, coutPerce, metiersOeuvre, type Cou
 import { BOISSONS, CONSO, ELIXIRS, PARCHEMINS, RARES_RECOLTE, REPAS, RES_BOISSON, sorteConso, texteBonus } from './consommables';
 import { majMonstreSadida, rallier, soignerPoupee } from './sadida';
 import { coupSurMonstre, morsureRoquet, proieAchevee } from './ouginak';
+import { acheveSram, detoner, invisiblePour, leurrePour, ombre } from './sram';
 import { RECOLTE, porteeRecolte, quantite, xpRecolte, type Recolte, type RecoltesData } from './recolte';
 
 export interface HitDef { dmg: number; knock: number; element?: Element; lifesteal?: number;
@@ -1683,7 +1684,8 @@ export class World {
     if (input.havreSac) this.havreSac();
     if (input.coffre && this.player.cls.coffre && !this.player.dead) ouvrirCoffre(this.player, this);   // Enutrof : touche du coffre
     if (input.coffre && this.player.cls.poker && !this.player.dead) jouerMain(this.player, this);   // Écaflip : la même touche Joue la Main
-    if (input.coffre && this.player.cls.sadida) rallier(this.player, input.aim, this);   // Sadida 6B : ralliement des Poupées
+    if (input.coffre && this.player.cls.sadida) rallier(this.player, input.aim, this);
+    if (input.coffre && this.player.cls.sram) detoner(this.player, this);   // Sram 7B : touche X, tous les pièges sautent   // Sadida 6B : ralliement des Poupées
     if (input.meute != null && this.monsters.some(m => m.id === input.meute && !m.dead)) this.cibleMeute = input.meute;
     if (input.zaap != null) this.voyagerZaap(input.zaap);
     if (input.versZaap) this.versZaap = input.versZaap;
@@ -2217,7 +2219,8 @@ export class World {
     if (fxm && idolesMort(this, m, this.groups[m.group], fxm)) return;   // Sakai : revient à la vie ; Chokwa, Serpi, Nahuatl
     m.dead = true; m.t = 0.6; this.kills++;
     if (m.e06) mortSorts06(this, m);   // Cryothérapie : l'état éclate
-    if (m.proieDe != null) proieAchevee(m, this);   // Ouginak : Proie achevée, sort Proie rechargé
+    if (m.proieDe != null) proieAchevee(m, this);
+    if (this.player.cls.sram) acheveSram(this.player, this);   // Sram : Ruse, Invisibilité rechargée   // Ouginak : Proie achevée, sort Proie rechargé
     piecesMonstre(this, m);   // Enutrof (1A 1B) : le coffre au trésor des Enutrofs proches se remplit
     const tq = this.player.dead ? 0 : this.player.pcv('pc-cra-O');
     if (tq) for (const md of this.player.mods) if (md.src === 'tirs_eloignes') {   // Traque sans fin : prolongé, jusqu'à doubler sa durée
@@ -3686,13 +3689,18 @@ export class World {
   /** 8A : un monstre en chasse frappe la bête qui l'a frappé (si elle est à moins de 4 cases), ou la bête bien plus proche que le joueur. */
   cibleDe(m: Monster): Cible {
     // Multi : le joueur vivant le plus proche (le joueur de cet écran s'ils sont tous à terre)
+    // Sram : un joueur invisible n'est plus vu (6A+6C) ; le Double attire les monstres en chasse (8A)
+    const vu = (q: Player) => !q.dead && !invisiblePour(q, m, this);
     let p = this.players[0];
     if (this.players.length > 1) {
-      let dm = p.dead ? Infinity : Math.hypot(p.x - m.x, p.y - m.y);
-      for (const q of this.players) { if (q.dead) continue; const d = Math.hypot(q.x - m.x, q.y - m.y); if (d < dm) { dm = d; p = q; } }
+      let dm = !vu(p) ? Infinity : Math.hypot(p.x - m.x, p.y - m.y);
+      for (const q of this.players) { if (!vu(q)) continue; const d = Math.hypot(q.x - m.x, q.y - m.y); if (d < dm) { dm = d; p = q; } }
       // Eniripsa 11A : le soigneur qui vient de soigner un allié proche attire ce monstre quelques secondes
       if (m.viseJusqua > this.time) { const v = this.players.find(q => q.id === m.viseId && !q.dead); if (v && Math.hypot(v.x - m.x, v.y - m.y) < CASE * 12) p = v; }
     }
+    const leurre = this.betes.length ? leurrePour(m, this) : null;
+    if (leurre) return leurre;
+    if (!p.dead && !vu(p)) return ombre(p);   // plus personne en vue : il perd la trace
     if (!this.betes.length || m.state === 'idle' || m.state === 'return') return p;
     const vivantes = this.betes.filter(b => !b.dead && b.state !== 'spawn');
     const ag = vivantes.find(b => b.id === m.agresseur);

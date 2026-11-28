@@ -42,6 +42,12 @@ const SANS_EFFET_OFFICIEL: Record<string, string> = {
   lance_roquet: 'Ouginak : invocation, aucun gfx officiel (le Roquet apparaît)',
   bond_bete: 'Ouginak : sort maison (17A), la ruée officielle AnimDash est dans le geste',
   flair: 'Ouginak : téléportation, aucun gfx officiel (spellscript vide)',
+  piege_sournois: 'Sram : piège, aucun gfx officiel (spellscript vide, la case piégée est dessinée)',
+  piege_fangeux: 'Sram : piège, aucun gfx officiel (spellscript vide, la case piégée est dessinée)',
+  piege_funeste: 'Sram : piège, aucun gfx officiel (spellscript vide, la case piégée est dessinée)',
+  piege_repulsif: 'Sram : piège, aucun gfx officiel (spellscript vide, la case piégée est dessinée)',
+  piege_immobilisation: 'Sram : piège, aucun gfx officiel (spellscript vide, la case piégée est dessinée)',
+  pas_sram: 'Sram : sort maison (« Classes : 9A »), le pas est dans le geste',
 };
 
 type Ref = { gfx: number };

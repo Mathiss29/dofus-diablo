@@ -49,6 +49,9 @@ export type SimEvent =
   | { k: 'proie'; id: number; x: number; y: number }
   | { k: 'bete'; id: number; x: number; y: number; on: boolean }
   | { k: 'bondOug'; x: number; y: number; tx: number; ty: number }
+  /** Sram : Invisibilité qui commence ou finit (on), piège qui saute. */
+  | { k: 'invisible'; id: number; x: number; y: number; on: boolean }
+  | { k: 'piege'; id: number; x: number; y: number; r: number }
   /** Osamodas : soin (chiffre vert), bête invoquée, bête éveillée (8C), monstre dompté (15A). */
   | { k: 'heal'; x: number; y: number; z: number; amount: number }
   /** Eniripsa 12C : fil de soin vert du soigneur (ou de sa bête) vers l'allié soigné, vu de tous les joueurs. */

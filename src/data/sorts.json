@@ -18257,5 +18257,1887 @@
     "pom": 0
    }
   ]
+ ],
+ "sram": [
+  [
+   {
+    "id": 12902,
+    "name": "Truanderie",
+    "icon": 11982,
+    "desc": "Vole de la Puissance et occasionne des dommages Terre.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       15,
+       17
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 66,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       20,
+       23
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 132,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       26,
+       29
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 12932,
+    "name": "Chausse-trappe",
+    "icon": 12006,
+    "desc": "Occasionne des dommages Terre.\nLes dommages du sort sont augmentés pour chaque piège déclenché du lanceur.\n\nLes effets sont retirés après utilisation du sort.",
+    "grades": [
+     {
+      "niv": 95,
+      "pa": 4,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       23,
+       26
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 162,
+      "pa": 4,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       28,
+       32
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 12904,
+    "name": "Sournoiserie",
+    "icon": 11987,
+    "desc": "Occasionne des dommages Feu aux ennemis et repousse la cible.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       17,
+       19
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 67,
+      "pa": 3,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       22,
+       24
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 133,
+      "pa": 3,
+      "po": [
+       1,
+       8
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       28,
+       31
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 1,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 12935,
+    "name": "Coupe-gorge",
+    "icon": 12007,
+    "desc": "Occasionne des dommages Feu et augmente les dommages subis par la cible.",
+    "grades": [
+     {
+      "niv": 100,
+      "pa": 4,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       30,
+       33
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 167,
+      "pa": 4,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       34,
+       38
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 12907,
+    "name": "Arsenic",
+    "icon": 11985,
+    "desc": "Retire de la Portée et applique un poison Air de début de tour sur la cible.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       9,
+       11
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 68,
+      "pa": 3,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       12,
+       14
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 134,
+      "pa": 3,
+      "po": [
+       1,
+       8
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 1,
+      "dmg": [
+       16,
+       18
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 1,
+    "ldv": 0,
+    "pom": 1
+   },
+   {
+    "id": 12933,
+    "name": "Toxines",
+    "icon": 12010,
+    "desc": "Applique un poison Air de fin de tour sur l'ennemi ciblé.\n\nLes dommages du sort sont augmentés (cumulable 5 fois) et le poison est réappliqué tant qu'il est actif et que la cible subit des dommages de pièges\nCet effet ne peut être déclenché qu'une seule fois par tour.",
+    "grades": [
+     {
+      "niv": 105,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       5,
+       7
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 172,
+      "pa": 3,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       7,
+       9
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 12919,
+    "name": "Cruauté",
+    "icon": 11990,
+    "desc": "Occasionne des dommages Eau et augmente les PM du lanceur.\nLes dommages n'affectent pas le lanceur.",
+    "grades": [
+     {
+      "niv": 1,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       13,
+       15
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 69,
+      "pa": 3,
+      "po": [
+       0,
+       7
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       18,
+       20
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 136,
+      "pa": 3,
+      "po": [
+       0,
+       8
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       22,
+       25
+      ],
+      "element": "eau"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   },
+   {
+    "id": 12922,
+    "name": "Poisse",
+    "icon": 12021,
+    "desc": "Vole de la vie dans l'élément Eau et minimise les effets aléatoires de l'ennemi ciblé.\nSoigne également les alliés (hors lanceur) selon les dommages occasionnés à l'ennemi ciblé en zone.\n\nLa minimisation des effets ne fonctionne qu'un tour sur deux sur une même cible.",
+    "grades": [
+     {
+      "niv": 110,
+      "pa": 4,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       29,
+       32
+      ],
+      "element": "eau",
+      "vol": true
+     },
+     {
+      "niv": 177,
+      "pa": 4,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       34,
+       38
+      ],
+      "element": "eau",
+      "vol": true
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 12913,
+    "name": "Invisibilité",
+    "icon": 11984,
+    "desc": "Rend la cible invisible.\nAugmente également ses PM si c'est un allié.\n\nLe temps de relance est réinitialisé lorsque le lanceur achève un combattant.",
+    "grades": [
+     {
+      "niv": 5,
+      "pa": 2,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 72,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 139,
+      "pa": 2,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 12930,
+    "name": "Brume",
+    "icon": 13798,
+    "desc": "Pose un glyphe-aura qui rend les alliés invisibles et retire de la Portée aux ennemis.\n\nLe temps de relance est réduit lorsque le lanceur achève un combattant.",
+    "grades": [
+     {
+      "niv": 115,
+      "pa": 3,
+      "po": [
+       0,
+       2
+      ],
+      "relance": 5,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 182,
+      "pa": 3,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 5,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 12915,
+    "name": "Double",
+    "icon": 11988,
+    "desc": "Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.\n\nIl n'attaque pas et meurt à la fin de son deuxième tour pour échanger de position avec le lanceur et lui augmenter ses PM.",
+    "grades": [
+     {
+      "niv": 10,
+      "pa": 3,
+      "po": [
+       1,
+       1
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 77,
+      "pa": 3,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 144,
+      "pa": 3,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 12936,
+    "name": "Comploteur",
+    "icon": 12013,
+    "desc": "Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.\n\nIl n'attaque pas et meurt à la fin de son troisième tour pour occasionner des dommages dans son meilleur élément aux entités à son contact.\nLes dommages à la mort du double sont augmentés pour chaque piège déclenché du lanceur depuis son invocation.",
+    "grades": [
+     {
+      "niv": 120,
+      "pa": 3,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0,
+      "dmg": [
+       26,
+       30
+      ],
+      "element": "meilleur"
+     },
+     {
+      "niv": 187,
+      "pa": 3,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0,
+      "dmg": [
+       26,
+       30
+      ],
+      "element": "meilleur"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 12906,
+    "name": "Piège Sournois",
+    "icon": 11983,
+    "desc": "Pose un piège qui occasionne des dommages Feu aux ennemis et attire les entités vers son centre en zone.",
+    "grades": [
+     {
+      "niv": 15,
+      "pa": 2,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       10,
+       12
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 82,
+      "pa": 2,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       13,
+       15
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 149,
+      "pa": 2,
+      "po": [
+       1,
+       8
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       17,
+       19
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 1
+   },
+   {
+    "id": 12939,
+    "name": "Guet-apens",
+    "icon": 13023,
+    "desc": "Vole de la vie dans l'élément Eau aux ennemis et attire la cible.\nLes entités qui attaquent l'ennemi ciblé sont soignées d'une partie des dommages occasionnés.\n\nAttire la cible vers le double du lanceur s'il est présent sur le terrain.",
+    "grades": [
+     {
+      "niv": 125,
+      "pa": 3,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       19,
+       22
+      ],
+      "element": "eau",
+      "vol": true
+     },
+     {
+      "niv": 192,
+      "pa": 3,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       22,
+       25
+      ],
+      "element": "eau",
+      "vol": true
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 12916,
+    "name": "Piège Fangeux",
+    "icon": 11556,
+    "desc": "Pose un piège qui occasionne des dommages Eau et retire des PM.",
+    "grades": [
+     {
+      "niv": 20,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       21,
+       25
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 87,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       27,
+       31
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 154,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       33,
+       37
+      ],
+      "element": "eau"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 1
+   },
+   {
+    "id": 12943,
+    "name": "Épidémie",
+    "icon": 12017,
+    "desc": "Applique un poison Air de fin de tour sur l'ennemi ciblé et lui applique l'état Épidémie :\n• À la fin du tour de la cible, propage le poison et l'état sur les ennemis en zone autour d'elle.\n\nLe lanceur et son double peuvent servir de cible pour propager le poison.\nN'affecte pas les invocations statiques.",
+    "grades": [
+     {
+      "niv": 130,
+      "pa": 4,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       32,
+       36
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 197,
+      "pa": 4,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       36,
+       40
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 1,
+    "ldv": 1,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 12948,
+    "name": "Piège Funeste",
+    "icon": 11991,
+    "desc": "Pose un piège qui occasionne des dommages Terre.\nLes dommages du sort sont augmentés pour chaque ennemi en zone autour du piège avant d'appliquer ses effets.",
+    "grades": [
+     {
+      "niv": 25,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       18,
+       20
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 92,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       23,
+       26
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 159,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       28,
+       32
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 1
+   },
+   {
+    "id": 14742,
+    "name": "Effraction",
+    "icon": 12026,
+    "desc": "Vole des Résistances Poussée et occasionne des dommages Feu.",
+    "grades": [
+     {
+      "niv": 135,
+      "pa": 2,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       15,
+       17
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 12914,
+    "name": "Piège Répulsif",
+    "icon": 11995,
+    "desc": "Pose un piège qui repousse les entités depuis son centre et occasionne des dommages Air aux ennemis en zone.",
+    "grades": [
+     {
+      "niv": 30,
+      "pa": 2,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       9,
+       11
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 97,
+      "pa": 2,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       11,
+       14
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 164,
+      "pa": 2,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       14,
+       17
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 1
+   },
+   {
+    "id": 12920,
+    "name": "Piège Effroyable",
+    "icon": 11989,
+    "desc": "Pose un piège mono-cellule qui occasionne des dommages Terre aux ennemis et repousse les entités depuis le centre en zone.",
+    "grades": [
+     {
+      "niv": 140,
+      "pa": 2,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 12910,
+    "name": "Piège d'Immobilisation",
+    "icon": 11993,
+    "desc": "Pose un piège qui retire des PM aux ennemis en zone.",
+    "grades": [
+     {
+      "niv": 35,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 102,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 169,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 4,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 1,
+    "ldv": 0,
+    "pom": 1
+   },
+   {
+    "id": 14314,
+    "name": "Fosse Commune",
+    "icon": 12019,
+    "desc": "Pose un piège mono-cellule qui applique l'état Pesanteur en zone.",
+    "grades": [
+     {
+      "niv": 145,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 12938,
+    "name": "Extorsion",
+    "icon": 13799,
+    "desc": "Vole de la Force et de la vie dans l'élément Terre.",
+    "grades": [
+     {
+      "niv": 40,
+      "pa": 3,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       17,
+       19
+      ],
+      "element": "terre",
+      "vol": true
+     },
+     {
+      "niv": 107,
+      "pa": 3,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       22,
+       24
+      ],
+      "element": "terre",
+      "vol": true
+     },
+     {
+      "niv": 174,
+      "pa": 3,
+      "po": [
+       1,
+       3
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       27,
+       30
+      ],
+      "element": "terre",
+      "vol": true
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 12947,
+    "name": "Perquisition",
+    "icon": 13024,
+    "desc": "Occasionne des dommages Feu aux ennemis et repousse la cible.\n\nRepousse la cible depuis le double du lanceur s'il est présent sur le terrain.",
+    "grades": [
+     {
+      "niv": 150,
+      "pa": 2,
+      "po": [
+       0,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       13,
+       15
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 12911,
+    "name": "Arnaque",
+    "icon": 13801,
+    "desc": "Vole de l'Agilité et de la vie dans l'élément Air.",
+    "grades": [
+     {
+      "niv": 45,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       16,
+       18
+      ],
+      "element": "air",
+      "vol": true
+     },
+     {
+      "niv": 112,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       21,
+       23
+      ],
+      "element": "air",
+      "vol": true
+     },
+     {
+      "niv": 179,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       25,
+       28
+      ],
+      "element": "air",
+      "vol": true
+     }
+    ],
+    "ligne": 1,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 12937,
+    "name": "Larcin",
+    "icon": 13839,
+    "desc": "Érode les cibles et occasionne des dommages Eau en zone.\nN'affecte pas le lanceur.",
+    "grades": [
+     {
+      "niv": 155,
+      "pa": 4,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       34,
+       38
+      ],
+      "element": "eau"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 12934,
+    "name": "Pillage",
+    "icon": 11999,
+    "desc": "Vole de la Chance et de la vie dans l'élément Eau.",
+    "grades": [
+     {
+      "niv": 50,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       17,
+       19
+      ],
+      "element": "eau",
+      "vol": true
+     },
+     {
+      "niv": 117,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       22,
+       25
+      ],
+      "element": "eau",
+      "vol": true
+     },
+     {
+      "niv": 184,
+      "pa": 3,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       26,
+       29
+      ],
+      "element": "eau",
+      "vol": true
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 12917,
+    "name": "Attaque Mortelle",
+    "icon": 12001,
+    "desc": "Occasionne des dommages Terre.\nLes dommages sont plus importants sur les cibles ayant moins de 50% de leur vie.",
+    "grades": [
+     {
+      "niv": 160,
+      "pa": 4,
+      "po": [
+       1,
+       2
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       43,
+       48
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 12905,
+    "name": "Fourberie",
+    "icon": 13195,
+    "desc": "Vole de l'Intelligence et de la vie dans l'élément Feu en zone.\nN'affecte pas le lanceur.",
+    "grades": [
+     {
+      "niv": 55,
+      "pa": 4,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       18,
+       20
+      ],
+      "element": "feu",
+      "vol": true
+     },
+     {
+      "niv": 122,
+      "pa": 4,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       24,
+       27
+      ],
+      "element": "feu",
+      "vol": true
+     },
+     {
+      "niv": 189,
+      "pa": 4,
+      "po": [
+       0,
+       3
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       27,
+       31
+      ],
+      "element": "feu",
+      "vol": true
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 12940,
+    "name": "Injection Toxique",
+    "icon": 12020,
+    "desc": "Retire des PM et applique un poison Air de début de tour sur la cible.\nLe temps de relance du sort est réduit pour chaque piège déclenché du lanceur.",
+    "grades": [
+     {
+      "niv": 165,
+      "pa": 5,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 5,
+      "parTour": 0,
+      "parCible": 0,
+      "dmg": [
+       28,
+       32
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 12908,
+    "name": "Peur",
+    "icon": 11996,
+    "desc": "Pousse la cible jusqu'à la case ciblée.",
+    "grades": [
+     {
+      "niv": 60,
+      "pa": 2,
+      "po": [
+       2,
+       6
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 0
+     },
+     {
+      "niv": 127,
+      "pa": 2,
+      "po": [
+       2,
+       7
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 0
+     },
+     {
+      "niv": 194,
+      "pa": 2,
+      "po": [
+       2,
+       8
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 0
+     }
+    ],
+    "ligne": 1,
+    "ldv": 0,
+    "pom": 0
+   },
+   {
+    "id": 12945,
+    "name": "Méprise",
+    "icon": 12022,
+    "desc": "Échange de position avec la cible.\nÉchange les positions de la cible et du double du lanceur s'il est présent sur le terrain.\n\nDissipe l'invisibilité du lanceur.",
+    "grades": [
+     {
+      "niv": 170,
+      "pa": 3,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0,
+      "dmg": [
+       1,
+       1
+      ],
+      "element": "neutre"
+     }
+    ],
+    "ligne": 1,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 12942,
+    "name": "Piège de Dérive",
+    "icon": 12016,
+    "desc": "Pose un piège qui occasionne des dommages Feu aux ennemis et repousse les entités depuis le centre en zone.",
+    "grades": [
+     {
+      "niv": 65,
+      "pa": 2,
+      "po": [
+       1,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       12,
+       14
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 131,
+      "pa": 2,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       15,
+       17
+      ],
+      "element": "feu"
+     },
+     {
+      "niv": 198,
+      "pa": 2,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       17,
+       19
+      ],
+      "element": "feu"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 1
+   },
+   {
+    "id": 12918,
+    "name": "Piège Insidieux",
+    "icon": 11986,
+    "desc": "Pose un piège qui applique un poison Air de fin de tour sur les ennemis, leur occasionne des dommages Air et attire les entités vers le centre en zone.",
+    "grades": [
+     {
+      "niv": 175,
+      "pa": 2,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 12931,
+    "name": "Piège Scélérat",
+    "icon": 12000,
+    "desc": "Pose un piège mono-cellule qui attire les entités vers son centre et occasionne des dommages Eau aux ennemis en zone.",
+    "grades": [
+     {
+      "niv": 70,
+      "pa": 2,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       13,
+       15
+      ],
+      "element": "eau"
+     },
+     {
+      "niv": 137,
+      "pa": 2,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       17,
+       19
+      ],
+      "element": "eau"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 1
+   },
+   {
+    "id": 12941,
+    "name": "Piège à Fragmentation",
+    "icon": 11992,
+    "desc": "Pose un piège mono-cellule qui occasionne des dommages Feu en zone.\nLes dommages sont plus importants sur la case centrale et selon la distance avec le piège.\n\nN'affecte pas l'entité qui déclenche le piège si c'est un allié.",
+    "grades": [
+     {
+      "niv": 180,
+      "pa": 4,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 12903,
+    "name": "Concentration de Chakra",
+    "icon": 11998,
+    "desc": "Applique l'état Concentration de Chakra sur l'ennemi ciblé :\n• Vole de la vie dans le meilleur élément du lanceur à la cible si elle subit des dommages de pièges.\n\nDissipe l'invisibilité du lanceur.",
+    "grades": [
+     {
+      "niv": 75,
+      "pa": 3,
+      "po": [
+       1,
+       5
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 142,
+      "pa": 3,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 1,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 14741,
+    "name": "Manigance",
+    "icon": 12982,
+    "desc": "Vole de la Fuite et des Dommages aux ennemis ou augmente ceux du lanceur et de l'allié ciblé.",
+    "grades": [
+     {
+      "niv": 185,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 12921,
+    "name": "Piège Mortel",
+    "icon": 12002,
+    "desc": "Pose un piège qui occasionne des dommages Terre.\nLes dommages sont plus importants sur les entités ayant moins de 50% de leurs points de vie.",
+    "grades": [
+     {
+      "niv": 80,
+      "pa": 3,
+      "po": [
+       1,
+       7
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       31,
+       35
+      ],
+      "element": "terre"
+     },
+     {
+      "niv": 147,
+      "pa": 3,
+      "po": [
+       1,
+       8
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       39,
+       43
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 1,
+    "ldv": 0,
+    "pom": 1
+   },
+   {
+    "id": 12950,
+    "name": "Calamité",
+    "icon": 12024,
+    "desc": "Pose un piège qui vole de la Fuite et occasionne des dommages Eau aux ennemis en zone.",
+    "grades": [
+     {
+      "niv": 190,
+      "pa": 4,
+      "po": [
+       1,
+       8
+      ],
+      "relance": 0,
+      "parTour": 1,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 1
+   }
+  ],
+  [
+   {
+    "id": 12909,
+    "name": "Fourvoiement",
+    "icon": 11994,
+    "desc": "Érode les cibles et occasionne des dommages Air en zone.\nN'affecte pas le lanceur.",
+    "grades": [
+     {
+      "niv": 85,
+      "pa": 4,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       27,
+       31
+      ],
+      "element": "air"
+     },
+     {
+      "niv": 152,
+      "pa": 4,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 0,
+      "dmg": [
+       32,
+       36
+      ],
+      "element": "air"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   },
+   {
+    "id": 12949,
+    "name": "Perfidie",
+    "icon": 12027,
+    "desc": "Occasionne des dommages Terre.\nLe coût en PA du sort est réduit pour chaque piège déclenché du lanceur.\n\nLes effets sont retirés après utilisation du sort.",
+    "grades": [
+     {
+      "niv": 195,
+      "pa": 6,
+      "po": [
+       1,
+       1
+      ],
+      "relance": 0,
+      "parTour": 3,
+      "parCible": 2,
+      "dmg": [
+       56,
+       60
+      ],
+      "element": "terre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ],
+  [
+   {
+    "id": 14312,
+    "name": "Dérobade",
+    "icon": 12003,
+    "desc": "Réduit les dommages subis par l'allié ciblé, le rend Intaclable et lui applique l'état Dérobade :\n• Éloigne la cible de son attaquant et augmente ses PM si elle est attaquée par un ennemi (cumulable 3 fois).\n\nLe recul ne fait pas de dommages.",
+    "grades": [
+     {
+      "niv": 90,
+      "pa": 2,
+      "po": [
+       0,
+       4
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     },
+     {
+      "niv": 157,
+      "pa": 2,
+      "po": [
+       0,
+       5
+      ],
+      "relance": 3,
+      "parTour": 0,
+      "parCible": 0
+     }
+    ],
+    "ligne": 0,
+    "ldv": 0,
+    "pom": 1
+   },
+   {
+    "id": 14313,
+    "name": "Marque Mortuaire",
+    "icon": 12029,
+    "desc": "Augmente les dommages subis par la cible et l'érode.\nLes effets sont plus importants selon le nombre de pièges déclenchés du lanceur.\n\nDissipe l'invisibilité du lanceur.",
+    "grades": [
+     {
+      "niv": 200,
+      "pa": 2,
+      "po": [
+       1,
+       6
+      ],
+      "relance": 0,
+      "parTour": 2,
+      "parCible": 1,
+      "dmg": [
+       1,
+       1
+      ],
+      "element": "neutre"
+     }
+    ],
+    "ligne": 0,
+    "ldv": 1,
+    "pom": 0
+   }
+  ]
  ]
 }

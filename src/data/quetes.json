@@ -2418,6 +2418,169 @@
        }
       ]
      }
+    ],
+    "sram": [
+     {
+      "nom": "Premiers pas",
+      "bulle": "Bienvenue sur Incarnam, jeune Sram ! Contemple les Dofus, puis clique sur le sol et suis le chemin. Je t'attends dans la salle suivante.",
+      "objectifs": [
+       {
+        "t": "aller",
+        "texte": "Passer dans la salle suivante (clic gauche)",
+        "carte": "temple_2"
+       }
+      ]
+     },
+     {
+      "nom": "La salle d'entraînement",
+      "pnj": "ganymede_temple",
+      "objectifs": [
+       {
+        "t": "aller",
+        "texte": "Rejoindre Ganymède",
+        "pnj": "ganymede_temple"
+       }
+      ]
+     },
+     {
+      "nom": "Frapper",
+      "pnj": "ganymede_temple",
+      "bulle": "Des esprits de feu se sont glissés dans le Temple. Clique sur l'un d'eux : tu le poursuis et tu le frappes.",
+      "objectifs": [
+       {
+        "t": "vaincre",
+        "texte": "Vaincre un monstre (clic dessus)",
+        "n": 1,
+        "sousZone": 446
+       }
+      ]
+     },
+     {
+      "nom": "Poser des pièges",
+      "pnj": "ganymede_temple",
+      "bulle": "Tes sorts sont sur & é \" ' (. Touche ( : Piège Sournois. Pose-le sur le chemin des esprits : ils ne le voient pas, et il saute quand l'un d'eux passe dessus.",
+      "halo": 4,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "sort": "piege_sournois",
+        "texte": "Poser un Piège Sournois (()"
+       }
+      ]
+     },
+     {
+      "nom": "Droit dans le piège",
+      "pnj": "ganymede_temple",
+      "bulle": "Clic droit : Sournoiserie. Frappe un esprit pour le repousser de 3 cases, droit dans ton piège. Chaque piège qui touche remplit ta Ruse.",
+      "halo": 6,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "sort": "sournoiserie",
+        "texte": "Repousser un esprit avec Sournoiserie (clic droit)"
+       },
+       {
+        "t": "vaincre",
+        "texte": "Vaincre un esprit",
+        "n": 1,
+        "sousZone": 446
+       }
+      ]
+     },
+     {
+      "nom": "Disparaître",
+      "pnj": "ganymede_temple",
+      "bulle": "Touche ' : Invisibilité. Quand les autres arrivent, disparais : ils perdent ta trace 4 s. Frapper te montre un court instant.",
+      "halo": 3,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "sort": "invisibilite",
+        "texte": "Devenir invisible (')"
+       }
+      ]
+     },
+     {
+      "nom": "Finir le dernier",
+      "pnj": "ganymede_temple",
+      "bulle": "Touche & : Truanderie, qui vole de la Puissance. Achève les derniers esprits ; X fait sauter tous tes pièges d'un coup.",
+      "halo": 0,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "sort": "truanderie",
+        "texte": "Lancer Truanderie (&)"
+       },
+       {
+        "t": "vaincre",
+        "texte": "Vaincre deux esprits",
+        "n": 2,
+        "sousZone": 446
+       }
+      ]
+     },
+     {
+      "nom": "Se déplacer vite",
+      "pnj": "ganymede_temple",
+      "bulle": "Espace : Pas de l'ombre. Un petit pas de 4 cases, sans bruit.",
+      "halo": 7,
+      "objectifs": [
+       {
+        "t": "utiliser",
+        "quoi": "mobilite",
+        "texte": "Se déplacer avec Espace"
+       }
+      ]
+     },
+     {
+      "nom": "Premières armes",
+      "pnj": "ganymede_temple",
+      "bulle": "Voici ton équipement : un Couteau de Chasse et la panoplie de l'Intrépide. I ouvre ton sac : équipe tout.",
+      "donner": {
+       "sram": [
+        "1934",
+        "10801",
+        "10800",
+        "10784",
+        "10785",
+        "10799",
+        "10794",
+        "10798"
+       ]
+      },
+      "objectifs": [
+       {
+        "t": "equiper",
+        "objet": "1934",
+        "texte": "Équiper ta dague (I)"
+       },
+       {
+        "t": "equiper",
+        "objets": [
+         "10801",
+         "10800",
+         "10784",
+         "10785",
+         "10799",
+         "10794",
+         "10798"
+        ],
+        "texte": "Équiper la panoplie de l'Intrépide"
+       }
+      ]
+     },
+     {
+      "nom": "Descendre sur Incarnam",
+      "pnj": "ganymede_temple",
+      "bulle": "Tu es prêt. Parle-moi et je t'envoie au village, près de Lykhen. Le Zaap de la Route des âmes sera ton point de retour si tu tombes.",
+      "objectifs": [
+       {
+        "t": "parler",
+        "texte": "Parler à Ganymède pour descendre au village",
+        "pnj": "ganymede_temple"
+       }
+      ]
+     }
     ]
    },
    "recompense": {

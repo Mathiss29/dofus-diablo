@@ -141,6 +141,16 @@ export function spellDetail(p: Player, id: SkillId, gOver?: SortGrade) {
     d.ouginak?.rassemble ? `Sur la Proie : attire d'abord à son contact les ennemis à ${d.ouginak.rassemble.rayon} cases` : '',
     d.ouginak?.flair ? 'Demande une Proie : tu apparais à son contact, où qu\'elle soit' : '',
     d.ouginak?.appel ? `Roquet de retour ${d.ouginak.appel.retour} s plus tôt ; sur la Proie : −${Math.round(d.ouginak.appel.erosion * 100)} % de PV max et la meute bondit sur elle` : '',
+    // Sram (pièges, Invisibilité, Double, Peur, vols)
+    d.sram?.piege ? `Piège invisible pour les monstres (5 au plus, armé en 0,5 s) : saute quand un monstre passe dessus, ou avec X${d.sram.piege.attire ? ` ; attire de ${d.sram.piege.attire} case vers son centre` : ''}${d.sram.piege.repousse ? ` ; repousse de ${d.sram.piege.repousse} cases depuis son centre` : ''}${d.sram.piege.immobilise ? ` ; immobilise ${String(d.sram.piege.immobilise).replace('.', ',')} s (moitié sur les boss)` : ''}${d.sram.piege.parEnnemi ? ` ; +${Math.round(d.sram.piege.parEnnemi * 100)} % par ennemi autour` : ''}` : '',
+    d.sram?.piege ? 'Ruse pleine : le piège posé joue ses effets deux fois' : '',
+    d.sram?.vol ? `Vole la caractéristique : le monstre fait 15 % de dégâts en moins 3 s, toi 15 % de plus (2 fois au plus)` : '',
+    d.sram?.poison ? `Poison continu : ${Math.round(d.sram.poison)} dommages sur 3 s` : '',
+    d.sram?.poLoss ? `−${d.sram.poLoss.n} cases de portée à la cible pendant ${d.sram.poLoss.t} s` : '',
+    d.sram?.pm ? `+${d.sram.pm} charge de pas (Espace)` : '',
+    d.sram?.invisible ? 'Toi ou l\'allié visé : invisible 4 s, les monstres perdent ta trace (élites et boss : 1 s) ; frapper te montre 0,5 s ; achever un monstre le recharge' : '',
+    d.sram?.double ? 'Double leurre 6 s : les monstres le visent ; à sa mort, tu prends sa place et tu cours plus vite 3 s' : '',
+    d.sram?.peur ? 'En deux temps : vise le monstre, puis relance sur la case où l\'envoyer (5 cases au plus)' : '',
     // Eniripsa
     d.soin ? `Soigne les alliés touchés de ${Math.round(d.soin)} PV (+ Intelligence et Soins)${d.soinLanceur === false ? ', pas toi' : ''}` : '',
     d.soinVol ? `Soigne les alliés de la zone de ${Math.round(d.soinVol * 100)} % des dommages faits${d.soinLanceur === false ? ' (pas toi)' : ''}` : '',

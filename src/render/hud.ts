@@ -1388,6 +1388,7 @@ export class Hud {
       this.rageLabel.setPosition(rx, ry + rh + 1);
       this.medImg.setVisible(false); this.medRect = null;
     }
+    if (cls.sram) this.rageLabel.setText(`Pièges ${p.sram?.pieges.length ?? 0}/${cls.sram.pieges.max}`).setColor(p.rageFull ? (Math.floor(world.time * 4) % 2 ? '#f2d36b' : '#d6b4ff') : '#b9a6d8');   // Sram : Ruse en jauge, pièges posés dessous
     if (sf >= 0) this.rageLabel.setText(sf ? `${cls.rage.name} ${sf}` : cls.rage.name).setColor(sf ? '#ff6a5a' : '#c9a49c');
     if (fl >= 0) this.rageLabel.setText(p.lance ? 'Désarmé' : 'Armé').setColor(p.lance ? '#e8b860' : '#c9c2b0');
     // Tutoriel (3A) : halo doré qui pulse sur l'emplacement de l'étape suivie, et sa touche au-dessus
