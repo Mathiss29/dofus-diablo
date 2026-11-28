@@ -4,6 +4,7 @@ import type { Cible, Monster } from './monster';
 import type { Player } from './player';
 import type { HitDef, World } from './world';
 import { empoisonner } from './sadida';
+import { REGLAGES_BUTIN } from './butin';
 
 /** Sram (classe 4). Choix de Mathis : « Classes : 5A 6A+6C 7A+7B 8A 9A » (15 nov. 2026) et
  *  « Sram : 1A 2A 3A 4A 5A 6A-6P 7A 8A+8B 9A » (28 nov. 2026).
@@ -39,6 +40,8 @@ export interface EffetsSram {
   /** Cruauté : +n charge de pas (PM). */
   pm?: number;
   invisible?: boolean; double?: boolean; peur?: boolean;
+  /** Pas de l'ombre (Espace) : rien de lui-même, porte le légendaire pc-sram-K. */
+  pas?: boolean;
   /** Sournoiserie (clic droit) : repousse dans l'axe du lanceur (droit dans les pièges). */
   sournoiserie?: boolean;
   /** Concentration de Chakra (61-90) : t s sur l'ennemi visé ; un piège qui le touche te soigne de part des dommages du piège. */
@@ -71,13 +74,33 @@ export interface EtatSram {
   explose: { sort: string; gm: number } | null;
   /** Ennemis sous Concentration de Chakra et sous Toxines (id, secondes, crans). */
   chakra: { mid: number; t: number }[]; toxines: { mid: number; t: number; n: number }[];
+  /** Nappe de brume (pc-sram-O) : âge du dernier déclenchement. */
+  brumeA: number;
 }
 export const etatSram = (p: Player): EtatSram =>
   (p.sram ??= { pieges: [], prochain: 1, invisT: 0, invisA: -99, reveleT: 0, vols: {}, double: null, peur: null, peurT: 0,
-    sautes: 0, sautesDouble: 0, explose: null, chakra: [], toxines: [] });
+    sautes: 0, sautesDouble: 0, explose: null, chakra: [], toxines: [], brumeA: -99 });
 const R = (p: Player): ReglesSram | undefined => p.cls.sram;
 /** Règles du Sram, même pour un allié qui n'est pas Sram (Invisibilité posée sur lui). */
 const REGLES = (p: Player, w: World): ReglesSram | undefined => R(p) ?? w.players.find(q => q.cls.sram)?.cls.sram;
+
+// --- Légendaires inventés (« Sram : 6A-6P ») -------------------------------------------------------------------------------
+/** Poison du Sram : Poison lent (pc-sram-E) dure 1 s de plus et frappe plus fort. */
+function poison(p: Player, m: Monster, brut: number, el: SpellDef['element'], w: World) {
+  const e = p.pcv('pc-sram-E');
+  empoisonner(p, m, brut * (1 + e / 100) * (e ? 4 / 3 : 1), el, w);
+  if (e && m.poisonT > 0) m.poisonT += 1;
+}
+/** Multiplicateur des dommages d'un sort du Sram : Lame dans le dos (invisible), Chausse-trappe (pièges sautés). */
+export function multSram(p: Player, d: SpellDef): number {
+  let k = 1;
+  const a = p.pcv('pc-sram-A');
+  if (a && invisible(p) && d.dmg > 0) k *= 1 + a / 100;
+  if (d.sram?.sautes && p.sram) k *= 1 + d.sram.sautes.par * Math.min(d.sram.sautes.max, p.sram.sautes);
+  return k;
+}
+/** Fuite rapide (pc-sram-L) : course en plus pendant l'Invisibilité. */
+export const vitesseSram = (p: Player): number => p.sram && p.sram.invisT > 0 ? 1 + p.pcv('pc-sram-L') / 100 : 1;
 
 // --- Invisibilité (6A+6C) ---------------------------------------------------------------------------------------------
 /** Le joueur est-il invisible (pas montré par un coup) ? */
@@ -138,12 +161,13 @@ export function dommagesSram(p: Player, el: string): number {
   return 1 + n * r.vol.n / 100;
 }
 function voler(p: Player, c: Carac, cibles: Monster[], w: World) {
-  const r = R(p)!, s = etatSram(p), v = s.vols[c], n = Math.min(r.vol.max, (v && v.t > 0 ? v.n : 0) + 1);
-  s.vols[c] = { n, t: r.vol.t };
+  const r = R(p)!, s = etatSram(p), v = s.vols[c], mi = p.pcv('pc-sram-I');   // Mains agiles : plus long, 3 crans
+  const max = r.vol.max + (mi ? 1 : 0), n = Math.min(max, (v && v.t > 0 ? v.n : 0) + 1);
+  s.vols[c] = { n, t: r.vol.t + mi };
   for (const m of cibles) {
     const k = r.vol.n * (m.def.boss ? 0.5 : 1);
     if (m.furyPct > 0) continue;   // un monstre enragé garde sa Frénésie
-    m.furyPct = Math.max(-k * r.vol.max, m.furyPct - k); m.furyT = Math.max(m.furyT, r.vol.t); m.furyFlat = 0;
+    m.furyPct = Math.max(-k * max, m.furyPct - k); m.furyT = Math.max(m.furyT, r.vol.t + mi); m.furyFlat = 0;
   }
   const nom = { puissance: 'Puissance', force: 'Force', agilite: 'Agilité', chance: 'Chance', intelligence: 'Intelligence' }[c];
   w.emit({ k: 'status', x: p.x, y: p.y - 70, text: `+${nom}${n > 1 ? ` ×${n}` : ''}`, color: '#c9a0ff' });
@@ -158,16 +182,22 @@ export function gagnerRuse(p: Player, n: number, w: World) {
 }
 
 // --- Pièges (7A+7B) ---------------------------------------------------------------------------------------------------
-export function poserPiege(p: Player, sort: string, x: number, y: number, gm: number, w: World) {
+export function poserPiege(p: Player, sort: string, x: number, y: number, gm: number, w: World, jumeau = false) {
   const r = R(p)!, s = etatSram(p);
   const q = w.walkable(x, y) ? { x, y } : w.map.nearestFree(x, y);
-  const double = p.rageFull;
+  const double = !jumeau && p.rageFull;
   if (double) { p.rage = 0; w.emit({ k: 'status', x: q.x, y: q.y - 30, text: 'Piège doublé', color: '#d6b4ff' }); }
-  s.pieges.push({ id: s.prochain++, sort, x: q.x, y: q.y, t: 0, double, gm });
+  s.pieges.push({ id: s.prochain++, sort, x: q.x, y: q.y, t: p.pcv('pc-sram-D') ? r.pieges.arme : 0, double, gm });   // Mèche courte : armé aussitôt
   while (s.pieges.length > r.pieges.max) s.pieges.shift();   // le plus ancien disparaît
+  const c = p.pcv('pc-sram-C');   // Piège jumeau : un second, identique, à une case
+  if (!jumeau && c && w.rng.next() < c / 100) {
+    const a = w.rng.next() * Math.PI * 2;
+    poserPiege(p, sort, q.x + Math.cos(a) * CASE, q.y + Math.sin(a) * CASE, gm, w, true);
+    w.emit({ k: 'status', x: q.x, y: q.y - 46, text: 'Piège jumeau', color: '#d6b4ff' });
+  }
 }
 /** Fait sauter un piège : ses effets (deux fois s'il est doublé), le poison des légendaires plus tard. Renvoie les monstres touchés. */
-export function declencher(p: Player, pg: Piege, w: World): number {
+export function declencher(p: Player, pg: Piege, w: World, mult = 1): number {
   const s = etatSram(p);
   s.pieges = s.pieges.filter(x => x !== pg);
   const d = p.cls.spells[pg.sort];
@@ -178,7 +208,8 @@ export function declencher(p: Player, pg: Piege, w: World): number {
   let n = 0;
   for (let i = 0; i < fois; i++) {
     const autour = P.parEnnemi ? w.monsters.filter(m => !m.dead && Math.hypot(m.x - pg.x, m.y - pg.y) <= (P.autour ?? 2) * CASE + m.radius).length : 0;
-    const hit: HitDef = { dmg: d.dmg * pg.gm * (1 + (P.parEnnemi ?? 0) * Math.max(0, autour - 1)), knock: (P.repousse ?? 0) * 342, element: d.element,
+    const N = p.pcv('pc-sram-N');
+    const hit: HitDef = { dmg: d.dmg * pg.gm * mult * (1 + p.pcv('pc-sram-D') / 100) * (1 + (P.parEnnemi ?? 0) * Math.max(0, autour - 1)), execute: N ? N / 100 : undefined, knock: (P.repousse ?? 0) * 342, element: d.element,
       pmLoss: d.pmLoss, attire: P.attire ? { px: P.attire * CASE, vers: 'centre' } : undefined, sort: pg.sort };
     const touches = zone();
     if (P.mortel && hit.dmg > 0) {   // Piège Mortel : plus fort sous la moitié des PV, cible par cible
@@ -188,13 +219,21 @@ export function declencher(p: Player, pg: Piege, w: World): number {
       const m = c.t > 0 ? touches.find(x => x.id === c.mid) : undefined;
       if (m) { const sp = p.cls.spells.chakra?.sram?.chakra; if (sp && p.soigner(hit.dmg * sp.part) > 0) w.emit({ k: 'status', x: p.x, y: p.y - 60, text: 'Chakra', color: '#7fdc7f' }); }
     }
+    const f = p.pcv('pc-sram-F');   // Venin des pièges
+    if (f && hit.dmg > 0) for (const m of touches) poison(p, m, hit.dmg * f / 100, d.element, w);
+    const morts = touches.filter(m => !m.dead);
     for (const x of s.toxines) {
       const m = x.t > 0 ? touches.find(q => q.id === x.mid) : undefined;
       const tx = p.cls.spells.toxines;
-      if (m && tx?.sram?.poison && tx.sram.toxines) empoisonner(p, m, tx.sram.poison * (1 + tx.sram.toxines.par * (x.n - 1)), tx.element, w);
+      if (m && tx?.sram?.poison && tx.sram.toxines) poison(p, m, tx.sram.poison * (1 + tx.sram.toxines.par * (x.n - 1)), tx.element, w);
     }
     if (hit.dmg > 0 || hit.knock || hit.attire || hit.pmLoss) n = Math.max(n, w.hitCircle(pg.x, pg.y, r, hit));
     else n = Math.max(n, touches.length);
+    const j = p.pcv('pc-sram-J');   // Butin facile : les monstres tués par le piège sèment des kamas
+    if (j) for (const m of morts) if ((m.dead || m.hp <= 0) && !m.mannequin) {
+      const K = REGLAGES_BUTIN.kamas, k = Math.round(w.monsterLevel(m) * (K.min + K.max) / 2 * j / 100);
+      if (k > 0) w.semerKamas(k, m.x, m.y);
+    }
     if (P.immobilise) for (const m of touches) {
       const t = P.immobilise * (m.def.boss ? 0.5 : 1);
       m.haste = Math.min(m.haste, 0.05); m.hasteT = Math.max(m.hasteT, t);
@@ -213,9 +252,12 @@ export function detoner(p: Player, w: World): number {
   const s = p.sram;
   if (!s?.pieges.length || p.dead) return 0;
   const k0 = w.kills;
-  for (const pg of [...s.pieges]) declencher(p, pg, w);
+  const ch = p.pcv('pc-sram-M'), mult = 1 + ch / 100 * (s.pieges.length - 1);   // Détonation en chaîne
+  for (const pg of [...s.pieges]) declencher(p, pg, w, mult);
   w.emit({ k: 'impact', hitstop: 0.06, shake: 0.012, big: true });
-  return w.kills - k0;
+  const n = w.kills - k0, q = w.quetes;   // 8B « Le grand piège » : meilleure détonation, pour le perso de cet écran
+  if (q && p === w.players[0] && n > (q.compteurs.grandPiege ?? 0)) q.compteurs.grandPiege = n;
+  return n;
 }
 
 // --- Sorts ------------------------------------------------------------------------------------------------------------
@@ -233,7 +275,8 @@ export function avantImpactSram(p: Player, id: string, d: SpellDef, s: { tx: num
     doubleDe(p, w)?.mourir(w);
     const b = w.invoquer(p, 'sram_double', id, s.tx, s.ty);
     const st = etatSram(p);
-    if (b) { b.horsCompte = true; b.finT = S.explose?.t ?? r.double.t; st.double = b.id; st.sautesDouble = 0; st.explose = S.explose ? { sort: id, gm: s.gm } : null; }
+    if (b) { const g = p.pcv('pc-sram-G'); if (g) { b.maxHp = Math.round(b.maxHp * 1.5); b.hp = b.maxHp; }
+      b.horsCompte = true; b.finT = (S.explose?.t ?? r.double.t) + g; st.double = b.id; st.sautesDouble = 0; st.explose = S.explose ? { sort: id, gm: s.gm } : null; }
     return true;
   }
   if (S.derobade) {
@@ -306,13 +349,17 @@ export function impactSram(p: Player, d: SpellDef, tx: number, ty: number, size:
         if (!x) { x = { mid: m.id, t: 0, n: 0 }; st.toxines = st.toxines.filter(q => q.t > 0); st.toxines.push(x); }
         x.n = Math.min(S.toxines.max, x.n + 1); x.t = S.toxines.t; k = 1 + S.toxines.par * (x.n - 1);
       }
-      empoisonner(p, m, S.poison * gm * k, d.element, w);
+      poison(p, m, S.poison * gm * k, d.element, w);
     }
     if (S.poLoss) for (const m of z) { m.poMalus = Math.max(m.poMalus, S.poLoss.n); m.poMalusT = Math.max(m.poMalusT, S.poLoss.t);
       w.emit({ k: 'status', x: m.x, y: m.y, text: `-${S.poLoss.n} PO`, color: '#c8a0ff' }); }
     if (z.length) reveler(p, w);
   }
   if (S.sautes) etatSram(p).sautes = 0;
+  const k = S.pas ? p.pcv('pc-sram-K') : 0;   // Pas de l'ombre : invisible à l'arrivée
+  if (k) { rendreInvisible(p, w, k); return; }
+  const fi = p.pcv('pc-sram-P');   // Fiel : vol de vie en plus sur une cible empoisonnée
+  if (fi && d.lifesteal && hits > 0 && zone().some(m => m.poisonT > 0)) p.soigner(w.degatsCoup * d.lifesteal * fi / 100);
   if (S.pm) p.pm = Math.min(p.cls.pm.max + S.pm, p.pm + S.pm);
   if (hits > 0) reveler(p, w);
 }
@@ -322,6 +369,8 @@ export function acheveSram(p: Player, w: World) {
   const r = R(p);
   if (!r) return;
   gagnerRuse(p, r.ruse.parAcheve, w);
+  const b = p.pcv('pc-sram-B');   // Disparition : l'Invisibilité dure plus
+  if (b && p.sram && p.sram.invisT > 0) p.sram.invisT += b;
   if (p.sram && p.sram.invisT > 0 && (p.cd.invisibilite > 0 || p.casts.invisibilite?.length)) { p.cd.invisibilite = 0; p.casts.invisibilite = []; }
 }
 
@@ -335,6 +384,8 @@ export function majSram(p: Player, dt: number, w: World) {
   }
   for (const v of Object.values(s.vols)) if (v && v.t > 0) v.t -= dt;
   if (s.peurT > 0 && (s.peurT -= dt) <= 0) s.peur = null;
+  const o = p.pcv('pc-sram-O');   // Nappe de brume : sous 30 % de PV, invisible (toutes les 20 s)
+  if (o && !p.dead && p.hp < p.maxHp * 0.3 && p.age - s.brumeA >= 20) { s.brumeA = p.age; rendreInvisible(p, w, o); }
   for (const c of s.chakra) c.t -= dt;
   for (const x of s.toxines) x.t -= dt;
   if (s.chakra.length && s.chakra.every(c => c.t <= 0)) s.chakra = [];
@@ -349,6 +400,8 @@ export function majSram(p: Player, dt: number, w: World) {
         w.emit({ k: 'spell', fx: 'burst', id: ex.sort, x: b.x, y: b.y, facing: 0, size: E.r * CASE, arc: 0, element: de.element, big: true, boosted: false });
       }
       s.explose = null;
+      const h = p.pcv('pc-sram-H');   // Double piégé : un Piège Sournois à sa place
+      if (b && h && !p.dead && p.cls.spells.piege_sournois) poserPiege(p, 'piege_sournois', b.x, b.y, h / 100, w, true);
       if (b && !p.dead && w.walkable(b.x, b.y)) {   // 8A : à sa mort, tu prends sa place et tu files
         w.emit({ k: 'bondOug', x: p.x, y: p.y, tx: b.x, ty: b.y });
         p.x = b.x; p.y = b.y; p.courir(r.double.course, r.double.courseT);

@@ -4,10 +4,21 @@ import { GAME_DATA, ITEMS, QUETES } from '../src/sim/data';
 import { GridMap, type MapData } from '../src/sim/gridmap';
 import { NO_INPUT, type PlayerInput } from '../src/sim/input';
 import { World } from '../src/sim/world';
+import { Quetes } from '../src/sim/quests';
 import { doubleDe, invisible, invisiblePour } from '../src/sim/sram';
+import { PC_PAR_ID } from '../src/sim/pouvoirsClasse';
+import POUVOIRS from '../src/data/pouvoirs.json';
+import type { EquipSlot, Item } from '../src/sim/items';
 
 const carte = JSON.parse(readFileSync(new URL('../public/assets/cartes/5_-27/carte.json', import.meta.url), 'utf8')) as MapData;
 const STEP = 1 / 60;
+const porter = (w: World, id: string, value: number) => {
+  const c = PC_PAR_ID[id], s = (c.slot === 'anneau' ? 'anneau1' : c.slot) as EquipSlot, deja = w.player.equipment[s];
+  if (deja?.legendary && !deja.legendary2) { deja.legendary2 = { id, value }; w.player.recompute(); return; }   // deux pouvoirs du même emplacement
+  const [iid] = Object.entries(ITEMS.equipment).find(([, d]) => d.slot === c.slot && !d.familier && d.level <= 20)!;
+  const it: Item = { uid: w.newUid(), id: iid, rarity: 'legendaire', stats: {}, extra: [], legendary: { id, value } };
+  w.player.v03 = true; w.player.equipment[s] = it; w.player.recompute();
+};
 const sram = (seed = 7) => { const w = new World({ data: GAME_DATA, zone: 'champs-astrub', map: new GridMap(carte), seed, items: ITEMS, classId: 'sram', test: {} as never }); w.waveDelay = 1e9; return w; };
 const idle = (w: World, s: number) => { for (let i = 0; i < s * 60; i++) w.step(STEP, NO_INPUT); };
 const press = (w: World, pressed: PlayerInput['pressed'], aim: { x: number; y: number }) => { w.player.pa = 99; w.player.cd = {}; w.player.casts = {}; w.step(STEP, { ...NO_INPUT, aim, pressed }); };
@@ -207,5 +218,88 @@ describe('Sram (« Classes : 5A 6A+6C 7A+7B 8A 9A », « Sram : 1A 2A 3A 4A 5A �
     m.x = b.x + 20; m.y = b.y; const hp = m.hp;
     b.mourir(w); idle(w, 0.05);
     expect(m.hp).toBeLessThan(hp);
+  });
+  it('5A : 40 légendaires officiels de la Panoplie Criminelle, chacun sur un vrai sort', () => {
+    const l = (POUVOIRS as unknown as Record<string, { dofusId: number }[]>).sram;
+    expect(l).toHaveLength(40);
+    expect(PC_PAR_ID['pc-sram-P']).toBeTruthy();
+  });
+
+  it('6A-6P : Mèche courte, Piège jumeau, Détonation en chaîne', () => {
+    const w = sram(); idle(w, 0.2);
+    const p = w.player;
+    porter(w, 'pc-sram-D', 18); porter(w, 'pc-sram-C', 100);
+    Object.defineProperty(p, 'critChance', { get: () => 0 });
+    press(w, 'piege_sournois', { x: p.x + 120, y: p.y }); idle(w, 0.2);
+    expect(p.sram!.pieges).toHaveLength(2);
+    expect(p.sram!.pieges.every(g => g.t >= 0.5)).toBe(true);
+    // Détonation en chaîne : deux pièges ensemble font plus mal qu'un seul
+    const m = cible(w, p.x + 120, p.y + 400), x0 = p.sram!.pieges[0];
+    for (const g of p.sram!.pieges) { g.x = m.x; g.y = m.y - 200; }
+    x0.y = m.y; const h0 = m.hp; p.sram!.pieges = [x0]; w.step(STEP, { ...NO_INPUT, coffre: true }); const seul = h0 - m.hp;
+    porter(w, 'pc-sram-M', 35);
+    press(w, 'piege_sournois', { x: p.x + 120, y: p.y }); idle(w, 0.2);
+    expect(p.sram!.pieges).toHaveLength(2);
+    for (const g of p.sram!.pieges) { g.x = m.x; g.y = m.y; }
+    const h1 = m.hp; w.step(STEP, { ...NO_INPUT, coffre: true });
+    expect(h1 - m.hp).toBeGreaterThan(seul * 2.4);   // deux pièges, +35 % chacun
+  });
+
+  it('6A-6P : Lame dans le dos, Pas de l\'ombre, Fuite rapide, Nappe de brume', () => {
+    const w = sram(); idle(w, 0.2);
+    const p = w.player;
+    porter(w, 'pc-sram-K', 1); porter(w, 'pc-sram-L', 25); porter(w, 'pc-sram-O', 3);
+    const v = p.speed;
+    press(w, 'pas_sram', { x: p.x + 150, y: p.y }); idle(w, 0.5);
+    expect(invisible(p)).toBe(true);
+    expect(p.speed).toBeGreaterThan(v * 1.2);
+    idle(w, 1.5);
+    expect(invisible(p)).toBe(false);
+    p.hp = p.maxHp * 0.2; idle(w, 0.1);
+    expect(invisible(p)).toBe(true);
+  });
+
+  it('6A-6P : Coup de grâce achève sous le seuil, jamais un boss', () => {
+    const w = sram(); idle(w, 0.2);
+    const p = w.player; porter(w, 'pc-sram-N', 20);
+    const m = cible(w, p.x + 80, p.y, 1000); m.hp = 150;
+    press(w, 'truanderie', { x: m.x, y: m.y }); idle(w, 0.4);
+    expect(m.hp <= 0 || m.dead).toBe(true);
+  });
+
+  it('6A-6P : Mains agiles (3 crans), Double parfait et Double piégé', () => {
+    const w = sram(); idle(w, 0.2);
+    const p = w.player; niveau(p, 40); porter(w, 'pc-sram-I', 4); porter(w, 'pc-sram-G', 4);
+    const m = cible(w, p.x + 80, p.y);
+    for (let i = 0; i < 4; i++) { press(w, 'extorsion', { x: m.x, y: m.y }); idle(w, 0.5); }
+    expect(p.sram!.vols.force!.n).toBe(3);
+    expect(p.sram!.vols.force!.t).toBeGreaterThan(4);
+    press(w, 'double', { x: p.x + 48, y: p.y }); idle(w, 0.6);
+    expect(doubleDe(p, w)!.finT).toBeGreaterThan(9);
+    porter(w, 'pc-sram-H', 100);
+    const n = p.sram!.pieges.length;
+    doubleDe(p, w)!.mourir(w); idle(w, 0.05);
+    expect(p.sram!.pieges.length).toBe(n + 1);
+  });
+  it('8B « Le grand piège » : 5 monstres tués par la même détonation ; 8A « Personne ne m\'a vu » au bout d\'une arène sans coup', () => {
+    const w = sram(); idle(w, 0.2);
+    const p = w.player, x = p.x + 150, y = p.y;
+    const q = { compteurs: {} as Record<string, number> };
+    (w as { quetes: unknown }).quetes = new Proxy(q, { get: (t, k) => k in t ? t[k as 'compteurs'] : () => undefined });   // compteurs seuls
+    for (let i = 0; i < 5; i++) { press(w, 'piege_sournois', { x: x + (i % 3) * 30, y: y + Math.floor(i / 3) * 30 }); idle(w, 0.45); }
+    const ms = [0, 1, 2, 3, 4].map(i => cible(w, x + 400, y + 400 + i * 10, 1));
+    for (const m of ms) { m.x = x + 30; m.y = y + 15; }
+    w.step(STEP, { ...NO_INPUT, coffre: true }); idle(w, 0.1);
+    expect(q.compteurs.grandPiege).toBeGreaterThanOrEqual(5);
+    expect(QUETES.succes.grand_piege.objectifs[0]).toMatchObject({ compteur: 'grandPiege', n: 5 });
+    const Q = new Quetes(QUETES, w);
+    Q.observer({ k: 'areneDebut', nom: 'x', boss: null, vagues: 1, cle: null, reprise: 0 });
+    Q.observer({ k: 'areneFin', nom: 'x', temps: 30, record: false, idoles: 0 });
+    expect(Q.compteurs.personneVu).toBe(1);
+    Q.observer({ k: 'areneDebut', nom: 'x', boss: null, vagues: 1, cle: null, reprise: 0 });
+    Q.compteurs.personneVu = 0; Q.observer({ k: 'playerHurt' } as never);
+    Q.observer({ k: 'areneFin', nom: 'x', temps: 30, record: false, idoles: 0 });
+    expect(Q.compteurs.personneVu).toBe(0);
+    expect(QUETES.succes.personne_vu.recompense?.titre).toBe('Ombre d\'Astrub');
   });
 });

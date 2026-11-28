@@ -202,6 +202,23 @@ export const POUVOIRS_CLASSE: PouvoirClasseDef[] = [
   pc('ouginak', 'N', 'Rage aveugle', 'tibia', 'arme', [20, 35], 1, v => `En Forme Bestiale, Tibia et Amarok frappent 1 case plus large et ${v} % plus fort.`),
   pc('ouginak', 'O', 'Pelage épais', 'pelage_protecteur', 'bouclier', [20, 35], 1, v => `Pelage Protecteur se lance aussi en Forme Bestiale, et ses boucliers sont ${v} % plus gros.`),
   pc('ouginak', 'P', 'Instinct de survie', 'apaisement', 'bouclier', [10, 15], 1, v => `Sous 30 % de PV, tu gagnes aussitôt un cran de Rage et un bouclier de ${v} % de tes PV (une fois toutes les 20 s).`),
+  // --- Sram (« Sram : 6A-6P », 2026-11-28) : pouvoirs codés dans src/sim/sram.ts ------------------------------------------
+  pc('sram', 'A', 'Lame dans le dos', 'invisibilite', 'chapeau', [25, 40], 1, v => `Tes sorts lancés pendant que tu es invisible font ${v} % de dégâts en plus.`),
+  pc('sram', 'B', 'Disparition', 'invisibilite', 'chapeau', [1, 2], 0.5, v => `Achever un monstre pendant l'Invisibilité la prolonge de ${n(v)} s.`),
+  pc('sram', 'C', 'Piège jumeau', 'piege_sournois', 'cape', [15, 25], 1, v => `Chaque piège posé a ${v} % de chances d'en poser un second, identique, à une case.`),
+  pc('sram', 'D', 'Mèche courte', 'piege_repulsif', 'cape', [10, 18], 1, v => `Tes pièges s'arment aussitôt et font ${v} % de dégâts en plus.`),
+  pc('sram', 'E', 'Poison lent', 'arsenic', 'amulette', [10, 20], 1, v => `Tes poisons durent 1 s de plus et font ${v} % de dégâts en plus.`),
+  pc('sram', 'F', 'Venin des pièges', 'toxines', 'amulette', [20, 35], 1, v => `Tes pièges empoisonnent : ${v} % de leurs dégâts en plus sur 3 s.`),
+  pc('sram', 'G', 'Double parfait', 'double', 'anneau', [2, 4], 1, v => `Le Double tient ${v} s de plus et a 50 % de PV en plus.`),
+  pc('sram', 'H', 'Double piégé', 'double', 'anneau', [80, 120], 5, v => `À la mort du Double, un Piège Sournois apparaît à sa place, à ${v} % de ses dégâts.`),
+  pc('sram', 'I', 'Mains agiles', 'extorsion', 'ceinture', [2, 4], 1, v => `Tes vols de caractéristiques durent ${v} s de plus et montent jusqu'à 3 fois.`),
+  pc('sram', 'J', 'Butin facile', 'pillage', 'ceinture', [10, 20], 1, v => `Un monstre tué par un de tes pièges sème ${v} % de kamas en plus.`),
+  pc('sram', 'K', "Pas de l'ombre", 'sournoiserie', 'bottes', [0.5, 1], 0.5, v => `Ton pas (Espace) te rend invisible ${n(v)} s à l'arrivée.`),
+  pc('sram', 'L', 'Fuite rapide', 'derobade', 'bottes', [15, 25], 1, v => `Pendant l'Invisibilité, tu cours ${v} % plus vite.`),
+  pc('sram', 'M', 'Détonation en chaîne', 'piege_funeste', 'arme', [20, 35], 1, v => `La détonation (X) fait ${v} % de dégâts en plus pour chaque autre piège qui saute en même temps.`),
+  pc('sram', 'N', 'Coup de grâce', 'piege_mortel', 'arme', [15, 20], 1, v => `Sous ${v} % de PV, un monstre touché par tes sorts ou tes pièges est achevé (élites : moitié, jamais les boss) ; une fois toutes les 4 s.`),
+  pc('sram', 'O', 'Nappe de brume', 'brume', 'bouclier', [2, 3], 0.5, v => `Quand tu tombes sous 30 % de PV, tu deviens invisible ${n(v)} s (une fois toutes les 20 s).`),
+  pc('sram', 'P', 'Fiel', 'poisse', 'bouclier', [15, 25], 1, v => `Tes vols de vie rendent ${v} % de plus quand une cible touchée est empoisonnée.`),
 ];
 /** Châtiments du Sacrieur (Dofus Rétro, 14B) : caractéristique gagnée à chaque coup reçu. */
 export const CHATIMENTS: Record<string, 'force' | 'agilite' | 'chance' | 'intelligence' | 'vitalite'> =
@@ -213,11 +230,11 @@ export const estPouvoirClasse = (id: string) => !!PC_PAR_ID[id];
 
 /** 2D : pouvoirs préférés de chaque boss (chance triplée sur son butin), un par classe. */
 export const BOSS_PREFERES: Record<string, string[]> = {
-  royal: ['pc-iop-A', 'pc-cra-G', 'pc-osamodas-E', 'pc-sacrieur-E', 'pc-sacrieur-L', 'pc-iop-K', 'pc-cra-P', 'pc-osamodas-L', 'pc-forgelance-E', 'pc-forgelance-M', 'pc-eniripsa-E', 'pc-eniripsa-I', 'pc-ecaflip-A', 'pc-ecaflip-J', 'pc-sadida-C', 'pc-sadida-J', 'pc-sadida-Q', 'pc-ouginak-A', 'pc-ouginak-J', 'pc-ouginak-O'],
-  kardorim: ['pc-iop-F', 'pc-cra-H', 'pc-osamodas-F', 'pc-sacrieur-D', 'pc-sacrieur-O', 'pc-iop-J', 'pc-cra-O', 'pc-osamodas-O', 'pc-forgelance-C', 'pc-forgelance-L', 'pc-eniripsa-P', 'pc-eniripsa-H', 'pc-ecaflip-P', 'pc-ecaflip-E', 'pc-sadida-P', 'pc-sadida-F', 'pc-sadida-R', 'pc-ouginak-P', 'pc-ouginak-M', 'pc-ouginak-E'],
-  tournesol_affame: ['pc-sadida-A', 'pc-iop-H', 'pc-cra-A', 'pc-osamodas-D', 'pc-sacrieur-A', 'pc-sacrieur-J', 'pc-iop-L', 'pc-cra-K', 'pc-osamodas-J', 'pc-forgelance-I', 'pc-forgelance-A', 'pc-eniripsa-C', 'pc-eniripsa-G', 'pc-ecaflip-N', 'pc-ecaflip-G', 'pc-sadida-K', 'pc-sadida-S', 'pc-sadida-T', 'pc-ouginak-D', 'pc-ouginak-C', 'pc-ouginak-I'],
-  mob_l_eponge: ['pc-iop-E', 'pc-cra-F', 'pc-osamodas-B', 'pc-sacrieur-C', 'pc-sacrieur-P', 'pc-iop-M', 'pc-cra-M', 'pc-osamodas-K', 'pc-forgelance-K', 'pc-forgelance-H', 'pc-eniripsa-A', 'pc-eniripsa-O', 'pc-ecaflip-O', 'pc-ecaflip-C', 'pc-sadida-M', 'pc-sadida-H', 'pc-sadida-U', 'pc-sadida-V', 'pc-ouginak-G', 'pc-ouginak-H', 'pc-ouginak-L'],
-  kankreblath: ['pc-iop-B', 'pc-cra-C', 'pc-osamodas-C', 'pc-sacrieur-B', 'pc-sacrieur-K', 'pc-iop-O', 'pc-cra-J', 'pc-osamodas-P', 'pc-forgelance-D', 'pc-forgelance-O', 'pc-eniripsa-M', 'pc-eniripsa-N', 'pc-ecaflip-M', 'pc-ecaflip-I', 'pc-sadida-D', 'pc-sadida-N', 'pc-sadida-W', 'pc-sadida-X', 'pc-ouginak-F', 'pc-ouginak-N', 'pc-ouginak-K', 'pc-ouginak-B'],
+  royal: ['pc-iop-A', 'pc-cra-G', 'pc-osamodas-E', 'pc-sacrieur-E', 'pc-sacrieur-L', 'pc-iop-K', 'pc-cra-P', 'pc-osamodas-L', 'pc-forgelance-E', 'pc-forgelance-M', 'pc-eniripsa-E', 'pc-eniripsa-I', 'pc-ecaflip-A', 'pc-ecaflip-J', 'pc-sadida-C', 'pc-sadida-J', 'pc-sadida-Q', 'pc-ouginak-A', 'pc-ouginak-J', 'pc-ouginak-O', 'pc-sram-A', 'pc-sram-J'],
+  kardorim: ['pc-iop-F', 'pc-cra-H', 'pc-osamodas-F', 'pc-sacrieur-D', 'pc-sacrieur-O', 'pc-iop-J', 'pc-cra-O', 'pc-osamodas-O', 'pc-forgelance-C', 'pc-forgelance-L', 'pc-eniripsa-P', 'pc-eniripsa-H', 'pc-ecaflip-P', 'pc-ecaflip-E', 'pc-sadida-P', 'pc-sadida-F', 'pc-sadida-R', 'pc-ouginak-P', 'pc-ouginak-M', 'pc-ouginak-E', 'pc-sram-O', 'pc-sram-N'],
+  tournesol_affame: ['pc-sadida-A', 'pc-iop-H', 'pc-cra-A', 'pc-osamodas-D', 'pc-sacrieur-A', 'pc-sacrieur-J', 'pc-iop-L', 'pc-cra-K', 'pc-osamodas-J', 'pc-forgelance-I', 'pc-forgelance-A', 'pc-eniripsa-C', 'pc-eniripsa-G', 'pc-ecaflip-N', 'pc-ecaflip-G', 'pc-sadida-K', 'pc-sadida-S', 'pc-sadida-T', 'pc-ouginak-D', 'pc-ouginak-C', 'pc-ouginak-I', 'pc-sram-C', 'pc-sram-F'],
+  mob_l_eponge: ['pc-iop-E', 'pc-cra-F', 'pc-osamodas-B', 'pc-sacrieur-C', 'pc-sacrieur-P', 'pc-iop-M', 'pc-cra-M', 'pc-osamodas-K', 'pc-forgelance-K', 'pc-forgelance-H', 'pc-eniripsa-A', 'pc-eniripsa-O', 'pc-ecaflip-O', 'pc-ecaflip-C', 'pc-sadida-M', 'pc-sadida-H', 'pc-sadida-U', 'pc-sadida-V', 'pc-ouginak-G', 'pc-ouginak-H', 'pc-ouginak-L', 'pc-sram-G', 'pc-sram-H', 'pc-sram-L'],
+  kankreblath: ['pc-iop-B', 'pc-cra-C', 'pc-osamodas-C', 'pc-sacrieur-B', 'pc-sacrieur-K', 'pc-iop-O', 'pc-cra-J', 'pc-osamodas-P', 'pc-forgelance-D', 'pc-forgelance-O', 'pc-eniripsa-M', 'pc-eniripsa-N', 'pc-ecaflip-M', 'pc-ecaflip-I', 'pc-sadida-D', 'pc-sadida-N', 'pc-sadida-W', 'pc-sadida-X', 'pc-ouginak-F', 'pc-ouginak-N', 'pc-ouginak-K', 'pc-ouginak-B', 'pc-sram-B', 'pc-sram-D', 'pc-sram-E', 'pc-sram-I', 'pc-sram-K', 'pc-sram-M', 'pc-sram-P'],
 };
 /** 2A : part des pouvoirs de Légendaire qui sont des pouvoirs de classe inventés. */
 export const CHANCE_POUVOIR_CLASSE = 0.2;

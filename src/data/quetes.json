@@ -12517,7 +12517,50 @@
     "titre": "Chef de meute"
    },
    "test": true
+  },  "personne_vu": {
+   "nom": "Personne ne m'a vu",
+   "dofusId": 0,
+   "description": "Avec un Sram, vider une arène de donjon sans prendre un seul coup.",
+   "categorie": "Général",
+   "sousCategorie": "Classes",
+   "points": 20,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "Une arène de donjon vidée sans être touché",
+     "compteur": "personneVu",
+     "n": 1
+    }
+   ],
+   "recompense": {
+    "xp": 1000,
+    "apparat": "21472",
+    "titre": "Ombre d'Astrub"
+   },
+   "test": true
   },
+  "grand_piege": {
+   "nom": "Le grand piège",
+   "dofusId": 0,
+   "description": "Avec un Sram, tuer 5 monstres d'un coup en faisant sauter tes pièges (X).",
+   "categorie": "Général",
+   "sousCategorie": "Classes",
+   "points": 20,
+   "icone": 82,
+   "objectifs": [
+    {
+     "nom": "5 monstres tués par la même détonation",
+     "compteur": "grandPiege",
+     "n": 5
+    }
+   ],
+   "recompense": {
+    "xp": 1000,
+    "apparat": "21473"
+   },
+   "test": true
+  },
+
   "arene_25": {
    "nom": "Vingt-cinq âmes relâchées",
    "dofusId": 0,

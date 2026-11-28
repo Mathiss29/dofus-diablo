@@ -32,7 +32,7 @@ import { avantImpact61, dommages61, echangeBalise61, hit61, viseBalise61, impact
 import { SORTS, dmgMoyen, gradeAuNiveau, niveauRequis, type PaireSorts, type SortGrade, type SortOfficiel } from './sorts';
 import { porteeSort } from './apercu';
 import { aimanter, alchiRhetorique, apresCoupEniripsa, envol, impactEniripsa, majEniripsa } from './eniripsa';
-import { avantImpactSram, dommagesSram, impactSram, majSram, type EtatSram } from './sram';
+import { avantImpactSram, dommagesSram, impactSram, majSram, multSram, vitesseSram, type EtatSram } from './sram';
 import { aboie, arriveeBond, avantImpactOuginak, bondGratuit, porteeBondOuginak, vitesseOuginak, zoneOuginak, coupRecuOuginak, impactOuginak, interditBete, majOuginak, porteeBete, subisOuginak, type EtatOuginak } from './ouginak';
 import { arbrePassage, avantImpactSadida, impactSadida, majSadida, partagerDon, sentierDeRonces } from './sadida';
 import { avantImpactEcaflip, chateauBrise, impactEcaflip, majEcaflip, neuviemeVie, type Carte, type MainGagnante } from './ecaflip';
@@ -486,7 +486,7 @@ export class Player extends Entity {
   ecaPattesA = -99; ecaVieA = -999;
   courir(k: number, t: number) { this.courseK = this.courseT > 0 ? Math.max(this.courseK, k) : k; this.courseT = Math.max(this.courseT, t); }
   slow(t: number, k: number) { if (this.insensibleT > 0) return; k *= fuiteFactor(this.fuite); this.slowK = this.slowT > 0 ? Math.max(this.slowK, k) : k; if (t >= this.slowT) this.slowT0 = t; this.slowT = Math.max(this.slowT, t); }
-  get speed(): number { return this.cls.speed * (1 + vitesseAgilite(this.stat('agilite'))) * this.vitesseTest * (this.slowT > 0 ? 1 - this.slowK : 1) * (this.courseT > 0 ? 1 + this.courseK : 1) * (1 + this.bonusMetier('pecheur')) * (this.ougBete ? 1 + this.cls.ouginak!.bete.vitesse : 1) * vitesseOuginak(this) * vitesseMonture(this); }
+  get speed(): number { return this.cls.speed * (1 + vitesseAgilite(this.stat('agilite'))) * this.vitesseTest * (this.slowT > 0 ? 1 - this.slowK : 1) * (this.courseT > 0 ? 1 + this.courseK : 1) * (1 + this.bonusMetier('pecheur')) * (this.ougBete ? 1 + this.cls.ouginak!.bete.vitesse : 1) * vitesseOuginak(this) * vitesseSram(this) * vitesseMonture(this); }
   /** Partie de test (5D) : course ×3. */
   vitesseTest = 1;
   /** Tacle et Fuite (base Agilité / 10), Retrait et Esquive PA / PM (base Sagesse / 10), comme dans Dofus. */
@@ -1330,7 +1330,7 @@ export class Player extends Entity {
       if (eca) mult *= eca.mult;
       if (d.e61) mult *= avantImpact61(this, s.id, d, s.tx, s.ty, s.gm, world);   // Épée du Destin, Flèche Dévorante, Bain de Sang
       if (d.e07) mult *= avantImpact07(this, d, s.tx, s.ty, world);   // Épée du Jugement, Muselière (0.7)
-      if (d.sram?.sautes && this.sram) mult *= 1 + d.sram.sautes.par * Math.min(d.sram.sautes.max, this.sram.sautes);   // Chausse-trappe
+      if (d.sram && this.cls.sram) mult *= multSram(this, d);   // Chausse-trappe, Lame dans le dos
       if (d.ouginak && this.cls.ouginak && !mv) mult *= avantImpactOuginak(this, s.id, d, s, world);   // Ouginak : bond sur la Proie, cumul sur la Proie
       const base = d.dmgPV ? this.hp * d.dmgPV : d.dmg * s.gm;
       const attire = d.attire && { px: ((this.souffrance >= 6 && d.souffrance6?.attire) || d.attire.cases) * CASE, vers: d.attire.vers };
@@ -1507,6 +1507,7 @@ export class Player extends Entity {
     if (!this.v03) return {};
     const o: Partial<HitDef> = {}, v = (k: string) => this.pcv(k);
     if (id === 'couperet' && v('pc-iop-F')) o.execute = v('pc-iop-F') / 100;
+    if (this.cls.sram && v('pc-sram-N')) o.execute = v('pc-sram-N') / 100;   // Coup de grâce (Sram)
     if (v('pc-cra-E') && this.mods.some(m => m.src === 'tirs_eloignes')) o.loin = v('pc-cra-E');
     if (id === 'glacee' && v('pc-cra-F')) o.givre = v('pc-cra-F');
     if (id === 'recul' && v('pc-cra-G')) { o.clouage = v('pc-cra-G'); o.pushDmg = true; }

@@ -234,7 +234,8 @@ export type SuccesObjectif = { nom: string } & (
   /** 9E : objets fabriqués ou runes obtenues en brisant, au total. */
   /** Sadida 17B : « Forêt Hantée » (6 Feuillus et 10 Infectés en même temps). */
   /** Ouginak 8A : « Nouvelle Lune » (meilleure série de Proies achevées d'affilée en Forme Bestiale). */
-  | { compteur: 'fabriques' | 'runes' | 'foretHantee' | 'nouvelleLune'; n: number }
+  /** Sram 8A + 8B : arène de donjon vidée sans être touché ; meilleur nombre de monstres tués par une seule détonation (X). */
+  | { compteur: 'fabriques' | 'runes' | 'foretHantee' | 'nouvelleLune' | 'personneVu' | 'grandPiege'; n: number }
   /** Carte du monde 6D (succès Cartographe) : part des cartes du dehors de ce monde vues sous le brouillard. */
   | { exploration: string; part: number; cartes: string[] }
   /** Guerre des Cawottes (12A-12D) : attaques gagnées, coffres en or, Kiafin rattrapés, ou un champ défendu sans perte. */
@@ -338,6 +339,8 @@ export class Quetes {
   titresBonus: string[] = [];
   /** Boss du donjon apparu (9C) : moment de son apparition, et coup reçu depuis. */
   private bossVu: { t: number; touche: boolean } | null = null;
+  /** Sram 8A (« Personne ne m'a vu ») : arène de donjon en cours avec un Sram, touché ou non. */
+  private areneSram: { touche: boolean } | null = null;
   /** Défense en cours : quête, objectif, temps tenu, prochaine vague. */
   private defense: { q: string; i: number; t: number; vague: number; hors: number } | null = null;
   /** Contre la montre en cours : quête, objectif, temps écoulé. */
@@ -876,6 +879,14 @@ export class Quetes {
     } else if (e.k === 'playerHurt') {
       this.dialogue = null;   // un coup reçu ferme le dialogue (4B)
       if (this.bossVu) this.bossVu.touche = true;
+      if (this.areneSram) this.areneSram.touche = true;
+      return;
+    } else if (e.k === 'areneDebut') {
+      this.areneSram = w.players[0]?.cls.sram ? { touche: false } : null;
+      return;
+    } else if (e.k === 'areneFin') {
+      if (this.areneSram && !this.areneSram.touche && w.players[0]?.cls.sram) this.compteurs.personneVu = 1;
+      this.areneSram = null;
       return;
     } else if (e.k === 'bossIntro') {
       if (w.donjonIci()) this.bossVu = { t: w.time, touche: false };
