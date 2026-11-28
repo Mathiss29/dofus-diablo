@@ -813,7 +813,9 @@
     233,
     234,
     253,
-    231
+    231,
+    230,
+    275
    ],
    "discussion": [
     {
@@ -834,7 +836,10 @@
    "contrats": [
     70,
     525,
-    521
+    521,
+    55,
+    69,
+    523
    ],
    "discussion": [
     {
@@ -884,7 +889,8 @@
    "phrase": "Les Rats Bougris ont pris le port, et le froid ne les gêne pas. Moi, si.",
    "contrats": [
     601,
-    600
+    600,
+    602
    ],
    "discussion": [
     {
@@ -972,6 +978,49 @@
    "v07": true,
    "titre": "Bateau pour l'île de Pandala",
    "phrase": "Pandala ne reçoit pas les mains vides. Apporte quelque chose, et on parlera de la traversée."
+  },
+  "tableau_otomai": {
+   "nom": "Vigie du Village côtier",
+   "sprite": "garde_amakna",
+   "dofusId": 2849,
+   "zone": "astrub",
+   "carte": "-45_18",
+   "v07": true,
+   "titre": "Milice d'Otomaï",
+   "phrase": "Les Zoths descendent de leur village, les Tourbassingues sortent de la boue. Et moi je suis seul avec une longue-vue.",
+   "contrats": [
+    454,
+    457,
+    471,
+    468
+   ],
+   "discussion": [
+    {
+     "reponse": "Comment marchent les contrats ?",
+     "texte": "Trois contrats par jour, un gros par semaine, comme sur le continent. Plaines, tourbières ou village des Zoths : tu choisis, tu nettoies, tu reviens."
+    }
+   ]
+  },
+  "tableau_pandala": {
+   "nom": "Garde du Village de Pandala",
+   "sprite": "garde_pandala",
+   "dofusId": 5910,
+   "zone": "astrub",
+   "carte": "21_-28",
+   "v07": true,
+   "titre": "Milice de Pandala",
+   "phrase": "Pandala Air, Pandala Eau, Pandala Terre… chaque coin de l'île a ses bestioles, et elles ont toutes soif de bagarre.",
+   "contrats": [
+    942,
+    941,
+    944
+   ],
+   "discussion": [
+    {
+     "reponse": "Comment marchent les contrats ?",
+     "texte": "Trois contrats par jour, un gros par semaine. Bambous, rizières ou rochers : la Milice paie en kamas, pas en bambou, promis."
+    }
+   ]
   }
  },
  "quetes": {
@@ -12188,6 +12237,80 @@
    },
    "test": true
   },
+  "maitre_tranche_90_120": {
+   "nom": "Maître de la tranche 90-120",
+   "dofusId": 0,
+   "description": "Vaincre les sept donjons du niveau 90 au 120 et atteindre le palier 2 de renommée dans les régions de la 0.7.",
+   "categorie": "Donjons",
+   "sousCategorie": "Niveaux 101 à 150",
+   "points": 50,
+   "icone": 254,
+   "objectifs": [
+    {
+     "nom": "Caverne du Koulosse",
+     "donjon": "Caverne du Koulosse"
+    },
+    {
+     "nom": "Bibliothèque du Maître Corbac",
+     "donjon": "Bibliothèque du Maître Corbac"
+    },
+    {
+     "nom": "Goulet du Rasboul",
+     "donjon": "Goulet du Rasboul"
+    },
+    {
+     "nom": "Bambusaie de Damadrya",
+     "donjon": "Bambusaie de Damadrya"
+    },
+    {
+     "nom": "Repaire de Skeunk",
+     "donjon": "Repaire de Skeunk"
+    },
+    {
+     "nom": "Antre du Blop Multicolore Royal",
+     "donjon": "Antre du Blop Multicolore Royal"
+    },
+    {
+     "nom": "Serre du Royalmouth",
+     "donjon": "Serre du Royalmouth"
+    },
+    {
+     "nom": "Renommée : Île d'Otomaï (palier 2)",
+     "renommee": "Île d'Otomaï",
+     "palier": 2
+    },
+    {
+     "nom": "Renommée : Cania (palier 2)",
+     "renommee": "Cania",
+     "palier": 2
+    },
+    {
+     "nom": "Renommée : Île de Pandala (palier 2)",
+     "renommee": "Île de Pandala",
+     "palier": 2
+    },
+    {
+     "nom": "Renommée : Montagne des Koalaks (palier 2)",
+     "renommee": "Montagne des Koalaks",
+     "palier": 2
+    },
+    {
+     "nom": "Renommée : Frigost (palier 2)",
+     "renommee": "Frigost",
+     "palier": 2
+    }
+   ],
+   "recompense": {
+    "xp": 40000,
+    "titre": "Maître de la tranche 90-120",
+    "ornement": {
+     "id": 901,
+     "nom": "Maître de la tranche 90-120",
+     "icone": 1
+    }
+   },
+   "v07": true
+  },
   "foret_hantee": {
    "nom": "Forêt Hantée",
    "dofusId": 0,
@@ -12754,6 +12877,188 @@
     [
      "Village en flammes",
      "Les Dragoss Charbon mettent le feu partout. Éteins-les."
+    ]
+   ],
+   "454": [
+    [
+     "Les plaines d'Otomaï",
+     "Les Bitoufs et les Craqueleurs polis piétinent les Plaines herbeuses. Fais-leur de la place."
+    ],
+    [
+     "Herbe haute",
+     "Des Mufafahs rôdent dans les hautes herbes. Ne les laisse pas approcher du village."
+    ],
+    [
+     "Kidos en vadrouille",
+     "Les Kidos et les Kilibriss pillent les nids. Rends-leur la monnaie."
+    ]
+   ],
+   "457": [
+    [
+     "Boue jusqu'aux genoux",
+     "Les Tourbassingues sortent de la Tourbière sans fond. Renvoie-les dans la boue."
+    ],
+    [
+     "Ouassingue entourbé",
+     "Le Ouassingue entourbé bloque le passage. Libère le chemin."
+    ],
+    [
+     "Fleurs de marais",
+     "Les Nénufors tilotus étouffent la tourbière. Coupe-les à la racine."
+    ]
+   ],
+   "471": [
+    [
+     "Ça sent mauvais",
+     "La Tourbière nauséabonde déborde de Bourbassingues. Respire par la bouche et tape fort."
+    ],
+    [
+     "Ali Grothor",
+     "Ali Grothor se croit roi du marais. Détrône-le."
+    ],
+    [
+     "Le marais gronde",
+     "Les bêtes de la tourbière deviennent nerveuses. Calme-les, à ta manière."
+    ]
+   ],
+   "468": [
+    [
+     "Les Zoths en colère",
+     "Le Village des Zoths prépare une sortie. Frappe le premier."
+    ],
+    [
+     "Discipline Zoth",
+     "Les Disciples et les Sergents Zoths s'entraînent sur les voyageurs. Montre-leur une autre leçon."
+    ],
+    [
+     "Le Maître Zoth",
+     "Le Maître Zoth recrute. Fais-lui perdre l'envie."
+    ]
+   ],
+   "55": [
+    [
+     "Plumes noires",
+     "Les Corbacs tournent au-dessus des Pénates. Fais-les descendre."
+    ],
+    [
+     "Buveurs de Cania",
+     "Les Buveurs et les Renarbos ont envahi les Pénates du Corbac. Chasse-les."
+    ],
+    [
+     "Corbac apprivoisé",
+     "Quelqu'un dresse des Corbacs contre les caravanes. Mets fin au dressage."
+    ]
+   ],
+   "69": [
+    [
+     "Le bois maudit",
+     "Les Chafers sortent du Bois de Litneg à la nuit tombée. Renvoie-les sous terre."
+    ],
+    [
+     "Troollaraj",
+     "Un Troollaraj garde le bois comme son jardin. Fais-lui comprendre que non."
+    ],
+    [
+     "Archers d'os",
+     "Les Chafers archers tirent sur tout ce qui bouge. Approche-toi et tape."
+    ]
+   ],
+   "523": [
+    [
+     "Le Cirque de Cania",
+     "Les Truchs ont pris le Cirque. Le spectacle doit s'arrêter."
+    ],
+    [
+     "Fojumo",
+     "Les Fojumos se battent pour un rien. Donne-leur une vraie raison."
+    ],
+    [
+     "Numéro de dressage",
+     "Les Truchideurs dressent des Truchons pour attaquer. Ferme le chapiteau."
+    ]
+   ],
+   "230": [
+    [
+     "Repos troublé",
+     "Le Cimetière primitif ne dort plus : les Momies Koalaks se relèvent. Recouche-les."
+    ],
+    [
+     "Fossoyeurs",
+     "Les Fossoyeurs Koalaks creusent des tombes pour les voyageurs. Remplis-les avec eux."
+    ],
+    [
+     "Le Maître Koalak",
+     "Le Maître Koalak lève ses chevaucheurs. Brise la charge."
+    ]
+   ],
+   "275": [
+    [
+     "La vallée sanglante",
+     "Les Koalaks sanguins tiennent la Vallée de la Morh'Kitu. Reprends-la."
+    ],
+    [
+     "Warkos violets",
+     "Les Warkos violets attaquent les cueilleurs. Protège la vallée."
+    ],
+    [
+     "Fauchalaks",
+     "Les Fauchalaks fauchent tout, même les voyageurs. Désarme-les."
+    ]
+   ],
+   "942": [
+    [
+     "Plantala en friche",
+     "Les Bamboutos envahissent les champs de Plantala. Fais le ménage."
+    ],
+    [
+     "Floristiles",
+     "Les Floristiles piquent tout ce qui passe. Taille-les court."
+    ],
+    [
+     "Grenufars",
+     "Les Grenufars coassent nuit et jour. Fais taire la mare."
+    ]
+   ],
+   "941": [
+    [
+     "Akwadala inondée",
+     "Les Sarkapwanes remontent des rizières d'Akwadala. Fais-les redescendre."
+    ],
+    [
+     "Kokoms",
+     "Les Kokoms volent les récoltes de riz. Rends le riz aux paysans."
+    ],
+    [
+     "L'eau qui dort",
+     "Les Akakwas et les Bettos guettent sous l'eau. Ne leur laisse pas le temps."
+    ]
+   ],
+   "944": [
+    [
+     "Terrdala tremble",
+     "Les bêtes de Terrdala dévalent la montagne. Arrête l'avalanche."
+    ],
+    [
+     "Jerart Dupaindur",
+     "Jerart Dupaindur et ses Ishigro Pakés bloquent le col. Ouvre le passage."
+    ],
+    [
+     "Tetonukis",
+     "Les Tetonukis et les Parashukouis sèment la pagaille. Ramène le calme."
+    ]
+   ],
+   "602": [
+    [
+     "Les Champs de glace",
+     "Les Boufmouths broutent la glace et chargent les voyageurs. Fais-les reculer."
+    ],
+    [
+     "Bouflouths",
+     "Les Bouflouths glissent sur la glace plus vite que toi. Rattrape-les."
+    ],
+    [
+     "Boufmouths de guerre",
+     "Une harde de Boufmouths de guerre se prépare. Frappe avant qu'elle charge."
     ]
    ]
   }

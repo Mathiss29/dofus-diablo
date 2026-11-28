@@ -14,6 +14,8 @@ export const ACTIONS: Action[] = [
   { id: 'potion', nom: 'Potion', groupe: 'Combat', def: 'E' },
   // « Métiers : » 4A : la boisson de résistance (5 s d'un élément) bue en dernier
   { id: 'boisson', nom: 'Boisson de résistance', groupe: 'Combat', def: 'V' },
+  // 0.7 (17A) : monter sur sa Dragodinde ou son Muldo, en descendre (on descend aussi seul au premier coup)
+  { id: 'monture', nom: 'Monter / descendre de sa monture', groupe: 'Combat', def: 'Digit7' },
   { id: 'coffre', nom: 'Coffre (Enutrof) · Jouer la Main (Écaflip) · Ralliement (Sadida)', groupe: 'Combat', def: 'X' },
   ...[1, 2, 3, 4].map(i => ({ id: `invoc${i}`, nom: `Invocation ${i} (Osamodas)`, groupe: 'Combat', def: 'AZRT'[i - 1] })),
   { id: 'inventaire', nom: 'Inventaire', groupe: 'Fenêtres', def: 'I' },
@@ -35,6 +37,7 @@ export const ACTIONS: Action[] = [
   { id: 'carte', nom: 'Carte du monde', groupe: 'Fenêtres', def: 'M' },
   { id: 'carteTab', nom: 'Carte en surimpression', groupe: 'Fenêtres', def: 'Tab' },
   { id: 'havresac', nom: 'Havre-Sac', groupe: 'Fenêtres', def: 'H' },
+  { id: 'elevage', nom: 'Montures et élevage', groupe: 'Fenêtres', def: 'Digit8' },
   { id: 'deco', nom: 'Décorer le Havre-Sac', groupe: 'Fenêtres', def: 'N' },
   { id: 'muet', nom: 'Couper ou remettre le son', groupe: 'Divers', def: 'Ctrl+M' },
   { id: 'impact', nom: 'Effets d\'impact', groupe: 'Divers', def: 'F' },

@@ -4,6 +4,9 @@
 # 3B : le Façonneur les fabrique avec leur recette officielle, sans les Galets et la Pépite (monnaies de Kolizéum et d'événement, absentes du jeu).
 #      Une recette n'entre dans items.json que si tous ses ingrédients existent dans le jeu : relancer ce script après chaque ajout de ressources.
 # Les trophées sont aussi rangés dans items.resources (nom, icône, niveau) pour les fenêtres d'Artisanat et de butin.
+# 0.7 (« 0.7 : » 9C) : NIVEAU=100 python trophees.py … ajoute les 87 trophées du niveau 100 (v07 : cachés hors partie de test),
+#   tous répartis entre les 8 boss de donjon de la 0.7 (Gobrechaun compris, 10 ou 11 chacun) : leurs recettes demandent des
+#   minerais et substrats absents du jeu (Kouartz, Kriptonite…). Sans toucher aux autres niveaux.
 # Usage : python trophees.py <tables Dofus (data_dump : items, recipes, effects, characteristics)> <fr.bin>   puis   icones_ajout.py <bundle> <icônes listées>
 import ast, json, os, random, sys
 R = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..')
@@ -32,25 +35,30 @@ STATS = {}
 for eid, e in EFF.items():
     kw = (CH.get(int(e.get('characteristic') or 0)) or {}).get('keyword')
     if kw in CARAC and e.get('characteristicOperator') in ('+', '-'): STATS[eid] = (CARAC[kw], 1 if e['characteristicOperator'] == '+' else -1)
-SANS = {'Galet cramoisi', 'Galet Saisonnier', 'Pépite'}
+SANS = {'Galet cramoisi', 'Galet Saisonnier', 'Pépite', 'Galet rutilant', 'Galet Lunaire'}
+NIV = int(os.environ.get('NIVEAU', '50'))
+BOSS07 = ['koulosse', 'maitre_corbac', 'silf_le_rasboul_majeur', 'damadrya', 'skeunk', 'blop_multicolore_royal', 'royalmouth', 'gobrechaun']
 BOSS = ['scarabosse_dore', 'chafer_ronin', 'batofu', 'directeur_grunob', 'bworkette', 'coffre_des_forgerons', 'kwakwa', 'shin_larve',
         'craqueleur_legendaire', 'wa_wobot', 'wa_wabbit']
 
+PAR = 2
+if NIV == 100: BOSS = BOSS07
 P = os.path.join(R, 'src/data/dofus.json'); D = json.load(open(P))
 PI = os.path.join(R, 'src/data/items.json'); G = json.load(open(PI))
 tro = {}
 for k, v in sorted(I.items()):
-    if not v or int(v['typeId']) != 151 or int(v['level']) != 50: continue
+    if not v or int(v['typeId']) != 151 or int(v['level']) != NIV: continue
     st = {}
     for r in L(v['possibleEffects']):
         e = RI.get(r['rid']) or {}
         s = STATS.get(int(e.get('effectId', 0)))
         if s: st[s[0]] = st.get(s[0], 0) + s[1] * int(e.get('diceNum', 0))
     if not st: continue
-    tro[str(k)] = {'nom': T(int(v['nameId'])), 'niveau': 50, 'icon': int(v['iconId']), 'stats': st}
-ids = sorted(tro); random.Random(50).shuffle(ids)
+    tro[str(k)] = {'nom': T(int(v['nameId'])), 'niveau': NIV, 'icon': int(v['iconId']), 'stats': st}
+    if NIV == 100: tro[str(k)]['v07'] = True
+ids = sorted(tro); random.Random(NIV).shuffle(ids)
 for i, b in enumerate(BOSS):
-    for t in ids[2 * i:2 * i + 2]: tro[t]['boss'] = b
+    for t in (ids[i::len(BOSS)] if NIV == 100 else ids[PAR * i:PAR * i + PAR]): tro[t]['boss'] = b
 have = set(G['resources']) | set(tro)
 G['recipes'] = [r for r in G['recipes'] if r['result'] not in tro]
 n = 0
@@ -60,8 +68,8 @@ for r in REC.values():
     if not all(i in G['resources'] for i, _ in ing): continue
     G['recipes'].append({'result': str(r['resultId']), 'metier': 'faconneur', 'level': int(r['resultLevel']), 'ingredients': ing}); n += 1
 G['recipes'].sort(key=lambda r: r['level'])
-for k, t in tro.items(): G['resources'][k] = {'name': t['nom'], 'icon': t['icon'], 'level': 50, 'trophee': True}
-D['trophees'] = tro
+for k, t in tro.items(): G['resources'][k] = {'name': t['nom'], 'icon': t['icon'], 'level': NIV, 'trophee': True}
+D['trophees'] = {**{k: t for k, t in D.get('trophees', {}).items() if t['niveau'] != NIV}, **tro}
 json.dump(D, open(P, 'w'), ensure_ascii=False, indent=1)
 json.dump(G, open(PI, 'w'), ensure_ascii=False, indent=1)
 print(len(tro), 'trophées ;', n, 'recettes du Façonneur ; icônes :', ' '.join(map(str, sorted({t['icon'] for t in tro.values()}))))

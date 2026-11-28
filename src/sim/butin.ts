@@ -77,7 +77,7 @@ export interface CtxButin {
 export type EtatLigne = 'ok' | 'evenement' | 'quete' | 'metier';
 export const metierDe = (d: DropDef, items: ItemsData) => d.metier ? Object.entries(items.metiers ?? {}).find(([, j]) => j.id === d.metier!.id)?.[0] : undefined;
 /** Équipement d'une version pas encore sortie (26-40 : 0.3 ; 41-60 : 0.4) : ni tiré ni affiché avant (partie de test d'ici là). */
-const avant03 = (d: DropDef, ctx: CtxButin) => (ctx.items.equipment[d.item]?.level ?? 0) > niveauObjetsMax(!!ctx.pouvoirs?.v03, ctx.pouvoirs?.v04);
+const avant03 = (d: DropDef, ctx: CtxButin) => (ctx.items.equipment[d.item]?.level ?? 0) > niveauObjetsMax(!!ctx.pouvoirs?.v03, ctx.pouvoirs?.v04, ctx.pouvoirs?.v07 ?? true);
 export function etatLigne(d: DropDef, ctx: CtxButin): EtatLigne {
   if (d.cond === 'quete') return 'quete';   // nos quêtes sont les nôtres (règle Quêtes) : ces objets de quête de Dofus ne tombent pas
   if (d.cond === 'evenement' && !ctx.evenement) return 'evenement';
@@ -113,6 +113,8 @@ export function poolOfficiel(items: ItemsData, monstres: Iterable<string>): { id
     (items.equipment[d.item] ? ids : res).add(d.item);
   }
   for (const r of items.recipes ?? []) if (items.equipment[r.result] && r.ingredients.some(([i]) => res.has(String(i)))) ids.add(r.result);
+  // 0.7 (9A) : au-dessus de 60, la recette officielle absente du jeu relie quand même l'objet aux monstres qui lâchent ses ingrédients
+  for (const [id, e] of Object.entries(items.equipment)) if (e.ing?.some(i => res.has(i))) ids.add(id);
   // « Métiers : » 3D : les pièces des panoplies d'artisan ne se trouvent qu'à l'atelier
   return [...ids].filter(id => { const d = items.equipment[id]; return d && !d.familier && !d.horsJeu && !pieceArtisan(items, id); }).sort().map(id => ({ id, level: items.equipment[id].level }));
 }

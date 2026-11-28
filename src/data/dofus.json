@@ -89,7 +89,11 @@
    "stats": {
     "prospection": 30
    },
-   "source": "Repaire de Skeunk"
+   "source": "Repaire de Skeunk (1 chance sur 50)",
+   "boss": {
+    "skeunk": 0.02
+   },
+   "v07": true
   },
   "16061": {
    "nom": "Dofus des Veilleurs",
@@ -1116,6 +1120,914 @@
     "dommagesAir": 3
    },
    "boss": "bworkette"
+  },
+  "12623": {
+   "nom": "Tacleur",
+   "niveau": 100,
+   "icon": 151080,
+   "stats": {
+    "tacle": 8
+   },
+   "v07": true,
+   "boss": "blop_multicolore_royal"
+  },
+  "12626": {
+   "nom": "Fuyard",
+   "niveau": 100,
+   "icon": 151035,
+   "stats": {
+    "fuite": 8
+   },
+   "v07": true,
+   "boss": "blop_multicolore_royal"
+  },
+  "12629": {
+   "nom": "Ralentisseur",
+   "niveau": 100,
+   "icon": 151068,
+   "stats": {
+    "retraitPM": 6
+   },
+   "v07": true,
+   "boss": "damadrya"
+  },
+  "12632": {
+   "nom": "Engourdisseur",
+   "niveau": 100,
+   "icon": 151023,
+   "stats": {
+    "retraitPA": 6
+   },
+   "v07": true,
+   "boss": "koulosse"
+  },
+  "12635": {
+   "nom": "Fugitif",
+   "niveau": 100,
+   "icon": 151029,
+   "stats": {
+    "esquivePM": 8
+   },
+   "v07": true,
+   "boss": "skeunk"
+  },
+  "12638": {
+   "nom": "Insaisissable",
+   "niveau": 100,
+   "icon": 151041,
+   "stats": {
+    "esquivePA": 8
+   },
+   "v07": true,
+   "boss": "maitre_corbac"
+  },
+  "12641": {
+   "nom": "Pousseur",
+   "niveau": 100,
+   "icon": 151026,
+   "stats": {
+    "dommagesPoussee": 16
+   },
+   "v07": true,
+   "boss": "koulosse"
+  },
+  "12644": {
+   "nom": "Adamantin",
+   "niveau": 100,
+   "icon": 151005,
+   "stats": {
+    "resPoussee": 24
+   },
+   "v07": true,
+   "boss": "gobrechaun"
+  },
+  "12647": {
+   "nom": "Rempart",
+   "niveau": 100,
+   "icon": 151065,
+   "stats": {
+    "resCritiques": 6
+   },
+   "v07": true,
+   "boss": "maitre_corbac"
+  },
+  "12650": {
+   "nom": "Cuirassé Air",
+   "niveau": 100,
+   "icon": 151008,
+   "stats": {
+    "redAir": 12
+   },
+   "v07": true,
+   "boss": "silf_le_rasboul_majeur"
+  },
+  "12653": {
+   "nom": "Cuirassé Eau",
+   "niveau": 100,
+   "icon": 151011,
+   "stats": {
+    "redEau": 12
+   },
+   "v07": true,
+   "boss": "damadrya"
+  },
+  "12678": {
+   "nom": "Cuirassé Feu",
+   "niveau": 100,
+   "icon": 151014,
+   "stats": {
+    "redFeu": 12
+   },
+   "v07": true,
+   "boss": "royalmouth"
+  },
+  "12681": {
+   "nom": "Cuirassé Terre",
+   "niveau": 100,
+   "icon": 151020,
+   "stats": {
+    "redTerre": 12
+   },
+   "v07": true,
+   "boss": "gobrechaun"
+  },
+  "12684": {
+   "nom": "Cuirassé Neutre",
+   "niveau": 100,
+   "icon": 151017,
+   "stats": {
+    "redNeutre": 12
+   },
+   "v07": true,
+   "boss": "silf_le_rasboul_majeur"
+  },
+  "12686": {
+   "nom": "Ravageur Air",
+   "niveau": 100,
+   "icon": 151050,
+   "stats": {
+    "dommagesAir": 6
+   },
+   "v07": true,
+   "boss": "royalmouth"
+  },
+  "12689": {
+   "nom": "Ravageur Eau",
+   "niveau": 100,
+   "icon": 151053,
+   "stats": {
+    "dommagesEau": 6
+   },
+   "v07": true,
+   "boss": "skeunk"
+  },
+  "12692": {
+   "nom": "Ravageur Feu",
+   "niveau": 100,
+   "icon": 151056,
+   "stats": {
+    "dommagesFeu": 6
+   },
+   "v07": true,
+   "boss": "damadrya"
+  },
+  "12695": {
+   "nom": "Ravageur Neutre",
+   "niveau": 100,
+   "icon": 151059,
+   "stats": {
+    "dommagesNeutre": 6
+   },
+   "v07": true,
+   "boss": "royalmouth"
+  },
+  "12698": {
+   "nom": "Ravageur Terre",
+   "niveau": 100,
+   "icon": 151062,
+   "stats": {
+    "dommagesTerre": 6
+   },
+   "v07": true,
+   "boss": "royalmouth"
+  },
+  "12701": {
+   "nom": "Initiateur",
+   "niveau": 100,
+   "icon": 151038,
+   "stats": {
+    "initiative": 200
+   },
+   "v07": true,
+   "boss": "blop_multicolore_royal"
+  },
+  "12705": {
+   "nom": "Porteur",
+   "niveau": 100,
+   "icon": 151047,
+   "stats": {
+    "pods": 500
+   },
+   "v07": true,
+   "boss": "damadrya"
+  },
+  "12709": {
+   "nom": "Soigneur",
+   "niveau": 100,
+   "icon": 151074,
+   "stats": {
+    "soins": 8
+   },
+   "v07": true,
+   "boss": "maitre_corbac"
+  },
+  "12713": {
+   "nom": "Acrobate",
+   "niveau": 100,
+   "icon": 151002,
+   "stats": {
+    "agilite": 30
+   },
+   "v07": true,
+   "boss": "damadrya"
+  },
+  "12715": {
+   "nom": "Joueur",
+   "niveau": 100,
+   "icon": 151044,
+   "stats": {
+    "chance": 30
+   },
+   "v07": true,
+   "boss": "royalmouth"
+  },
+  "12720": {
+   "nom": "Savant",
+   "niveau": 100,
+   "icon": 151071,
+   "stats": {
+    "intelligence": 30
+   },
+   "v07": true,
+   "boss": "koulosse"
+  },
+  "12723": {
+   "nom": "Furibond",
+   "niveau": 100,
+   "icon": 151032,
+   "stats": {
+    "force": 30
+   },
+   "v07": true,
+   "boss": "maitre_corbac"
+  },
+  "12725": {
+   "nom": "Survivant",
+   "niveau": 100,
+   "icon": 151077,
+   "stats": {
+    "vitalite": 80
+   },
+   "v07": true,
+   "boss": "gobrechaun"
+  },
+  "13749": {
+   "nom": "Bloqueur",
+   "niveau": 100,
+   "icon": 151083,
+   "stats": {
+    "tacle": 16,
+    "fuite": -16
+   },
+   "v07": true,
+   "boss": "blop_multicolore_royal"
+  },
+  "13752": {
+   "nom": "Vagabond",
+   "niveau": 100,
+   "icon": 151086,
+   "stats": {
+    "fuite": 16,
+    "tacle": -16
+   },
+   "v07": true,
+   "boss": "damadrya"
+  },
+  "13755": {
+   "nom": "Docteur",
+   "niveau": 100,
+   "icon": 151089,
+   "stats": {
+    "soins": 16,
+    "vitalite": -100
+   },
+   "v07": true,
+   "boss": "blop_multicolore_royal"
+  },
+  "13758": {
+   "nom": "Forcené",
+   "niveau": 100,
+   "icon": 151092,
+   "stats": {
+    "force": 50,
+    "vitalite": -100
+   },
+   "v07": true,
+   "boss": "silf_le_rasboul_majeur"
+  },
+  "13761": {
+   "nom": "Astucieux",
+   "niveau": 100,
+   "icon": 151095,
+   "stats": {
+    "intelligence": 50,
+    "vitalite": -100
+   },
+   "v07": true,
+   "boss": "maitre_corbac"
+  },
+  "13764": {
+   "nom": "Equilibriste",
+   "niveau": 100,
+   "icon": 151098,
+   "stats": {
+    "agilite": 50,
+    "vitalite": -100
+   },
+   "v07": true,
+   "boss": "koulosse"
+  },
+  "13767": {
+   "nom": "Taquin",
+   "niveau": 100,
+   "icon": 151101,
+   "stats": {
+    "chance": 50,
+    "vitalite": -100
+   },
+   "v07": true,
+   "boss": "maitre_corbac"
+  },
+  "13770": {
+   "nom": "Bastion",
+   "niveau": 100,
+   "icon": 151104,
+   "stats": {
+    "resCritiques": 16,
+    "dommagesCritiques": -16
+   },
+   "v07": true,
+   "boss": "skeunk"
+  },
+  "13773": {
+   "nom": "Saccageur Terre",
+   "niveau": 100,
+   "icon": 151107,
+   "stats": {
+    "dommagesTerre": 10,
+    "resAir": -4
+   },
+   "v07": true,
+   "boss": "gobrechaun"
+  },
+  "13776": {
+   "nom": "Saccageur Neutre",
+   "niveau": 100,
+   "icon": 151110,
+   "stats": {
+    "dommagesNeutre": 10,
+    "resEau": -4
+   },
+   "v07": true,
+   "boss": "maitre_corbac"
+  },
+  "13779": {
+   "nom": "Saccageur Feu",
+   "niveau": 100,
+   "icon": 151113,
+   "stats": {
+    "dommagesFeu": 10,
+    "resTerre": -4
+   },
+   "v07": true,
+   "boss": "gobrechaun"
+  },
+  "13782": {
+   "nom": "Saccageur Eau",
+   "niveau": 100,
+   "icon": 151116,
+   "stats": {
+    "dommagesEau": 10,
+    "resNeutre": -4
+   },
+   "v07": true,
+   "boss": "skeunk"
+  },
+  "13785": {
+   "nom": "Saccageur Air",
+   "niveau": 100,
+   "icon": 151119,
+   "stats": {
+    "dommagesAir": 10,
+    "resFeu": -4
+   },
+   "v07": true,
+   "boss": "skeunk"
+  },
+  "13788": {
+   "nom": "Entraveur",
+   "niveau": 100,
+   "icon": 151122,
+   "stats": {
+    "retraitPM": 12,
+    "esquivePA": -12
+   },
+   "v07": true,
+   "boss": "blop_multicolore_royal"
+  },
+  "13791": {
+   "nom": "Paralyseur",
+   "niveau": 100,
+   "icon": 151125,
+   "stats": {
+    "retraitPA": 12,
+    "esquivePM": -12
+   },
+   "v07": true,
+   "boss": "maitre_corbac"
+  },
+  "13794": {
+   "nom": "Imprenable",
+   "niveau": 100,
+   "icon": 151128,
+   "stats": {
+    "esquivePA": 16,
+    "esquivePM": -16
+   },
+   "v07": true,
+   "boss": "royalmouth"
+  },
+  "13797": {
+   "nom": "Evanescent",
+   "niveau": 100,
+   "icon": 151131,
+   "stats": {
+    "esquivePM": 16,
+    "esquivePA": -16
+   },
+   "v07": true,
+   "boss": "blop_multicolore_royal"
+  },
+  "13800": {
+   "nom": "Bousculeur",
+   "niveau": 100,
+   "icon": 151134,
+   "stats": {
+    "dommagesPoussee": 32,
+    "tacle": -16
+   },
+   "v07": true,
+   "boss": "maitre_corbac"
+  },
+  "13803": {
+   "nom": "Inflexible",
+   "niveau": 100,
+   "icon": 151137,
+   "stats": {
+    "resPoussee": 48,
+    "fuite": -16
+   },
+   "v07": true,
+   "boss": "silf_le_rasboul_majeur"
+  },
+  "13806": {
+   "nom": "Précurseur",
+   "niveau": 100,
+   "icon": 151140,
+   "stats": {
+    "initiative": 400,
+    "vitalite": -50
+   },
+   "v07": true,
+   "boss": "silf_le_rasboul_majeur"
+  },
+  "13809": {
+   "nom": "Muraille Terre",
+   "niveau": 100,
+   "icon": 151143,
+   "stats": {
+    "redTerre": 20,
+    "resAir": -4
+   },
+   "v07": true,
+   "boss": "royalmouth"
+  },
+  "13812": {
+   "nom": "Muraille Neutre",
+   "niveau": 100,
+   "icon": 151146,
+   "stats": {
+    "redNeutre": 20,
+    "resEau": -4
+   },
+   "v07": true,
+   "boss": "royalmouth"
+  },
+  "13815": {
+   "nom": "Muraille Feu",
+   "niveau": 100,
+   "icon": 151149,
+   "stats": {
+    "redFeu": 20,
+    "resTerre": -4
+   },
+   "v07": true,
+   "boss": "gobrechaun"
+  },
+  "13818": {
+   "nom": "Muraille Eau",
+   "niveau": 100,
+   "icon": 151152,
+   "stats": {
+    "redEau": 20,
+    "resNeutre": -4
+   },
+   "v07": true,
+   "boss": "silf_le_rasboul_majeur"
+  },
+  "13821": {
+   "nom": "Muraille Air",
+   "niveau": 100,
+   "icon": 151155,
+   "stats": {
+    "redAir": 20,
+    "resFeu": -4
+   },
+   "v07": true,
+   "boss": "silf_le_rasboul_majeur"
+  },
+  "13824": {
+   "nom": "Puissant",
+   "niveau": 100,
+   "icon": 151158,
+   "stats": {
+    "puissance": 20
+   },
+   "v07": true,
+   "boss": "skeunk"
+  },
+  "13827": {
+   "nom": "Robuste",
+   "niveau": 100,
+   "icon": 151161,
+   "stats": {
+    "puissance": 40,
+    "critique": -6
+   },
+   "v07": true,
+   "boss": "damadrya"
+  },
+  "13829": {
+   "nom": "Turbulent",
+   "niveau": 100,
+   "icon": 151163,
+   "stats": {
+    "pa": 1,
+    "pm": -1
+   },
+   "v07": true,
+   "boss": "damadrya"
+  },
+  "13830": {
+   "nom": "Voyageur",
+   "niveau": 100,
+   "icon": 151164,
+   "stats": {
+    "pm": 1,
+    "fuite": -30,
+    "tacle": -30
+   },
+   "v07": true,
+   "boss": "koulosse"
+  },
+  "13833": {
+   "nom": "Féroce",
+   "niveau": 100,
+   "icon": 151167,
+   "stats": {
+    "dommagesEau": 6,
+    "dommagesNeutre": 6,
+    "dommagesAir": 6,
+    "dommagesTerre": 6,
+    "dommagesFeu": 6,
+    "dommagesCritiques": -12
+   },
+   "v07": true,
+   "boss": "blop_multicolore_royal"
+  },
+  "16183": {
+   "nom": "Obstructeur",
+   "niveau": 100,
+   "icon": 151191,
+   "stats": {
+    "tacle": 16
+   },
+   "v07": true,
+   "boss": "damadrya"
+  },
+  "16186": {
+   "nom": "Déserteur",
+   "niveau": 100,
+   "icon": 151194,
+   "stats": {
+    "fuite": 16
+   },
+   "v07": true,
+   "boss": "blop_multicolore_royal"
+  },
+  "16189": {
+   "nom": "Guérisseur",
+   "niveau": 100,
+   "icon": 151188,
+   "stats": {
+    "soins": 16
+   },
+   "v07": true,
+   "boss": "koulosse"
+  },
+  "16192": {
+   "nom": "Miraculé",
+   "niveau": 100,
+   "icon": 151182,
+   "stats": {
+    "vitalite": 160
+   },
+   "v07": true,
+   "boss": "koulosse"
+  },
+  "16195": {
+   "nom": "Enragé",
+   "niveau": 100,
+   "icon": 151173,
+   "stats": {
+    "force": 50
+   },
+   "v07": true,
+   "boss": "koulosse"
+  },
+  "16203": {
+   "nom": "Érudit",
+   "niveau": 100,
+   "icon": 151170,
+   "stats": {
+    "intelligence": 50
+   },
+   "v07": true,
+   "boss": "gobrechaun"
+  },
+  "16244": {
+   "nom": "Cascadeur",
+   "niveau": 100,
+   "icon": 151179,
+   "stats": {
+    "agilite": 50
+   },
+   "v07": true,
+   "boss": "royalmouth"
+  },
+  "16247": {
+   "nom": "Chanceux",
+   "niveau": 100,
+   "icon": 151176,
+   "stats": {
+    "chance": 50
+   },
+   "v07": true,
+   "boss": "gobrechaun"
+  },
+  "16250": {
+   "nom": "Fortification",
+   "niveau": 100,
+   "icon": 151248,
+   "stats": {
+    "resCritiques": 16
+   },
+   "v07": true,
+   "boss": "gobrechaun"
+  },
+  "16253": {
+   "nom": "Dévastateur Terre",
+   "niveau": 100,
+   "icon": 151218,
+   "stats": {
+    "dommagesTerre": 10
+   },
+   "v07": true,
+   "boss": "royalmouth"
+  },
+  "16256": {
+   "nom": "Dévastateur Neutre",
+   "niveau": 100,
+   "icon": 151224,
+   "stats": {
+    "dommagesNeutre": 10
+   },
+   "v07": true,
+   "boss": "skeunk"
+  },
+  "16259": {
+   "nom": "Dévastateur Feu",
+   "niveau": 100,
+   "icon": 151215,
+   "stats": {
+    "dommagesFeu": 10
+   },
+   "v07": true,
+   "boss": "blop_multicolore_royal"
+  },
+  "16263": {
+   "nom": "Dévastateur Eau",
+   "niveau": 100,
+   "icon": 151212,
+   "stats": {
+    "dommagesEau": 10
+   },
+   "v07": true,
+   "boss": "koulosse"
+  },
+  "16266": {
+   "nom": "Dévastateur Air",
+   "niveau": 100,
+   "icon": 151221,
+   "stats": {
+    "dommagesAir": 10
+   },
+   "v07": true,
+   "boss": "maitre_corbac"
+  },
+  "16275": {
+   "nom": "Temporiseur",
+   "niveau": 100,
+   "icon": 151197,
+   "stats": {
+    "retraitPM": 12
+   },
+   "v07": true,
+   "boss": "damadrya"
+  },
+  "16283": {
+   "nom": "Étourdisseur",
+   "niveau": 100,
+   "icon": 151200,
+   "stats": {
+    "retraitPA": 12
+   },
+   "v07": true,
+   "boss": "silf_le_rasboul_majeur"
+  },
+  "16293": {
+   "nom": "Évasif",
+   "niveau": 100,
+   "icon": 151230,
+   "stats": {
+    "esquivePA": 16
+   },
+   "v07": true,
+   "boss": "skeunk"
+  },
+  "16301": {
+   "nom": "Cavaleur",
+   "niveau": 100,
+   "icon": 151209,
+   "stats": {
+    "esquivePM": 16
+   },
+   "v07": true,
+   "boss": "royalmouth"
+  },
+  "16305": {
+   "nom": "Culbuteur",
+   "niveau": 100,
+   "icon": 151206,
+   "stats": {
+    "dommagesPoussee": 32
+   },
+   "v07": true,
+   "boss": "silf_le_rasboul_majeur"
+  },
+  "16309": {
+   "nom": "Solide",
+   "niveau": 100,
+   "icon": 151251,
+   "stats": {
+    "resPoussee": 48
+   },
+   "v07": true,
+   "boss": "skeunk"
+  },
+  "16312": {
+   "nom": "Fonceur",
+   "niveau": 100,
+   "icon": 151227,
+   "stats": {
+    "initiative": 400
+   },
+   "v07": true,
+   "boss": "koulosse"
+  },
+  "16315": {
+   "nom": "Carapace Terre",
+   "niveau": 100,
+   "icon": 151239,
+   "stats": {
+    "resTerre": 6
+   },
+   "v07": true,
+   "boss": "koulosse"
+  },
+  "16319": {
+   "nom": "Carapace Neutre",
+   "niveau": 100,
+   "icon": 151245,
+   "stats": {
+    "resNeutre": 6
+   },
+   "v07": true,
+   "boss": "damadrya"
+  },
+  "16322": {
+   "nom": "Carapace Feu",
+   "niveau": 100,
+   "icon": 151236,
+   "stats": {
+    "resFeu": 6
+   },
+   "v07": true,
+   "boss": "skeunk"
+  },
+  "16325": {
+   "nom": "Carapace Eau",
+   "niveau": 100,
+   "icon": 151233,
+   "stats": {
+    "resEau": 6
+   },
+   "v07": true,
+   "boss": "gobrechaun"
+  },
+  "16328": {
+   "nom": "Carapace Air",
+   "niveau": 100,
+   "icon": 151242,
+   "stats": {
+    "resAir": 6
+   },
+   "v07": true,
+   "boss": "blop_multicolore_royal"
+  },
+  "16331": {
+   "nom": "Vigoureux",
+   "niveau": 100,
+   "icon": 151203,
+   "stats": {
+    "puissance": 40
+   },
+   "v07": true,
+   "boss": "silf_le_rasboul_majeur"
+  },
+  "16333": {
+   "nom": "Remueur",
+   "niveau": 100,
+   "icon": 151254,
+   "stats": {
+    "pa": 1
+   },
+   "v07": true,
+   "boss": "silf_le_rasboul_majeur"
+  },
+  "16335": {
+   "nom": "Nomade",
+   "niveau": 100,
+   "icon": 151257,
+   "stats": {
+    "pm": 1
+   },
+   "v07": true,
+   "boss": "skeunk"
+  },
+  "16338": {
+   "nom": "Sanguinaire",
+   "niveau": 100,
+   "icon": 151260,
+   "stats": {
+    "dommagesNeutre": 6,
+    "dommagesTerre": 6,
+    "dommagesFeu": 6,
+    "dommagesEau": 6,
+    "dommagesAir": 6
+   },
+   "v07": true,
+   "boss": "maitre_corbac"
   }
  }
 }

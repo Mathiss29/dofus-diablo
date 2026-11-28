@@ -7,6 +7,8 @@
   "rotation": ["chef_de_guerre_bouftou", "gelees_royales", "chef_crocodaille"],
   "_rotationV06": "0.6 (« 0.6 : » 9B) : un boss du monde par région de la 0.6, ajoutés à la rotation quand la 0.6 est visible (V06_PUBLIC ou partie de test).",
   "rotationV06": ["tyranne_la_terrible", "mama_koalak", "mega_craqueleur_des_plaines"],
+  "_rotationV07": "0.7 (« 0.7 : » 10B) : Boufmouth légendaire (officiel, Champs de glace) et deux boss Méga créés pour le jeu (Guerrier Zoth et Momie Koalak plus grands et plus forts, butin du monstre de base), ajoutés à la rotation quand la 0.7 est visible.",
+  "rotationV07": ["boufmouth_legendaire", "mega_guerrier_zoth", "mega_momie_koalak"],
   "_pv": "PV du boss = base + parNiveau × niveau, +parJoueur par joueur en plus présent quand il apparaît ; dégâts = ceux d'un boss de son niveau × degats.",
   "pv": { "base": 3000, "parNiveau": 300 }, "parJoueur": 0.6, "degats": 1.15, "echelle": 1.6,
   "_paliers": "3C : à 66 % puis 33 % de ses PV, il appelle sa garde (renforts de sa sous-zone, ils foncent) et devient intouchable tant qu'elle vit (au plus intouchableMax s).",
@@ -24,7 +26,10 @@
    "chef_crocodaille": { "nom": "Chef Crocodaille", "monstres": ["chef_crocodaille"], "sousZone": 31, "carte": "-6_11", "niveau": 61, "renforts": ["crocodaille", "boo"], "titre": "Dékrokilliseur", "cri": "Le Chef Crocodaille remonte des Marécages d'Amakna" },
    "tyranne_la_terrible": { "nom": "Tyranne la Terrible", "monstres": ["tyranne_la_terrible"], "sousZone": 168, "carte": "-10_-13", "niveau": 80, "renforts": ["abraknyde_sombre", "abrakne_sombre", "abraknyde_venerable"], "titre": "Tyrannicide", "v06": true, "cri": "Tyranne la Terrible fait trembler la Forêt Sombre" },
    "mama_koalak": { "nom": "Mama Koalak", "monstres": ["mama_koalak"], "sousZone": 253, "carte": "-15_9", "niveau": 90, "renforts": ["koalak_indigo", "koalak_coco", "koalak_griotte", "koalak_reinette"], "titre": "Dompteur de Koalaks", "v06": true, "cri": "Mama Koalak rassemble sa portée dans le Canyon sauvage" },
-   "mega_craqueleur_des_plaines": { "nom": "Méga Craqueleur des plaines", "monstres": ["mega_craqueleur_des_plaines"], "sousZone": 525, "carte": "-21_-22", "niveau": 80, "renforts": ["craqueleur_des_plaines", "craquelourd", "elementerre"], "titre": "Casseur de rocs", "v06": true, "cri": "Le Méga Craqueleur des plaines se lève sur les Routes Rocailleuses" }
+   "mega_craqueleur_des_plaines": { "nom": "Méga Craqueleur des plaines", "monstres": ["mega_craqueleur_des_plaines"], "sousZone": 525, "carte": "-21_-22", "niveau": 80, "renforts": ["craqueleur_des_plaines", "craquelourd", "elementerre"], "titre": "Casseur de rocs", "v06": true, "cri": "Le Méga Craqueleur des plaines se lève sur les Routes Rocailleuses" },
+   "boufmouth_legendaire": { "nom": "Boufmouth légendaire", "monstres": ["boufmouth_legendaire"], "sousZone": 602, "carte": "-72_-42", "niveau": 110, "renforts": ["boufmouth", "boufmouth_de_guerre", "bouflouth"], "titre": "Essuie-glace", "v07": true, "cri": "Le Boufmouth légendaire mugit dans les Champs de glace" },
+   "mega_guerrier_zoth": { "nom": "Méga Guerrier Zoth", "monstres": ["mega_guerrier_zoth"], "sousZone": 468, "carte": "-55_16", "niveau": 120, "renforts": ["guerrier_zoth", "sergent_zoth", "disciple_zoth"], "titre": "Farfouilleur d'Otomaï", "v07": true, "cri": "Le Méga Guerrier Zoth sort du Village des Zoths" },
+   "mega_momie_koalak": { "nom": "Méga Momie Koalak", "monstres": ["mega_momie_koalak"], "sousZone": 230, "carte": "-11_17", "niveau": 115, "renforts": ["momie_koalak", "fossoyeur_koalak", "maitre_koalak"], "titre": "Fléau des Trépamorts", "v07": true, "cri": "La Méga Momie Koalak se relève dans le Cimetière primitif" }
   }
  },
  "invasion": {
@@ -36,7 +41,9 @@
   "eclat": "14954", "eclatsElite": 3,
   "coffre": { "prix": 15, "tirages": 2, "epique": 0.15 },
   "_frigost": "0.6 (« 0.6 : » 9D) : invasion de Frigost : à ces heures (Paris), les Rats Bougris et les Gélikans envahissent le Port de givre ou la Bourgade (un jour sur deux), seuls envahisseurs. Seulement quand la 0.6 est visible.",
-  "frigost": { "nom": "Invasion de Frigost", "subs": [600, 601], "heures": [13, 19, 22], "envahisseurs": ["rat_bougri", "rat_bougri_delave", "gelikan"] }
+  "frigost": { "nom": "Invasion de Frigost", "subs": [600, 601], "heures": [13, 19, 22], "envahisseurs": ["rat_bougri", "rat_bougri_delave", "gelikan"] },
+  "_otomai": "0.7 (« 0.7 : » 10C) : invasion d'Otomaï : à ces heures (Paris), les Zoths et les Tourbassingues envahissent les Plaines herbeuses ou la Tourbière sans fond (un jour sur deux), seuls envahisseurs. Seulement quand la 0.7 est visible.",
+  "otomai": { "nom": "Invasion d'Otomaï", "subs": [454, 457], "heures": [11, 16, 21], "envahisseurs": ["guerrier_zoth", "sergent_zoth", "disciple_zoth", "tourbassingue", "bourbassingue"] }
  },
  "evenements": {
   "_": "8A + 8B : petits événements qui arrivent près du joueur quand il traverse une sous-zone, environ toutes les 5 min (intervalle en s). Lieux et monstres de la sous-zone, déroulé à nous.",

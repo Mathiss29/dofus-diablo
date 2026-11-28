@@ -10,6 +10,7 @@ import { TEINTES, type Carte } from '../sim/ecaflip';
 import { VIVANT } from '../sim/mondeVivant';
 import type { Look } from './looks';
 import { PersoVivant } from './persoVivant';
+import { selle } from './montureView';
 
 /** Affiche une entité de la simulation avec sa planche de sprites.
  *  Orientations de Dofus : _0 droite, _1 bas-droite, _2 bas, _5 haut-gauche, _6 haut ; les autres par miroir
@@ -53,6 +54,8 @@ export class EntityView {
   private cartes: Phaser.GameObjects.Graphics | null = null;
   /** Sadida 13A : icône officielle « Infecté » au-dessus du monstre (créée seulement pour eux). */
   private infecte: Phaser.GameObjects.Image | null = null;
+  /** 0.7 : le perso est dessiné sur sa monture (rogné). */
+  private monte = false;
   /** Ouginak : icône officielle « Proie » au-dessus du monstre marqué (créée seulement pour eux). */
   private proie: Phaser.GameObjects.Image | null = null;
 
@@ -129,7 +132,8 @@ export class EntityView {
     const arme = (e as { arme?: boolean }).arme && L.map[`${e.anim}_arme`];   // Forgelance Armé : variante qui montre la Lance en main
     // Ouginak (1A) : l'animation officielle 1815 joue la transformation en Bête par-dessus le reste
     const ougT = (e as { ougTransfoT?: number }).ougTransfoT ?? 0, transfo = ougT > 0 && !!L.map.bete;
-    const st = transfo ? L.map.bete : arme || (L.map[e.anim] ?? L.map[e.anim.replace(/\d+$/, '')] ?? L.map.idle);   // windup1 -> windup si l'animation du sort manque
+    const cav = selle((e as Player).montee ?? '');   // 0.7 (17A) : monté, il reste assis sur la selle
+    const st = cav ? L.map.idle : transfo ? L.map.bete : arme || (L.map[e.anim] ?? L.map[e.anim.replace(/\d+$/, '')] ?? L.map.idle);   // windup1 -> windup si l'animation du sort manque
     // secteur de 45° mesuré après avoir « redressé » la vue isométrique (y x 2) : 0 = droite, 2 = bas, 6 = haut
     const sector = ((Math.round(Math.atan2(fd.y * 2, fd.x) / (Math.PI / 4)) % 8) + 8) % 8;
     let o = MIRROR[sector] ?? sector, flip = sector in MIRROR;
@@ -159,15 +163,21 @@ export class EntityView {
     const bete = !!(e as { ougBete?: boolean }).ougBete;   // Ouginak en Forme Bestiale (1A) : +15 %, rouge sombre
     if (bete) kc *= 1.15 - (transfo ? 0.15 * ougT / 0.6 : 0);
     let sy = L.scale * this.k * kc, alpha = 1;
-    if (e.anim === 'idle') sy *= 1 + Math.sin(e.age * 4) * 0.02;
+    if (e.anim === 'idle' && !cav) sy *= 1 + Math.sin(e.age * 4) * 0.02;
     if (e.anim === 'spawn') alpha = e.animT;
     if ((e as { state?: string }).state === 'return') alpha = 0.5;   // maquette « Aggro » 7A : il abandonne et rentre
     if (e.anim === 'die') alpha = e.animT < 0.7 ? 1 : 1 - (e.animT - 0.7) / 0.3;
     if ((e as Monster).intouchable && (e as Monster).bossMonde) alpha *= 0.55 + 0.1 * Math.sin(EntityView.temps * 5);   // 0.5 (1B, 3C) : intouchable, il pâlit
     this.sprite.setScale((flip ? -L.scale : L.scale) * this.k * kc, sy).setAlpha(alpha);
     // posé pile sur un pixel de l'écran : il ne « bave » plus quand la caméra le suit (voir pixel.ts)
-    const cam = this.sprite.scene.cameras.main, pp = auPixel(cam, p.x, p.y - (L.ignoreZ ? 0 : e.z));
+    const cam = this.sprite.scene.cameras.main, pp = auPixel(cam, p.x, p.y - (L.ignoreZ ? 0 : e.z) - (cav ? cav.haut - cav.jambes * L.height * L.scale : 0));
     this.sprite.setPosition(pp.x, pp.y).setDepth(p.y);
+    if (cav) {   // jambes cachées : on ne garde que le haut du perso, du pied moins la part des jambes
+      // (coordonnées du rectangle rogné de l'image : f.y = son décalage dans la cellule)
+      const f = this.sprite.frame, pied = this.sprite.originY * f.realHeight, h = L.height * L.scale / Math.abs(sy);
+      this.sprite.setCrop(0, 0, f.width, Math.max(1, pied - cav.jambes * h - (f.trimmed ? f.y : 0)));
+      this.monte = true;
+    } else if (this.monte) { this.sprite.setCrop(); this.monte = false; }
     if (e.flash > 0) this.sprite.setTintFill(0xffffff);
     else if (sur) { const k = 0.5 + 0.5 * Math.sin(EntityView.temps * 7); this.sprite.setTint(mulTint(Phaser.Display.Color.GetColor(255, Math.round(150 + 60 * k), Math.round(90 + 60 * k)), EntityView.ambiance)); }   // 6B : surcharge, il rougeoie
     else if (bete) { const k = 0.5 + 0.5 * Math.sin(EntityView.temps * 5); this.sprite.setTint(mulTint(Phaser.Display.Color.GetColor(255, Math.round(150 + 40 * k), Math.round(140 + 30 * k)), EntityView.ambiance)); }

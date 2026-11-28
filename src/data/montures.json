@@ -1,0 +1,3779 @@
+{
+"_": "Fait par tools/extraction/montures_export.py (table mounts de Dofus 3). stats = [carac, valeur au niveau 100] ; teinte = couleurs 1 à 4 du look officiel ; gen = génération de l'arbre officiel.",
+"races": {
+"3": {
+"nom": "Dragodinde Ébène",
+"famille": "dragodinde",
+"gen": 3,
+"couleurs": [
+"Ébène"
+],
+"teinte": [
+1245184,
+393216,
+1245184,
+7758915
+],
+"stats": [
+[
+"vitalite",
+300
+],
+[
+"agilite",
+100
+]
+]
+},
+"9": {
+"nom": "Dragodinde Ébène et Ivoire",
+"famille": "dragodinde",
+"gen": 8,
+"couleurs": [
+"Ébène",
+"Ivoire"
+],
+"teinte": [
+1182992,
+16777200,
+16777200,
+7758915
+],
+"stats": [
+[
+"puissance",
+50
+],
+[
+"agilite",
+70
+],
+[
+"vitalite",
+300
+]
+]
+},
+"10": {
+"nom": "Dragodinde Rousse",
+"famille": "dragodinde",
+"gen": 1,
+"couleurs": [
+"Rousse"
+],
+"teinte": [
+16747520,
+16747520,
+16301825,
+7758915
+],
+"stats": [
+[
+"soins",
+50
+],
+[
+"vitalite",
+300
+]
+]
+},
+"11": {
+"nom": "Dragodinde Ivoire et Rousse",
+"famille": "dragodinde",
+"gen": 8,
+"couleurs": [
+"Ivoire",
+"Rousse"
+],
+"teinte": [
+16747520,
+16777200,
+16777200,
+7758915
+],
+"stats": [
+[
+"soins",
+35
+],
+[
+"puissance",
+50
+],
+[
+"vitalite",
+300
+]
+]
+},
+"12": {
+"nom": "Dragodinde Ébène et Rousse",
+"famille": "dragodinde",
+"gen": 4,
+"couleurs": [
+"Ébène",
+"Rousse"
+],
+"teinte": [
+16747520,
+1703936,
+1774084,
+7758915
+],
+"stats": [
+[
+"agilite",
+70
+],
+[
+"vitalite",
+300
+],
+[
+"soins",
+35
+]
+]
+},
+"15": {
+"nom": "Dragodinde Turquoise",
+"famille": "dragodinde",
+"gen": 7,
+"couleurs": [
+"Turquoise"
+],
+"teinte": [
+4251856,
+4251856,
+16301825,
+7758915
+],
+"stats": [
+[
+"prospection",
+80
+],
+[
+"vitalite",
+300
+]
+]
+},
+"16": {
+"nom": "Dragodinde Ivoire",
+"famille": "dragodinde",
+"gen": 7,
+"couleurs": [
+"Ivoire"
+],
+"teinte": [
+16777200,
+16777200,
+16777200,
+7758915
+],
+"stats": [
+[
+"puissance",
+70
+],
+[
+"vitalite",
+300
+]
+]
+},
+"17": {
+"nom": "Dragodinde Indigo",
+"famille": "dragodinde",
+"gen": 3,
+"couleurs": [
+"Indigo"
+],
+"teinte": [
+4915330,
+4915330,
+16301825,
+7758915
+],
+"stats": [
+[
+"chance",
+100
+],
+[
+"vitalite",
+300
+]
+]
+},
+"18": {
+"nom": "Dragodinde Dorée",
+"famille": "dragodinde",
+"gen": 1,
+"couleurs": [
+"Dorée"
+],
+"teinte": [
+16766720,
+16766720,
+16766720,
+7758915
+],
+"stats": [
+[
+"invocations",
+2
+],
+[
+"vitalite",
+300
+]
+]
+},
+"19": {
+"nom": "Dragodinde Pourpre",
+"famille": "dragodinde",
+"gen": 5,
+"couleurs": [
+"Pourpre"
+],
+"teinte": [
+14423100,
+14423100,
+16301825,
+7758915
+],
+"stats": [
+[
+"force",
+100
+],
+[
+"vitalite",
+300
+]
+]
+},
+"20": {
+"nom": "Dragodinde Amande",
+"famille": "dragodinde",
+"gen": 1,
+"couleurs": [
+"Amande"
+],
+"teinte": [
+16772045,
+16772045,
+16301825,
+7758915
+],
+"stats": [
+[
+"initiative",
+1500
+],
+[
+"vitalite",
+300
+]
+]
+},
+"21": {
+"nom": "Dragodinde Émeraude",
+"famille": "dragodinde",
+"gen": 9,
+"couleurs": [
+"Émeraude"
+],
+"teinte": [
+3329330,
+3329330,
+16301825,
+7758915
+],
+"stats": [
+[
+"critique",
+12
+],
+[
+"vitalite",
+300
+]
+]
+},
+"22": {
+"nom": "Dragodinde Orchidée",
+"famille": "dragodinde",
+"gen": 5,
+"couleurs": [
+"Orchidée"
+],
+"teinte": [
+15859954,
+15859954,
+16777200,
+7758915
+],
+"stats": [
+[
+"intelligence",
+100
+],
+[
+"vitalite",
+300
+]
+]
+},
+"23": {
+"nom": "Dragodinde Prune",
+"famille": "dragodinde",
+"gen": 9,
+"couleurs": [
+"Prune"
+],
+"teinte": [
+14524637,
+14524637,
+16301825,
+7758915
+],
+"stats": [
+[
+"portee",
+2
+],
+[
+"vitalite",
+300
+]
+]
+},
+"33": {
+"nom": "Dragodinde Amande et Dorée",
+"famille": "dragodinde",
+"gen": 2,
+"couleurs": [
+"Amande",
+"Dorée"
+],
+"teinte": [
+16772045,
+16766720,
+16766720,
+7758915
+],
+"stats": [
+[
+"vitalite",
+300
+],
+[
+"invocations",
+1
+],
+[
+"initiative",
+1000
+]
+]
+},
+"34": {
+"nom": "Dragodinde Amande et Ébène",
+"famille": "dragodinde",
+"gen": 4,
+"couleurs": [
+"Amande",
+"Ébène"
+],
+"teinte": [
+16772045,
+1245184,
+1245184,
+7758915
+],
+"stats": [
+[
+"agilite",
+70
+],
+[
+"initiative",
+1000
+],
+[
+"vitalite",
+300
+]
+]
+},
+"35": {
+"nom": "Dragodinde Amande et Émeraude",
+"famille": "dragodinde",
+"gen": 10,
+"couleurs": [
+"Amande",
+"Émeraude"
+],
+"teinte": [
+16772045,
+3329330,
+3329330,
+7758915
+],
+"stats": [
+[
+"initiative",
+1000
+],
+[
+"critique",
+8
+],
+[
+"vitalite",
+300
+]
+]
+},
+"36": {
+"nom": "Dragodinde Amande et Indigo",
+"famille": "dragodinde",
+"gen": 4,
+"couleurs": [
+"Amande",
+"Indigo"
+],
+"teinte": [
+16772045,
+4915330,
+4915330,
+7758915
+],
+"stats": [
+[
+"chance",
+70
+],
+[
+"vitalite",
+300
+],
+[
+"initiative",
+1000
+]
+]
+},
+"37": {
+"nom": "Dragodinde Amande et Ivoire",
+"famille": "dragodinde",
+"gen": 8,
+"couleurs": [
+"Amande",
+"Ivoire"
+],
+"teinte": [
+16772045,
+16777200,
+16777200,
+7758915
+],
+"stats": [
+[
+"puissance",
+50
+],
+[
+"vitalite",
+300
+],
+[
+"initiative",
+1000
+]
+]
+},
+"38": {
+"nom": "Dragodinde Amande et Rousse",
+"famille": "dragodinde",
+"gen": 2,
+"couleurs": [
+"Amande",
+"Rousse"
+],
+"teinte": [
+16772045,
+16747520,
+16747520,
+7758915
+],
+"stats": [
+[
+"vitalite",
+300
+],
+[
+"initiative",
+1000
+],
+[
+"soins",
+35
+]
+]
+},
+"39": {
+"nom": "Dragodinde Amande et Turquoise",
+"famille": "dragodinde",
+"gen": 8,
+"couleurs": [
+"Amande",
+"Turquoise"
+],
+"teinte": [
+16772045,
+4251856,
+4251856,
+7758915
+],
+"stats": [
+[
+"vitalite",
+300
+],
+[
+"prospection",
+60
+],
+[
+"initiative",
+1000
+]
+]
+},
+"40": {
+"nom": "Dragodinde Amande et Orchidée",
+"famille": "dragodinde",
+"gen": 6,
+"couleurs": [
+"Amande",
+"Orchidée"
+],
+"teinte": [
+16772045,
+15859954,
+15859954,
+7758915
+],
+"stats": [
+[
+"vitalite",
+300
+],
+[
+"intelligence",
+70
+],
+[
+"initiative",
+1000
+]
+]
+},
+"41": {
+"nom": "Dragodinde Amande et Pourpre",
+"famille": "dragodinde",
+"gen": 6,
+"couleurs": [
+"Amande",
+"Pourpre"
+],
+"teinte": [
+16772045,
+14423100,
+14423100,
+7758915
+],
+"stats": [
+[
+"vitalite",
+300
+],
+[
+"force",
+70
+],
+[
+"initiative",
+1000
+]
+]
+},
+"42": {
+"nom": "Dragodinde Dorée et Ébène",
+"famille": "dragodinde",
+"gen": 4,
+"couleurs": [
+"Dorée",
+"Ébène"
+],
+"teinte": [
+1245184,
+16766720,
+16766720,
+7758915
+],
+"stats": [
+[
+"agilite",
+70
+],
+[
+"invocations",
+1
+],
+[
+"vitalite",
+300
+]
+]
+},
+"43": {
+"nom": "Dragodinde Dorée et Émeraude",
+"famille": "dragodinde",
+"gen": 10,
+"couleurs": [
+"Dorée",
+"Émeraude"
+],
+"teinte": [
+16766720,
+3329330,
+3329330,
+7758915
+],
+"stats": [
+[
+"vitalite",
+300
+],
+[
+"critique",
+8
+],
+[
+"invocations",
+1
+]
+]
+},
+"44": {
+"nom": "Dragodinde Dorée et Indigo",
+"famille": "dragodinde",
+"gen": 4,
+"couleurs": [
+"Dorée",
+"Indigo"
+],
+"teinte": [
+16766720,
+4915330,
+4915330,
+7758915
+],
+"stats": [
+[
+"chance",
+70
+],
+[
+"vitalite",
+300
+],
+[
+"invocations",
+1
+]
+]
+},
+"45": {
+"nom": "Dragodinde Dorée et Ivoire",
+"famille": "dragodinde",
+"gen": 8,
+"couleurs": [
+"Dorée",
+"Ivoire"
+],
+"teinte": [
+16766720,
+16777200,
+16777200,
+7758915
+],
+"stats": [
+[
+"invocations",
+1
+],
+[
+"puissance",
+50
+],
+[
+"vitalite",
+300
+]
+]
+},
+"46": {
+"nom": "Dragodinde Dorée et Rousse",
+"famille": "dragodinde",
+"gen": 2,
+"couleurs": [
+"Dorée",
+"Rousse"
+],
+"teinte": [
+16766720,
+16747520,
+16747520,
+7758915
+],
+"stats": [
+[
+"vitalite",
+300
+],
+[
+"soins",
+35
+],
+[
+"invocations",
+1
+]
+]
+},
+"47": {
+"nom": "Dragodinde Dorée et Turquoise",
+"famille": "dragodinde",
+"gen": 8,
+"couleurs": [
+"Dorée",
+"Turquoise"
+],
+"teinte": [
+16766720,
+4251856,
+4251856,
+7758915
+],
+"stats": [
+[
+"vitalite",
+300
+],
+[
+"prospection",
+60
+],
+[
+"invocations",
+1
+]
+]
+},
+"48": {
+"nom": "Dragodinde Dorée et Orchidée",
+"famille": "dragodinde",
+"gen": 6,
+"couleurs": [
+"Dorée",
+"Orchidée"
+],
+"teinte": [
+16766720,
+15859954,
+15859954,
+7758915
+],
+"stats": [
+[
+"invocations",
+1
+],
+[
+"intelligence",
+70
+],
+[
+"vitalite",
+300
+]
+]
+},
+"49": {
+"nom": "Dragodinde Dorée et Pourpre",
+"famille": "dragodinde",
+"gen": 6,
+"couleurs": [
+"Dorée",
+"Pourpre"
+],
+"teinte": [
+16766720,
+14423100,
+14423100,
+7758915
+],
+"stats": [
+[
+"force",
+70
+],
+[
+"invocations",
+1
+],
+[
+"vitalite",
+300
+]
+]
+},
+"50": {
+"nom": "Dragodinde Ébène et Émeraude",
+"famille": "dragodinde",
+"gen": 10,
+"couleurs": [
+"Ébène",
+"Émeraude"
+],
+"teinte": [
+1245184,
+3329330,
+3329330,
+7758915
+],
+"stats": [
+[
+"critique",
+8
+],
+[
+"vitalite",
+300
+],
+[
+"agilite",
+70
+]
+]
+},
+"51": {
+"nom": "Dragodinde Ébène et Indigo",
+"famille": "dragodinde",
+"gen": 4,
+"couleurs": [
+"Ébène",
+"Indigo"
+],
+"teinte": [
+4915330,
+1245184,
+1245184,
+7758915
+],
+"stats": [
+[
+"chance",
+70
+],
+[
+"vitalite",
+300
+],
+[
+"agilite",
+70
+]
+]
+},
+"52": {
+"nom": "Dragodinde Ébène et Turquoise",
+"famille": "dragodinde",
+"gen": 8,
+"couleurs": [
+"Ébène",
+"Turquoise"
+],
+"teinte": [
+1245184,
+4251856,
+4251856,
+7758915
+],
+"stats": [
+[
+"vitalite",
+300
+],
+[
+"agilite",
+70
+],
+[
+"prospection",
+60
+]
+]
+},
+"53": {
+"nom": "Dragodinde Ébène et Orchidée",
+"famille": "dragodinde",
+"gen": 6,
+"couleurs": [
+"Ébène",
+"Orchidée"
+],
+"teinte": [
+15859954,
+0,
+0,
+7758915
+],
+"stats": [
+[
+"intelligence",
+70
+],
+[
+"vitalite",
+300
+],
+[
+"agilite",
+70
+]
+]
+},
+"54": {
+"nom": "Dragodinde Ébène et Pourpre",
+"famille": "dragodinde",
+"gen": 6,
+"couleurs": [
+"Ébène",
+"Pourpre"
+],
+"teinte": [
+14423100,
+1245184,
+1245184,
+7758915
+],
+"stats": [
+[
+"force",
+70
+],
+[
+"vitalite",
+300
+],
+[
+"agilite",
+70
+]
+]
+},
+"55": {
+"nom": "Dragodinde Émeraude et Indigo",
+"famille": "dragodinde",
+"gen": 10,
+"couleurs": [
+"Émeraude",
+"Indigo"
+],
+"teinte": [
+3329330,
+4915330,
+4915330,
+7758915
+],
+"stats": [
+[
+"critique",
+8
+],
+[
+"vitalite",
+300
+],
+[
+"chance",
+70
+]
+]
+},
+"56": {
+"nom": "Dragodinde Émeraude et Ivoire",
+"famille": "dragodinde",
+"gen": 10,
+"couleurs": [
+"Émeraude",
+"Ivoire"
+],
+"teinte": [
+3329330,
+16777200,
+16777200,
+7758915
+],
+"stats": [
+[
+"vitalite",
+300
+],
+[
+"puissance",
+50
+],
+[
+"critique",
+8
+]
+]
+},
+"57": {
+"nom": "Dragodinde Émeraude et Rousse",
+"famille": "dragodinde",
+"gen": 10,
+"couleurs": [
+"Émeraude",
+"Rousse"
+],
+"teinte": [
+3329330,
+16747520,
+16747520,
+7758915
+],
+"stats": [
+[
+"critique",
+8
+],
+[
+"vitalite",
+300
+],
+[
+"soins",
+35
+]
+]
+},
+"58": {
+"nom": "Dragodinde Émeraude et Turquoise",
+"famille": "dragodinde",
+"gen": 10,
+"couleurs": [
+"Émeraude",
+"Turquoise"
+],
+"teinte": [
+3329330,
+4251856,
+4251856,
+7758915
+],
+"stats": [
+[
+"critique",
+8
+],
+[
+"vitalite",
+300
+],
+[
+"prospection",
+60
+]
+]
+},
+"59": {
+"nom": "Dragodinde Émeraude et Orchidée",
+"famille": "dragodinde",
+"gen": 10,
+"couleurs": [
+"Émeraude",
+"Orchidée"
+],
+"teinte": [
+3329330,
+15859954,
+15859954,
+7758915
+],
+"stats": [
+[
+"critique",
+8
+],
+[
+"vitalite",
+300
+],
+[
+"intelligence",
+70
+]
+]
+},
+"60": {
+"nom": "Dragodinde Émeraude et Pourpre",
+"famille": "dragodinde",
+"gen": 10,
+"couleurs": [
+"Émeraude",
+"Pourpre"
+],
+"teinte": [
+3329330,
+14423100,
+14423100,
+7758915
+],
+"stats": [
+[
+"critique",
+8
+],
+[
+"vitalite",
+300
+],
+[
+"force",
+70
+]
+]
+},
+"61": {
+"nom": "Dragodinde Indigo et Ivoire",
+"famille": "dragodinde",
+"gen": 8,
+"couleurs": [
+"Indigo",
+"Ivoire"
+],
+"teinte": [
+4915330,
+16777200,
+16777200,
+7758915
+],
+"stats": [
+[
+"chance",
+70
+],
+[
+"vitalite",
+300
+],
+[
+"puissance",
+50
+]
+]
+},
+"62": {
+"nom": "Dragodinde Indigo et Rousse",
+"famille": "dragodinde",
+"gen": 4,
+"couleurs": [
+"Indigo",
+"Rousse"
+],
+"teinte": [
+4915330,
+16747520,
+16747520,
+7758915
+],
+"stats": [
+[
+"soins",
+35
+],
+[
+"vitalite",
+300
+],
+[
+"chance",
+70
+]
+]
+},
+"63": {
+"nom": "Dragodinde Indigo et Turquoise",
+"famille": "dragodinde",
+"gen": 8,
+"couleurs": [
+"Indigo",
+"Turquoise"
+],
+"teinte": [
+4915330,
+4251856,
+4251856,
+7758915
+],
+"stats": [
+[
+"vitalite",
+300
+],
+[
+"chance",
+70
+],
+[
+"prospection",
+60
+]
+]
+},
+"64": {
+"nom": "Dragodinde Indigo et Orchidée",
+"famille": "dragodinde",
+"gen": 6,
+"couleurs": [
+"Indigo",
+"Orchidée"
+],
+"teinte": [
+4915330,
+15859954,
+15859954,
+7758915
+],
+"stats": [
+[
+"intelligence",
+70
+],
+[
+"chance",
+70
+],
+[
+"vitalite",
+300
+]
+]
+},
+"65": {
+"nom": "Dragodinde Indigo et Pourpre",
+"famille": "dragodinde",
+"gen": 6,
+"couleurs": [
+"Indigo",
+"Pourpre"
+],
+"teinte": [
+14423100,
+4915330,
+4915330,
+7758915
+],
+"stats": [
+[
+"force",
+70
+],
+[
+"vitalite",
+300
+],
+[
+"chance",
+70
+]
+]
+},
+"66": {
+"nom": "Dragodinde Ivoire et Turquoise",
+"famille": "dragodinde",
+"gen": 8,
+"couleurs": [
+"Ivoire",
+"Turquoise"
+],
+"teinte": [
+16777200,
+4251856,
+4251856,
+7758915
+],
+"stats": [
+[
+"prospection",
+60
+],
+[
+"vitalite",
+300
+],
+[
+"puissance",
+50
+]
+]
+},
+"67": {
+"nom": "Dragodinde Ivoire et Orchidée",
+"famille": "dragodinde",
+"gen": 8,
+"couleurs": [
+"Ivoire",
+"Orchidée"
+],
+"teinte": [
+16777200,
+16731355,
+16711910,
+7758915
+],
+"stats": [
+[
+"intelligence",
+70
+],
+[
+"puissance",
+50
+],
+[
+"vitalite",
+300
+]
+]
+},
+"68": {
+"nom": "Dragodinde Ivoire et Pourpre",
+"famille": "dragodinde",
+"gen": 8,
+"couleurs": [
+"Ivoire",
+"Pourpre"
+],
+"teinte": [
+14423100,
+16777200,
+16777200,
+7758915
+],
+"stats": [
+[
+"vitalite",
+300
+],
+[
+"force",
+70
+],
+[
+"puissance",
+50
+]
+]
+},
+"69": {
+"nom": "Dragodinde Turquoise et Rousse",
+"famille": "dragodinde",
+"gen": 8,
+"couleurs": [
+"Turquoise",
+"Rousse"
+],
+"teinte": [
+4251856,
+16747520,
+16747520,
+7758915
+],
+"stats": [
+[
+"vitalite",
+300
+],
+[
+"prospection",
+60
+],
+[
+"soins",
+35
+]
+]
+},
+"70": {
+"nom": "Dragodinde Orchidée et Rousse",
+"famille": "dragodinde",
+"gen": 6,
+"couleurs": [
+"Orchidée",
+"Rousse"
+],
+"teinte": [
+14315734,
+16747520,
+16747520,
+7758915
+],
+"stats": [
+[
+"soins",
+35
+],
+[
+"intelligence",
+70
+],
+[
+"vitalite",
+300
+]
+]
+},
+"71": {
+"nom": "Dragodinde Pourpre et Rousse",
+"famille": "dragodinde",
+"gen": 6,
+"couleurs": [
+"Pourpre",
+"Rousse"
+],
+"teinte": [
+14423100,
+16747520,
+16747520,
+7758915
+],
+"stats": [
+[
+"force",
+70
+],
+[
+"soins",
+35
+],
+[
+"vitalite",
+300
+]
+]
+},
+"72": {
+"nom": "Dragodinde Turquoise et Orchidée",
+"famille": "dragodinde",
+"gen": 8,
+"couleurs": [
+"Turquoise",
+"Orchidée"
+],
+"teinte": [
+15859954,
+4251856,
+4251856,
+7758915
+],
+"stats": [
+[
+"vitalite",
+300
+],
+[
+"prospection",
+60
+],
+[
+"intelligence",
+70
+]
+]
+},
+"73": {
+"nom": "Dragodinde Turquoise et Pourpre",
+"famille": "dragodinde",
+"gen": 8,
+"couleurs": [
+"Turquoise",
+"Pourpre"
+],
+"teinte": [
+14423100,
+4251856,
+4251856,
+7758915
+],
+"stats": [
+[
+"force",
+70
+],
+[
+"vitalite",
+300
+],
+[
+"prospection",
+60
+]
+]
+},
+"76": {
+"nom": "Dragodinde Orchidée et Pourpre",
+"famille": "dragodinde",
+"gen": 6,
+"couleurs": [
+"Orchidée",
+"Pourpre"
+],
+"teinte": [
+14315734,
+14423100,
+14423100,
+7758915
+],
+"stats": [
+[
+"vitalite",
+300
+],
+[
+"force",
+70
+],
+[
+"intelligence",
+70
+]
+]
+},
+"77": {
+"nom": "Dragodinde Prune et Amande",
+"famille": "dragodinde",
+"gen": 10,
+"couleurs": [
+"Prune",
+"Amande"
+],
+"teinte": [
+14524637,
+16772045,
+16772045,
+7758915
+],
+"stats": [
+[
+"vitalite",
+300
+],
+[
+"initiative",
+1000
+],
+[
+"portee",
+1
+]
+]
+},
+"78": {
+"nom": "Dragodinde Prune et Dorée",
+"famille": "dragodinde",
+"gen": 10,
+"couleurs": [
+"Prune",
+"Dorée"
+],
+"teinte": [
+14524637,
+16766720,
+16766720,
+7758915
+],
+"stats": [
+[
+"vitalite",
+300
+],
+[
+"portee",
+1
+],
+[
+"invocations",
+1
+]
+]
+},
+"79": {
+"nom": "Dragodinde Prune et Ébène",
+"famille": "dragodinde",
+"gen": 10,
+"couleurs": [
+"Prune",
+"Ébène"
+],
+"teinte": [
+14524637,
+1245184,
+1245184,
+7758915
+],
+"stats": [
+[
+"agilite",
+70
+],
+[
+"portee",
+1
+],
+[
+"vitalite",
+300
+]
+]
+},
+"80": {
+"nom": "Dragodinde Prune et Émeraude",
+"famille": "dragodinde",
+"gen": 10,
+"couleurs": [
+"Prune",
+"Émeraude"
+],
+"teinte": [
+14524637,
+3329330,
+3329330,
+7758915
+],
+"stats": [
+[
+"portee",
+1
+],
+[
+"critique",
+8
+],
+[
+"vitalite",
+300
+]
+]
+},
+"82": {
+"nom": "Dragodinde Prune et Indigo",
+"famille": "dragodinde",
+"gen": 10,
+"couleurs": [
+"Prune",
+"Indigo"
+],
+"teinte": [
+14524637,
+4915330,
+4915330,
+7758915
+],
+"stats": [
+[
+"portee",
+1
+],
+[
+"chance",
+70
+],
+[
+"vitalite",
+300
+]
+]
+},
+"83": {
+"nom": "Dragodinde Prune et Ivoire",
+"famille": "dragodinde",
+"gen": 10,
+"couleurs": [
+"Prune",
+"Ivoire"
+],
+"teinte": [
+14524637,
+16777200,
+16777200,
+7758915
+],
+"stats": [
+[
+"puissance",
+50
+],
+[
+"portee",
+1
+],
+[
+"vitalite",
+300
+]
+]
+},
+"84": {
+"nom": "Dragodinde Prune et Rousse",
+"famille": "dragodinde",
+"gen": 10,
+"couleurs": [
+"Prune",
+"Rousse"
+],
+"teinte": [
+14524637,
+16747520,
+16747520,
+7758915
+],
+"stats": [
+[
+"vitalite",
+300
+],
+[
+"portee",
+1
+],
+[
+"soins",
+35
+]
+]
+},
+"85": {
+"nom": "Dragodinde Prune et Turquoise",
+"famille": "dragodinde",
+"gen": 10,
+"couleurs": [
+"Prune",
+"Turquoise"
+],
+"teinte": [
+14524637,
+4251856,
+4251856,
+7758915
+],
+"stats": [
+[
+"vitalite",
+300
+],
+[
+"portee",
+1
+],
+[
+"prospection",
+60
+]
+]
+},
+"86": {
+"nom": "Dragodinde Prune et Orchidée",
+"famille": "dragodinde",
+"gen": 10,
+"couleurs": [
+"Prune",
+"Orchidée"
+],
+"teinte": [
+14524637,
+15859954,
+15859954,
+7758915
+],
+"stats": [
+[
+"portee",
+1
+],
+[
+"intelligence",
+70
+],
+[
+"vitalite",
+300
+]
+]
+},
+"87": {
+"nom": "Dragodinde Prune et Pourpre",
+"famille": "dragodinde",
+"gen": 10,
+"couleurs": [
+"Prune",
+"Pourpre"
+],
+"teinte": [
+14524637,
+14423100,
+14423100,
+7758915
+],
+"stats": [
+[
+"portee",
+1
+],
+[
+"force",
+70
+],
+[
+"vitalite",
+300
+]
+]
+},
+"90": {
+"nom": "Muldo Orchidée",
+"famille": "muldo",
+"gen": 1,
+"couleurs": [
+"Orchidée"
+],
+"teinte": [
+14315734,
+14315734,
+14315734,
+0
+],
+"stats": [
+[
+"resFeu",
+16
+],
+[
+"pm",
+1
+]
+]
+},
+"91": {
+"nom": "Muldo Ébène",
+"famille": "muldo",
+"gen": 1,
+"couleurs": [
+"Ébène"
+],
+"teinte": [
+1708036,
+1708036,
+1708036,
+0
+],
+"stats": [
+[
+"resAir",
+16
+],
+[
+"pm",
+1
+]
+]
+},
+"92": {
+"nom": "Muldo Indigo",
+"famille": "muldo",
+"gen": 1,
+"couleurs": [
+"Indigo"
+],
+"teinte": [
+7700427,
+7700427,
+7700427,
+0
+],
+"stats": [
+[
+"pm",
+1
+],
+[
+"resEau",
+16
+]
+]
+},
+"93": {
+"nom": "Muldo Pourpre",
+"famille": "muldo",
+"gen": 1,
+"couleurs": [
+"Pourpre"
+],
+"teinte": [
+7019555,
+7019555,
+7019555,
+0
+],
+"stats": [
+[
+"pm",
+1
+],
+[
+"resTerre",
+16
+]
+]
+},
+"94": {
+"nom": "Muldo Doré",
+"famille": "muldo",
+"gen": 1,
+"couleurs": [
+"Doré"
+],
+"teinte": [
+15118592,
+15118592,
+15118592,
+0
+],
+"stats": [
+[
+"puissance",
+50
+],
+[
+"pm",
+1
+]
+]
+},
+"95": {
+"nom": "Muldo Roux",
+"famille": "muldo",
+"gen": 3,
+"couleurs": [
+"Roux"
+],
+"teinte": [
+12673280,
+12673280,
+12673280,
+0
+],
+"stats": [
+[
+"pm",
+1
+],
+[
+"tacle",
+40
+]
+]
+},
+"96": {
+"nom": "Muldo Amande",
+"famille": "muldo",
+"gen": 3,
+"couleurs": [
+"Amande"
+],
+"teinte": [
+14207612,
+14207612,
+14207612,
+0
+],
+"stats": [
+[
+"fuite",
+40
+],
+[
+"pm",
+1
+]
+]
+},
+"97": {
+"nom": "Muldo Ivoire",
+"famille": "muldo",
+"gen": 5,
+"couleurs": [
+"Ivoire"
+],
+"teinte": [
+16250853,
+16250853,
+16250853,
+0
+],
+"stats": [
+[
+"esquivePA",
+40
+],
+[
+"pm",
+1
+]
+]
+},
+"98": {
+"nom": "Muldo Turquoise",
+"famille": "muldo",
+"gen": 5,
+"couleurs": [
+"Turquoise"
+],
+"teinte": [
+2605815,
+2605815,
+2605815,
+0
+],
+"stats": [
+[
+"esquivePM",
+40
+],
+[
+"pm",
+1
+]
+]
+},
+"99": {
+"nom": "Muldo Prune",
+"famille": "muldo",
+"gen": 7,
+"couleurs": [
+"Prune"
+],
+"teinte": [
+6684825,
+6684825,
+6684825,
+0
+],
+"stats": [
+[
+"pm",
+1
+],
+[
+"critique",
+10
+]
+]
+},
+"100": {
+"nom": "Muldo Émeraude",
+"famille": "muldo",
+"gen": 7,
+"couleurs": [
+"Émeraude"
+],
+"teinte": [
+2650659,
+2650659,
+2650659,
+0
+],
+"stats": [
+[
+"dommagesCritiques",
+30
+],
+[
+"pm",
+1
+]
+]
+},
+"101": {
+"nom": "Muldo Doré et Pourpre",
+"famille": "muldo",
+"gen": 2,
+"couleurs": [
+"Doré",
+"Pourpre"
+],
+"teinte": [
+7019555,
+15118592,
+7019555,
+0
+],
+"stats": [
+[
+"resTerre",
+8
+],
+[
+"pm",
+1
+],
+[
+"puissance",
+40
+]
+]
+},
+"102": {
+"nom": "Muldo Indigo et Pourpre",
+"famille": "muldo",
+"gen": 2,
+"couleurs": [
+"Indigo",
+"Pourpre"
+],
+"teinte": [
+7019555,
+7700427,
+7019555,
+0
+],
+"stats": [
+[
+"resTerre",
+8
+],
+[
+"pm",
+1
+],
+[
+"resEau",
+8
+]
+]
+},
+"103": {
+"nom": "Muldo Ébène et Pourpre",
+"famille": "muldo",
+"gen": 2,
+"couleurs": [
+"Ébène",
+"Pourpre"
+],
+"teinte": [
+1708036,
+7019555,
+1708036,
+0
+],
+"stats": [
+[
+"pm",
+1
+],
+[
+"resAir",
+8
+],
+[
+"resTerre",
+8
+]
+]
+},
+"104": {
+"nom": "Muldo Orchidée et Pourpre",
+"famille": "muldo",
+"gen": 2,
+"couleurs": [
+"Orchidée",
+"Pourpre"
+],
+"teinte": [
+14315734,
+7019555,
+14315734,
+0
+],
+"stats": [
+[
+"pm",
+1
+],
+[
+"resTerre",
+8
+],
+[
+"resFeu",
+8
+]
+]
+},
+"105": {
+"nom": "Muldo Doré et Orchidée",
+"famille": "muldo",
+"gen": 2,
+"couleurs": [
+"Doré",
+"Orchidée"
+],
+"teinte": [
+14315734,
+15118592,
+14315734,
+0
+],
+"stats": [
+[
+"resFeu",
+8
+],
+[
+"pm",
+1
+],
+[
+"puissance",
+40
+]
+]
+},
+"106": {
+"nom": "Muldo Indigo et Orchidée",
+"famille": "muldo",
+"gen": 2,
+"couleurs": [
+"Indigo",
+"Orchidée"
+],
+"teinte": [
+7700427,
+14315734,
+7700427,
+0
+],
+"stats": [
+[
+"pm",
+1
+],
+[
+"resFeu",
+8
+],
+[
+"resEau",
+8
+]
+]
+},
+"107": {
+"nom": "Muldo Ébène et Orchidée",
+"famille": "muldo",
+"gen": 2,
+"couleurs": [
+"Ébène",
+"Orchidée"
+],
+"teinte": [
+1708036,
+14315734,
+1708036,
+0
+],
+"stats": [
+[
+"resAir",
+8
+],
+[
+"pm",
+1
+],
+[
+"resFeu",
+8
+]
+]
+},
+"108": {
+"nom": "Muldo Doré et Indigo",
+"famille": "muldo",
+"gen": 2,
+"couleurs": [
+"Doré",
+"Indigo"
+],
+"teinte": [
+7700427,
+15118592,
+7700427,
+0
+],
+"stats": [
+[
+"puissance",
+40
+],
+[
+"resEau",
+8
+],
+[
+"pm",
+1
+]
+]
+},
+"109": {
+"nom": "Muldo Ébène et Indigo",
+"famille": "muldo",
+"gen": 2,
+"couleurs": [
+"Ébène",
+"Indigo"
+],
+"teinte": [
+1708036,
+7700427,
+1708036,
+0
+],
+"stats": [
+[
+"resEau",
+8
+],
+[
+"pm",
+1
+],
+[
+"resAir",
+8
+]
+]
+},
+"110": {
+"nom": "Muldo Doré et Ébène",
+"famille": "muldo",
+"gen": 2,
+"couleurs": [
+"Doré",
+"Ébène"
+],
+"teinte": [
+15118592,
+1708036,
+15118592,
+0
+],
+"stats": [
+[
+"resAir",
+8
+],
+[
+"pm",
+1
+],
+[
+"puissance",
+40
+]
+]
+},
+"111": {
+"nom": "Muldo Roux et Pourpre",
+"famille": "muldo",
+"gen": 4,
+"couleurs": [
+"Roux",
+"Pourpre"
+],
+"teinte": [
+7019555,
+12673280,
+7019555,
+0
+],
+"stats": [
+[
+"resTerre",
+8
+],
+[
+"tacle",
+30
+],
+[
+"pm",
+1
+]
+]
+},
+"112": {
+"nom": "Muldo Roux et Orchidée",
+"famille": "muldo",
+"gen": 4,
+"couleurs": [
+"Roux",
+"Orchidée"
+],
+"teinte": [
+12673280,
+14315734,
+12673280,
+0
+],
+"stats": [
+[
+"pm",
+1
+],
+[
+"tacle",
+30
+],
+[
+"resFeu",
+8
+]
+]
+},
+"113": {
+"nom": "Muldo Roux et Indigo",
+"famille": "muldo",
+"gen": 4,
+"couleurs": [
+"Roux",
+"Indigo"
+],
+"teinte": [
+7700427,
+12673280,
+7700427,
+0
+],
+"stats": [
+[
+"resEau",
+8
+],
+[
+"tacle",
+30
+],
+[
+"pm",
+1
+]
+]
+},
+"114": {
+"nom": "Muldo Roux et Ébène",
+"famille": "muldo",
+"gen": 4,
+"couleurs": [
+"Roux",
+"Ébène"
+],
+"teinte": [
+1708036,
+12673280,
+1708036,
+0
+],
+"stats": [
+[
+"tacle",
+30
+],
+[
+"pm",
+1
+],
+[
+"resAir",
+8
+]
+]
+},
+"115": {
+"nom": "Muldo Roux et Doré",
+"famille": "muldo",
+"gen": 4,
+"couleurs": [
+"Roux",
+"Doré"
+],
+"teinte": [
+12673280,
+15118592,
+12673280,
+0
+],
+"stats": [
+[
+"puissance",
+40
+],
+[
+"pm",
+1
+],
+[
+"tacle",
+30
+]
+]
+},
+"116": {
+"nom": "Muldo Roux et Amande",
+"famille": "muldo",
+"gen": 4,
+"couleurs": [
+"Roux",
+"Amande"
+],
+"teinte": [
+12673280,
+14207612,
+12673280,
+0
+],
+"stats": [
+[
+"tacle",
+30
+],
+[
+"pm",
+1
+],
+[
+"fuite",
+30
+]
+]
+},
+"117": {
+"nom": "Muldo Pourpre et Amande",
+"famille": "muldo",
+"gen": 4,
+"couleurs": [
+"Pourpre",
+"Amande"
+],
+"teinte": [
+14207612,
+7019555,
+14207612,
+0
+],
+"stats": [
+[
+"fuite",
+30
+],
+[
+"resTerre",
+8
+],
+[
+"pm",
+1
+]
+]
+},
+"118": {
+"nom": "Muldo Orchidée et Amande",
+"famille": "muldo",
+"gen": 4,
+"couleurs": [
+"Orchidée",
+"Amande"
+],
+"teinte": [
+14315734,
+14207612,
+14315734,
+0
+],
+"stats": [
+[
+"fuite",
+30
+],
+[
+"pm",
+1
+],
+[
+"resFeu",
+8
+]
+]
+},
+"119": {
+"nom": "Muldo Indigo et Amande",
+"famille": "muldo",
+"gen": 4,
+"couleurs": [
+"Indigo",
+"Amande"
+],
+"teinte": [
+7700427,
+14207612,
+7700427,
+0
+],
+"stats": [
+[
+"resEau",
+8
+],
+[
+"fuite",
+30
+],
+[
+"pm",
+1
+]
+]
+},
+"120": {
+"nom": "Muldo Ébène et Amande",
+"famille": "muldo",
+"gen": 4,
+"couleurs": [
+"Ébène",
+"Amande"
+],
+"teinte": [
+14207612,
+1708036,
+14207612,
+0
+],
+"stats": [
+[
+"fuite",
+30
+],
+[
+"pm",
+1
+],
+[
+"resAir",
+8
+]
+]
+},
+"121": {
+"nom": "Muldo Doré et Amande",
+"famille": "muldo",
+"gen": 4,
+"couleurs": [
+"Doré",
+"Amande"
+],
+"teinte": [
+15118592,
+14207612,
+15118592,
+0
+],
+"stats": [
+[
+"puissance",
+40
+],
+[
+"pm",
+1
+],
+[
+"fuite",
+30
+]
+]
+},
+"122": {
+"nom": "Muldo Pourpre et Ivoire",
+"famille": "muldo",
+"gen": 6,
+"couleurs": [
+"Pourpre",
+"Ivoire"
+],
+"teinte": [
+16250853,
+7019555,
+16250853,
+0
+],
+"stats": [
+[
+"resTerre",
+8
+],
+[
+"esquivePA",
+30
+],
+[
+"pm",
+1
+]
+]
+},
+"123": {
+"nom": "Muldo Orchidée et Ivoire",
+"famille": "muldo",
+"gen": 6,
+"couleurs": [
+"Orchidée",
+"Ivoire"
+],
+"teinte": [
+16250853,
+14315734,
+16250853,
+0
+],
+"stats": [
+[
+"resFeu",
+8
+],
+[
+"esquivePA",
+30
+],
+[
+"pm",
+1
+]
+]
+},
+"124": {
+"nom": "Muldo Indigo et Ivoire",
+"famille": "muldo",
+"gen": 6,
+"couleurs": [
+"Indigo",
+"Ivoire"
+],
+"teinte": [
+16250853,
+7700427,
+16250853,
+0
+],
+"stats": [
+[
+"pm",
+1
+],
+[
+"esquivePA",
+30
+],
+[
+"resEau",
+8
+]
+]
+},
+"125": {
+"nom": "Muldo Ébène et Ivoire",
+"famille": "muldo",
+"gen": 6,
+"couleurs": [
+"Ébène",
+"Ivoire"
+],
+"teinte": [
+1708036,
+16250853,
+1708036,
+0
+],
+"stats": [
+[
+"resAir",
+8
+],
+[
+"pm",
+1
+],
+[
+"esquivePA",
+30
+]
+]
+},
+"126": {
+"nom": "Muldo Doré et Ivoire",
+"famille": "muldo",
+"gen": 6,
+"couleurs": [
+"Doré",
+"Ivoire"
+],
+"teinte": [
+16250853,
+15118592,
+16250853,
+0
+],
+"stats": [
+[
+"pm",
+1
+],
+[
+"esquivePA",
+30
+],
+[
+"puissance",
+40
+]
+]
+},
+"127": {
+"nom": "Muldo Roux et Ivoire",
+"famille": "muldo",
+"gen": 6,
+"couleurs": [
+"Roux",
+"Ivoire"
+],
+"teinte": [
+12673280,
+16250853,
+12673280,
+0
+],
+"stats": [
+[
+"tacle",
+30
+],
+[
+"esquivePA",
+30
+],
+[
+"pm",
+1
+]
+]
+},
+"138": {
+"nom": "Muldo Amande et Ivoire",
+"famille": "muldo",
+"gen": 6,
+"couleurs": [
+"Amande",
+"Ivoire"
+],
+"teinte": [
+16250853,
+14207612,
+16250853,
+0
+],
+"stats": [
+[
+"fuite",
+30
+],
+[
+"pm",
+1
+],
+[
+"esquivePA",
+30
+]
+]
+},
+"139": {
+"nom": "Muldo Turquoise et Ivoire",
+"famille": "muldo",
+"gen": 6,
+"couleurs": [
+"Turquoise",
+"Ivoire"
+],
+"teinte": [
+16250853,
+2605815,
+16250853,
+0
+],
+"stats": [
+[
+"esquivePM",
+30
+],
+[
+"esquivePA",
+30
+],
+[
+"pm",
+1
+]
+]
+},
+"140": {
+"nom": "Muldo Turquoise et Pourpre",
+"famille": "muldo",
+"gen": 6,
+"couleurs": [
+"Turquoise",
+"Pourpre"
+],
+"teinte": [
+7019555,
+2605815,
+7019555,
+0
+],
+"stats": [
+[
+"pm",
+1
+],
+[
+"esquivePM",
+30
+],
+[
+"resTerre",
+8
+]
+]
+},
+"141": {
+"nom": "Muldo Turquoise et Indigo",
+"famille": "muldo",
+"gen": 6,
+"couleurs": [
+"Turquoise",
+"Indigo"
+],
+"teinte": [
+7700427,
+2605815,
+7700427,
+0
+],
+"stats": [
+[
+"pm",
+1
+],
+[
+"resEau",
+8
+],
+[
+"esquivePM",
+30
+]
+]
+},
+"142": {
+"nom": "Muldo Turquoise et Ébène",
+"famille": "muldo",
+"gen": 6,
+"couleurs": [
+"Turquoise",
+"Ébène"
+],
+"teinte": [
+1708036,
+2605815,
+1708036,
+0
+],
+"stats": [
+[
+"esquivePM",
+30
+],
+[
+"resAir",
+8
+],
+[
+"pm",
+1
+]
+]
+},
+"143": {
+"nom": "Muldo Turquoise et Roux",
+"famille": "muldo",
+"gen": 6,
+"couleurs": [
+"Turquoise",
+"Roux"
+],
+"teinte": [
+2605815,
+12673280,
+2605815,
+0
+],
+"stats": [
+[
+"tacle",
+30
+],
+[
+"pm",
+1
+],
+[
+"esquivePM",
+30
+]
+]
+},
+"144": {
+"nom": "Muldo Turquoise et Amande",
+"famille": "muldo",
+"gen": 6,
+"couleurs": [
+"Turquoise",
+"Amande"
+],
+"teinte": [
+2605815,
+14207612,
+2605815,
+0
+],
+"stats": [
+[
+"esquivePM",
+30
+],
+[
+"pm",
+1
+],
+[
+"fuite",
+30
+]
+]
+},
+"145": {
+"nom": "Muldo Turquoise et Doré",
+"famille": "muldo",
+"gen": 6,
+"couleurs": [
+"Turquoise",
+"Doré"
+],
+"teinte": [
+15118592,
+2605815,
+15118592,
+0
+],
+"stats": [
+[
+"puissance",
+40
+],
+[
+"esquivePM",
+30
+],
+[
+"pm",
+1
+]
+]
+},
+"146": {
+"nom": "Muldo Prune et Pourpre",
+"famille": "muldo",
+"gen": 8,
+"couleurs": [
+"Prune",
+"Pourpre"
+],
+"teinte": [
+6684825,
+7019555,
+6684825,
+0
+],
+"stats": [
+[
+"critique",
+6
+],
+[
+"resTerre",
+8
+],
+[
+"pm",
+1
+]
+]
+},
+"147": {
+"nom": "Muldo Prune et Orchidée",
+"famille": "muldo",
+"gen": 8,
+"couleurs": [
+"Prune",
+"Orchidée"
+],
+"teinte": [
+6684825,
+14315734,
+6684825,
+0
+],
+"stats": [
+[
+"resFeu",
+8
+],
+[
+"critique",
+6
+],
+[
+"pm",
+1
+]
+]
+},
+"148": {
+"nom": "Muldo Prune et Indigo",
+"famille": "muldo",
+"gen": 8,
+"couleurs": [
+"Prune",
+"Indigo"
+],
+"teinte": [
+6684825,
+7700427,
+6684825,
+0
+],
+"stats": [
+[
+"critique",
+6
+],
+[
+"pm",
+1
+],
+[
+"resEau",
+8
+]
+]
+},
+"149": {
+"nom": "Muldo Prune et Ébène",
+"famille": "muldo",
+"gen": 8,
+"couleurs": [
+"Prune",
+"Ébène"
+],
+"teinte": [
+1708036,
+6684825,
+1708036,
+0
+],
+"stats": [
+[
+"pm",
+1
+],
+[
+"critique",
+6
+],
+[
+"resAir",
+8
+]
+]
+},
+"150": {
+"nom": "Muldo Prune et Doré",
+"famille": "muldo",
+"gen": 8,
+"couleurs": [
+"Prune",
+"Doré"
+],
+"teinte": [
+6684825,
+15118592,
+6684825,
+0
+],
+"stats": [
+[
+"pm",
+1
+],
+[
+"puissance",
+40
+],
+[
+"critique",
+6
+]
+]
+},
+"151": {
+"nom": "Muldo Prune et Roux",
+"famille": "muldo",
+"gen": 8,
+"couleurs": [
+"Prune",
+"Roux"
+],
+"teinte": [
+12673280,
+6684825,
+12673280,
+0
+],
+"stats": [
+[
+"critique",
+6
+],
+[
+"pm",
+1
+],
+[
+"tacle",
+30
+]
+]
+},
+"152": {
+"nom": "Muldo Prune et Amande",
+"famille": "muldo",
+"gen": 8,
+"couleurs": [
+"Prune",
+"Amande"
+],
+"teinte": [
+14207612,
+6684825,
+14207612,
+0
+],
+"stats": [
+[
+"fuite",
+30
+],
+[
+"pm",
+1
+],
+[
+"critique",
+6
+]
+]
+},
+"153": {
+"nom": "Muldo Prune et Ivoire",
+"famille": "muldo",
+"gen": 8,
+"couleurs": [
+"Prune",
+"Ivoire"
+],
+"teinte": [
+16250853,
+6684825,
+16250853,
+0
+],
+"stats": [
+[
+"esquivePA",
+30
+],
+[
+"critique",
+6
+],
+[
+"pm",
+1
+]
+]
+},
+"154": {
+"nom": "Muldo Prune et Turquoise",
+"famille": "muldo",
+"gen": 8,
+"couleurs": [
+"Prune",
+"Turquoise"
+],
+"teinte": [
+6684825,
+2605815,
+6684825,
+0
+],
+"stats": [
+[
+"pm",
+1
+],
+[
+"critique",
+6
+],
+[
+"esquivePM",
+30
+]
+]
+},
+"155": {
+"nom": "Muldo Prune et Émeraude",
+"famille": "muldo",
+"gen": 8,
+"couleurs": [
+"Prune",
+"Émeraude"
+],
+"teinte": [
+2650659,
+6684825,
+2650659,
+0
+],
+"stats": [
+[
+"dommagesCritiques",
+20
+],
+[
+"critique",
+6
+],
+[
+"pm",
+1
+]
+]
+},
+"156": {
+"nom": "Muldo Pourpre et Émeraude",
+"famille": "muldo",
+"gen": 8,
+"couleurs": [
+"Pourpre",
+"Émeraude"
+],
+"teinte": [
+2650659,
+7019555,
+2650659,
+0
+],
+"stats": [
+[
+"pm",
+1
+],
+[
+"resTerre",
+8
+],
+[
+"dommagesCritiques",
+20
+]
+]
+},
+"157": {
+"nom": "Muldo Orchidée et Émeraude",
+"famille": "muldo",
+"gen": 8,
+"couleurs": [
+"Orchidée",
+"Émeraude"
+],
+"teinte": [
+2650659,
+14315734,
+2650659,
+0
+],
+"stats": [
+[
+"pm",
+1
+],
+[
+"resFeu",
+8
+],
+[
+"dommagesCritiques",
+20
+]
+]
+},
+"158": {
+"nom": "Muldo Indigo et Émeraude",
+"famille": "muldo",
+"gen": 8,
+"couleurs": [
+"Indigo",
+"Émeraude"
+],
+"teinte": [
+2650659,
+7700427,
+2650659,
+0
+],
+"stats": [
+[
+"pm",
+1
+],
+[
+"resEau",
+8
+],
+[
+"dommagesCritiques",
+20
+]
+]
+},
+"159": {
+"nom": "Muldo Ébène et Émeraude",
+"famille": "muldo",
+"gen": 8,
+"couleurs": [
+"Ébène",
+"Émeraude"
+],
+"teinte": [
+1708036,
+2650659,
+1708036,
+0
+],
+"stats": [
+[
+"resAir",
+8
+],
+[
+"dommagesCritiques",
+20
+],
+[
+"pm",
+1
+]
+]
+},
+"160": {
+"nom": "Muldo Doré et Émeraude",
+"famille": "muldo",
+"gen": 8,
+"couleurs": [
+"Doré",
+"Émeraude"
+],
+"teinte": [
+2650659,
+15118592,
+2650659,
+0
+],
+"stats": [
+[
+"pm",
+1
+],
+[
+"puissance",
+40
+],
+[
+"dommagesCritiques",
+20
+]
+]
+},
+"161": {
+"nom": "Muldo Roux et Émeraude",
+"famille": "muldo",
+"gen": 8,
+"couleurs": [
+"Roux",
+"Émeraude"
+],
+"teinte": [
+12673280,
+2650659,
+12673280,
+0
+],
+"stats": [
+[
+"tacle",
+30
+],
+[
+"dommagesCritiques",
+20
+],
+[
+"pm",
+1
+]
+]
+},
+"162": {
+"nom": "Muldo Amande et Émeraude",
+"famille": "muldo",
+"gen": 8,
+"couleurs": [
+"Amande",
+"Émeraude"
+],
+"teinte": [
+14207612,
+2650659,
+14207612,
+0
+],
+"stats": [
+[
+"fuite",
+30
+],
+[
+"pm",
+1
+],
+[
+"dommagesCritiques",
+20
+]
+]
+},
+"163": {
+"nom": "Muldo Ivoire et Émeraude",
+"famille": "muldo",
+"gen": 8,
+"couleurs": [
+"Ivoire",
+"Émeraude"
+],
+"teinte": [
+2650659,
+16250853,
+2650659,
+0
+],
+"stats": [
+[
+"esquivePA",
+30
+],
+[
+"pm",
+1
+],
+[
+"dommagesCritiques",
+20
+]
+]
+},
+"164": {
+"nom": "Muldo Turquoise et Émeraude",
+"famille": "muldo",
+"gen": 8,
+"couleurs": [
+"Turquoise",
+"Émeraude"
+],
+"teinte": [
+2650659,
+2605815,
+2650659,
+0
+],
+"stats": [
+[
+"esquivePM",
+30
+],
+[
+"pm",
+1
+],
+[
+"dommagesCritiques",
+20
+]
+]
+},
+"165": {
+"nom": "Muldo Turquoise et Orchidée",
+"famille": "muldo",
+"gen": 6,
+"couleurs": [
+"Turquoise",
+"Orchidée"
+],
+"teinte": [
+14315734,
+2605815,
+14315734,
+0
+],
+"stats": [
+[
+"resFeu",
+8
+],
+[
+"pm",
+1
+],
+[
+"esquivePM",
+30
+]
+]
+}
+},
+"sauvages": {
+"dragodinde_amande_sauvage": "20",
+"dragodinde_rousse_sauvage": "10",
+"dragodinde_doree_sauvage": "18",
+"muldo_indigo_sauvage": "92",
+"muldo_ebene_sauvage": "91",
+"muldo_orchidee_sauvage": "90",
+"muldo_pourpre_sauvage": "93",
+"muldo_dore_sauvage": "94"
+},
+"capacites": {
+"1": {
+"nom": "Infatigable",
+"officiel": "Une monture infatigable dispose de beaucoup plus d'énergie qu'une monture normale et en regagne beaucoup plus vite également."
+},
+"2": {
+"nom": "Porteuse",
+"officiel": "Une monture porteuse peut porter beaucoup plus d'objets qu'une monture normale."
+},
+"3": {
+"nom": "Reproductrice",
+"officiel": "Une monture reproductrice met au monde plus de jeunes montures qu'une monture normale."
+},
+"4": {
+"nom": "Sage",
+"officiel": "Une monture sage évolue deux fois plus vite qu'une monture normale."
+},
+"5": {
+"nom": "Endurante",
+"officiel": "Une monture endurante devient plus rapidement endurante qu'une monture normale."
+},
+"6": {
+"nom": "Amoureuse",
+"officiel": "Une monture amoureuse devient plus rapidement amoureuse qu'une monture normale."
+},
+"7": {
+"nom": "Précoce",
+"officiel": "Une monture précoce devient plus rapidement mature qu'une monture normale."
+},
+"8": {
+"nom": "Prédisposée Génétique",
+"officiel": "Une monture prédisposée génétique a plus de chance de transmettre ses caractères génétiques qu'une monture normale."
+},
+"9": {
+"nom": "Caméléone",
+"officiel": "Une monture caméléone fait varier son ramage selon le plumage de l'aventurier qui la chevauche."
+}
+},
+"planches": {
+"dragodinde": "mont_639",
+"muldo": "mont_3588"
+},
+"zones": {
+"dragodinde": "mont_639_zones.4774358d.webp",
+"muldo": "mont_3588_zones.b6522a73.webp"
+}
+}

@@ -20,7 +20,16 @@ export const CLASSEMENT = {
   metier: 100,
   /** 0.6 (25A) : donjons au chrono de la semaine (lundi 0 h, heure de Paris), avec le score d'idoles. */
   hebdo: ['Labyrinthe du Dragon Cochon'],
+  /** 0.7 (16A) : une semaine sur deux, la Caverne du Koulosse remplace le Labyrinthe, quand la 0.7 est publique (v07 à true à sa sortie). */
+  alterne: ['Labyrinthe du Dragon Cochon', 'Caverne du Koulosse'],
+  v07: false,
 };
+/** Donjons au chrono de la semaine sem (« 2026-11-09 ») : le Labyrinthe, puis avec la 0.7 le Labyrinthe et le Koulosse à tour de rôle. */
+export function hebdoDe(sem) {
+  if (!CLASSEMENT.v07) return CLASSEMENT.hebdo;
+  const n = Math.round(Date.parse(sem) / 604_800_000);
+  return [CLASSEMENT.alterne[((n % CLASSEMENT.alterne.length) + CLASSEMENT.alterne.length) % CLASSEMENT.alterne.length]];
+}
 /** 0.6 (18D) : meilleur = plus haut score d'idoles, puis meilleur temps à score égal. */
 export const meilleur = (a, b) => (b.idoles ?? 0) - (a.idoles ?? 0) || a.temps - b.temps;
 /** 0.6 (25A) : semaine d'un instant (ms), « 2026-11-09 » = son lundi, heure de Paris (décalage fixe d'hiver : une heure près). */
@@ -138,7 +147,7 @@ export function creerClassement({ comptes, enLigne = () => [], annoncer = () => 
     const semAvant = q.kv.get('semaine')?.valeur;
     if (semAvant !== cleSemaine) {
       q.ecrireKv.run('semaine', cleSemaine);
-      if (semAvant) for (const nom of CLASSEMENT.hebdo) {
+      if (semAvant) for (const nom of hebdoDe(semAvant)) {
         const g = q.semaine.all(semAvant).find(r => r.donjon === nom);
         if (g) annoncer(`🏆 ${(json(g.equipe) ?? []).map(m => `**${texte(m.nom, 20)}**`).join(', ')} remporte **${nom}** de la semaine (${Math.floor(g.temps / 60)} min ${String(Math.round(g.temps % 60)).padStart(2, '0')} s, idoles ${g.idoles}) !`);
       }
@@ -203,7 +212,7 @@ export function creerClassement({ comptes, enLigne = () => [], annoncer = () => 
     const t = Number(temps), nom = texte(donjon, 40), id = ent(idoles, 0, 1000) ?? 0;
     if (!nom || !Number.isFinite(t) || t <= 0 || !membres.length) return;
     const mode = membres.length > 1 ? 'groupe' : 'solo', equipe = JSON.stringify(membres.map(m => ({ nom: texte(m.nom, 20), classe: texte(m.classe, 20) })));
-    const nouveau = { temps: t, idoles: id }, sem = semaineDe(maintenant()), hebdo = CLASSEMENT.hebdo.includes(nom);
+    const nouveau = { temps: t, idoles: id }, sem = semaineDe(maintenant()), hebdo = hebdoDe(sem).includes(nom);
     for (const m of membres) {
       const avant = q.record.get(nom, mode, m.compte, m.emplacement);
       if (!avant || meilleur(nouveau, avant) < 0) q.noter.run(nom, mode, m.compte, m.emplacement, t, equipe, maintenant(), id);

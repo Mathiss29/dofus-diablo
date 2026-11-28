@@ -2389,6 +2389,9 @@
             ]
           }
         ],
+        "Corrections": [
+          "Du niveau 61 à 90, bien plus d'objets officiels tombent : ceux qu'on fabrique avec le butin de la zone."
+        ],
         "En coulisses": [
           "0.7 en partie de test : Otomaï, Cania nord, Koalaks hauts, Pandala et Champs de glace, 569 cartes.",
           "0.7 : bateaux pour Otomaï et Pandala, 66 monstres, 37 archimonstres et les musiques de combat des régions.",
@@ -2396,7 +2399,15 @@
           "0.7 : grimoires du Corbac, Blop Multicolore qui change de couleur, Skeunk voleur de potion.",
           "0.7 : Siège des Zoths, 3 min pour défendre la Pierre du village, un coffre et une fois par heure.",
           "0.7 : le Gobrechaun fuit en semant des kamas et lâche la clé du Laboratoire caché, où il garde son trésor.",
-          "0.7 : 60 sorts du niveau 91 à 120 pour les dix classes, avec leurs gestes et effets officiels."
+          "0.7 : 60 sorts du niveau 91 à 120 pour les dix classes, avec leurs gestes et effets officiels.",
+          "0.7 : 283 objets du 91 au 120, 62 panoplies, 87 trophées sur les boss et le Dofus Kaliptus sur Skeunk.",
+          "0.7 : Boufmouth légendaire, Méga Guerrier Zoth et Méga Momie Koalak rejoignent les boss du monde.",
+          "0.7 : invasion d'Otomaï à 11 h, 16 h et 21 h, et tableaux de contrats à Otomaï et à Pandala.",
+          "0.7 : succès « Maître de la tranche 90-120 » avec son aura bleue, et Koulosse au chrono de la semaine.",
+          "0.7 : dalas de Pandala, +20 % en Eau à Akwadala, en Terre à Terrdala et en Air à Plantala pour tous.",
+          "0.7 : Carnet des Fêlures, actes VI (Otomaï) et VII (Pandala et les hauteurs), 18 chapitres jusqu'au 120.",
+"0.7 : Dragodindes et Muldos à capturer et à monter (touche 7), +40 % de vitesse hors combat.",
+"0.7 : élevage (touche 8) : enclos, croisements des 10 générations, nourriture, expéditions."
         ]
       }
     }

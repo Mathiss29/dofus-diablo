@@ -8,6 +8,7 @@ import type { StyleChoisi, Tenue } from './style';
 import { BENEDICTIONS, type AchatsDuJour, type Benediction } from './magasin';
 import { avantage, type Palier } from './boutiqueOgrines';
 import { CHATIMENTS, PC_PAR_ID } from './pouvoirsClasse';
+import { facteurDala } from './dalas';
 import { DOFUS, EMPLACEMENTS_DOFUS, PASSIFS, PORTABLE, TROPHEES } from './dofus';
 import type { CleDonjon } from './arene';
 import { guerreVide, type EtatGuerre } from './guerre';
@@ -42,6 +43,7 @@ import { DANGER } from './danger';
 import { bonusPierre, coefOeuvre } from './oeuvre';
 import type { EntreeCodex } from './codex';
 import type { Drapeau, Signal, Tombe } from './carte';
+import { ecurieVide, monture as montureActive, statsMonture, vitesseMonture, coupEchange, basculerMonture, type Ecurie } from './montures';
 import { POUVOIR_PAR_ID, classeDuPouvoir, gradeAvecPouvoirs, type CtxPouvoirs, type PouvoirDef } from './pouvoirs';
 
 type ActiveSkill =
@@ -157,6 +159,12 @@ export class Player extends Entity {
   areneAmes: EtatAreneAmes = areneAmesVide();
   /** « Familiers : » 6A : familiers obtenus par ce perso (la Ménagerie du compte est dans le coffre, Coffre.familiers). */
   menagerie: string[] = [];
+  /** 0.7 (17A, Élevage) : montures du perso, enclos, monture montée ; heure du dernier coup donné ou reçu (pour remonter). */
+  ecurie: Ecurie = ecurieVide();
+  monte = false;
+  /** Race de la monture montée ('' à pied) : ce que les autres écrans dessinent (miroir). */
+  montee = '';
+  coupA = -99;
   /** « Familiers : » 4C : familier de départ déjà choisi à l'Animalerie. */
   familierOffert = false;
   /** Abonnement du compte (« Apparats : » 16-17) : réglé par l'affichage à partir du serveur, jamais sauvé avec le perso. */
@@ -293,6 +301,8 @@ export class Player extends Entity {
   v06 = false;
   /** 0.7 visible (partie de test tant que V07_PUBLIC est faux). */
   v07 = false;
+  /** 0.7 (13C) : dala de Pandala où se trouve le joueur (« » hors de Pandala), pour l'annoncer en y entrant. */
+  dala = '';
   /** Campagne « Le Carnet des Fêlures » visible (partie de test tant que CAMPAGNE_PUBLIC est faux). */
   campagne = false;
   /** Sorts 61-90 (Iop, Crâ, Osamodas, Sacrieur) : effets en cours lancés par ce perso (src/sim/sorts61.ts). */
@@ -371,7 +381,7 @@ export class Player extends Entity {
       const o = this.official(k), n = o ? this.requiredLevel(o) : 0;
       if (o && n > this.level) aVenir.push({ dofusId: d.dofusId, niveau: n });
     }
-    return { classe: this.cls.sorts, connus, aVenir, sortsRecharge: this.sortsRecharge, v03: this.v03, v04: this.v04 };
+    return { classe: this.cls.sorts, connus, aVenir, sortsRecharge: this.sortsRecharge, v03: this.v03, v04: this.v04, v07: this.v07 };
   }
   /** État d'un pouvoir porté (infobulle) : actif, sort pas encore appris (niveau), autre classe, ou sort absent du jeu. */
   etatPouvoir(id: string): { actif: true } | { actif: false; raison: string } {
@@ -473,7 +483,7 @@ export class Player extends Entity {
   ecaPattesA = -99; ecaVieA = -999;
   courir(k: number, t: number) { this.courseK = this.courseT > 0 ? Math.max(this.courseK, k) : k; this.courseT = Math.max(this.courseT, t); }
   slow(t: number, k: number) { if (this.insensibleT > 0) return; k *= fuiteFactor(this.fuite); this.slowK = this.slowT > 0 ? Math.max(this.slowK, k) : k; if (t >= this.slowT) this.slowT0 = t; this.slowT = Math.max(this.slowT, t); }
-  get speed(): number { return this.cls.speed * (1 + vitesseAgilite(this.stat('agilite'))) * this.vitesseTest * (this.slowT > 0 ? 1 - this.slowK : 1) * (this.courseT > 0 ? 1 + this.courseK : 1) * (1 + this.bonusMetier('pecheur')) * (this.ougBete ? 1 + this.cls.ouginak!.bete.vitesse : 1) * vitesseOuginak(this); }
+  get speed(): number { return this.cls.speed * (1 + vitesseAgilite(this.stat('agilite'))) * this.vitesseTest * (this.slowT > 0 ? 1 - this.slowK : 1) * (this.courseT > 0 ? 1 + this.courseK : 1) * (1 + this.bonusMetier('pecheur')) * (this.ougBete ? 1 + this.cls.ouginak!.bete.vitesse : 1) * vitesseOuginak(this) * vitesseMonture(this); }
   /** Partie de test (5D) : course ×3. */
   vitesseTest = 1;
   /** Tacle et Fuite (base Agilité / 10), Retrait et Esquive PA / PM (base Sagesse / 10), comme dans Dofus. */
@@ -560,6 +570,8 @@ export class Player extends Entity {
     }
     for (const id of this.dofusPortes) if (id) for (const [k, v] of Object.entries(PORTABLE(id)?.stats ?? {}) as [Stat, number][]) add(k, v);
     for (const [k, v] of Object.entries(this.parchemins) as [Stat, number][]) add(k, v);   // « Métiers : » 5A
+    const mo = this.v07 ? montureActive(this) : undefined;   // 0.7 (Élevage 5A) : bonus de la monture équipée
+    if (mo && !mo.expedition) for (const [k, v] of Object.entries(statsMonture(mo)) as [Stat, number][]) add(k, v);
     for (const [k, v] of Object.entries(bonusSanctuaires(this.sanctuaires)) as [Stat, number][]) add(k, v);   // 0.6 (20A) : sanctuaires des Douze
     for (const c of [this.repas && REPAS[this.repas.id], this.elixir && ELIXIRS[this.elixir.id]]) if (c) add(c.stat, c.n);   // 4B + 4C
     for (const [id, n] of Object.entries(sets)) {
@@ -1099,7 +1111,9 @@ export class Player extends Entity {
     }
     if (input.target != null || input.dest || input.pickup != null) this.castChase = null;
     // Tampon d'entrée : une touche pressée 150 ms trop tôt n'est pas perdue
+    if (input.monture) basculerMonture(this, world);   // 0.7 (17A) : monter / descendre
     let pr = input.pressed === 'attaque' ? this.autoAttack : input.pressed;
+    if ((pr || input.target != null && world.monsters.some(q => q.id === input.target && !q.dead)) && this.monte) coupEchange(this, world);   // coup donné : on descend
     // Option 5B : sort lancé sur un monstre hors de portée → le perso s'approche, puis lance
     if (pr && pr !== this.autoAttack && input.approach && input.castOn != null && this.knows(pr) && !this.spell(pr)?.move) {
       const m = world.monsters.find(q => q.id === input.castOn && !q.dead), reach = porteeSort(world, pr);
@@ -1761,9 +1775,11 @@ export class Player extends Entity {
   }
   hurt(raw: number, fromX: number, fromY: number, world: World, element: Element = 'neutre', loin?: boolean): boolean {
     if (this.invuln > 0 || this.dead) return false;
+    coupEchange(this, world);   // 0.7 (17A) : coup reçu, on descend de sa monture
     if (redirige61(this, raw, fromX, fromY, world, element, loin)) return true;   // Sacrifice : un Sacrieur proche encaisse à sa place
     const fi = this.fxIdoles, qui = world.monsters.find(m => !m.dead && m.x === fromX && m.y === fromY);
     if (this.autel?.effet === 'protection') raw *= AUTELS.effets.protection.subis;   // autel de Féca
+    raw *= facteurDala(world, this.x, this.y, element);   // 0.7 (13C) : dalas de Pandala, pour les monstres aussi
     if (fi) {   // idoles : Brouce (rage sous 50 % de PV), Hadibel et Tigel (critiques des monstres)
       if (fi.rage && qui && qui.hp < qui.maxHp / 2) raw *= 1 + fi.rage;
       if (fi.critMonstres && world.rng.next() < fi.critMonstres) {

@@ -26,6 +26,8 @@ export interface BossMondeDef {
   brille?: boolean;
   /** 0.6 (9B) : boss d'une région de la 0.6, dans la rotation seulement quand la 0.6 est visible. */
   v06?: boolean;
+  /** 0.7 (10B) : idem pour la 0.7 (Boufmouth légendaire, Méga Guerrier Zoth, Méga Momie Koalak). */
+  v07?: boolean;
 }
 export const BOSS_MONDE = B.liste as Record<string, BossMondeDef>;
 
@@ -37,19 +39,19 @@ export const jourSemaine = (s: number) => (((jourDe(s) + 3) % 7) + 7) % 7;
 export const heureDe = (s: number) => Math.floor((((s % JOUR) + JOUR) % JOUR) / HEURE);
 
 // --- Boss du monde : qui et quand (2A) ------------------------------------------------------------------------------------
-/** Boss du créneau c (créneau = periode s depuis le 1er janvier 1970, heure de Paris). v06 : la 0.6 est visible (ses boss
- *  entrent dans la rotation) ; par défaut, ce que voit une partie publique. */
-export function bossDuCreneau(c: number, v06 = V06_PUBLIC): string {
+/** Boss du créneau c (créneau = periode s depuis le 1er janvier 1970, heure de Paris). v06 / v07 : la 0.6 / la 0.7 est visible
+ *  (ses boss entrent dans la rotation) ; par défaut, ce que voit une partie publique. */
+export function bossDuCreneau(c: number, v06 = V06_PUBLIC, v07 = V07_PUBLIC): string {
   const parJour = Math.round(JOUR / B.periode), jour = Math.floor(c / parJour), k = c - jour * parJour, prog = B.programme;
   if (prog[k] === 'nuit') return Object.keys(BOSS_MONDE).find(x => BOSS_MONDE[x].nuit)!;
-  const i = prog.slice(0, k).filter(x => x === 'jour').length, R = v06 ? [...B.rotation, ...B.rotationV06] : B.rotation;
+  const i = prog.slice(0, k).filter(x => x === 'jour').length, R = [...B.rotation, ...(v06 ? B.rotationV06 : []), ...(v07 ? B.rotationV07 : [])];
   return R[(((jour + i) % R.length) + R.length) % R.length];   // tourne d'un cran chaque jour
 }
 export interface RendezVous { cle: string; creneau: number; debut: number }
 /** Le boss en cours (dans sa fenêtre d'attente) et le prochain. */
-export function rendezVous(s: number, v06 = V06_PUBLIC): { enCours: RendezVous | null; suivant: RendezVous } {
-  const c = Math.floor(s / B.periode), cur = { cle: bossDuCreneau(c, v06), creneau: c, debut: c * B.periode };
-  return { enCours: s - cur.debut < B.attente ? cur : null, suivant: { cle: bossDuCreneau(c + 1, v06), creneau: c + 1, debut: (c + 1) * B.periode } };
+export function rendezVous(s: number, v06 = V06_PUBLIC, v07 = V07_PUBLIC): { enCours: RendezVous | null; suivant: RendezVous } {
+  const c = Math.floor(s / B.periode), cur = { cle: bossDuCreneau(c, v06, v07), creneau: c, debut: c * B.periode };
+  return { enCours: s - cur.debut < B.attente ? cur : null, suivant: { cle: bossDuCreneau(c + 1, v06, v07), creneau: c + 1, debut: (c + 1) * B.periode } };
 }
 /** « 21 h », « 0 h » : l'heure de Paris d'un instant. */
 export const heureTexte = (s: number) => `${heureDe(s)} h`;
@@ -57,9 +59,9 @@ export const heureTexte = (s: number) => `${heureDe(s)} h`;
 // --- Invasions : une sous-zone par heure (5B, 6B) -------------------------------------------------------------------------
 /** Sous-zones qui peuvent être envahies : celles du monde d'Astrub et d'Amakna qui ont des groupes de monstres
  *  (celles de la 0.6 seulement si elle est visible : jamais une invasion dans une région fermée). */
-export function candidatsInvasion(data: GameData, v06 = V06_PUBLIC): number[] {
+export function candidatsInvasion(data: GameData, v06 = V06_PUBLIC, v07 = V07_PUBLIC): number[] {
   const sz = data.zones.astrub?.open?.subareas ?? {};
-  return Object.entries(sz).filter(([, s]) => s.monsters.length && s.groupsPerMap > 0 && !s.interieur && !s.cartes && (v06 || !s.v06) && (V07_PUBLIC || !s.v07)).map(([k]) => Number(k)).sort((a, b) => a - b);
+  return Object.entries(sz).filter(([, s]) => s.monsters.length && s.groupsPerMap > 0 && !s.interieur && !s.cartes && (v06 || !s.v06) && (v07 || !s.v07)).map(([k]) => Number(k)).sort((a, b) => a - b);
 }
 /** Mélange entier d'une heure : la même sous-zone pour tous les joueurs (pas de hasard ici, juste l'heure). */
 function melange(h: number): number {
@@ -67,18 +69,23 @@ function melange(h: number): number {
   x = (x ^ (x >>> 13)) >>> 0; x = Math.imul(x, 0xc2b2ae35) >>> 0;
   return (x ^ (x >>> 16)) >>> 0;
 }
-/** 0.6 (9D) : invasion de Frigost, à heures fixes, dans le Port de givre ou la Bourgade. frigost = c'est elle. */
-export interface InvasionHeure { sub: number; heure: number; debut: number; fin: number; frigost?: boolean }
-const FRIGOST = INV.frigost;
+/** 0.6 (9D) : invasion de Frigost, à heures fixes, dans le Port de givre ou la Bourgade. frigost = c'est elle.
+ *  0.7 (10C) : invasion d'Otomaï, de même dans les Plaines herbeuses ou la Tourbière sans fond. venue = laquelle. */
+export type Venue = 'frigost' | 'otomai';
+export interface InvasionHeure { sub: number; heure: number; debut: number; fin: number; frigost?: boolean; venue?: Venue }
+const VENUES: [Venue, { subs: number[]; heures: number[]; envahisseurs: string[] }, string][] = [['frigost', INV.frigost, 'de Frigost'], ['otomai', INV.otomai, "d'Otomaï"]];
 /** « La Bourgade (venue de Frigost) » : le HUD et le crieur disent déjà « Invasion ». */
-const nomInvasion = (sz: string, frigost?: boolean) => frigost ? `${sz} (venue de Frigost)` : sz;
+const nomInvasion = (sz: string, venue?: Venue) => venue ? `${sz} (venue ${VENUES.find(v => v[0] === venue)![2]})` : sz;
 /** L'invasion de l'heure en cours (jamais deux fois la même sous-zone de suite). */
 export function invasionDe(s: number, candidats: number[]): InvasionHeure | null {
   const n = candidats.length;
   if (!n) return null;
-  const h = Math.floor(s / HEURE), fr = FRIGOST.subs[jourDe(s) % FRIGOST.subs.length];
-  // 9D : aux heures de Frigost, si la Bourgade est envahissable (0.6 visible), c'est elle
-  if (FRIGOST.heures.includes(heureDe(s)) && candidats.includes(fr)) return { sub: fr, heure: h, debut: h * HEURE, fin: (h + 1) * HEURE, frigost: true };
+  const h = Math.floor(s / HEURE);
+  // 9D (0.6) et 10C (0.7) : aux heures de Frigost ou d'Otomaï, si sa sous-zone du jour est envahissable (région visible), c'est elle
+  for (const [venue, V] of VENUES) {
+    const sub = V.subs[jourDe(s) % V.subs.length];
+    if (V.heures.includes(heureDe(s)) && candidats.includes(sub)) return { sub, heure: h, debut: h * HEURE, fin: (h + 1) * HEURE, venue, ...(venue === 'frigost' ? { frigost: true } : {}) };
+  }
   const avant = melange(h - 1) % n;
   let i = melange(h) % n;
   if (i === avant && n > 1) i = (i + 1) % n;
@@ -140,17 +147,17 @@ export function bossAnnonce(w: World): (BossMondeDef & { cle: string }) | null {
   const v = w.vueVivant, h = w.opts.horloge;
   if (v?.boss && !v.boss.fin) return { ...BOSS_MONDE[v.boss.cle], cle: v.boss.cle };
   if (!h || !v) return null;
-  const s = h(), sv = rendezVous(s, w.v06Ouvert).suivant;
+  const s = h(), sv = rendezVous(s, w.v06Ouvert, w.v07Ouvert).suivant;
   return sv.debut - s <= B.annonce && BOSS_MONDE[sv.cle] ? { ...BOSS_MONDE[sv.cle], cle: sv.cle } : null;
 }
 
 /** Ce que crie le crieur du Bastion (2D) : prochain boss du monde (nom, lieu, heure) et invasion de l'heure. */
-export function nouvellesDuMonde(data: GameData, s: number, v06 = V06_PUBLIC): { boss: string; invasion: string } {
-  const sz = data.zones.astrub?.open?.subareas ?? {}, sv = rendezVous(s, v06).suivant, d = BOSS_MONDE[sv.cle];
-  const inv = invasionDe(s, candidatsInvasion(data, v06));
+export function nouvellesDuMonde(data: GameData, s: number, v06 = V06_PUBLIC, v07 = V07_PUBLIC): { boss: string; invasion: string } {
+  const sz = data.zones.astrub?.open?.subareas ?? {}, sv = rendezVous(s, v06, v07).suivant, d = BOSS_MONDE[sv.cle];
+  const inv = invasionDe(s, candidatsInvasion(data, v06, v07));
   return {
     boss: d && data.monsters[d.monstres[0]] ? `${d.nom} à ${heureTexte(sv.debut)}, ${sz[String(d.sousZone)]?.name ?? 'Amakna'}` : '',
-    invasion: inv ? nomInvasion(sz[String(inv.sub)]?.name ?? '', inv.frigost) : '',
+    invasion: inv ? nomInvasion(sz[String(inv.sub)]?.name ?? '', inv.venue) : '',
   };
 }
 
@@ -169,7 +176,7 @@ export class MondeVivant {
   private defs = new Map<string, MonsterDef>();
   constructor(readonly w: World) {
     const sz = w.zone.open?.subareas ?? {};
-    this.candidats = candidatsInvasion(w.opts.data, w.v06Ouvert).filter(k => sz[String(k)]);
+    this.candidats = candidatsInvasion(w.opts.data, w.v06Ouvert, w.v07Ouvert).filter(k => sz[String(k)]);
   }
   /** Heure de Paris (s), ou null sans horloge (tests, serveur). */
   get secondes(): number | null { const h = this.w.opts.horloge; return h ? h() : null; }
@@ -196,7 +203,7 @@ export class MondeVivant {
 
   // === Boss du monde =========================================================================================================
   private updateBoss(dt: number, s: number) {
-    const w = this.w, rv = rendezVous(s, w.v06Ouvert);
+    const w = this.w, rv = rendezVous(s, w.v06Ouvert, w.v07Ouvert);
     // 2D : annonce 10 minutes avant
     const sv = rv.suivant;
     if (sv.debut - s <= B.annonce && this.annonce !== sv.creneau && this.lieuOk(sv.cle)) {
@@ -388,8 +395,8 @@ export class MondeVivant {
   // === Invasions ================================================================================================================
   /** La sous-zone est envahie en ce moment. */
   envahie(sub: number | undefined): boolean { return sub != null && this.invasion?.sub === sub; }
-  /** 0.6 (9D) : seuls envahisseurs de l'invasion de Frigost (sinon null : les monstres de la sous-zone). */
-  envahisseurs(): string[] | null { return this.invasion?.frigost ? FRIGOST.envahisseurs.filter(m => this.w.opts.data.monsters[m]) : null; }
+  /** 0.6 (9D), 0.7 (10C) : seuls envahisseurs de l'invasion de Frigost ou d'Otomaï (sinon null : les monstres de la sous-zone). */
+  envahisseurs(): string[] | null { const V = VENUES.find(v => v[0] === this.invasion?.venue)?.[1]; return V ? V.envahisseurs.filter(m => this.w.opts.data.monsters[m]) : null; }
   /** Définition d'un envahisseur : plus de PV, plus de dégâts (5B). */
   defEnvahi(type: string): MonsterDef {
     const k = `inv|${type}`, c = this.defs.get(k);
@@ -402,7 +409,7 @@ export class MondeVivant {
     const w = this.w, h = invasionDe(s, this.candidats);
     if (!h) return;
     if (!this.invasion || this.invasion.heure !== h.heure) {
-      const nom = nomInvasion(this.nomSousZone(h.sub), h.frigost);
+      const nom = nomInvasion(this.nomSousZone(h.sub), h.venue);
       this.invasion = { ...h, nom, jauge: 0, max: INV.jauge, pleine: false, aides: new Set(), coffre: null };
       w.relancerSousZone(h.sub);   // les groupes au calme de la sous-zone repartent envahis
       w.emit({ k: 'invasionDebut', nom, sub: h.sub, fin: h.fin - s });

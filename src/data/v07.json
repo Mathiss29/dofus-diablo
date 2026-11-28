@@ -1,0 +1,9 @@
+{
+ "_dalas": "0.7 (« 0.7 : » 13C) : dalas élémentaires de Pandala. Dans la sous-zone, tous les coups de cet élément (joueurs et monstres) font bonus en plus. On change d'équipement ou on s'adapte.",
+ "dalas": {
+  "941": { "nom": "Akwadala", "element": "eau" },
+  "944": { "nom": "Terrdala", "element": "terre" },
+  "942": { "nom": "Plantala", "element": "air" }
+ },
+ "bonusDala": 0.2
+}

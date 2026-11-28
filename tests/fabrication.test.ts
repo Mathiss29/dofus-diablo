@@ -25,7 +25,7 @@ describe('métiers de fabrication (version 0.3 : 9A 10A+10B)', () => {
       expect(l.length, m).toBeGreaterThan(5);
       for (const r of l) {
         expect(ITEMS.equipment[r.result] ?? (ITEMS.resources[r.result] as { trophee?: boolean } | undefined)?.trophee, r.result).toBeTruthy();
-        expect(r.level).toBeLessThanOrEqual(60);   // 0.4 suite 2A : recettes jusqu'au 60
+        expect(r.level).toBeLessThanOrEqual(120);   // 0.4 suite 2A : recettes jusqu'au 60 ; 0.7 : jusqu'au 120 (cachées hors 0.7)
         for (const [id] of r.ingredients) expect(ITEMS.resources[id], `${r.result} ${id}`).toBeDefined();
       }
     }
@@ -37,6 +37,12 @@ describe('métiers de fabrication (version 0.3 : 9A 10A+10B)', () => {
     remplir(w, i, 1);
     expect(w.craftMax(i)).toBe(1);
     expect(w.craft(i)).toBe(1);
+  });
+
+  it('0.7 : les recettes d\'équipement 91-120 restent cachées tant que la 0.7 est fermée', () => {
+    const w = arena(false), r = R.find(x => METIERS_FAB.includes(x.metier) && (ITEMS.equipment[x.result]?.level ?? 0) > 90)!;
+    expect(r).toBeDefined();
+    expect(w.recetteVisible(r)).toBe(w.player.v07);
   });
 
   it('10A : un objet par recette dans le sac, Commun ou Rare (jamais plus, sans pouvoir), plus souvent Rare au haut niveau du métier', () => {

@@ -19,7 +19,8 @@ export const V07_PUBLIC = false;
 export const CAMPAGNE_PUBLIC = false;
 export const NIVEAU_OBJETS_03 = 40;
 /** Plus haut niveau d'équipement en jeu selon la version visible par le joueur. */
-export const niveauObjetsMax = (v03: boolean, v04 = false) => v04 ? Infinity : v03 ? NIVEAU_OBJETS_03 : NIVEAU_OBJETS_02;
+/** Équipements 91-120 (0.7, « 0.7 : » 9A) : cachés tant que la 0.7 l'est (v07 faux = plafond 90). */
+export const niveauObjetsMax = (v03: boolean, v04 = false, v07 = true) => v04 ? (v07 ? Infinity : 90) : v03 ? NIVEAU_OBJETS_03 : NIVEAU_OBJETS_02;
 
 /** Effet de sort officiel d'une panoplie de classe (src/data/pouvoirs.json, tools/extraction/pouvoirs.py). */
 export interface PouvoirDef {
@@ -65,6 +66,8 @@ export interface CtxPouvoirs {
   v03: boolean;
   /** 0.4 visible (partie de test, ou sortie publique) : équipements 41-60. */
   v04?: boolean;
+  /** 0.7 visible : équipements 91-120. */
+  v07?: boolean;
   /** Pouvoir de la classe garanti (quête « Le premier pouvoir », 8C) : jamais d'une autre classe ni d'un sort à venir, ni maison. */
   garanti?: boolean;
   /** Butin d'un boss : ses légendaires de classe préférés ont 3 fois plus de chance (Légendaires classe 2D). */

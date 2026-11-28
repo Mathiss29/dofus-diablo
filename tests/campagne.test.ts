@@ -15,9 +15,9 @@ const actes = QUETES.campagne!;
 const ordre = actes.flatMap(a => a.chapitres);
 
 describe('Campagne « Le Carnet des Fêlures » : contenu', () => {
-  it('8 actes, 8 à 10 chapitres par grande région (4C), 10 Sceaux dans l\'ordre, un seul fil', () => {
-    expect(actes.map(a => a.id)).toEqual(['prologue', 'incarnam', 'astrub', 'amakna', 'wabbits', 'moon', 'continent', 'frigost']);
-    for (const id of ['incarnam', 'astrub', 'amakna', 'continent']) {
+  it('10 actes (2 de la 0.7), 8 à 10 chapitres par grande région (4C), 10 Sceaux dans l\'ordre, un seul fil', () => {
+    expect(actes.map(a => a.id)).toEqual(['prologue', 'incarnam', 'astrub', 'amakna', 'wabbits', 'moon', 'continent', 'frigost', 'otomai', 'pandala']);
+    for (const id of ['incarnam', 'astrub', 'amakna', 'continent', 'otomai', 'pandala']) {
       const n = actes.find(a => a.id === id)!.chapitres.length;
       expect(n >= 8 && n <= 10, `${id} : ${n} chapitres`).toBe(true);
     }
@@ -37,7 +37,8 @@ describe('Campagne « Le Carnet des Fêlures » : contenu', () => {
       expect(r.sac, a.id).toBe(a.sac);
       expect(r.titre, a.id).toBe(a.titre);
     }
-    expect(QUETES.quetes[ordre[ordre.length - 1]].recompense.apparats?.length).toBeGreaterThan(0);
+    const fin = actes.find(a => a.id === 'frigost')!.chapitres;   // fin de la campagne ouverte à tous (la 0.7 vient après)
+    expect(QUETES.quetes[fin[fin.length - 1]].recompense.apparats?.length).toBeGreaterThan(0);
   });
   it('textes courts, sans vocabulaire tactique (règle temps réel)', () => {
     for (const id of ordre) {
@@ -124,5 +125,26 @@ describe('Campagne : fenêtre du Carnet', () => {
     const h = carnetHtml(w, '<h1>Carnet</h1>', { acte: null, confirmer: null });
     expect(h).toContain(actes[0].nom);
     for (const a of actes) expect(carnetHtml(w, '', { acte: a.id, confirmer: null }).length).toBeGreaterThan(200);
+  });
+});
+
+describe('Campagne : actes de la 0.7 (« 0.7 : » 12A)', () => {
+  it('Otomaï et Pandala suivent Frigost, cachés tant que la 0.7 ne se voit pas', () => {
+    for (const id of ['otomai', 'pandala']) {
+      const a = actes.find(x => x.id === id)!;
+      expect(a.v07, id).toBe(true);
+      for (const c of a.chapitres) expect(QUETES.quetes[c].v07, c).toBe(true);
+    }
+    const f = actes.find(a => a.id === 'frigost')!.chapitres, der = f[f.length - 1];
+    const etat: EtatQuetes = { ...VIDE, finies: ordre.slice(0, ordre.indexOf(der) + 1) };
+    const pub = monde(false, etat);
+    if (!pub.v07Ouvert && pub.quetes!.campagneOuverte) {
+      expect(pub.quetes!.actes.some(a => a.v07)).toBe(false);
+      expect(pub.quetes!.chapitre).toBeNull();
+    }
+    const t = monde(true, etat);
+    t.step(1 / 60, NO_INPUT);
+    expect(t.quetes!.actes.some(a => a.id === 'otomai')).toBe(true);
+    expect(t.quetes!.chapitre?.id).toBe('cmp_o1');
   });
 });
