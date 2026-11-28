@@ -47,6 +47,9 @@ const SANS_EFFET_OFFICIEL: Record<string, string> = {
   piege_funeste: 'Sram : piège, aucun gfx officiel (spellscript vide, la case piégée est dessinée)',
   piege_repulsif: 'Sram : piège, aucun gfx officiel (spellscript vide, la case piégée est dessinée)',
   piege_immobilisation: 'Sram : piège, aucun gfx officiel (spellscript vide, la case piégée est dessinée)',
+  piege_derive: 'Sram : piège, aucun gfx officiel (spellscript vide, la case piégée est dessinée)',
+  piege_scelerat: 'Sram : piège, aucun gfx officiel (spellscript vide, la case piégée est dessinée)',
+  piege_mortel: 'Sram : piège, aucun gfx officiel (spellscript vide, la case piégée est dessinée)',
   pas_sram: 'Sram : sort maison (« Classes : 9A »), le pas est dans le geste',
 };
 

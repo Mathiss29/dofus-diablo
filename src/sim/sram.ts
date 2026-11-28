@@ -29,7 +29,9 @@ export type Carac = 'puissance' | 'force' | 'agilite' | 'chance' | 'intelligence
 export interface EffetsSram {
   /** Pose un piège au point visé : rayon de ses effets (cases), attire / repousse vers / depuis son centre (cases),
    *  immobilise (s), +parEnnemi de dommages par ennemi à `autour` cases (Funeste). */
-  piege?: { r: number; attire?: number; repousse?: number; immobilise?: number; parEnnemi?: number; autour?: number };
+  piege?: { r: number; attire?: number; repousse?: number; immobilise?: number; parEnnemi?: number; autour?: number;
+    /** Piège Mortel : dommages × mortel sur un ennemi sous la moitié de ses PV. */
+    mortel?: number };
   /** Vole cette caractéristique (5A). */
   vol?: Carac;
   /** Poison continu (dommages totaux, × 1,5 comme les sorts) et retrait de Portée (cases, s) : Arsenic. */
@@ -39,6 +41,18 @@ export interface EffetsSram {
   invisible?: boolean; double?: boolean; peur?: boolean;
   /** Sournoiserie (clic droit) : repousse dans l'axe du lanceur (droit dans les pièges). */
   sournoiserie?: boolean;
+  /** Concentration de Chakra (61-90) : t s sur l'ennemi visé ; un piège qui le touche te soigne de part des dommages du piège. */
+  chakra?: { t: number; part: number };
+  /** Dérobade : bouclier (part des PV max) et course en plus, t s, sur l'allié visé ou sur toi. */
+  derobade?: { bouclier: number; t: number; course: number };
+  /** Chausse-trappe (91-120) : +par de dommages par piège qui a sauté depuis le dernier lancer (max) ; le compte repart à zéro. */
+  sautes?: { par: number; max: number };
+  /** Toxines : chaque lancer sur la même cible renforce le poison de par (max fois, t s) ; un piège qui la touche le relance. */
+  toxines?: { par: number; max: number; t: number };
+  /** Brume : les alliés dans la zone deviennent invisibles t s, les ennemis y perdent po cases de Portée 6 s. */
+  brume?: { t: number; po: number };
+  /** Comploteur : Double de t s qui explose à sa mort (r cases, dommages du sort, +parPiege par piège qui a sauté pendant sa vie). */
+  explose?: { r: number; t: number; parPiege: number };
 }
 /** Un piège au sol. */
 export interface Piege { id: number; sort: string; x: number; y: number; t: number; double: boolean; gm: number }
@@ -51,9 +65,16 @@ export interface EtatSram {
   vols: Partial<Record<Carac, { n: number; t: number }>>;
   /** Double en jeu (id de la bête), monstre choisi par Peur (id) et secondes pour choisir la case. */
   double: number | null; peur: number | null; peurT: number;
+  /** Pièges qui ont sauté (Chausse-trappe : depuis son dernier lancer ; Comploteur : pendant la vie du Double). */
+  sautes: number; sautesDouble: number;
+  /** Comploteur en jeu : sort et grade, pour l'explosion à sa mort. */
+  explose: { sort: string; gm: number } | null;
+  /** Ennemis sous Concentration de Chakra et sous Toxines (id, secondes, crans). */
+  chakra: { mid: number; t: number }[]; toxines: { mid: number; t: number; n: number }[];
 }
 export const etatSram = (p: Player): EtatSram =>
-  (p.sram ??= { pieges: [], prochain: 1, invisT: 0, invisA: -99, reveleT: 0, vols: {}, double: null, peur: null, peurT: 0 });
+  (p.sram ??= { pieges: [], prochain: 1, invisT: 0, invisA: -99, reveleT: 0, vols: {}, double: null, peur: null, peurT: 0,
+    sautes: 0, sautesDouble: 0, explose: null, chakra: [], toxines: [] });
 const R = (p: Player): ReglesSram | undefined => p.cls.sram;
 /** Règles du Sram, même pour un allié qui n'est pas Sram (Invisibilité posée sur lui). */
 const REGLES = (p: Player, w: World): ReglesSram | undefined => R(p) ?? w.players.find(q => q.cls.sram)?.cls.sram;
@@ -160,6 +181,18 @@ export function declencher(p: Player, pg: Piege, w: World): number {
     const hit: HitDef = { dmg: d.dmg * pg.gm * (1 + (P.parEnnemi ?? 0) * Math.max(0, autour - 1)), knock: (P.repousse ?? 0) * 342, element: d.element,
       pmLoss: d.pmLoss, attire: P.attire ? { px: P.attire * CASE, vers: 'centre' } : undefined, sort: pg.sort };
     const touches = zone();
+    if (P.mortel && hit.dmg > 0) {   // Piège Mortel : plus fort sous la moitié des PV, cible par cible
+      for (const m of touches.filter(m => m.hp < m.maxHp / 2)) w.applyHits(q => q === m, { ...hit, dmg: hit.dmg * (P.mortel - 1), knock: 0, attire: undefined, pmLoss: 0 }, pg.x, pg.y, 0);
+    }
+    if (hit.dmg > 0) for (const c of s.chakra) {
+      const m = c.t > 0 ? touches.find(x => x.id === c.mid) : undefined;
+      if (m) { const sp = p.cls.spells.chakra?.sram?.chakra; if (sp && p.soigner(hit.dmg * sp.part) > 0) w.emit({ k: 'status', x: p.x, y: p.y - 60, text: 'Chakra', color: '#7fdc7f' }); }
+    }
+    for (const x of s.toxines) {
+      const m = x.t > 0 ? touches.find(q => q.id === x.mid) : undefined;
+      const tx = p.cls.spells.toxines;
+      if (m && tx?.sram?.poison && tx.sram.toxines) empoisonner(p, m, tx.sram.poison * (1 + tx.sram.toxines.par * (x.n - 1)), tx.element, w);
+    }
     if (hit.dmg > 0 || hit.knock || hit.attire || hit.pmLoss) n = Math.max(n, w.hitCircle(pg.x, pg.y, r, hit));
     else n = Math.max(n, touches.length);
     if (P.immobilise) for (const m of touches) {
@@ -172,6 +205,7 @@ export function declencher(p: Player, pg: Piege, w: World): number {
   w.emit({ k: 'spell', fx: 'burst', id: pg.sort, x: pg.x, y: pg.y, facing: 0, size: r, arc: 0, element: d.element, big: pg.double, boosted: pg.double });
   w.emit({ k: 'piege', id: pg.id, x: pg.x, y: pg.y, r });
   if (n > 0) gagnerRuse(p, R(p)!.ruse.parPiege * (pg.double ? 2 : 1), w);
+  s.sautes++; if (s.double != null) s.sautesDouble++;
   return n;
 }
 /** Touche X (7B) : tous les pièges sautent d'un coup. Renvoie les monstres achevés par la détonation. */
@@ -198,7 +232,35 @@ export function avantImpactSram(p: Player, id: string, d: SpellDef, s: { tx: num
   if (S.double) {
     doubleDe(p, w)?.mourir(w);
     const b = w.invoquer(p, 'sram_double', id, s.tx, s.ty);
-    if (b) { b.horsCompte = true; b.finT = r.double.t; etatSram(p).double = b.id; }
+    const st = etatSram(p);
+    if (b) { b.horsCompte = true; b.finT = S.explose?.t ?? r.double.t; st.double = b.id; st.sautesDouble = 0; st.explose = S.explose ? { sort: id, gm: s.gm } : null; }
+    return true;
+  }
+  if (S.derobade) {
+    const q = w.players.find(j => j !== p && !j.dead && Math.hypot(j.x - s.tx, j.y - s.ty) <= j.radius + CASE * 0.6) ?? p;
+    q.shield = Math.max(q.shield, Math.round(q.maxHp * S.derobade.bouclier)); q.shieldT = q.shieldT0 = S.derobade.t; q.shieldSrc = id;
+    q.courir(S.derobade.course, S.derobade.t);
+    w.emit({ k: 'status', x: q.x, y: q.y - 70, text: 'Dérobade', color: '#b48cff' });
+    return true;
+  }
+  if (S.brume) {
+    const rr = d.hit.shape === 'point' || d.hit.shape === 'circle' ? d.hit.radius : CASE * 2;
+    for (const q of w.players) if (!q.dead && Math.hypot(q.x - s.tx, q.y - s.ty) <= rr + q.radius) rendreInvisible(q, w, S.brume.t);
+    for (const m of w.monsters) if (!m.dead && Math.hypot(m.x - s.tx, m.y - s.ty) <= rr + m.radius) {
+      m.poMalus = Math.max(m.poMalus, S.brume.po); m.poMalusT = Math.max(m.poMalusT, 6);
+    }
+    return true;
+  }
+  if (S.chakra) {
+    let best: Monster | null = null, bd = CASE;
+    for (const q of w.monsters) { if (q.dead) continue; const dd = Math.hypot(q.x - s.tx, q.y - s.ty) - q.radius; if (dd < bd) { bd = dd; best = q; } }
+    if (best) {
+      const st = etatSram(p);
+      st.chakra = st.chakra.filter(c => c.mid !== best!.id && c.t > 0); st.chakra.push({ mid: best.id, t: S.chakra.t });
+      if (best.state === 'idle' || best.state === 'return') w.aggroGroup(best);
+      w.emit({ k: 'status', x: best.x, y: best.y - 40, text: 'Chakra', color: '#c9a0ff' });
+    }
+    reveler(p, w);
     return true;
   }
   if (S.peur) { peur(p, s.tx, s.ty, w); return true; }
@@ -236,12 +298,21 @@ export function impactSram(p: Player, d: SpellDef, tx: number, ty: number, size:
   const zone = () => w.monsters.filter(m => !m.dead && m.state !== 'spawn' && Math.hypot(m.x - tx, m.y - ty) <= size + m.radius);
   if (S.vol && hits > 0) voler(p, S.vol, zone(), w);
   if (S.poison) {
-    const z = zone();
-    for (const m of z) empoisonner(p, m, S.poison * gm, d.element, w);
+    const z = zone(), st = etatSram(p);
+    for (const m of z) {
+      let k = 1;
+      if (S.toxines) {   // Toxines : le poison grossit à chaque lancer sur la même cible
+        let x = st.toxines.find(q => q.mid === m.id && q.t > 0);
+        if (!x) { x = { mid: m.id, t: 0, n: 0 }; st.toxines = st.toxines.filter(q => q.t > 0); st.toxines.push(x); }
+        x.n = Math.min(S.toxines.max, x.n + 1); x.t = S.toxines.t; k = 1 + S.toxines.par * (x.n - 1);
+      }
+      empoisonner(p, m, S.poison * gm * k, d.element, w);
+    }
     if (S.poLoss) for (const m of z) { m.poMalus = Math.max(m.poMalus, S.poLoss.n); m.poMalusT = Math.max(m.poMalusT, S.poLoss.t);
       w.emit({ k: 'status', x: m.x, y: m.y, text: `-${S.poLoss.n} PO`, color: '#c8a0ff' }); }
     if (z.length) reveler(p, w);
   }
+  if (S.sautes) etatSram(p).sautes = 0;
   if (S.pm) p.pm = Math.min(p.cls.pm.max + S.pm, p.pm + S.pm);
   if (hits > 0) reveler(p, w);
 }
@@ -264,10 +335,20 @@ export function majSram(p: Player, dt: number, w: World) {
   }
   for (const v of Object.values(s.vols)) if (v && v.t > 0) v.t -= dt;
   if (s.peurT > 0 && (s.peurT -= dt) <= 0) s.peur = null;
+  for (const c of s.chakra) c.t -= dt;
+  for (const x of s.toxines) x.t -= dt;
+  if (s.chakra.length && s.chakra.every(c => c.t <= 0)) s.chakra = [];
+  if (s.toxines.length && s.toxines.every(x => x.t <= 0)) s.toxines = [];
   if (s.double != null) {
     const b = w.betes.find(x => x.id === s.double);
     if (!b || b.dead) {
       s.double = null;
+      const ex = s.explose, de = ex && p.cls.spells[ex.sort], E = de?.sram?.explose;
+      if (b && ex && de && E) {   // Comploteur : le Double explose
+        w.hitCircle(b.x, b.y, E.r * CASE, { dmg: de.dmg * ex.gm * (1 + E.parPiege * s.sautesDouble), knock: 0, element: de.element, sort: ex.sort });
+        w.emit({ k: 'spell', fx: 'burst', id: ex.sort, x: b.x, y: b.y, facing: 0, size: E.r * CASE, arc: 0, element: de.element, big: true, boosted: false });
+      }
+      s.explose = null;
       if (b && !p.dead && w.walkable(b.x, b.y)) {   // 8A : à sa mort, tu prends sa place et tu files
         w.emit({ k: 'bondOug', x: p.x, y: p.y, tx: b.x, ty: b.y });
         p.x = b.x; p.y = b.y; p.courir(r.double.course, r.double.courseT);

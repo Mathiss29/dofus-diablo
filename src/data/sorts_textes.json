@@ -4278,7 +4278,7 @@
     "Cumul"
    ],
    "accroche": "Le venin qui revient.",
-   "texte": "Empoisonne en Air 3 s jusqu'à 6 cases, un peu plus fort à chaque lancer sur la même cible, jusqu'à 5 fois."
+   "texte": "Empoisonne en Air 3 s jusqu'à 6 cases, plus fort à chaque lancer sur la même cible (5 fois) ; tes pièges qui la touchent relancent le poison."
   },
   "12919": {
    "role": "base",
@@ -4315,7 +4315,7 @@
     "Affaiblit"
    ],
    "accroche": "Le brouillard des voleurs.",
-   "texte": "Pose une brume 4 s : les alliés dedans deviennent invisibles, les ennemis y perdent de la portée."
+   "texte": "Pose une brume de 2 cases : les alliés dedans deviennent invisibles 3 s, les ennemis y perdent 2 cases de portée."
   },
   "12915": {
    "role": "invoc",
@@ -4332,7 +4332,7 @@
     "Meilleur élément"
    ],
    "accroche": "Le double qui frappe en partant.",
-   "texte": "Pose un Double qui attire les monstres plus longtemps et explose à sa mort dans ton meilleur élément."
+   "texte": "Pose un Double de 9 s qui attire les monstres et explose à sa mort, plus fort pour chaque piège sauté entre-temps."
   },
   "12906": {
    "role": "ctrl",
@@ -4563,7 +4563,7 @@
     "Meilleur élément"
    ],
    "accroche": "Son sang nourrit le tien.",
-   "texte": "Marque un ennemi jusqu'à 5 cases : quand il est frappé, tu te soignes dans ton meilleur élément."
+   "texte": "Marque un ennemi 9 s jusqu'à 5 cases : quand tes pièges le touchent, tu te soignes de la moitié de leurs dommages."
   },
   "14741": {
    "role": "soutien",
@@ -4617,7 +4617,7 @@
     "Bouclier"
    ],
    "accroche": "Il glisse entre les doigts.",
-   "texte": "Réduit les dommages subis par l'allié visé et l'écarte de qui le frappe, pendant quelques secondes."
+   "texte": "Bouclier de 12 % des PV max et course plus rapide pendant 6 s, sur l'allié visé ou sur toi."
   },
   "14313": {
    "role": "ctrl",

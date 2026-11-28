@@ -148,4 +148,64 @@ describe('Sram (« Classes : 5A 6A+6C 7A+7B 8A 9A », « Sram : 1A 2A 3A 4A 5A �
     expect(p.sram!.peur).toBe(null);
     expect(Math.hypot(m.x - x0, m.y - y0)).toBeGreaterThan(80);
   });
+  it('sorts 61-120 : cachés sans la 0.6 / 0.7, appris au niveau 120 avec elles', () => {
+    const w = sram(); idle(w, 0.2);
+    const p = w.player; niveau(p, 120);
+    p.v06 = false; p.v07 = false;
+    expect(p.knows('piege_mortel')).toBe(false);
+    p.v06 = true; p.v07 = true; niveau(p, 120);
+    for (const k of ['piege_derive', 'piege_scelerat', 'chakra', 'piege_mortel', 'fourvoiement', 'derobade']) expect(p.knows(k), k).toBe(true);
+    p.variants = Array(22).fill(1); niveau(p, 120);
+    for (const k of ['chausse_trappe', 'coupe_gorge', 'toxines', 'poisse', 'brume', 'comploteur']) expect(p.knows(k), k).toBe(true);
+  });
+
+  it('Piège Mortel : bien plus fort sous la moitié des PV', () => {
+    const w = sram(); idle(w, 0.2);
+    const p = w.player; p.v06 = true; niveau(p, 90);
+    const x = p.x + 120, y = p.y;
+    press(w, 'piege_mortel', { x, y }); idle(w, 0.8);
+    const a = cible(w, x, y); const ha = a.hp; idle(w, 0.1); const da = ha - a.hp; a.dead = true;
+    press(w, 'piege_mortel', { x, y: y + 150 }); idle(w, 0.8);
+    const b = cible(w, x, y + 150); b.hp = b.maxHp * 0.3; const hb = b.hp; idle(w, 0.1);
+    expect(hb - b.hp).toBeGreaterThan(da * 1.3);
+  });
+
+  it('Concentration de Chakra : un piège sur la cible marquée te soigne', () => {
+    const w = sram(); idle(w, 0.2);
+    const p = w.player; p.v06 = true; niveau(p, 90);
+    const x = p.x + 120, y = p.y;
+    press(w, 'piege_sournois', { x, y }); idle(w, 0.6);
+    const m = cible(w, x + 200, y);
+    press(w, 'chakra', { x: m.x, y: m.y }); idle(w, 0.3);
+    expect(p.sram!.chakra.some(c => c.mid === m.id)).toBe(true);
+    p.hp = p.maxHp / 2; const hp = p.hp;
+    m.x = x; m.y = y; idle(w, 0.2);
+    expect(p.hp).toBeGreaterThan(hp);
+  });
+
+  it('Chausse-trappe : plus fort après des pièges sautés, le compte repart à zéro', () => {
+    const w = sram(); idle(w, 0.2);
+    const p = w.player; p.v07 = true; p.variants = Array(22).fill(1); niveau(p, 120);
+    Object.defineProperty(p, 'critChance', { get: () => 0 });
+    const m = cible(w, p.x + 100, p.y);
+    const h0 = m.hp; press(w, 'chausse_trappe', { x: m.x, y: m.y }); idle(w, 0.4); const d0 = h0 - m.hp;
+    p.sram!.sautes = 5;
+    const h1 = m.hp; press(w, 'chausse_trappe', { x: m.x, y: m.y }); idle(w, 0.4); const d1 = h1 - m.hp;
+    expect(d1).toBeGreaterThan(d0 * 1.4);
+    expect(p.sram!.sautes).toBe(0);
+  });
+
+  it('Brume : invisible dans la zone, Comploteur explose à sa mort', () => {
+    const w = sram(); idle(w, 0.2);
+    const p = w.player; p.v07 = true; p.variants = Array(22).fill(1); niveau(p, 120);
+    press(w, 'brume', { x: p.x, y: p.y }); idle(w, 0.3);
+    expect(invisible(p)).toBe(true);
+    idle(w, 4);
+    const m = cible(w, p.x + 90, p.y);
+    press(w, 'comploteur', { x: p.x + 60, y: p.y }); idle(w, 0.6);
+    const b = doubleDe(p, w)!; expect(b).toBeTruthy();
+    m.x = b.x + 20; m.y = b.y; const hp = m.hp;
+    b.mourir(w); idle(w, 0.05);
+    expect(m.hp).toBeLessThan(hp);
+  });
 });
