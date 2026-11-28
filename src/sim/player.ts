@@ -1330,6 +1330,7 @@ export class Player extends Entity {
       if (eca) mult *= eca.mult;
       if (d.e61) mult *= avantImpact61(this, s.id, d, s.tx, s.ty, s.gm, world);   // Épée du Destin, Flèche Dévorante, Bain de Sang
       if (d.e07) mult *= avantImpact07(this, d, s.tx, s.ty, world);   // Épée du Jugement, Muselière (0.7)
+      if (d.sram?.sautes && this.sram) mult *= 1 + d.sram.sautes.par * Math.min(d.sram.sautes.max, this.sram.sautes);   // Chausse-trappe
       if (d.ouginak && this.cls.ouginak && !mv) mult *= avantImpactOuginak(this, s.id, d, s, world);   // Ouginak : bond sur la Proie, cumul sur la Proie
       const base = d.dmgPV ? this.hp * d.dmgPV : d.dmg * s.gm;
       const attire = d.attire && { px: ((this.souffrance >= 6 && d.souffrance6?.attire) || d.attire.cases) * CASE, vers: d.attire.vers };

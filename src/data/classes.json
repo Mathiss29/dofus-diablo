@@ -9738,6 +9738,350 @@
      "height": 12
     },
     "self": true
+   },
+   "piege_derive": {
+    "name": "Piège de Dérive",
+    "dofusId": 12942,
+    "icon": 12016,
+    "element": "feu",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Pose un piège qui occasionne des dommages Feu aux ennemis et repousse les entités depuis le centre en zone.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 19.5,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 72
+    },
+    "sram": {
+     "piege": {
+      "r": 1.5,
+      "repousse": 2
+     }
+    },
+    "v06": true
+   },
+   "piege_scelerat": {
+    "name": "Piège Scélérat",
+    "dofusId": 12931,
+    "icon": 12000,
+    "element": "eau",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Pose un piège mono-cellule qui attire les entités vers son centre et occasionne des dommages Eau aux ennemis en zone.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 21.0,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 312,
+     "radius": 72
+    },
+    "sram": {
+     "piege": {
+      "r": 1.5,
+      "attire": 1
+     }
+    },
+    "v06": true
+   },
+   "chakra": {
+    "name": "Concentration de Chakra",
+    "dofusId": 12903,
+    "icon": 11998,
+    "element": "neutre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Applique l'état Concentration de Chakra sur l'ennemi ciblé :\n• Vole de la vie dans le meilleur élément du lanceur à la cible si elle subit des dommages de pièges.\n\nDissipe l'invisibilité du lanceur.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 264,
+     "radius": 30
+    },
+    "sram": {
+     "chakra": {
+      "t": 9,
+      "part": 0.5
+     }
+    },
+    "v06": true
+   },
+   "piege_mortel": {
+    "name": "Piège Mortel",
+    "dofusId": 12921,
+    "icon": 12002,
+    "element": "terre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Pose un piège qui occasionne des dommages Terre.\nLes dommages sont plus importants sur les entités ayant moins de 50% de leurs points de vie.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 49.5,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 360,
+     "radius": 30
+    },
+    "sram": {
+     "piege": {
+      "r": 0.8,
+      "mortel": 1.5
+     }
+    },
+    "v06": true
+   },
+   "fourvoiement": {
+    "name": "Fourvoiement",
+    "dofusId": 12909,
+    "icon": 11994,
+    "element": "air",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Érode les cibles et occasionne des dommages Air en zone.\nN'affecte pas le lanceur.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 43.5,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 72
+    },
+    "erosion": 0.1,
+    "v06": true
+   },
+   "derobade": {
+    "name": "Dérobade",
+    "dofusId": 14312,
+    "icon": 12003,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Réduit les dommages subis par l'allié ciblé, le rend Intaclable et lui applique l'état Dérobade :\n• Éloigne la cible de son attaquant et augmente ses PM si elle est attaquée par un ennemi (cumulable 3 fois).\n\nLe recul ne fait pas de dommages.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 30
+    },
+    "sram": {
+     "derobade": {
+      "bouclier": 0.12,
+      "t": 6,
+      "course": 0.2
+     }
+    },
+    "v06": true
+   },
+   "chausse_trappe": {
+    "name": "Chausse-trappe",
+    "dofusId": 12932,
+    "icon": 12006,
+    "element": "terre",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Terre.\nLes dommages du sort sont augmentés pour chaque piège déclenché du lanceur.\n\nLes effets sont retirés après utilisation du sort.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 36.8,
+    "knock": 0,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 30
+    },
+    "sram": {
+     "sautes": {
+      "par": 0.2,
+      "max": 5
+     }
+    },
+    "v07": true
+   },
+   "coupe_gorge": {
+    "name": "Coupe-gorge",
+    "dofusId": 12935,
+    "icon": 12007,
+    "element": "feu",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Feu et augmente les dommages subis par la cible.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 47.2,
+    "knock": 0,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 312,
+     "radius": 30
+    },
+    "vuln": {
+     "n": 15,
+     "t": 3
+    },
+    "v07": true
+   },
+   "toxines": {
+    "name": "Toxines",
+    "dofusId": 12933,
+    "icon": 12010,
+    "element": "air",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Applique un poison Air de fin de tour sur l'ennemi ciblé.\n\nLes dommages du sort sont augmentés (cumulable 5 fois) et le poison est réappliqué tant qu'il est actif et que la cible subit des dommages de pièges\nCet effet ne peut être déclenché qu'une seule fois par tour.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 312,
+     "radius": 30
+    },
+    "sram": {
+     "poison": 9.0,
+     "toxines": {
+      "par": 0.2,
+      "max": 5,
+      "t": 9
+     }
+    },
+    "v07": true
+   },
+   "poisse": {
+    "name": "Poisse",
+    "dofusId": 12922,
+    "icon": 12021,
+    "element": "eau",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Vole de la vie dans l'élément Eau et minimise les effets aléatoires de l'ennemi ciblé.\nSoigne également les alliés (hors lanceur) selon les dommages occasionnés à l'ennemi ciblé en zone.\n\nLa minimisation des effets ne fonctionne qu'un tour sur deux sur une même cible.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 45.8,
+    "knock": 0,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 30
+    },
+    "lifesteal": 0.5,
+    "e07": {
+     "soinDegats": 0.3
+    },
+    "v07": true
+   },
+   "brume": {
+    "name": "Brume",
+    "dofusId": 12930,
+    "icon": 13798,
+    "element": "neutre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Pose un glyphe-aura qui rend les alliés invisibles et retire de la Portée aux ennemis.\n\nLe temps de relance est réduit lorsque le lanceur achève un combattant.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 120,
+     "radius": 96
+    },
+    "sram": {
+     "brume": {
+      "t": 3,
+      "po": 2
+     }
+    },
+    "v07": true
+   },
+   "comploteur": {
+    "name": "Comploteur",
+    "dofusId": 12936,
+    "icon": 12013,
+    "element": "meilleur",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.\n\nIl n'attaque pas et meurt à la fin de son troisième tour pour occasionner des dommages dans son meilleur élément aux entités à son contact.\nLes dommages à la mort du double sont augmentés pour chaque piège déclenché du lanceur depuis son invocation.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 42.0,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 120,
+     "radius": 30
+    },
+    "sram": {
+     "double": true,
+     "explose": {
+      "r": 1.5,
+      "t": 9,
+      "parPiege": 0.1
+     }
+    },
+    "v07": true
    }
   }
  }

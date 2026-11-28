@@ -151,6 +151,13 @@ export function spellDetail(p: Player, id: SkillId, gOver?: SortGrade) {
     d.sram?.invisible ? 'Toi ou l\'allié visé : invisible 4 s, les monstres perdent ta trace (élites et boss : 1 s) ; frapper te montre 0,5 s ; achever un monstre le recharge' : '',
     d.sram?.double ? 'Double leurre 6 s : les monstres le visent ; à sa mort, tu prends sa place et tu cours plus vite 3 s' : '',
     d.sram?.peur ? 'En deux temps : vise le monstre, puis relance sur la case où l\'envoyer (5 cases au plus)' : '',
+    d.sram?.piege?.mortel ? `Dommages ×${String(d.sram.piege.mortel).replace('.', ',')} sur les ennemis sous la moitié de leurs PV` : '',
+    d.sram?.chakra ? `Marque l'ennemi ${d.sram.chakra.t} s : tes pièges qui le touchent te soignent de ${Math.round(d.sram.chakra.part * 100)} % de leurs dommages` : '',
+    d.sram?.derobade ? `Toi ou l'allié visé : bouclier de ${Math.round(d.sram.derobade.bouclier * 100)} % des PV max et course +${Math.round(d.sram.derobade.course * 100)} %, ${d.sram.derobade.t} s` : '',
+    d.sram?.sautes ? `+${Math.round(d.sram.sautes.par * 100)} % par piège qui a sauté depuis le dernier lancer (${d.sram.sautes.max} au plus)` : '',
+    d.sram?.toxines ? `Chaque lancer sur la même cible : poison +${Math.round(d.sram.toxines.par * 100)} % (${d.sram.toxines.max} fois) ; tes pièges qui la touchent le relancent` : '',
+    d.sram?.brume ? `Brume : les alliés dedans deviennent invisibles ${d.sram.brume.t} s, les ennemis perdent ${d.sram.brume.po} cases de portée` : '',
+    d.sram?.explose ? `Double de ${d.sram.explose.t} s qui explose à sa mort autour de lui, +${Math.round(d.sram.explose.parPiege * 100)} % par piège sauté pendant sa vie` : '',
     // Eniripsa
     d.soin ? `Soigne les alliés touchés de ${Math.round(d.soin)} PV (+ Intelligence et Soins)${d.soinLanceur === false ? ', pas toi' : ''}` : '',
     d.soinVol ? `Soigne les alliés de la zone de ${Math.round(d.soinVol * 100)} % des dommages faits${d.soinLanceur === false ? ' (pas toi)' : ''}` : '',

@@ -357,6 +357,8 @@ const SRAM_MAP: Record<string, AnimSlice> = {
     truanderie: 404, sournoiserie: 402, fourberie: 402, arsenic: 409, cruaute: 403, double: 403, extorsion: 403, arnaque: 403,
     invisibilite: 401, piege_sournois: 411, piege_repulsif: 411, piege_fangeux: 417, piege_funeste: 414, piege_immobilisation: 400,
     pillage: 407, peur: 405,
+    piege_derive: 412, piege_scelerat: 411, chakra: 406, piege_mortel: 416, fourvoiement: 420, derobade: 406,
+    chausse_trappe: 403, coupe_gorge: 403, toxines: 419, poisse: 406, brume: 415, comploteur: 403,
   }).map(([k, n]) => [k, { anim: `AnimAttaque${n}`, from: 0, to: 0.65 }])),
   pas_sram: { anim: 'AnimAttaque406', from: 0, to: 0.45 },
   hit: { anim: 'AnimHit', from: 0, to: 1 },
