@@ -821,3 +821,16 @@ Toutes sont refaites avec `HD=2` : planche dessinée 2 fois plus grand, `meta.hd
   Gestes manquants (Osamodas 205/221, Sacrieur 1107, Enutrof 311, Sadida 1002/1006, Ouginak 1821) : `EXTRA=AnimAttaqueNNN squelette_export.py`
   dans un dossier à part, puis `fusion_anims.py <neuf> <publié> AnimAttaqueNNN,…` ne verse que ces animations dans `anims_<classe>.json` (morceaux et nœuds renumérotés ;
   les textures `os_*.webp` sortent identiques, rien à renvoyer).
+- Butin 91-120 (9A-9D) : tables `effects`, `characteristics`, `jobs`, `recipes`, `skinslotsrules` sorties avec `data_dump.py` ;
+  `items_export.py … 120` dans un dossier à part (la planche d'icônes peut manquer de mémoire : seul `items.json` sert), puis
+  `equipement_ajout.py` (283 objets, 62 panoplies), `MAX=120 recettes_equipement.py`, `liens_recettes.py <tables>` (au-dessus de 60, une
+  recette officielle absente du jeu relie quand même l'objet au butin des monstres qui lâchent ses ingrédients : champ `ing`),
+  `NIVEAU=100 trophees.py` (87 trophées `v07`, répartis entre les 8 boss de donjon de la 0.7, un au plus par victoire), `icones_ajout.py`.
+  Coiffes et capes : correspondances du catalogue Kaikina (`src/data/coiffes.json`, `capes.json` de son dépôt), puis `equipement_export.py`
+  avec seulement les skins nécessaires sortis de `cache-dofus/skins` (`tar -T`). Le plafond `niveauObjetsMax(…, v07)` cache tout au-dessus de 90.
+- Montures (17A 17C, « Élevage : ») : tables `mounts`, `mountbehaviors`, `mountbones` (data_dump.py), puis
+  `python montures_export.py <tables> <fr.bin> <dossier Bones>` (squelettes 639 Dragodinde et 3588 Muldo copiés de
+  Characters/Bones du PC) : `src/data/montures.json` (132 races, générations de l'arbre officiel, couleurs, bonus au niveau 100,
+  capacités) et les planches grises `mont_639`, `mont_3588` + leurs cartes de zones de couleur (teintes par race en jeu,
+  render/montureView.ts). Relancer ensuite SANS dossier Bones pour noter les cartes dans le JSON, puis `envoi.mjs`.
+  Le squelette 639 n'a pas d'animation de cavalier : le perso est posé sur la selle, jambes rognées (EntityView).

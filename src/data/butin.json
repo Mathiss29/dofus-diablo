@@ -21,6 +21,8 @@
   },
   "_trophee": "0.4 suite 3A : chance qu'un boss de la 0.4 lâche chacun de ses 2 trophées (si le joueur ne l'a pas déjà)",
   "trophee": 0.05,
+  "_trophee07": "0.7 (9C) : chance qu'un boss de donjon de la 0.7 lâche UN de ses trophées du niveau 100 qui manquent au joueur",
+  "trophee07": 0.2,
   "raretes": {
     "_doc": "% Rare et % Épique de chaque objet tiré ; le % Légendaire est calculé pour tomber à « legendaireParMonstre »",
     "normal": { "rare": 24, "epique": 6 },

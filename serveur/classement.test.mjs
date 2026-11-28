@@ -4,7 +4,7 @@ import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { creerComptes } from './comptes.mjs';
-import { creerClassement, annonceurDiscord, semaineDe } from './classement.mjs';
+import { CLASSEMENT, creerClassement, annonceurDiscord, hebdoDe, semaineDe } from './classement.mjs';
 
 function monde() {
   const comptes = creerComptes({ dossier: mkdtempSync(join(tmpdir(), 'diablofus-cl-')), env: {}, origines: new Set() });
@@ -116,6 +116,16 @@ test('0.6 (18D, 25A) : score d\'idoles d\'abord, puis le temps ; Labyrinthe de l
   assert.equal(c.donjons[L].solo.length, 2);   // les records de toujours restent
   assert.ok(annonces.some(a => /Fleche.*Labyrinthe du Dragon Cochon.*semaine/.test(a)));
   comptes.fermer();
+});
+
+test('0.7 (16A) : avec la 0.7 publique, le Koulosse et le Labyrinthe à tour de rôle chaque semaine', () => {
+  assert.deepEqual(hebdoDe('2026-11-09'), ['Labyrinthe du Dragon Cochon']);   // 0.7 cachée : toujours le Labyrinthe
+  CLASSEMENT.v07 = true;
+  try {
+    const a = hebdoDe('2026-11-09')[0], b = hebdoDe('2026-11-16')[0], c = hebdoDe('2026-11-23')[0];
+    assert.notEqual(a, b); assert.equal(a, c);
+    assert.deepEqual([a, b].sort(), ['Caverne du Koulosse', 'Labyrinthe du Dragon Cochon']);
+  } finally { CLASSEMENT.v07 = false; }
 });
 
 test('classement : un Hardcore mort reste dans les Tombés (3B)', () => {

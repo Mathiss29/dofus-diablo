@@ -176,6 +176,56 @@
    ],
    "sac": "epique",
    "titre": "Briseur de glace"
+  },
+  {
+   "id": "otomai",
+   "nom": "Acte VI",
+   "region": "Île d'Otomaï",
+   "niveaux": [
+    90,
+    110
+   ],
+   "guide": "marin_otomai",
+   "resume": "La fêlure ne s'arrête pas à la glace : des éclats ont filé vers le sud, jusqu'à l'île du vieil alchimiste Otomaï.",
+   "chapitres": [
+    "cmp_o1",
+    "cmp_o2",
+    "cmp_o3",
+    "cmp_o4",
+    "cmp_o5",
+    "cmp_o6",
+    "cmp_o7",
+    "cmp_o8"
+   ],
+   "sac": "legendaire",
+   "titre": "Arpenteur d'Otomaï",
+   "v07": true
+  },
+  {
+   "id": "pandala",
+   "nom": "Acte VII",
+   "region": "Pandala et les hauteurs",
+   "niveaux": [
+    105,
+    120
+   ],
+   "guide": "passeur_pandala",
+   "resume": "Les plus gros éclats sont tombés sur Pandala, dans les hauteurs de Cania et jusqu'aux Champs de glace. Chacun a trouvé un boss à rendre fou.",
+   "chapitres": [
+    "cmp_d1",
+    "cmp_d2",
+    "cmp_d3",
+    "cmp_d4",
+    "cmp_d5",
+    "cmp_d6",
+    "cmp_d7",
+    "cmp_d8",
+    "cmp_d9",
+    "cmp_d10"
+   ],
+   "sac": "legendaire",
+   "titre": "Gardien des Dalas",
+   "v07": true
   }
  ],
  "quetes": {
@@ -2491,7 +2541,714 @@
      "19466"
     ]
    },
-   "merci": "Tu as fait reculer la fêlure jusqu'à la grande glace. La suite viendra avec Frigost. Garde le carnet ouvert."
+   "merci": "Tu as fait reculer la fêlure jusqu'à la grande glace. La suite viendra avec Frigost. Garde le carnet ouvert.",
+   "suivante": "cmp_o1"
+  },
+  "cmp_o1": {
+   "nom": "Cap sur Otomaï",
+   "type": "campagne",
+   "acte": "otomai",
+   "serie": "Acte VI · Île d'Otomaï",
+   "pnj": "marin_otomai",
+   "niveau": 90,
+   "texte": "Le marin de Sufokia a vu des lueurs rouges sur l'île d'Otomaï. Il veut bien t'y conduire, si les Porcos laissent le port tranquille.",
+   "etapes": [
+    {
+     "nom": "Le Territoire des Porcos",
+     "bulle": "Les Porcos ravagent la route du port. Fais-leur comprendre que la mer n'est pas pour eux.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 20 monstres : Territoire des Porcos",
+       "n": 20,
+       "sousZone": 11
+      }
+     ]
+    },
+    {
+     "nom": "Embarquer",
+     "bulle": "La route est libre. Reviens au port, le marin largue les amarres.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Parler au marin d'Otomaï",
+       "pnj": "marin_otomai"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 11250,
+    "kamas": 2250
+   },
+   "ouvre": [
+    "otomai_passage"
+   ],
+   "v07": true,
+   "suivante": "cmp_o2"
+  },
+  "cmp_o2": {
+   "nom": "Le Village côtier",
+   "type": "campagne",
+   "acte": "otomai",
+   "serie": "Acte VI · Île d'Otomaï",
+   "pnj": "tableau_otomai",
+   "niveau": 92,
+   "texte": "Le Village côtier est le seul abri de l'île. Sa vigie surveille la jungle jour et nuit.",
+   "etapes": [
+    {
+     "nom": "Le Zaap",
+     "bulle": "Active le Zaap du Village côtier : l'île est grande et les marais sont lents.",
+     "objectifs": [
+      {
+       "t": "activer",
+       "texte": "Activer le Zaap Village côtier",
+       "zaap": "Zaap Village côtier"
+      }
+     ]
+    },
+    {
+     "nom": "La vigie",
+     "bulle": "La Vigie du Village côtier t'attend à son poste, la longue-vue à l'œil.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Parler à Vigie du Village côtier",
+       "pnj": "tableau_otomai"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 11500,
+    "kamas": 2300
+   },
+   "v07": true,
+   "suivante": "cmp_o3"
+  },
+  "cmp_o3": {
+   "nom": "Les hautes herbes",
+   "type": "campagne",
+   "acte": "otomai",
+   "serie": "Acte VI · Île d'Otomaï",
+   "pnj": "tableau_otomai",
+   "niveau": 94,
+   "texte": "Dans les Plaines herbeuses, un Mufafah a avalé un éclat. Depuis, toute la plaine charge.",
+   "etapes": [
+    {
+     "nom": "Les Plaines herbeuses",
+     "bulle": "Les bêtes des plaines foncent sur tout ce qui bouge. Le Mufafah fêlé mène la danse.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 20 monstres : Plaines herbeuses",
+       "n": 20,
+       "sousZone": 454
+      },
+      {
+       "t": "elite",
+       "texte": "Vaincre Mufafah fêlé",
+       "monstre": "mufafah",
+       "carte": "-56_12",
+       "pv": 3,
+       "nom": "Mufafah fêlé"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 11750,
+    "kamas": 2350
+   },
+   "v07": true,
+   "suivante": "cmp_o4"
+  },
+  "cmp_o4": {
+   "nom": "La Tourbière sans fond",
+   "type": "campagne",
+   "acte": "otomai",
+   "serie": "Acte VI · Île d'Otomaï",
+   "pnj": "tableau_otomai",
+   "niveau": 96,
+   "texte": "La boue de la Tourbière sans fond bouillonne de rouge. Les Tourbassingues remontent des éclats à chaque bulle.",
+   "etapes": [
+    {
+     "nom": "Les bulles rouges",
+     "bulle": "Repêche les éclats avant que la tourbière ne les avale pour de bon.",
+     "objectifs": [
+      {
+       "t": "ramasser",
+       "texte": "Récupérer 8 Éclats boueux (Tourbière sans fond)",
+       "objet": "Éclats boueux",
+       "n": 8,
+       "chance": 0.4,
+       "sousZone": 457
+      },
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 15 monstres : Tourbière sans fond",
+       "n": 15,
+       "sousZone": 457
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 12000,
+    "kamas": 2400
+   },
+   "v07": true,
+   "suivante": "cmp_o5"
+  },
+  "cmp_o5": {
+   "nom": "Le Koulosse",
+   "type": "campagne",
+   "acte": "otomai",
+   "serie": "Acte VI · Île d'Otomaï",
+   "pnj": "tableau_otomai",
+   "niveau": 100,
+   "texte": "Un éclat a filé vers le continent, droit dans la Caverne du Koulosse, au fond du Canyon sauvage. Le Bouftou géant l'a gobé.",
+   "etapes": [
+    {
+     "nom": "La Caverne du Koulosse",
+     "bulle": "Trois étages de Bouftous des cavernes, et le Koulosse tout en bas. Il ne crachera pas l'éclat tout seul.",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Koulosse (Caverne du Koulosse)",
+       "donjon": "Caverne du Koulosse",
+       "boss": "Koulosse",
+       "niveau": 100,
+       "region": "Montagne des Koalaks"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 12500,
+    "kamas": 2500
+   },
+   "v07": true,
+   "suivante": "cmp_o6"
+  },
+  "cmp_o6": {
+   "nom": "La Tourbière nauséabonde",
+   "type": "campagne",
+   "acte": "otomai",
+   "serie": "Acte VI · Île d'Otomaï",
+   "pnj": "tableau_otomai",
+   "niveau": 102,
+   "texte": "Plus au nord, la Tourbière nauséabonde déborde. Les Bourbassingues montent vers le village.",
+   "etapes": [
+    {
+     "nom": "Tenir la digue",
+     "bulle": "Tiens la digue le temps que la vigie fasse sonner l'alarme.",
+     "objectifs": [
+      {
+       "t": "defense",
+       "texte": "Tenir 75 secondes dans la Tourbière nauséabonde",
+       "carte": "-60_-8",
+       "s": 75
+      },
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 15 monstres : Tourbière nauséabonde",
+       "n": 15,
+       "sousZone": 471
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 12750,
+    "kamas": 2550
+   },
+   "v07": true,
+   "suivante": "cmp_o7"
+  },
+  "cmp_o7": {
+   "nom": "Le Village des Zoths",
+   "type": "campagne",
+   "acte": "otomai",
+   "serie": "Acte VI · Île d'Otomaï",
+   "pnj": "tableau_otomai",
+   "niveau": 105,
+   "texte": "Les Zoths ont ramassé un éclat et le vénèrent comme une idole. Leur Maître s'en sert pour lever ses guerriers.",
+   "etapes": [
+    {
+     "nom": "Les guerriers Zoths",
+     "bulle": "Brise la garde du village, puis le Maître Zoth fêlé.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 20 monstres : Village des Zoths",
+       "n": 20,
+       "sousZone": 468
+      },
+      {
+       "t": "elite",
+       "texte": "Vaincre Maître Zoth fêlé",
+       "monstre": "maitre_zoth",
+       "carte": "-52_17",
+       "pv": 3,
+       "nom": "Maître Zoth fêlé"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 13125,
+    "kamas": 2625
+   },
+   "v07": true,
+   "suivante": "cmp_o8"
+  },
+  "cmp_o8": {
+   "nom": "Le Goulet du Rasboul",
+   "type": "campagne",
+   "acte": "otomai",
+   "serie": "Acte VI · Île d'Otomaï",
+   "pnj": "tableau_otomai",
+   "niveau": 110,
+   "texte": "Le dernier éclat de l'île est tombé au fond du Goulet, chez Silf le Rasboul Majeur. Il le garde comme un trésor de famille.",
+   "etapes": [
+    {
+     "nom": "Le Goulet",
+     "bulle": "Silf ne rend jamais rien. Va le lui prendre.",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Silf le Rasboul Majeur (Goulet du Rasboul)",
+       "donjon": "Goulet du Rasboul",
+       "boss": "Silf le Rasboul Majeur",
+       "niveau": 110,
+       "region": "Île d'Otomaï"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 33000,
+    "kamas": 2750,
+    "sac": "legendaire",
+    "titre": "Arpenteur d'Otomaï"
+   },
+   "merci": "L'île respire. Mais les éclats les plus gros sont partis vers Pandala et les hauteurs de Cania. Le passeur pandawa connaît la route.",
+   "v07": true,
+   "suivante": "cmp_d1"
+  },
+  "cmp_d1": {
+   "nom": "Cap sur Pandala",
+   "type": "campagne",
+   "acte": "pandala",
+   "serie": "Acte VII · Pandala et les hauteurs",
+   "pnj": "passeur_pandala",
+   "niveau": 105,
+   "texte": "Le passeur pandawa de Madrestam a vu les dalas changer de couleur. Il t'emmène, si tu fais taire les Dragoeufs qui pillent son ponton.",
+   "etapes": [
+    {
+     "nom": "Le Village des Dragoeufs",
+     "bulle": "Les Dragoeufs pillent le ponton. Montre-leur la sortie.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 20 monstres : Village des Dragoeufs",
+       "n": 20,
+       "sousZone": 315
+      }
+     ]
+    },
+    {
+     "nom": "Embarquer",
+     "bulle": "Le ponton est calme. Le passeur t'attend.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Parler au passeur pandawa",
+       "pnj": "passeur_pandala"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 13125,
+    "kamas": 2625
+   },
+   "ouvre": [
+    "pandala_passage"
+   ],
+   "v07": true,
+   "suivante": "cmp_d2"
+  },
+  "cmp_d2": {
+   "nom": "Le Village de Pandala",
+   "type": "campagne",
+   "acte": "pandala",
+   "serie": "Acte VII · Pandala et les hauteurs",
+   "pnj": "tableau_pandala",
+   "niveau": 106,
+   "texte": "Le Zaap de Pandala est caché dans une taverne, entre deux tonneaux de bière de bambou. La garde du village t'y attend.",
+   "etapes": [
+    {
+     "nom": "La taverne",
+     "bulle": "Active le Zaap du Village de Pandala.",
+     "objectifs": [
+      {
+       "t": "activer",
+       "texte": "Activer le Zaap Village de Pandala",
+       "zaap": "Zaap Village de Pandala"
+      }
+     ]
+    },
+    {
+     "nom": "La garde",
+     "bulle": "Le Garde du Village de Pandala sait où sont tombés les éclats.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Parler à Garde du Village de Pandala",
+       "pnj": "tableau_pandala"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 13250,
+    "kamas": 2650
+   },
+   "v07": true,
+   "suivante": "cmp_d3"
+  },
+  "cmp_d3": {
+   "nom": "La Bambusaie",
+   "type": "campagne",
+   "acte": "pandala",
+   "serie": "Acte VII · Pandala et les hauteurs",
+   "pnj": "tableau_pandala",
+   "niveau": 108,
+   "texte": "À Plantala, Damadrya fait pousser les bambous à vue d'œil. Un éclat est planté au cœur de sa bambusaie.",
+   "etapes": [
+    {
+     "nom": "Plantala",
+     "bulle": "Fraie-toi un chemin dans Plantala : ici, l'Air frappe plus fort, pour toi comme pour eux.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 20 monstres : Plantala",
+       "n": 20,
+       "sousZone": 942
+      }
+     ]
+    },
+    {
+     "nom": "Damadrya",
+     "bulle": "L'éclat est au cœur de la Bambusaie.",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Damadrya (Bambusaie de Damadrya)",
+       "donjon": "Bambusaie de Damadrya",
+       "boss": "Damadrya",
+       "niveau": 110,
+       "region": "Île de Pandala"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 13500,
+    "kamas": 2700
+   },
+   "v07": true,
+   "suivante": "cmp_d4"
+  },
+  "cmp_d4": {
+   "nom": "Les rizières",
+   "type": "campagne",
+   "acte": "pandala",
+   "serie": "Acte VII · Pandala et les hauteurs",
+   "pnj": "tableau_pandala",
+   "niveau": 110,
+   "texte": "À Akwadala, les Kokoms volent le riz et les Sarkapwanes remontent des rizières. L'eau y frappe plus fort qu'ailleurs.",
+   "etapes": [
+    {
+     "nom": "Akwadala",
+     "bulle": "L'Eau frappe plus fort ici. Adapte-toi, ou sors ton équipement d'Eau.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 20 monstres : Akwadala",
+       "n": 20,
+       "sousZone": 941
+      },
+      {
+       "t": "elite",
+       "texte": "Vaincre Kokom fêlé",
+       "monstre": "kokom",
+       "carte": "20_-23",
+       "pv": 3,
+       "nom": "Kokom fêlé"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 13750,
+    "kamas": 2750
+   },
+   "v07": true,
+   "suivante": "cmp_d5"
+  },
+  "cmp_d5": {
+   "nom": "La montagne qui tremble",
+   "type": "campagne",
+   "acte": "pandala",
+   "serie": "Acte VII · Pandala et les hauteurs",
+   "pnj": "tableau_pandala",
+   "niveau": 112,
+   "texte": "À Terrdala, la montagne dévale. Les bêtes fuient devant un éclat qui roule de rocher en rocher.",
+   "etapes": [
+    {
+     "nom": "Terrdala",
+     "bulle": "Vide le col avant que l'éboulement ne t'emporte.",
+     "objectifs": [
+      {
+       "t": "chrono",
+       "texte": "Vider le col en moins de 90 secondes",
+       "carte": "25_-25",
+       "s": 90
+      },
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 15 monstres : Terrdala",
+       "n": 15,
+       "sousZone": 944
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 14000,
+    "kamas": 2800
+   },
+   "v07": true,
+   "suivante": "cmp_d6"
+  },
+  "cmp_d6": {
+   "nom": "La Bibliothèque du Corbac",
+   "type": "campagne",
+   "acte": "pandala",
+   "serie": "Acte VII · Pandala et les hauteurs",
+   "pnj": "tableau_cania",
+   "niveau": 112,
+   "texte": "Au nord de Cania, le Maître Corbac a rangé un éclat entre deux grimoires. Ses Corbacs gardent les Pénates.",
+   "etapes": [
+    {
+     "nom": "Les Pénates",
+     "bulle": "Le Garde de Cania connaît le chemin des Pénates du Corbac.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Parler à Garde de Cania",
+       "pnj": "tableau_cania"
+      },
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 15 monstres : Pénates du Corbac",
+       "n": 15,
+       "sousZone": 55
+      }
+     ]
+    },
+    {
+     "nom": "Le Maître Corbac",
+     "bulle": "L'éclat est dans sa bibliothèque.",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Maître Corbac (Bibliothèque du Maître Corbac)",
+       "donjon": "Bibliothèque du Maître Corbac",
+       "boss": "Maître Corbac",
+       "niveau": 110,
+       "region": "Cania"
+      }
+     ],
+     "pnj": "tableau_cania"
+    }
+   ],
+   "recompense": {
+    "xp": 14000,
+    "kamas": 2800
+   },
+   "v07": true,
+   "suivante": "cmp_d7"
+  },
+  "cmp_d7": {
+   "nom": "Le Bois de Litneg",
+   "type": "campagne",
+   "acte": "pandala",
+   "serie": "Acte VII · Pandala et les hauteurs",
+   "pnj": "tableau_cania",
+   "niveau": 114,
+   "texte": "Les Chafers du Bois de Litneg sortent en plein jour, menés par un Troollaraj qui a goûté à un éclat.",
+   "etapes": [
+    {
+     "nom": "Le bois maudit",
+     "bulle": "Renvoie les Chafers sous terre et fais tomber le Troollaraj.",
+     "objectifs": [
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 15 monstres : Bois de Litneg",
+       "n": 15,
+       "sousZone": 69
+      },
+      {
+       "t": "elite",
+       "texte": "Vaincre Troollaraj fêlé",
+       "monstre": "troollaraj",
+       "carte": "-13_-53",
+       "pv": 3,
+       "nom": "Troollaraj fêlé"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 14250,
+    "kamas": 2850
+   },
+   "v07": true,
+   "suivante": "cmp_d8"
+  },
+  "cmp_d8": {
+   "nom": "Le Blop Multicolore",
+   "type": "campagne",
+   "acte": "pandala",
+   "serie": "Acte VII · Pandala et les hauteurs",
+   "pnj": "tableau_cania",
+   "niveau": 116,
+   "texte": "Dans les Pics de Cania, le Blop Multicolore Royal change de couleur à chaque battement. L'éclat lui donne toutes les teintes à la fois.",
+   "etapes": [
+    {
+     "nom": "L'Antre",
+     "bulle": "Frappe-le dans la bonne couleur.",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Blop Multicolore Royal (Antre du Blop Multicolore Royal)",
+       "donjon": "Antre du Blop Multicolore Royal",
+       "boss": "Blop Multicolore Royal",
+       "niveau": 120,
+       "region": "Cania"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 14500,
+    "kamas": 2900
+   },
+   "v07": true,
+   "suivante": "cmp_d9"
+  },
+  "cmp_d9": {
+   "nom": "Le Repaire de Skeunk",
+   "type": "campagne",
+   "acte": "pandala",
+   "serie": "Acte VII · Pandala et les hauteurs",
+   "pnj": "tableau_koalaks",
+   "niveau": 118,
+   "texte": "Sur la Montagne des Koalaks, Skeunk a volé un éclat comme il vole les potions. Les Momies du Cimetière primitif le protègent.",
+   "etapes": [
+    {
+     "nom": "Le Cimetière primitif",
+     "bulle": "Active le Zaap du Cimetière primitif et recouche les Momies Koalaks.",
+     "objectifs": [
+      {
+       "t": "activer",
+       "texte": "Activer le Zaap Cimetière primitif",
+       "zaap": "Zaap Cimetière primitif"
+      },
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 15 monstres : Cimetière primitif",
+       "n": 15,
+       "sousZone": 230
+      }
+     ]
+    },
+    {
+     "nom": "Skeunk",
+     "bulle": "Le Repaire de Skeunk est au fond de la Vallée de la Morh'Kitu.",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Skeunk (Repaire de Skeunk)",
+       "donjon": "Repaire de Skeunk",
+       "boss": "Skeunk",
+       "niveau": 120,
+       "region": "Montagne des Koalaks"
+      }
+     ]
+    }
+   ],
+   "recompense": {
+    "xp": 14750,
+    "kamas": 2950
+   },
+   "v07": true,
+   "suivante": "cmp_d10"
+  },
+  "cmp_d10": {
+   "nom": "La Serre du Royalmouth",
+   "type": "campagne",
+   "acte": "pandala",
+   "serie": "Acte VII · Pandala et les hauteurs",
+   "pnj": "tableau_frigost",
+   "niveau": 120,
+   "texte": "Le dernier éclat de la tranche est sous la glace, dans la serre du Royalmouth. Le Milicien de la Bourgade t'y attend.",
+   "etapes": [
+    {
+     "nom": "Les Champs de glace",
+     "bulle": "Le Milicien de la Bourgade connaît le chemin. Les Boufmouths, eux, ne laissent passer personne.",
+     "objectifs": [
+      {
+       "t": "parler",
+       "texte": "Parler à Milicien de la Bourgade",
+       "pnj": "tableau_frigost"
+      },
+      {
+       "t": "vaincre",
+       "texte": "Vaincre 20 monstres : Champs de glace",
+       "n": 20,
+       "sousZone": 602
+      }
+     ]
+    },
+    {
+     "nom": "Le Royalmouth",
+     "bulle": "La serre est au bout des Champs de glace.",
+     "objectifs": [
+      {
+       "t": "donjon",
+       "texte": "Vaincre Royalmouth (Serre du Royalmouth)",
+       "donjon": "Serre du Royalmouth",
+       "boss": "Royalmouth",
+       "niveau": 120,
+       "region": "Frigost"
+      }
+     ],
+     "pnj": "tableau_frigost"
+    }
+   ],
+   "recompense": {
+    "xp": 36000,
+    "kamas": 3000,
+    "sac": "legendaire",
+    "titre": "Gardien des Dalas"
+   },
+   "merci": "Les éclats du sud sont repris. Il ne reste que les deux derniers Sceaux, sous la grande glace. Garde le carnet ouvert.",
+   "v07": true
   }
  }
 }

@@ -13,11 +13,15 @@ export interface DofusDef {
   /** Passif codé dans le jeu. */
   jeu?: boolean;
   source: string;
+  /** Lâché par un boss : monstre -> chance par victoire (Dofus Kaliptus sur Skeunk, 0.7 9D). */
+  boss?: Record<string, number>;
+  /** 0.7 : caché hors partie de test. */
+  v07?: boolean;
 }
 export const DOFUS = (DATA as unknown as { dofus: Record<string, DofusDef> }).dofus;
 /** Trophées (« 0.4 suite : 3A+3B ») : les 85 trophées officiels du niveau 50 (tools/contenu/trophees.py). Ils se portent dans les
  *  emplacements de Dofus, une fois chacun, à partir de leur niveau. Lâchés par un boss de la 0.4 (« boss ») ou fabriqués par le Façonneur. */
-export interface TropheeDef { nom: string; niveau: number; icon: number; stats: Partial<Record<Stat, number>>; boss?: string }
+export interface TropheeDef { nom: string; niveau: number; icon: number; stats: Partial<Record<Stat, number>>; boss?: string; /** niveau 100 : 0.7, caché hors partie de test */ v07?: boolean }
 export const TROPHEES = (DATA as unknown as { trophees: Record<string, TropheeDef> }).trophees ?? {};
 /** Ce qui se porte dans un emplacement de Dofus : un Dofus ou un trophée. */
 export const PORTABLE = (id: string): { nom: string; niveau: number; icon: number; stats: Partial<Record<Stat, number>> } | undefined => DOFUS[id] ?? TROPHEES[id];

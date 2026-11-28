@@ -13,6 +13,8 @@ export interface PlayerInput {
   pressed: SkillId | null;
   /** Clic gauche maintenu : enchaîne l'attaque. */
   holdAttack: boolean;
+  /** 0.7 (17A) : monter sur sa monture ou en descendre. */
+  monture?: boolean;
   /** Boire une potion pendant cette frame. */
   potion?: boolean;
   /** « Métiers : » 4A : boire la boisson de résistance mise sur sa touche. */

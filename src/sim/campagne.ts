@@ -12,6 +12,8 @@ export interface ActeDef {
   resume: string;
   /** Ids des chapitres, dans l'ordre. */
   chapitres: string[];
+  /** Acte de la 0.7 (Otomaï, Pandala) : caché tant que la 0.7 ne se voit pas. */
+  v07?: boolean;
   /** Fin d'acte (6A + 6B) : rareté du sac et titre, posés sur le dernier chapitre. */
   sac?: string; titre?: string;
 }

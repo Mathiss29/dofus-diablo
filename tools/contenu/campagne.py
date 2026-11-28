@@ -22,7 +22,7 @@ for z in ('incarnam', 'astrub', 'bastion'):
 ZAAPS = {c['name']: z for z in ('incarnam', 'astrub') for c in ZONES[z]['open'].get('checkpoints', [])}
 DONJONS = {}
 for z in ('incarnam', 'astrub'):
-    for k in ('donjons', 'donjonsTest', 'donjonsV06'):
+    for k in ('donjons', 'donjonsTest', 'donjonsV06', 'donjonsV07'):
         for d in ZONES[z]['open'].get(k, []): DONJONS[d['nom']] = (d.get('bossVague') or [d.get('boss')])[0]
 PNJ = QUETES['pnj']
 def ok(cond, msg):
@@ -66,10 +66,10 @@ def etape(nom, bulle, *objectifs, pnj=None):
 # id, nom, région, niveaux conseillés, guide (PNJ), résumé, récompense de fin d'acte (sac, ratio d'XP, titre)
 ACTES = []
 Q = {}
-def acte(id, nom, region, niveaux, guide, resume, sac=None, titre=None):
+def acte(id, nom, region, niveaux, guide, resume, sac=None, titre=None, v07=False):
     ok(guide in PNJ, f'guide {guide}')
     ACTES.append({'id': id, 'nom': nom, 'region': region, 'niveaux': niveaux, 'guide': guide, 'resume': resume, 'chapitres': [],
-                  **({'sac': sac} if sac else {}), **({'titre': titre} if titre else {})})
+                  **({'sac': sac} if sac else {}), **({'titre': titre} if titre else {}), **({'v07': True} if v07 else {})})
 def chap(id, nom, niveau, texte, etapes, pnj=None, sceau=None, merci=None, ouvre=None):
     a = ACTES[-1]
     q = {'nom': nom, 'type': 'campagne', 'acte': a['id'], 'serie': f"{a['nom']} · {a['region']}", 'pnj': pnj or a['guide'], 'niveau': niveau, 'texte': texte, 'etapes': etapes,
@@ -78,6 +78,7 @@ def chap(id, nom, niveau, texte, etapes, pnj=None, sceau=None, merci=None, ouvre
     if sceau: q['sceau'] = sceau
     if merci: q['merci'] = merci
     if ouvre: q['ouvre'] = ouvre
+    if a.get('v07'): q['v07'] = True   # 0.7 : caché tant que la 0.7 ne se voit pas
     a['chapitres'].append(id); Q[id] = q
 
 # ===== Prologue : le ciel se fend =====================================================================
@@ -374,13 +375,109 @@ chap('cmp_f5', 'Sous la glace', 88,
       etape('La suite au nord', "Reviens me voir. La suite est sous la glace, et la glace ne s'ouvre pas encore.", parler('tableau_frigost', 'Retourner voir le Milicien de la Bourgade'))],
      pnj='tableau_frigost', merci="Tu as fait reculer la fêlure jusqu'à la grande glace. La suite viendra avec Frigost. Garde le carnet ouvert.")
 
+# ===== Acte VI : Otomaï (0.7, « 0.7 : » 12A) =================================================================
+acte('otomai', 'Acte VI', "Île d'Otomaï", [90, 110], 'marin_otomai',
+     "La fêlure ne s'arrête pas à la glace : des éclats ont filé vers le sud, jusqu'à l'île du vieil alchimiste Otomaï.",
+     sac='legendaire', titre="Arpenteur d'Otomaï", v07=True)
+chap('cmp_o1', "Cap sur Otomaï", 90,
+     "Le marin de Sufokia a vu des lueurs rouges sur l'île d'Otomaï. Il veut bien t'y conduire, si les Porcos laissent le port tranquille.",
+     [etape('Le Territoire des Porcos', "Les Porcos ravagent la route du port. Fais-leur comprendre que la mer n'est pas pour eux.", vaincre(20, 11)),
+      etape('Embarquer', "La route est libre. Reviens au port, le marin largue les amarres.", parler('marin_otomai', "Parler au marin d'Otomaï"))],
+     ouvre=['otomai_passage'])
+chap('cmp_o2', 'Le Village côtier', 92,
+     "Le Village côtier est le seul abri de l'île. Sa vigie surveille la jungle jour et nuit.",
+     [etape('Le Zaap', "Active le Zaap du Village côtier : l'île est grande et les marais sont lents.", zaap('Zaap Village côtier')),
+      etape('La vigie', "La Vigie du Village côtier t'attend à son poste, la longue-vue à l'œil.", parler('tableau_otomai'))],
+     pnj='tableau_otomai')
+chap('cmp_o3', 'Les hautes herbes', 94,
+     "Dans les Plaines herbeuses, un Mufafah a avalé un éclat. Depuis, toute la plaine charge.",
+     [etape('Les Plaines herbeuses', "Les bêtes des plaines foncent sur tout ce qui bouge. Le Mufafah fêlé mène la danse.",
+            vaincre(20, 454), elite('mufafah', '-56_12', 'Mufafah fêlé'))],
+     pnj='tableau_otomai')
+chap('cmp_o4', 'La Tourbière sans fond', 96,
+     "La boue de la Tourbière sans fond bouillonne de rouge. Les Tourbassingues remontent des éclats à chaque bulle.",
+     [etape('Les bulles rouges', "Repêche les éclats avant que la tourbière ne les avale pour de bon.",
+            ramasser('Éclats boueux', 8, 457, 0.4), vaincre(15, 457))],
+     pnj='tableau_otomai')
+chap('cmp_o5', 'Le Koulosse', 100,
+     "Un éclat a filé vers le continent, droit dans la Caverne du Koulosse, au fond du Canyon sauvage. Le Bouftou géant l'a gobé.",
+     [etape('La Caverne du Koulosse', "Trois étages de Bouftous des cavernes, et le Koulosse tout en bas. Il ne crachera pas l'éclat tout seul.",
+            donjon('Caverne du Koulosse', 100, 'Montagne des Koalaks'))],
+     pnj='tableau_otomai')
+chap('cmp_o6', 'La Tourbière nauséabonde', 102,
+     "Plus au nord, la Tourbière nauséabonde déborde. Les Bourbassingues montent vers le village.",
+     [etape('Tenir la digue', "Tiens la digue le temps que la vigie fasse sonner l'alarme.",
+            defense('-60_-8', 75, 'Tenir 75 secondes dans la Tourbière nauséabonde'), vaincre(15, 471))],
+     pnj='tableau_otomai')
+chap('cmp_o7', 'Le Village des Zoths', 105,
+     "Les Zoths ont ramassé un éclat et le vénèrent comme une idole. Leur Maître s'en sert pour lever ses guerriers.",
+     [etape('Les guerriers Zoths', "Brise la garde du village, puis le Maître Zoth fêlé.",
+            vaincre(20, 468), elite('maitre_zoth', '-52_17', 'Maître Zoth fêlé'))],
+     pnj='tableau_otomai')
+chap('cmp_o8', 'Le Goulet du Rasboul', 110,
+     "Le dernier éclat de l'île est tombé au fond du Goulet, chez Silf le Rasboul Majeur. Il le garde comme un trésor de famille.",
+     [etape('Le Goulet', "Silf ne rend jamais rien. Va le lui prendre.", donjon('Goulet du Rasboul', 110, "Île d'Otomaï"))],
+     pnj='tableau_otomai', merci="L'île respire. Mais les éclats les plus gros sont partis vers Pandala et les hauteurs de Cania. Le passeur pandawa connaît la route.")
+
+# ===== Acte VII : Pandala et les hauteurs (0.7) =============================================================
+acte('pandala', 'Acte VII', 'Pandala et les hauteurs', [105, 120], 'passeur_pandala',
+     "Les plus gros éclats sont tombés sur Pandala, dans les hauteurs de Cania et jusqu'aux Champs de glace. Chacun a trouvé un boss à rendre fou.",
+     sac='legendaire', titre='Gardien des Dalas', v07=True)
+chap('cmp_d1', 'Cap sur Pandala', 105,
+     "Le passeur pandawa de Madrestam a vu les dalas changer de couleur. Il t'emmène, si tu fais taire les Dragoeufs qui pillent son ponton.",
+     [etape('Le Village des Dragoeufs', "Les Dragoeufs pillent le ponton. Montre-leur la sortie.", vaincre(20, 315)),
+      etape('Embarquer', "Le ponton est calme. Le passeur t'attend.", parler('passeur_pandala', 'Parler au passeur pandawa'))],
+     ouvre=['pandala_passage'])
+chap('cmp_d2', 'Le Village de Pandala', 106,
+     "Le Zaap de Pandala est caché dans une taverne, entre deux tonneaux de bière de bambou. La garde du village t'y attend.",
+     [etape('La taverne', "Active le Zaap du Village de Pandala.", zaap('Zaap Village de Pandala')),
+      etape('La garde', "Le Garde du Village de Pandala sait où sont tombés les éclats.", parler('tableau_pandala'))],
+     pnj='tableau_pandala')
+chap('cmp_d3', 'La Bambusaie', 108,
+     "À Plantala, Damadrya fait pousser les bambous à vue d'œil. Un éclat est planté au cœur de sa bambusaie.",
+     [etape('Plantala', "Fraie-toi un chemin dans Plantala : ici, l'Air frappe plus fort, pour toi comme pour eux.", vaincre(20, 942)),
+      etape('Damadrya', "L'éclat est au cœur de la Bambusaie.", donjon('Bambusaie de Damadrya', 110, 'Île de Pandala'))],
+     pnj='tableau_pandala')
+chap('cmp_d4', 'Les rizières', 110,
+     "À Akwadala, les Kokoms volent le riz et les Sarkapwanes remontent des rizières. L'eau y frappe plus fort qu'ailleurs.",
+     [etape('Akwadala', "L'Eau frappe plus fort ici. Adapte-toi, ou sors ton équipement d'Eau.", vaincre(20, 941), elite('kokom', '20_-23', 'Kokom fêlé'))],
+     pnj='tableau_pandala')
+chap('cmp_d5', 'La montagne qui tremble', 112,
+     "À Terrdala, la montagne dévale. Les bêtes fuient devant un éclat qui roule de rocher en rocher.",
+     [etape('Terrdala', "Vide le col avant que l'éboulement ne t'emporte.", chrono('25_-25', 90, 'Vider le col en moins de 90 secondes'), vaincre(15, 944))],
+     pnj='tableau_pandala')
+chap('cmp_d6', 'La Bibliothèque du Corbac', 112,
+     "Au nord de Cania, le Maître Corbac a rangé un éclat entre deux grimoires. Ses Corbacs gardent les Pénates.",
+     [etape('Les Pénates', "Le Garde de Cania connaît le chemin des Pénates du Corbac.", parler('tableau_cania'), vaincre(15, 55)),
+      etape('Le Maître Corbac', "L'éclat est dans sa bibliothèque.", donjon('Bibliothèque du Maître Corbac', 110, 'Cania'), pnj='tableau_cania')],
+     pnj='tableau_cania')
+chap('cmp_d7', 'Le Bois de Litneg', 114,
+     "Les Chafers du Bois de Litneg sortent en plein jour, menés par un Troollaraj qui a goûté à un éclat.",
+     [etape('Le bois maudit', "Renvoie les Chafers sous terre et fais tomber le Troollaraj.", vaincre(15, 69), elite('troollaraj', '-13_-53', 'Troollaraj fêlé'))],
+     pnj='tableau_cania')
+chap('cmp_d8', 'Le Blop Multicolore', 116,
+     "Dans les Pics de Cania, le Blop Multicolore Royal change de couleur à chaque battement. L'éclat lui donne toutes les teintes à la fois.",
+     [etape("L'Antre", "Frappe-le dans la bonne couleur.", donjon('Antre du Blop Multicolore Royal', 120, 'Cania'))],
+     pnj='tableau_cania')
+chap('cmp_d9', 'Le Repaire de Skeunk', 118,
+     "Sur la Montagne des Koalaks, Skeunk a volé un éclat comme il vole les potions. Les Momies du Cimetière primitif le protègent.",
+     [etape('Le Cimetière primitif', "Active le Zaap du Cimetière primitif et recouche les Momies Koalaks.", zaap('Zaap Cimetière primitif'), vaincre(15, 230)),
+      etape('Skeunk', "Le Repaire de Skeunk est au fond de la Vallée de la Morh'Kitu.", donjon('Repaire de Skeunk', 120, 'Montagne des Koalaks'))],
+     pnj='tableau_koalaks')
+chap('cmp_d10', 'La Serre du Royalmouth', 120,
+     "Le dernier éclat de la tranche est sous la glace, dans la serre du Royalmouth. Le Milicien de la Bourgade t'y attend.",
+     [etape('Les Champs de glace', "Le Milicien de la Bourgade connaît le chemin. Les Boufmouths, eux, ne laissent passer personne.", parler('tableau_frigost'), vaincre(20, 602)),
+      etape('Le Royalmouth', "La serre est au bout des Champs de glace.", donjon('Serre du Royalmouth', 120, 'Frigost'), pnj='tableau_frigost')],
+     pnj='tableau_frigost', merci="Les éclats du sud sont repris. Il ne reste que les deux derniers Sceaux, sous la grande glace. Garde le carnet ouvert.")
+
 # fin de chaque acte : sac, XP et titre sur le dernier chapitre (6A + 6B) ; apparat à la fin de la campagne (6B)
 RATIO_FIN = 6
 for a in ACTES:
     der = Q[a['chapitres'][-1]]
     if a.get('sac'): der['recompense']['sac'] = a['sac']; der['recompense']['xp'] = round(RATIO_FIN * der['niveau'] * 50)
     if a.get('titre'): der['recompense']['titre'] = a['titre']
-Q[ACTES[-1]['chapitres'][-1]]['recompense']['apparats'] = ['19465', '19466']   # Casque Divin + Cape Divine (apparat.json)
+FIN = [a for a in ACTES if a['id'] == 'frigost'][0]   # la fin de la campagne ouverte à tous (les actes de la 0.7 viennent après, cachés)
+Q[FIN['chapitres'][-1]]['recompense']['apparats'] = ['19465', '19466']   # Casque Divin + Cape Divine (apparat.json)
 # chaînage : chaque chapitre lance le suivant, d'un acte à l'autre
 ordre = [c for a in ACTES for c in a['chapitres']]
 for a, b in zip(ordre, ordre[1:]): Q[a]['suivante'] = b

@@ -63233,5 +63233,201 @@
    "retraitPA": 0
   },
   "xp": 91
+ },
+ "mega_guerrier_zoth": {
+  "dofusId": 0,
+  "name": "Méga Guerrier Zoth",
+  "hp": 9000,
+  "speed": 95,
+  "radius": 34,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "guerrier_zoth",
+  "color": "#d8d0b8",
+  "xp": 94,
+  "spells": [
+   {
+    "id": 1090,
+    "name": "Héchaud Fourrée",
+    "pa": 6,
+    "po": [
+     1,
+     1
+    ],
+    "relance": 0,
+    "anim": 1,
+    "zone": "P1",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "neutre",
+      "min": 6,
+      "max": 10,
+      "steal": false
+     },
+     {
+      "k": "dommages",
+      "n": 200,
+      "dur": 2
+     }
+    ],
+    "gfx": 21003
+   },
+   {
+    "id": 1091,
+    "name": "Mêlée",
+    "pa": 4,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 2,
+    "zone": "C3",
+    "allies": true,
+    "effects": [
+     {
+      "k": "dommages",
+      "n": 100,
+      "dur": 2
+     },
+     {
+      "k": "pm",
+      "n": 2,
+      "dur": 2
+     }
+    ]
+   }
+  ],
+  "level": 125,
+  "res": {
+   "terre": 5,
+   "feu": 38,
+   "eau": 10,
+   "air": -30,
+   "neutre": -15
+  },
+  "caracs": {
+   "force": 700,
+   "intelligence": 700,
+   "chance": 700,
+   "agilite": 700,
+   "sagesse": 500,
+   "esquivePA": 0,
+   "esquivePM": 0,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "mega": "guerrier_zoth"
+ },
+ "mega_momie_koalak": {
+  "dofusId": 0,
+  "name": "Méga Momie Koalak",
+  "hp": 7500,
+  "speed": 95,
+  "radius": 30,
+  "mass": 1.2,
+  "dmg": 14,
+  "attackRange": 60,
+  "windup": 0.5,
+  "lungeSpeed": 420,
+  "lungeTime": 0.18,
+  "recover": 0.65,
+  "look": "momie_koalak",
+  "color": "#d8d0b8",
+  "xp": 93,
+  "spells": [
+   {
+    "id": 759,
+    "name": "Malédiction de la Momie",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 3,
+    "anim": 4,
+    "zone": "C63",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "feu",
+      "min": 16,
+      "max": 20,
+      "steal": false
+     }
+    ]
+   },
+   {
+    "id": 760,
+    "name": "Clepsydre",
+    "pa": 5,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 0,
+    "anim": 0,
+    "zone": "X3",
+    "allies": false,
+    "effects": [
+     {
+      "k": "dmg",
+      "element": "eau",
+      "min": 31,
+      "max": 40,
+      "steal": true
+     },
+     {
+      "k": "pa",
+      "n": -2,
+      "dur": 0
+     }
+    ]
+   },
+   {
+    "id": 761,
+    "name": "Bandelette Ancestrale",
+    "pa": 3,
+    "po": [
+     0,
+     0
+    ],
+    "relance": 4,
+    "anim": 1,
+    "zone": "X3",
+    "allies": true,
+    "effects": []
+   }
+  ],
+  "level": 118,
+  "res": {
+   "terre": -25,
+   "feu": 10,
+   "eau": 50,
+   "air": -50,
+   "neutre": 60
+  },
+  "caracs": {
+   "force": 0,
+   "intelligence": 280,
+   "chance": 350,
+   "agilite": 140,
+   "sagesse": 400,
+   "esquivePA": 8,
+   "esquivePM": 12,
+   "tacle": 0,
+   "fuite": 0,
+   "retraitPA": 0
+  },
+  "mega": "momie_koalak"
  }
 }

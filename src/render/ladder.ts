@@ -93,7 +93,7 @@ const EN_CLAIR: Record<OngletLadder, [string, string]> = {
   metiers: ['Métiers', 'Un classement par métier : niveau, puis expérience du métier.'],
   exploration: ['Exploration', 'Sous-zones découvertes, puis Zaaps activés.'],
   succes: ['Succès', 'Points de succès du compte (tous ses persos comptent ensemble) : une ligne par compte, avec son perso le plus haut.'],
-  donjons: ['Donjons', 'Meilleur résultat de chaque perso, en solo et en groupe : le plus haut score d\'idoles d\'abord, puis le meilleur temps. Le Labyrinthe du Dragon Cochon a aussi son classement de la semaine, remis à zéro le lundi. Seules les parties tenues par le serveur comptent (en groupe, ou « Partie sur le serveur »).'],
+  donjons: ['Donjons', 'Meilleur résultat de chaque perso, en solo et en groupe : le plus haut score d\'idoles d\'abord, puis le meilleur temps. Le donjon de la semaine a aussi son classement, remis à zéro le lundi. Seules les parties tenues par le serveur comptent (en groupe, ou « Partie sur le serveur »).'],
   premiers: ['Les premiers', 'Le premier à atteindre un palier y est gravé pour toujours, même s\'il est dépassé ensuite.'],
 };
 const NOM_PREMIER = (p: Premier) => p.cle.startsWith('niveau_') ? `Niveau ${p.cle.slice(7)}` : p.cle === 'dofus' ? 'Premier Dofus'

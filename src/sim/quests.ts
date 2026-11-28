@@ -269,6 +269,8 @@ export interface SuccesDef {
   recompense?: { xp?: number; objet?: string; /** « Apparats : » 1C : apparat donné (id Dofus). */ apparat?: string; /** Titre affiché sous le nom du perso (Tour 7A). */ titre?: string; ornement?: OrnementDef };
   /** Contenu de la partie de test (0.4) : caché et jamais obtenu ailleurs. */
   test?: boolean;
+  /** 0.7 : caché tant que la 0.7 ne se voit pas. */
+  v07?: boolean;
 }
 export interface QuetesData { pnj: Record<string, PnjDef>; quetes: Record<string, QueteDef>; succes: Record<string, SuccesDef>;
   /** Contrats du jour : titres officiels et une ligne de texte par sous-zone (2A). */
@@ -615,7 +617,7 @@ export class Quetes {
     const w = this.world, I = w.opts.items, M = w.opts.data.monsters, wg = w.worldGrid;
     const liste = this.data.pnj[pnj]?.contrats, autres = new Set(this.tableaux_().flatMap(k => { const c = this.data.pnj[k].contrats; return Array.isArray(c) ? c.map(String) : []; }));
     const garde = (sub: string) => Array.isArray(liste) ? liste.includes(Number(sub)) : !autres.has(sub);
-    return { sousZones: Object.fromEntries(Object.entries(w.zone.open?.subareas ?? {}).filter(([k, s]) => s.monsters.length && garde(k))),
+    return { sousZones: Object.fromEntries(Object.entries(w.zone.open?.subareas ?? {}).filter(([k, s]) => s.monsters.length && garde(k) && (!s.v07 || w.player.v07))),   // 0.7 (10D) : ses sous-zones sur les tableaux seulement quand elle est visible
       nomMonstre: id => M[id]?.name ?? id,
       ressourcesDe: id => (I?.drops[id] ?? []).filter(d => I!.resources[d.item] && d.chance >= 5 && d.chance < 100).map(d => d.item),
       nomRessource: id => I?.resources[id]?.name ?? id,
@@ -677,6 +679,7 @@ export class Quetes {
   }
 
   prendre(id: string) {
+    if (this.data.quetes[id]?.v07 && !this.world.v07Ouvert) return;   // 0.7 cachée : ses chapitres attendent (majCampagne les lance à la sortie)
     if (this.finies.has(id) && this.existe(id) && this.reprenable(id)) this.finies.delete(id);
     if (this.finies.has(id) || this.enCours.some(c => c.id === id) || !this.existe(id)) return;
     const c: QueteEnCours = { id, etape: 0, compte: [], aRendre: false };
@@ -923,7 +926,7 @@ export class Quetes {
     if (!n || Math.hypot(n.x - p.x, n.y - p.y) > 1300 || this.dialogue || p.dead) return;
     if ((this.cri.t -= dt) > 0 || this.bulle) return;
     const cris = n.def.cris!, alm = this.world.almanaxDuJour, h = this.world.opts.horloge;
-    const nv = h ? nouvellesDuMonde(this.world.opts.data, h(), this.world.v06Ouvert) : { boss: '', invasion: '' };   // 0.5 (2D)
+    const nv = h ? nouvellesDuMonde(this.world.opts.data, h(), this.world.v06Ouvert, this.world.v07Ouvert) : { boss: '', invasion: '' };   // 0.5 (2D)
     for (let k = 0; k < cris.length; k++) {
       const c = cris[this.cri.i++ % cris.length];
       if ((c.includes('{almanax}') && !alm) || (c.includes('{boss}') && !nv.boss) || (c.includes('{invasion}') && !nv.invasion)) continue;
@@ -1109,7 +1112,7 @@ export class Quetes {
   }
   // --- Campagne « Le Carnet des Fêlures » (maquette Campagne, ligne du 2026-11-15) ------------------------------------
   /** Les actes de la campagne (aucun si ce perso ne la voit pas). */
-  get actes(): ActeDef[] { return this.campagneOuverte ? this.data.campagne ?? [] : []; }
+  get actes(): ActeDef[] { return this.campagneOuverte ? (this.data.campagne ?? []).filter(a => !a.v07 || this.world.v07Ouvert) : []; }
   acteDe(id: string): ActeDef | null { const a = this.data.quetes[id]?.acte; return a ? this.actes.find(x => x.id === a) ?? null : null; }
   /** Le chapitre de la campagne en cours (un seul à la fois). */
   get chapitre(): QueteEnCours | null {
@@ -1275,7 +1278,7 @@ export class Quetes {
     return [this.objectifSuccesFait(o) ? 1 : 0, 1];
   }
   /** Succès montré dans ce jeu : le contenu de la partie de test (0.4) reste caché ailleurs. */
-  visible(id: string): boolean { const s = this.data.succes[id]; return !!s && (!s.test || this.world.essaiOuvert); }
+  visible(id: string): boolean { const s = this.data.succes[id]; return !!s && (!s.test || this.world.essaiOuvert) && (!s.v07 || this.world.v07Ouvert); }
   /** Avancement d'un succès entre 0 et 1 (barre, « Presque finis »). */
   avancement(id: string): number {
     const s = this.data.succes[id]; if (!s) return 0;

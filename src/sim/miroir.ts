@@ -59,7 +59,7 @@ const SAC = ['bag', 'resources', 'kamas', 'metiers', 'apparats', 'dofus', 'troph
 const REFUS: Record<Sorte | 'a', Set<string>> = {
   j: new Set(['cls', 'items', 'bag', 'resources', 'codex', 'learned', 'zonesVues', 'metiers', 'prereglages', 'ames', 'areneAmes', 'apparats', 'dofus', 'trophees',
     'commandeFM', 'quetes', 'monde', 'evenements', 'cleDonjon', 'renfortDonjon', 'guerre', 'siege07', 'vivant', 'recetteSuivie', 'zaaps', '_pouvoirs', 'almanaxJour', 'magasin', 'sacEnPlus', 'benediction', 'repas', 'elixir', 'parchemins', 'ceinture', 'boissonCd', 'codexOuvert', 'lootFilter', 'autoDefaire', 'kamas', 'v03', 'v04', 'v06', 'chasse', 'bossSansLeg', 'idoles', 'renommee', 'sanctuaires', 'fxIdoles', 'bouclierVu', 'idoleT', 'repathT', 'bufferT', 'buffer', 'explore', '_explore', 'lieuxVus', 'tombe', 'carteIci',
-    'coffreVitrine', 'coffreJournal', 'coffreRecords', 'coffreEjection', 'recoltees']),
+    'coffreVitrine', 'coffreJournal', 'coffreRecords', 'coffreEjection', 'recoltees', 'ecurie', 'coupA']),
   // minuteries de l'IA des monstres : l'hôte seul s'en sert
   m: new Set(['def', 'atkCd', 'spellCd', 'sigCd', 'cheminT', 'wanderT', 'wanderX', 'wanderY', 'repathT', 'e06']),
   b: new Set(['def']),
@@ -72,12 +72,12 @@ const LISTES = ['projectiles', 'drops', 'telegraphs', 'zonesSol'] as const;
 const EVENEMENTS = new Set<SimEvent['k']>(['proie', 'bete', 'bondOug', 'feuillu', 'infection', 'ralliement', 'spell', 'shoot', 'slam', 'monsterCast', 'spellFx', 'status', 'massacre', 'massacreFin', 'hit', 'kill',
   'beteMorte', 'heal', 'filSoin', 'pieces', 'tresorOuvert', 'cartesJouees', 'mainGagnante', 'roulette', 'invocation', 'eveil', 'echange', 'souffrance', 'sacrifice', 'dompte', 'impact', 'grosCoup', 'bossIntro', 'furieux', 'wave',
   'areneDebut', 'areneVague', 'areneEtage', 'arenePalier', 'areneAlarme', 'bossFuite', 'wobot', 'bossEpilogue', 'areneFin', 'areneAmesVague', 'bossDown', 'cast', 'bulle', 'rageSpent', 'signal', 'guerreVague', 'guerreVol', 'guerreFuite', 'guerreReplantee',
-  'siegeVague', 'siegePierre', 'gobrechaun', 'bossMondeAnnonce', 'bossMondeArrive', 'bossMondeCombat', 'bossMondePalier', 'bossMondeFin', 'invasionDebut', 'evenementDebut']);
+  'siegeVague', 'siegePierre', 'gobrechaun', 'bossMondeAnnonce', 'bossMondeArrive', 'bossMondeCombat', 'bossMondePalier', 'bossMondeFin', 'invasionDebut', 'evenementDebut', 'monture']);
 export const evenementPartage = (e: SimEvent) => EVENEMENTS.has(e.k);
 /** Événements propres à l'invité (World.evenementsDe) qu'il peut jouer chez lui : bandeaux, butin, quêtes, métiers. */
 const PERSONNELS_AFFICHES = new Set<SimEvent['k']>(['levelUp', 'newSpell', 'enterArea', 'enterLieu', 'loot', 'lootResource', 'lootKamas', 'bagFull',
   'queteInfo', 'objetQuete', 'succes', 'checkpoint', 'zaapDecouvert', 'lieuDecouvert', 'recolteFin', 'recolteStop', 'metierLevel', 'dofusGagne', 'portal', 'itemDrop', 'guerreDebut', 'guerreFin', 'siegeDebut', 'siegeFin',
-  'bossMondeVaincu', 'invasionPleine', 'invasionCoffre', 'evenementFin']);
+  'bossMondeVaincu', 'invasionPleine', 'invasionCoffre', 'evenementFin', 'montureCapturee', 'montureNee', 'montureExpedition']);
 
 const arrondir = (v: number) => (Number.isInteger(v) || !Number.isFinite(v) ? v : Math.round(v * COOP.arrondi) / COOP.arrondi);
 const estEntite = (v: object): v is Entity => v instanceof Entity;

@@ -49,6 +49,8 @@ export interface ItemDef {
   familier?: FamilierDef;
   /** Objet de maître du jeu (butin.json, horsJeu) : jamais tiré, retiré des sauvegardes hors partie de test. */
   horsJeu?: boolean;
+  /** Au-dessus de 60, recette officielle absente du jeu : ses ingrédients lâchés par des monstres du jeu (butin par zone, tools/contenu/liens_recettes.py). */
+  ing?: string[];
 }
 /** Familier officiel (src/data/familiers.json, tools/extraction/familiers_export.py). */
 export interface FamilierDef {

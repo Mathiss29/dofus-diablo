@@ -203,6 +203,11 @@ export type SimEvent =
   | { k: 'impression'; uid: number; id: string }
   /** Collection d'apparences (1C) : premier exemplaire d'une coiffe, cape ou bouclier brisé ou recyclé. */
   | { k: 'apparence'; id: string; /** « Apparats : » 3A */ rarete?: Rarity }
+  /** 0.7 (17A, Élevage) : monté / descendu, capture, naissance, retour d'expédition. */
+  | { k: 'monture'; joueur: number; monte: boolean; race: string }
+  | { k: 'montureCapturee'; joueur: number; race: string; nom: string }
+  | { k: 'montureNee'; joueur: number; race: string; nom: string; gen: number }
+  | { k: 'montureExpedition'; joueur: number; nom: string; butin: Record<string, number>; blessee: boolean }
   /** « Familiers : » 6A : nouveau familier dans la Ménagerie (n = combien en tout). */
   | { k: 'menagerie'; id: string; nom: string; n: number }
   | { k: 'fusion'; de: string; vers: string; n: number }

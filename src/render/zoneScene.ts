@@ -69,6 +69,7 @@ import { Assemblage, LANCE_EN_MAIN, apparenceValide, fiches, objetsPortes, type 
 import { SpellFx } from './spellFx';
 import { FX } from './fx';
 import { FamilierView } from './familierView';
+import { MontureView } from './montureView';
 import { Hud } from './hud';
 import { LOOKS, type Look } from './looks';
 import { BETES, Bete } from '../sim/bete';
@@ -141,8 +142,9 @@ const CURSEUR_PORTE = `url("${v(`${ASSETS}/ui/curseur_porte.png`)}") 1 1, pointe
 
 /** Scène d'une zone : charge la carte et les planches de la zone, fait tourner la simulation
  *  à pas fixe, et dessine son état. Toute la logique de jeu est dans World (src/sim). */
-/** 0.6 (25B) : ornement du succès « Maître de la tranche » : le porter allume son aura dorée. */
-const AURA_MAITRE = 900;
+/** 0.6 (25B) : ornement du succès « Maître de la tranche » : le porter allume son aura dorée.
+ *  0.7 (16B) : « Maître de la tranche 90-120 », aura bleu glacier. Couleurs : fond, anneaux, étincelles. */
+const AURAS_MAITRE: Record<number, [number, number, number]> = { 900: [0xffd36b, 0xffe08a, 0xfff0b0], 901: [0x6bc8ff, 0x8ad8ff, 0xd0f0ff] };
 
 /** « Idées Thor : » 5B : Select maintenu + croix. */
 const AIDE_VISEE = { faible: 0.6, normale: 1, forte: 1.4 } as const;
@@ -224,6 +226,8 @@ export class ZoneScene extends Phaser.Scene {
   private menuStart: MenuStart | null = null;
   private potion = false;
   private boisson = false;
+  /** 0.7 (17A) : monter sur sa monture ou en descendre à la prochaine image. */
+  private montureT = false;
   private hitstop = 0;
   private windows: Windows | null = null;
   /** Carte du monde (touche M, 0.2 18A). */
@@ -511,6 +515,8 @@ export class ZoneScene extends Phaser.Scene {
     this.fx = new FX(this, t => hex(GAME_DATA.monsters[t].color));
     const fv = this.familierView = new FamilierView(this, a => this.planche({ atlas: a, multi: true } as Look), () => this.assemblage?.couleursPerso);
     this.events.once('shutdown', () => { fv.destroy(); if (this.familierView === fv) this.familierView = null; });
+    const mv = this.montureView = new MontureView(this, a => this.planche({ atlas: a, multi: true } as Look));
+    this.events.once('shutdown', () => { mv.destroy(); if (this.montureView === mv) this.montureView = null; });
     if (this.perso?.etat) restaurerJoueur(this.world, this.perso.etat);
     else if (this.test?.etat) restaurerJoueur(this.world, this.test.etat);
     // « Apparats : » 9 + 16-17 : achats Ogrines et abonnement du compte en ligne (le perso joué en profite)
@@ -707,6 +713,7 @@ export class ZoneScene extends Phaser.Scene {
   private apparenceEssai?: Apparence;
   private vivant: PersoVivant | null = null;
   private familierView: FamilierView | null = null;
+  private montureView: MontureView | null = null;
   /** Tête, couleurs et objets visibles du perso dessiné : quand ils changent (objet porté, apparat, garde-robe), le perso est réassemblé. */
   private apparenceCle = '';
   private cleApparence(objets: string[]) { const a = this.perso?.apparence ?? this.apparenceEssai; return JSON.stringify([a?.tete, a?.couleurs, objets]); }
@@ -1034,12 +1041,13 @@ export class ZoneScene extends Phaser.Scene {
   private drawRageAura() {
     const p = this.world.player, g = this.rageAura ??= this.add.graphics();
     g.clear();
-    if (this.world.quetes?.ornement?.id === AURA_MAITRE && !p.dead && !p.rageFull) {   // 0.6 (25B) : aura du « Maître de la tranche », portée avec son ornement
-      const v = this.viewOf(p), s = ISO.toScreen(p.x, p.y), t = this.world.time;
+    const aura = AURAS_MAITRE[this.world.quetes?.ornement?.id ?? -1];
+    if (aura && !p.dead && !p.rageFull) {   // 0.6 (25B), 0.7 (16B) : aura du « Maître de la tranche », portée avec son ornement
+      const v = this.viewOf(p), s = ISO.toScreen(p.x, p.y), t = this.world.time, [c0, c1, c2] = aura;
       g.setDepth(v.sprite.depth - 0.5).setBlendMode(Phaser.BlendModes.ADD);
-      g.fillStyle(0xffd36b, 0.1 + 0.05 * Math.sin(t * 2)); g.fillEllipse(s.x, s.y, 110, 48);
-      for (let i = 0; i < 3; i++) { const k = (t * 0.6 + i / 3) % 1; g.lineStyle(2, 0xffe08a, 0.5 * (1 - k)); g.strokeEllipse(s.x, s.y, 50 + 80 * k, 22 + 34 * k); }
-      for (let i = 0; i < 6; i++) { const a = t * 1.3 + i * Math.PI / 3, y = s.y - 20 - ((t * 30 + i * 17) % 70); g.fillStyle(0xfff0b0, 0.6).fillCircle(s.x + Math.cos(a) * 30, y, 2); }
+      g.fillStyle(c0, 0.1 + 0.05 * Math.sin(t * 2)); g.fillEllipse(s.x, s.y, 110, 48);
+      for (let i = 0; i < 3; i++) { const k = (t * 0.6 + i / 3) % 1; g.lineStyle(2, c1, 0.5 * (1 - k)); g.strokeEllipse(s.x, s.y, 50 + 80 * k, 22 + 34 * k); }
+      for (let i = 0; i < 6; i++) { const a = t * 1.3 + i * Math.PI / 3, y = s.y - 20 - ((t * 30 + i * 17) % 70); g.fillStyle(c2, 0.6).fillCircle(s.x + Math.cos(a) * 30, y, 2); }
     }
     if (!p.rageFull || p.dead) return;
     const v = this.viewOf(p), s = ISO.toScreen(p.x, p.y), k = 0.5 + 0.5 * Math.sin(this.world.time * 6);
@@ -1631,6 +1639,8 @@ export class ZoneScene extends Phaser.Scene {
       case 'deplacement': this.down(a, p.bar[7]); break;
       case 'potion': this.potion = true; break;
       case 'boisson': this.boisson = true; break;
+      case 'monture': this.montureT = true; break;
+      case 'elevage': w?.toggle('elevage'); break;
       case 'inventaire': w?.toggle('inv'); break;
       case 'caracs': w?.toggle('car'); break;
       case 'sorts': w?.toggle('sorts'); break;
@@ -1679,7 +1689,7 @@ export class ZoneScene extends Phaser.Scene {
   private readInput(): PlayerInput {
     const ptr = this.input.activePointer, wp = ptr.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
     const aim = ISO.toWorld(wp.x, wp.y), held = this.holding && (this.reglages.deplacement === 'droit' ? ptr.rightButtonDown() : ptr.leftButtonDown()) && !this.uiClick;
-    const input: PlayerInput = { move: { x: 0, y: 0 }, aim, pressed: this.pressed, potion: this.potion, boisson: this.boisson,
+    const input: PlayerInput = { move: { x: 0, y: 0 }, aim, pressed: this.pressed, potion: this.potion, boisson: this.boisson, monture: this.montureT,
       holdAttack: (held && this.clickMode === 'place') || this.attaqueSouris, pickup: this.pickClick, approach: this.reglages.approche,
       castOn: null };
     // un sort lancé sur un monstre vise le monstre (comme l'aperçu), pas le sol derrière son sprite
@@ -1731,7 +1741,7 @@ export class ZoneScene extends Phaser.Scene {
     // « Idées Thor : » 5A : allié touché sur l'écran du bas, les sorts de l'Eniripsa partent sur lui
     const av = this.allieVise && input.pressed && input.pressed !== 'attaque' && moi.cls.eniripsa ? this.world.players.find(o => o.id === this.allieVise!.id && !o.dead) : null;
     if (av) { input.castOn = null; input.aim = { x: av.x, y: av.y }; }
-    this.pressed = null; this.potion = false; this.boisson = false;
+    this.pressed = null; this.potion = false; this.boisson = false; this.montureT = false;
     // curseur : une épée sur un monstre
     const surPnj = this.questView?.pnjUnder(ptr, this.cameras.main) ?? null;
     if (this.questView) this.questView.survole = surPnj;
@@ -2779,6 +2789,7 @@ export class ZoneScene extends Phaser.Scene {
     this.dessinerLances();
     this.oublierPlanches();
     if (!this.vitrine) this.familierView?.maj(w, this.game.loop.delta / 1000);
+    if (!this.vitrine) this.montureView?.maj(w, this.game.loop.delta / 1000, p => p === w.player || alive.has(p.id));
     Mesure.debut('sil');
     if (this.transparence) {
       const caches: Cache[] = [];

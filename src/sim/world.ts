@@ -9,7 +9,9 @@ import { NO_INPUT, type PlayerInput } from './input';
 import { AGGRO, CASE, Monster, TOUR, type Cible } from './monster';
 import { jetOfficiel } from './danger';
 import { REGLAGES_BUTIN, coefChanceQuiMonte, monstresDeZone, panoDuBoss, poolNiveau, poolOfficiel, rangDe, tirerButin, type Butin, type CtxButin, type Rang } from './butin';
-import { PASSIFS, TROPHEES, tropheesDuBoss } from './dofus';
+import { dalasPas, facteurDala } from './dalas';
+import { chasseMonture, commandeElevage, majElevage, type CmdElevage } from './montures';
+import { DOFUS, PASSIFS, TROPHEES, tropheesDuBoss } from './dofus';
 import { jouerMain } from './ecaflip';
 import { ajouterPieces, CLE_COFFRE, enSurcharge, ouvrirCoffre, piecesMonstre, piecesObjet, seuilsCoffre } from './enutrof';
 import { briser, chanceRune, coutKamas, coutRelance, orbeConvient, potionConvient, POTIONS, regenerer, relancerLigne, REGLES_V2, dureeCommande, estimerCommande, executerCommande, forger, fusionVers, FUSION_N, runeCommande, RUNES, SIGNATURE, type Commande, type CommandeFM, type Estimation } from './forgemagie';
@@ -469,7 +471,7 @@ export class World {
     if (opts.items) {
       this.player.items = opts.items;
       // équipement aléatoire : objets officiels des monstres de la zone (butin + fabrication), sinon de tout le jeu (Mathis 2026-11-09)
-      const max = niveauObjetsMax(this.player.v03, this.player.v04), ok = (e: { level: number }) => e.level <= max;
+      const max = niveauObjetsMax(this.player.v03, this.player.v04, this.player.v07), ok = (e: { level: number }) => e.level <= max;
       this.equipByLevel = poolOfficiel(opts.items, monstresDeZone(this.zone)).filter(ok);
       this.equipSecours = poolOfficiel(opts.items, Object.values(opts.data.zones).flatMap(monstresDeZone)).filter(ok);
       for (const [id, d] of Object.entries(opts.items.equipment)) for (const m of d.familier?.monstres ?? []) (this.familiersDe[m] ??= []).push(id);
@@ -1742,6 +1744,8 @@ export class World {
     elitesPas(this, dt);
     autelsPas(this, dt);
     portailPas(this, dt);
+    dalasPas(this);   // 0.7 (13C)
+    if (Math.floor(this.time) !== Math.floor(this.time - dt)) for (const p of this.players) if (p.v07) majElevage(p, this);   // Élevage 3A : une fois par seconde
     if (this.zone.open && this.players[0]?.v06) {   // 0.6 (19-20) : sanctuaires trouvés en passant, renommée relue toutes les 3 s
       sanctuairesPas(this);
       if (Math.floor(this.time / 3) > Math.floor((this.time - dt) / 3)) for (const q of this.players) this.commeJoueur(q, () => majRenommee(this, q));
@@ -2038,7 +2042,7 @@ export class World {
       const first = m.struck ? 1 : 1 + initiativeBonus(p.initiative); m.struck = true;
       const flat = (crit ? p.stat('dommagesCritiques') : 0) + (def.knock > 0 ? p.stat('dommagesPoussee') : 0);
       const vs = def.vsSummon && (m.summoner || (def.vsElite && (m.def.elite || m.def.boss))) ? def.vsSummon : 1;
-      const vu = (m.vulnT > 0 ? 1 + m.vuln / 100 : 1) * m.subis * facteurCouleur(m, el);   // dommages subis augmentés (Bond) ou réduits (Cuirasse Laineuse) ; 0.7 : Blop Multicolore
+      const vu = (m.vulnT > 0 ? 1 + m.vuln / 100 : 1) * m.subis * facteurCouleur(m, el) * facteurDala(this, m.x, m.y, el);   // 0.7 (13C) : dalas de Pandala   // dommages subis augmentés (Bond) ou réduits (Cuirasse Laineuse) ; 0.7 : Blop Multicolore
       // Légendaires de classe : Marque du chasseur (les autres coups), Œil d'aigle (par case de distance)
       const pc = (m.marqueJusqua > this.time && !def.marque ? 1 + m.marque / 100 : 1)
         * (def.vsGros && (m.def.elite || m.def.boss) ? 1 + def.vsGros / 100 : 1) * (def.vsInfecte && m.infecteT > 0 ? 1 + def.vsInfecte / 100 : 1) * (def.plus ? 1 + def.plus / 100 : 1) * (def.vsBouclier && m.bouclier > 0 ? def.vsBouclier : 1)
@@ -2246,6 +2250,7 @@ export class World {
     if (xp > 0) this.emit({ k: 'xp', x: m.x, y: m.y, z: m.radius * 2 + 30, n: xp });
     for (const q of proches) { const a = this.acteur; this.acteur = q; try { q.gainXp(Math.round(base * World.ecartXp(q.level, nm) * (1 + avantage(q.abo, 'xp')) * this.decouverte(q, carte, fini)), this); } finally { this.acteur = a; } }
     this.xpFamilier(FAMILIER_XP.chasse(this.monsterLevel(m), !!m.def.elite, !!m.def.boss));
+    chasseMonture(this, m, [p, ...proches]);   // 0.7 (17A, 17C, Élevage 2A) : capture et XP de la monture
     if (m.def.boss) { this.emit({ k: 'impact', hitstop: 0.15, shake: 0.02, big: true }); this.emit({ k: 'bossDown', monster: m.type }); }
   }
   // --- Idoles (0.6, questions 17-18) : src/sim/idoles.ts ------------------------------------------------
@@ -2268,6 +2273,13 @@ export class World {
   get renforce(): boolean { const a = this.arene; return !!a && this.players.some(q => q.cleDonjon?.renforcee && q.cleDonjon.nom === a.d.nom); }
   /** Recette de l'idole chez le Bricoleur. */
   recetteIdole(id: string): [string, number][] { return this.opts.recoltes ? recetteIdole(id, this.opts.recoltes) : []; }
+  /** 0.7 (Élevage) : une commande de la fenêtre des montures pour le joueur qui agit ; null = faite, sinon pourquoi pas. */
+  elevage(c: CmdElevage): string | null {
+    if (!this.player.v07) return 'Les montures arrivent avec la 0.7.';
+    const r = commandeElevage(this.player, this, c);
+    majElevage(this.player, this);
+    return r;
+  }
   /** Fabrique une idole à l'atelier du Bricoleur : niveau de Bricoleur, ingrédients ; une seule fois, elle reste au perso. */
   fabriquerIdole(id: string): string | null {
     const I = IDOLES_DEFS[id], p = this.player;
@@ -2360,7 +2372,7 @@ export class World {
   private panoBoss(type: string) {
     let l = this.panosBoss.get(type);
     if (!l) {
-      const max = niveauObjetsMax(this.player.v03, this.player.v04);
+      const max = niveauObjetsMax(this.player.v03, this.player.v04, this.player.v07);
       this.panosBoss.set(type, l = this.opts.items ? panoDuBoss(this.opts.items, type).filter(e => e.level <= max) : []);
     }
     return l;
@@ -2442,8 +2454,14 @@ export class World {
     }
     if (rang === 'elite' && this.player.v03 && this.opts.items.resources[ARCHI.pierre] && this.rng.next() < ARCHI.pierreElite) b.ressources.push({ id: ARCHI.pierre });
     // trophées (0.4 suite 3A) : chaque boss de la 0.4 en a deux, rares, une fois chacun
-    if (rang === 'boss' && this.player.v04) for (const id of tropheesDuBoss(type))
-      if (!this.player.trophees.includes(id) && this.rng.next() < REGLAGES_BUTIN.trophee && this.player.gagnerTrophee(id)) this.emit({ k: 'dofusGagne', id });
+    // 0.7 (9C) : les boss de donjon de la 0.7 en ont une dizaine chacun ; un seul au plus par victoire, parmi ceux qui manquent
+    if (rang === 'boss' && this.player.v04) {
+      const l = tropheesDuBoss(type).filter(id => !this.player.trophees.includes(id) && (!TROPHEES[id].v07 || this.player.v07));
+      if (l.some(id => TROPHEES[id].v07)) { if (this.rng.next() < REGLAGES_BUTIN.trophee07) { const id = this.rng.pick(l); if (this.player.gagnerTrophee(id)) this.emit({ k: 'dofusGagne', id }); } }
+      else for (const id of l) if (this.rng.next() < REGLAGES_BUTIN.trophee && this.player.gagnerTrophee(id)) this.emit({ k: 'dofusGagne', id });
+      // Dofus de donjon (9D) : Dofus Kaliptus sur Skeunk
+      for (const [id, D] of Object.entries(DOFUS)) if (D.boss?.[type] && (!D.v07 || this.player.v07) && !this.player.dofus.includes(id) && this.rng.next() < D.boss[type] && this.player.gagnerDofus(id)) this.emit({ k: 'dofusGagne', id });
+    }
     if (rang === 'boss') this.noterBossLeg(type, b, true);
     this.butinForge(b, rang, niveau);
     // « Apparats : » 1B (boss, 1 sur 75) et 1D (fêtes) : jamais un apparat déjà possédé (2A)
@@ -3340,7 +3358,8 @@ export class World {
     return Math.max(0, n);
   }
   /** 0.3 (9A) : les métiers de fabrication d'équipement n'existent qu'en partie de test tant que la 0.3 n'est pas sortie. */
-  recetteVisible(r: RecipeDef): boolean { return (this.player.v03 || !METIERS_FAB.includes(r.metier)) && (this.player.v04 || !TROPHEES[r.result]) && (this.player.v06 || !meubleDeRecette(r.result)); }
+  recetteVisible(r: RecipeDef): boolean { return (this.player.v03 || !METIERS_FAB.includes(r.metier)) && (this.player.v04 || !TROPHEES[r.result]) && (this.player.v06 || !meubleDeRecette(r.result))
+    && (this.player.v07 || ((this.opts.items?.equipment[r.result]?.level ?? 0) <= 90 && !TROPHEES[r.result]?.v07)); }   // 0.7 : recettes 91-120 cachées
   private _rares: Set<string> | null = null;
   /** 10B : ressources de boss ou d'élite qui garantissent un objet fabriqué Rare. */
   get ingredientsRares(): Set<string> {
@@ -3732,7 +3751,7 @@ export class World {
     const p = b.owner;
     if (m.intouchable) return 0;
     const el = p.resolveElement(element), res = Math.min(50, m.def.res?.[el] ?? 0);
-    const vu = (m.vulnT > 0 ? 1 + m.vuln / 100 : 1) * m.subis * facteurCouleur(m, el);
+    const vu = (m.vulnT > 0 ? 1 + m.vuln / 100 : 1) * m.subis * facteurCouleur(m, el) * facteurDala(this, m.x, m.y, el);   // 0.7 (13C) : dalas de Pandala
     const dmg = Math.max(1, Math.round(p.damage(jet, element) * this.rng.range(0.9, 1.1) * (1 - res / 100) * vu));
     m.hp -= dmg; m.flash = 0.09; m.calmeT = 0; m.struck = true; m.agresseur = b.id;
     if (m.state === 'idle' || m.state === 'return') this.aggroGroup(m);
