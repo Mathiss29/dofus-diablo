@@ -23,6 +23,8 @@ export interface BeteDef {
   suivant: string | null; pv: number; sorts: SortBete[];
   /** Ne frappe jamais (coffre au trésor et Sac Animé de l'Enutrof) : suit son maître, les monstres peuvent le viser. */
   passif?: boolean;
+  /** Double du Sram (8A) : leurre immobile qui attire les monstres en chasse, sans frapper (src/sim/sram.ts). */
+  leurre?: boolean;
   /** Sadida : Arbre, Poupée, Groute (fixe = ne marche pas), effets des coups (Infecte, poison), IA de la Bloqueuse et de la Sacrifiée. */
   sadida?: { arbre?: boolean; poupee?: boolean; fixe?: boolean; infecte?: boolean; poison?: boolean; bloqueuse?: boolean;
     sacrifiee?: { element: Element; min: number; max: number };
@@ -182,6 +184,7 @@ export class Bete extends Entity {
       this.dead = true; this.t = 0; return;
     }
     if (this.def.balise) { this.majBalise(dt, world); return; }
+    if (this.def.leurre) { this.setAnim('idle'); this.applyKnock(dt); return; }   // Double du Sram : reste là où il est apparu
     if (this.hateT > 0 && (this.hateT -= dt) <= 0) this.hate = 0;
     const le = this.base === 'bouftou' && !this.dompteT ? p.pcv('pc-osamodas-E') : 0;
     if (le && (this.provoqueT -= dt) <= 0) {   // Laine épaisse : attire les monstres proches à l'arrivée puis toutes les 8 s

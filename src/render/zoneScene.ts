@@ -76,7 +76,7 @@ import { BETES, Bete } from '../sim/bete';
 import { Player } from '../sim/player';
 import { drawMap } from './mapView';
 import { Transparence, type Cache } from './transparence';
-import { WorldView } from './worldView';
+import { SOL, WorldView } from './worldView';
 import { Particules, type SysData } from './particles';
 import { ambiance, chargerReglages, matriceSaturation, sauverReglages, type Reglages } from './ambiance';
 import { ICON_SHEET, iconFrame } from './icons';
@@ -1661,7 +1661,7 @@ export class ZoneScene extends Phaser.Scene {
       case 'carteTab': if (this.carte?.dispo && !this.carte.ouverte) this.carte.basculerSurimpression(); break;   // 11B : carte en surimpression
       case 'havresac': this.havreSacDemande = true; break;
       case 'deco': if (this.decoPanneau) this.decoPanneau.basculer(); else if (this.world.dansHavreSac) this.hud.toast('La déco du Havre-Sac arrive avec la 0.6'); break;
-      case 'coffre': if (p.cls.coffre) w?.toggle('tresor'); else if (p.cls.poker || p.cls.sadida) this.coffreDemande = true; break;   // Enutrof (interface du coffre 2C) : la fenêtre du coffre ; Écaflip : Joue la Main
+      case 'coffre': if (p.cls.coffre) w?.toggle('tresor'); else if (p.cls.poker || p.cls.sadida || p.cls.sram) this.coffreDemande = true; break;   // Enutrof (interface du coffre 2C) : la fenêtre du coffre ; Écaflip : Joue la Main
       case 'muet': this.basculerMuet(); break;
       case 'impact':
         this.fx.juice = !this.fx.juice;
@@ -2537,6 +2537,10 @@ export class ZoneScene extends Phaser.Scene {
     let v = this.views.get(e.id);
     // bête éveillée (ou revenue à son rang) : nouvelle planche, nouvelle vue
     if (v && e instanceof Bete && v.look !== this.lookDe(e)) { v.destroy(); this.views.delete(e.id); v = undefined; }
+    if (!v && e instanceof Bete && e.def.leurre) {   // Double du Sram (8A) : dessiné avec le perso de son maître
+      const moi = e.owner === this.world.player, vv = moi ? this.vivant : this.vivantsAllies.get(e.owner.id);
+      if (vv) { v = new EntityView(this, moi ? this.look : LOOKS[e.owner.cls.sorts] ?? LOOKS.iop, vv); this.views.set(e.id, v); return v; }
+    }
     if (!v) {
       const moi = e === this.world.player, look = moi ? this.look : this.lookDe(e);
       if (moi && this.assemblage && !this.vivant) {
@@ -2554,6 +2558,24 @@ export class ZoneScene extends Phaser.Scene {
   private sangG?: Phaser.GameObjects.Graphics;
   private gouttesSol: { x: number; y: number; t: number; r: number }[] = [];
   private gouttesT = 0;
+  /** Sram (7A) : pièges au sol, contour violet visible du Sram et de son groupe seulement (pas des monstres) ; plein quand il est armé,
+   *  doré quand la Ruse l'a doublé. */
+  private piegesG?: Phaser.GameObjects.Graphics;
+  private dessinerPieges() {
+    const w = this.world, l = w.players.filter(q => q.sram?.pieges.length);
+    if (!l.length && !this.piegesG) return;
+    const g = this.piegesG ??= this.add.graphics().setDepth(SOL + 49);   // au sol, sous les télégraphes
+    g.clear();
+    if (this.vitrine) return;
+    const t = this.time.now / 1000, arme = (w.player.cls.sram ?? GAME_DATA.classes.sram?.sram)?.pieges.arme ?? 0.5;
+    for (const q of l) for (const pg of q.sram!.pieges) {
+      const c = ISO.toScreen(pg.x, pg.y), r = 20 + (pg.t < arme ? 0 : 2 * Math.sin(t * 4 + pg.id)), col = pg.double ? 0xf2d36b : 0xb48cff;
+      g.lineStyle(2, col, pg.t < arme ? 0.45 : 0.9);
+      g.fillStyle(col, pg.t < arme ? 0.08 : 0.22);
+      g.beginPath(); g.moveTo(c.x, c.y - r * 0.5); g.lineTo(c.x + r, c.y); g.lineTo(c.x, c.y + r * 0.5); g.lineTo(c.x - r, c.y); g.closePath();
+      g.fillPath(); g.strokePath();
+    }
+  }
   private dessinerSouffrance() {
     const w = this.world, p = w.player;
     if (!p.cls.souffrance) return;
@@ -2786,6 +2808,7 @@ export class ZoneScene extends Phaser.Scene {
     this.dessinerLaisse();
     this.dessinerSignaux();
     this.dessinerSouffrance();
+    this.dessinerPieges();
     this.dessinerLances();
     this.oublierPlanches();
     if (!this.vitrine) this.familierView?.maj(w, this.game.loop.delta / 1000);

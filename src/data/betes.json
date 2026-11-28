@@ -1743,5 +1743,19 @@
    "sansEchange": true
   },
   "_doc": "Fiole de l'Eniripsa (Mot Alchimique, sort 25802, monstre 7371, os 7585) : immobile 12 s, soigne de 5 % des PV max les alliés en vue à 4 cases, à la pose puis toutes les 3 s."
+ },
+ "sram_double": {
+  "dofusId": 12964,
+  "name": "Double",
+  "look": 0,
+  "atlas": "sram",
+  "rang": 1,
+  "element": "neutre",
+  "suivant": null,
+  "pv": 0.6,
+  "sorts": [],
+  "passif": true,
+  "leurre": true,
+  "_doc": "Double du Sram (sort officiel Double 12915, Doublure 12966) : leurre à l'apparence du Sram, 6 s (« Classes : 8A »), les monstres en chasse à 10 cases le visent ; à sa mort, le Sram prend sa place et court plus vite (src/sim/sram.ts). Dessiné avec le perso de son maître (render/zoneScene.ts)."
  }
 }

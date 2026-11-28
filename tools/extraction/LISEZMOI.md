@@ -756,6 +756,12 @@ Toutes sont refaites avec `HD=2` : planche dessinée 2 fois plus grand, `meta.hd
 - Roquet : planche monstre (`monster_planche`, os 9183), affiché à l'échelle 0,42.
 - Effets des sorts : 63 paquets bones (sorts jusqu'au 90) gardés dans `/mnt/project-files/cache-dofus/ouginak-bones/` ; `spell_fx.py` puis fusion à la main des seules entrées Ouginak dans `spellfx.json` (le script réécrit aussi d'autres classes).
 
+## Sram (classe 4, 28 nov. 2026)
+
+- Squelette et skins : `squelette_export.py` avec `EXTRA=AnimAttaque415,AnimAttaque419` (anims 400-419), têtes par `tetes_vignettes.py` (clé 4 = `sram`).
+- Sorts : `class_spells.py` (`sram:4`) puis `sram_classe.py` (dans le fil) ; les dégâts des pièges viennent de leurs sous-sorts officiels (12929, 12970, 12962, 12928…) recopiés sur les grades du sort de pose.
+- Effets des sorts : paquets bones 8420-8480, 8955 et 9154 gardés dans `/mnt/project-files/cache-dofus/sram-bones/` ; `spell_fx.py` puis fusion à la main des seules entrées Sram dans `spellfx.json`.
+
 ## Baie de Sufokia (0.6.1 publique, ligne « 0.7 : » 3B, 27 nov. 2026)
 - `sufokia061/liste.py` -> `sufokia061/liste.json` : 122 cartes du dehors (Sufokia 32, Rivage sufokien 490, Bassin des Muldos 1119 ; worldMap 1, l'îlot [26,22] sans voisine retiré après l'export ;
   sans les copies en (0, 0), coordonnée doublée = bits 23-24 de `m_flags` les plus hauts). Voisine à pied de la côte sud d'Amakna : pas de bateau.

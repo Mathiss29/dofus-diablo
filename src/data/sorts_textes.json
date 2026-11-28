@@ -4223,5 +4223,419 @@
    "accroche": "Quatre pattes, un seul élan.",
    "texte": "Bondis de 4 cases ; si ta Proie est sous la souris, tu sautes jusqu'à son contact (8 cases au plus)."
   }
+ },
+ "sram": {
+  "12902": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Affaiblit",
+    "Renforce"
+   ],
+   "accroche": "Ce qui est à lui est à toi.",
+   "texte": "Frappe en Terre jusqu'à 4 cases et vole 15 % de Puissance 3 s : tu frappes plus fort, lui moins."
+  },
+  "12932": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Se charge"
+   ],
+   "accroche": "Chaque piège affûte la lame.",
+   "texte": "Frappe en Terre jusqu'à 4 cases, plus fort pour chaque piège qui a sauté depuis ton dernier lancer."
+  },
+  "12904": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Repousse"
+   ],
+   "accroche": "Un coup bas, puis du large.",
+   "texte": "Frappe en Feu jusqu'à 6 cases et repousse la cible de 3 cases, droit vers tes pièges si tu vises bien."
+  },
+  "12935": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Affaiblit"
+   ],
+   "accroche": "Il saignera plus fort ensuite.",
+   "texte": "Frappe en Feu jusqu'à 6 cases ; la cible subit plus de dommages pendant 3 s."
+  },
+  "12907": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Affaiblit"
+   ],
+   "accroche": "Une goutte suffit.",
+   "texte": "Empoisonne en Air jusqu'à 6 cases : dégâts continus pendant 3 s, et la cible perd 2 cases de portée 6 s."
+  },
+  "12933": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Cumul"
+   ],
+   "accroche": "Le venin qui revient.",
+   "texte": "Empoisonne en Air 3 s jusqu'à 6 cases, un peu plus fort à chaque lancer sur la même cible, jusqu'à 5 fois."
+  },
+  "12919": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Renforce"
+   ],
+   "accroche": "Le mal donne des ailes.",
+   "texte": "Frappe en Eau jusqu'à 6 cases et te rend une charge de PM."
+  },
+  "12922": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Vol de vie",
+    "Allié"
+   ],
+   "accroche": "La chance tourne, pour lui.",
+   "texte": "Vole de la vie en Eau jusqu'à 4 cases ; tes alliés proches sont soignés d'une partie des dommages."
+  },
+  "12913": {
+   "role": "soutien",
+   "etiquettes": [
+    "Autour de toi"
+   ],
+   "accroche": "Tu n'as jamais été là.",
+   "texte": "Tu deviens invisible 4 s : les monstres perdent ta trace, élites et boss te retrouvent au bout d'1 s. Achever un monstre recharge le sort."
+  },
+  "12930": {
+   "role": "soutien",
+   "etiquettes": [
+    "Zone",
+    "Allié",
+    "Affaiblit"
+   ],
+   "accroche": "Le brouillard des voleurs.",
+   "texte": "Pose une brume 4 s : les alliés dedans deviennent invisibles, les ennemis y perdent de la portée."
+  },
+  "12915": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation"
+   ],
+   "accroche": "Regarde-le, pas moi.",
+   "texte": "Pose un Double qui attire les monstres 6 s. À sa mort tu prends sa place et tu cours plus vite 3 s."
+  },
+  "12936": {
+   "role": "invoc",
+   "etiquettes": [
+    "Invocation",
+    "Meilleur élément"
+   ],
+   "accroche": "Le double qui frappe en partant.",
+   "texte": "Pose un Double qui attire les monstres plus longtemps et explose à sa mort dans ton meilleur élément."
+  },
+  "12906": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Zone",
+    "Attire"
+   ],
+   "accroche": "Le piège de tous les jours.",
+   "texte": "Pose un piège en Feu jusqu'à 6 cases, armé en 0,5 s : un monstre qui marche dessus le fait sauter et les voisins sont attirés au centre."
+  },
+  "12939": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Vol de vie",
+    "Attire"
+   ],
+   "accroche": "Viens par ici.",
+   "texte": "Vole de la vie en Eau jusqu'à 5 cases et attire la cible ; qui la frappe ensuite se soigne un peu."
+  },
+  "12916": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Zone",
+    "Ralentit"
+   ],
+   "accroche": "Les pieds dans la boue.",
+   "texte": "Pose un piège en Eau jusqu'à 4 cases : il fait mal et ralentit en retirant 2 PM à qui le déclenche."
+  },
+  "12943": {
+   "role": "zone",
+   "etiquettes": [
+    "Distance",
+    "Zone"
+   ],
+   "accroche": "Il le passera aux autres.",
+   "texte": "Empoisonne en Air jusqu'à 5 cases ; quand le poison finit, il saute sur les ennemis proches."
+  },
+  "12948": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone",
+    "Cumul"
+   ],
+   "accroche": "Plus ils sont, plus ça fait mal.",
+   "texte": "Pose un piège en Terre : il frappe plus fort pour chaque ennemi à 2 cases quand il saute."
+  },
+  "14742": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Affaiblit"
+   ],
+   "accroche": "Il ne tiendra plus debout.",
+   "texte": "Frappe en Feu jusqu'à 6 cases et vole de la résistance à la poussée de la cible."
+  },
+  "12914": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Zone",
+    "Repousse"
+   ],
+   "accroche": "Pas d'invités.",
+   "texte": "Pose un piège en Air jusqu'à 5 cases : quand il saute, il repousse tout le monde de 2 cases depuis son centre."
+  },
+  "12920": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Zone",
+    "Repousse"
+   ],
+   "accroche": "Le sol se dérobe.",
+   "texte": "Pose un piège d'une case : il frappe en Terre et repousse les ennemis autour."
+  },
+  "12910": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Zone",
+    "Contrôle",
+    "Ralentit"
+   ],
+   "accroche": "Plus un pas.",
+   "texte": "Pose un large piège sans dégâts : les ennemis qui sont dedans quand il saute restent figés 1,5 s."
+  },
+  "14314": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Zone",
+    "Contrôle"
+   ],
+   "accroche": "Tout le monde à terre.",
+   "texte": "Pose un piège d'une case qui alourdit les ennemis autour : ils ne peuvent plus être poussés ni bondir quelques secondes."
+  },
+  "12938": {
+   "role": "base",
+   "etiquettes": [
+    "Mêlée",
+    "Vol de vie",
+    "Renforce"
+   ],
+   "accroche": "La force des autres.",
+   "texte": "Vole de la vie en Terre jusqu'à 3 cases et de la Force 3 s : tes coups Terre montent, les siens baissent."
+  },
+  "12947": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Repousse"
+   ],
+   "accroche": "Fouille au corps.",
+   "texte": "Frappe en Feu jusqu'à 6 cases et repousse la cible, depuis ton Double s'il est en jeu."
+  },
+  "12911": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Vol de vie",
+    "Renforce"
+   ],
+   "accroche": "Agile, à ses dépens.",
+   "texte": "Vole de la vie en Air jusqu'à 6 cases et de l'Agilité 3 s : tes coups Air montent, les siens baissent."
+  },
+  "12937": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone",
+    "Érosion"
+   ],
+   "accroche": "Il n'en reste que des miettes.",
+   "texte": "Frappe en Eau autour de la case visée et ronge les PV max des ennemis touchés."
+  },
+  "12934": {
+   "role": "base",
+   "etiquettes": [
+    "Distance",
+    "Vol de vie",
+    "Renforce"
+   ],
+   "accroche": "La chance change de camp.",
+   "texte": "Vole de la vie en Eau jusqu'à 4 cases et de la Chance 3 s : tes coups Eau montent, les siens baissent."
+  },
+  "12917": {
+   "role": "gros",
+   "etiquettes": [
+    "Mêlée"
+   ],
+   "accroche": "Pour finir le travail.",
+   "texte": "Frappe fort en Terre à 2 cases, bien plus fort sur une cible sous la moitié de ses PV."
+  },
+  "12905": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone",
+    "Vol de vie",
+    "Renforce"
+   ],
+   "accroche": "Tout le monde paie.",
+   "texte": "Vole de la vie en Feu autour de la case visée et de l'Intelligence 3 s à chaque ennemi touché."
+  },
+  "12940": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Ralentit"
+   ],
+   "accroche": "Une piqûre qui cloue.",
+   "texte": "Empoisonne en Air 3 s jusqu'à 5 cases et retire des PM ; chaque piège qui saute raccourcit sa recharge."
+  },
+  "12908": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Repousse",
+    "Contrôle"
+   ],
+   "accroche": "Il ira où tu veux.",
+   "texte": "Premier lancer : choisis un monstre, sans dépenser de PA. Second lancer dans les 4 s : il est poussé jusqu'à la case visée, 5 cases au plus."
+  },
+  "12945": {
+   "role": "dep",
+   "etiquettes": [
+    "Distance",
+    "Déplacement"
+   ],
+   "accroche": "Tu étais là, il est ici.",
+   "texte": "Échange ta place avec la cible jusqu'à 4 cases, ou la sienne avec ton Double s'il est en jeu. Te montre si tu es invisible."
+  },
+  "12942": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Zone",
+    "Repousse"
+   ],
+   "accroche": "Le courant l'emporte.",
+   "texte": "Pose un piège en Feu : quand il saute, il repousse les ennemis depuis son centre."
+  },
+  "12918": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone",
+    "Attire"
+   ],
+   "accroche": "Il ne sent rien venir.",
+   "texte": "Pose un piège en Air qui empoisonne 3 s et attire les ennemis au centre quand il saute."
+  },
+  "12931": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Zone",
+    "Attire"
+   ],
+   "accroche": "Tous au même endroit.",
+   "texte": "Pose un piège d'une case en Eau qui attire les ennemis autour vers son centre."
+  },
+  "12941": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone"
+   ],
+   "accroche": "Les éclats volent loin.",
+   "texte": "Pose un piège d'une case en Feu : il frappe en zone, plus fort au centre qu'aux bords."
+  },
+  "12903": {
+   "role": "soutien",
+   "etiquettes": [
+    "Distance",
+    "Vol de vie",
+    "Meilleur élément"
+   ],
+   "accroche": "Son sang nourrit le tien.",
+   "texte": "Marque un ennemi jusqu'à 5 cases : quand il est frappé, tu te soignes dans ton meilleur élément."
+  },
+  "14741": {
+   "role": "soutien",
+   "etiquettes": [
+    "Distance",
+    "Allié",
+    "Renforce"
+   ],
+   "accroche": "Prendre aux uns, donner aux autres.",
+   "texte": "Vole des dommages aux ennemis visés, ou en donne à toi et à l'allié visé, pendant quelques secondes."
+  },
+  "12921": {
+   "role": "gros",
+   "etiquettes": [
+    "Zone"
+   ],
+   "accroche": "Le dernier pas.",
+   "texte": "Pose un piège en Terre qui frappe très fort, encore plus sur les ennemis sous la moitié de leurs PV."
+  },
+  "12950": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone",
+    "Affaiblit"
+   ],
+   "accroche": "Personne ne s'enfuit.",
+   "texte": "Pose un piège en Eau jusqu'à 8 cases qui frappe en zone et ralentit les ennemis touchés."
+  },
+  "12909": {
+   "role": "zone",
+   "etiquettes": [
+    "Zone",
+    "Érosion"
+   ],
+   "accroche": "Sur la mauvaise route.",
+   "texte": "Frappe en Air autour de la case visée et ronge les PV max des ennemis touchés."
+  },
+  "12949": {
+   "role": "gros",
+   "etiquettes": [
+    "Mêlée",
+    "Se charge"
+   ],
+   "accroche": "La trahison au contact.",
+   "texte": "Frappe très fort en Terre au contact ; chaque piège qui saute rend le prochain lancer moins cher en PA."
+  },
+  "14312": {
+   "role": "soutien",
+   "etiquettes": [
+    "Allié",
+    "Bouclier"
+   ],
+   "accroche": "Il glisse entre les doigts.",
+   "texte": "Réduit les dommages subis par l'allié visé et l'écarte de qui le frappe, pendant quelques secondes."
+  },
+  "14313": {
+   "role": "ctrl",
+   "etiquettes": [
+    "Distance",
+    "Affaiblit",
+    "Érosion"
+   ],
+   "accroche": "Le nom est déjà écrit.",
+   "texte": "Marque la cible : elle subit plus de dommages et perd des PV max, d'autant plus que tes pièges ont sauté."
+  },
+  "pas_sram": {
+   "role": "dep",
+   "etiquettes": [
+    "Déplacement"
+   ],
+   "accroche": "Sans un bruit.",
+   "texte": "Petit bond silencieux jusqu'à 4 cases vers la souris, sur la touche Espace."
+  }
  }
 }

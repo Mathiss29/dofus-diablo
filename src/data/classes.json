@@ -9171,5 +9171,574 @@
     "v07": true
    }
   }
+ },
+ "sram": {
+  "name": "Sram",
+  "hp": 210,
+  "speed": 235,
+  "radius": 16,
+  "iframesOnHit": 0.45,
+  "healOnKill": 3,
+  "critChance": 0.18,
+  "critMult": 1.6,
+  "pa": {
+   "max": 6,
+   "regen": 1.25
+  },
+  "pm": {
+   "max": 2,
+   "recharge": 3.5
+  },
+  "potion": {
+   "charges": 3,
+   "heal": 0.35,
+   "cooldown": 1
+  },
+  "xpBase": 200,
+  "maxLevel": 200,
+  "rage": {
+   "name": "Ruse",
+   "max": 100,
+   "perHit": 0,
+   "perHurt": 0,
+   "bonus": 0,
+   "signature": 1,
+   "mode": "ruse"
+  },
+  "attaque": {
+   "name": "Coup de poing",
+   "element": "terre",
+   "comboWindow": 0.45,
+   "combo": [
+    {
+     "duration": 0.28,
+     "impactAt": 0.07,
+     "cancelAt": 0.13,
+     "dmg": 14,
+     "range": 78,
+     "arc": 110,
+     "knock": 210,
+     "step": 120,
+     "hitstop": 0.05,
+     "shake": 0.0035
+    },
+    {
+     "duration": 0.28,
+     "impactAt": 0.07,
+     "cancelAt": 0.13,
+     "dmg": 14,
+     "range": 78,
+     "arc": 110,
+     "knock": 210,
+     "step": 120,
+     "hitstop": 0.05,
+     "shake": 0.0035
+    },
+    {
+     "duration": 0.4,
+     "impactAt": 0.11,
+     "cancelAt": 0.22,
+     "dmg": 30,
+     "range": 92,
+     "arc": 160,
+     "knock": 480,
+     "step": 220,
+     "hitstop": 0.085,
+     "shake": 0.008
+    }
+   ]
+  },
+  "sram": {
+   "_doc": "Sram (maquettes « Classes : 5A 6A+6C 7A+7B 8A 9A » et « Sram : 1A 2A 3A 4A 5A 6A-6P 7A 8A+8B 9A », 28 nov. 2026). Ruse (1A) : +parPiege par piège qui touche, +parAcheve par monstre achevé ; pleine, le prochain piège posé joue ses effets deux fois. Pièges (7A+7B) : invisibles pour les monstres, max au sol (le plus ancien saute de la liste), armés en arme s, durent duree s ; un monstre qui marche dessus le déclenche ; touche X : tous sautent d'un coup. Invisibilité (6A+6C) : t s, les monstres perdent ta trace, élites et boss te retrouvent au bout de elite s, frapper te montre revele s, achever un monstre invisible recharge le sort. Vol de caractéristique (5A) : le monstre fait −n % de dégâts t s, toi +n % dans l'élément volé (max fois, moitié sur les boss). Double (8A) : leurre t s ; à sa mort, tu prends sa place et tu cours plus vite. Peur (3A) : 1er lancer sur le monstre, 2e sur la case (cases au plus, attente s pour choisir). Poisons continus 3 s (2A). Voir src/sim/sram.ts.",
+   "ruse": {
+    "parPiege": 20,
+    "parAcheve": 25
+   },
+   "pieges": {
+    "max": 5,
+    "arme": 0.5,
+    "duree": 60,
+    "declenche": 0.5
+   },
+   "invisible": {
+    "t": 4,
+    "revele": 0.5,
+    "elite": 1,
+    "allie": 0.25
+   },
+   "vol": {
+    "n": 15,
+    "max": 2,
+    "t": 3
+   },
+   "double": {
+    "t": 6,
+    "course": 0.3,
+    "courseT": 3
+   },
+   "peur": {
+    "cases": 5,
+    "attente": 4
+   }
+  },
+  "mobility": "pas_sram",
+  "sorts": "sram",
+  "clicDroit": "sournoiserie",
+  "niveau1": [
+   12906,
+   12913
+  ],
+  "spells": {
+   "truanderie": {
+    "name": "Truanderie",
+    "dofusId": 12902,
+    "icon": 11982,
+    "element": "terre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Vole de la Puissance et occasionne des dommages Terre.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 24.0,
+    "knock": 0,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 30
+    },
+    "sram": {
+     "vol": "puissance"
+    }
+   },
+   "sournoiserie": {
+    "name": "Sournoiserie",
+    "dofusId": 12904,
+    "icon": 11987,
+    "element": "feu",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Feu aux ennemis et repousse la cible.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 27.0,
+    "knock": 1026,
+    "fx": "line",
+    "hit": {
+     "shape": "point",
+     "range": 312,
+     "radius": 30
+    },
+    "sram": {
+     "sournoiserie": true
+    }
+   },
+   "arsenic": {
+    "name": "Arsenic",
+    "dofusId": 12907,
+    "icon": 11985,
+    "element": "air",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Retire de la Portée et applique un poison Air de début de tour sur la cible.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 312,
+     "radius": 30
+    },
+    "sram": {
+     "poison": 15.0,
+     "poLoss": {
+      "n": 2,
+      "t": 6
+     }
+    }
+   },
+   "cruaute": {
+    "name": "Cruauté",
+    "dofusId": 12919,
+    "icon": 11990,
+    "element": "eau",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Occasionne des dommages Eau et augmente les PM du lanceur.\nLes dommages n'affectent pas le lanceur.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 21.0,
+    "knock": 0,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 312,
+     "radius": 30
+    },
+    "sram": {
+     "pm": 1
+    }
+   },
+   "invisibilite": {
+    "name": "Invisibilité",
+    "dofusId": 12913,
+    "icon": 11984,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Rend la cible invisible.\nAugmente également ses PM si c'est un allié.\n\nLe temps de relance est réinitialisé lorsque le lanceur achève un combattant.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 30
+    },
+    "sram": {
+     "invisible": true
+    }
+   },
+   "double": {
+    "name": "Double",
+    "dofusId": 12915,
+    "icon": 11988,
+    "element": "neutre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Invoque un double contrôlable qui possède les mêmes caractéristiques que l'invocateur.\n\nIl n'attaque pas et meurt à la fin de son deuxième tour pour échanger de position avec le lanceur et lui augmenter ses PM.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 72,
+     "radius": 30
+    },
+    "sram": {
+     "double": true
+    }
+   },
+   "piege_sournois": {
+    "name": "Piège Sournois",
+    "dofusId": 12906,
+    "icon": 11983,
+    "element": "feu",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Pose un piège qui occasionne des dommages Feu aux ennemis et attire les entités vers son centre en zone.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 16.5,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 312,
+     "radius": 72
+    },
+    "sram": {
+     "piege": {
+      "r": 1.5,
+      "attire": 1
+     }
+    }
+   },
+   "piege_fangeux": {
+    "name": "Piège Fangeux",
+    "dofusId": 12916,
+    "icon": 11556,
+    "element": "eau",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Pose un piège qui occasionne des dommages Eau et retire des PM.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 34.5,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 30
+    },
+    "pmLoss": 2,
+    "sram": {
+     "piege": {
+      "r": 0.8
+     }
+    }
+   },
+   "piege_funeste": {
+    "name": "Piège Funeste",
+    "dofusId": 12948,
+    "icon": 11991,
+    "element": "terre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Pose un piège qui occasionne des dommages Terre.\nLes dommages du sort sont augmentés pour chaque ennemi en zone autour du piège avant d'appliquer ses effets.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 28.5,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 30
+    },
+    "sram": {
+     "piege": {
+      "r": 0.8,
+      "parEnnemi": 0.2,
+      "autour": 2
+     }
+    }
+   },
+   "piege_repulsif": {
+    "name": "Piège Répulsif",
+    "dofusId": 12914,
+    "icon": 11995,
+    "element": "air",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Pose un piège qui repousse les entités depuis son centre et occasionne des dommages Air aux ennemis en zone.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 15.0,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 264,
+     "radius": 72
+    },
+    "sram": {
+     "piege": {
+      "r": 1.5,
+      "repousse": 2
+     }
+    }
+   },
+   "piege_immobilisation": {
+    "name": "Piège d'Immobilisation",
+    "dofusId": 12910,
+    "icon": 11993,
+    "element": "neutre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Pose un piège qui retire des PM aux ennemis en zone.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 120
+    },
+    "sram": {
+     "piege": {
+      "r": 2.5,
+      "immobilise": 1.5
+     }
+    }
+   },
+   "extorsion": {
+    "name": "Extorsion",
+    "dofusId": 12938,
+    "icon": 13799,
+    "element": "terre",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Vole de la Force et de la vie dans l'élément Terre.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 27.0,
+    "knock": 0,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 168,
+     "radius": 30
+    },
+    "lifesteal": 0.5,
+    "sram": {
+     "vol": "force"
+    }
+   },
+   "arnaque": {
+    "name": "Arnaque",
+    "dofusId": 12911,
+    "icon": 13801,
+    "element": "air",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Vole de l'Agilité et de la vie dans l'élément Air.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 25.5,
+    "knock": 0,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 312,
+     "radius": 30
+    },
+    "lifesteal": 0.5,
+    "sram": {
+     "vol": "agilite"
+    }
+   },
+   "pillage": {
+    "name": "Pillage",
+    "dofusId": 12934,
+    "icon": 11999,
+    "element": "eau",
+    "pa": 3,
+    "cooldown": 0,
+    "desc": "Vole de la Chance et de la vie dans l'élément Eau.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 27.0,
+    "knock": 0,
+    "fx": "arc",
+    "hit": {
+     "shape": "point",
+     "range": 216,
+     "radius": 30
+    },
+    "lifesteal": 0.5,
+    "sram": {
+     "vol": "chance"
+    }
+   },
+   "fourberie": {
+    "name": "Fourberie",
+    "dofusId": 12905,
+    "icon": 13195,
+    "element": "feu",
+    "pa": 4,
+    "cooldown": 0,
+    "desc": "Vole de l'Intelligence et de la vie dans l'élément Feu en zone.\nN'affecte pas le lanceur.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 28.5,
+    "knock": 0,
+    "fx": "burst",
+    "hit": {
+     "shape": "point",
+     "range": 168,
+     "radius": 120
+    },
+    "lifesteal": 0.5,
+    "sram": {
+     "vol": "intelligence"
+    }
+   },
+   "peur": {
+    "name": "Peur",
+    "dofusId": 12908,
+    "icon": 11996,
+    "element": "neutre",
+    "pa": 2,
+    "cooldown": 0,
+    "desc": "Pousse la cible jusqu'à la case ciblée.",
+    "duration": 0.4,
+    "impactAt": 0.16,
+    "cancelAt": 0.26,
+    "hitstop": 0.05,
+    "shake": 0.006,
+    "dmg": 0,
+    "knock": 0,
+    "fx": "line",
+    "hit": {
+     "shape": "point",
+     "range": 312,
+     "radius": 30
+    },
+    "sram": {
+     "peur": true
+    }
+   },
+   "pas_sram": {
+    "name": "Pas de l'ombre",
+    "icon": 12003,
+    "element": "neutre",
+    "pm": 1,
+    "cooldown": 0.4,
+    "desc": "Petit pas de 4 cases, sans bruit. Sort maison (choix « Classes : 9A »).",
+    "duration": 0.28,
+    "impactAt": 0.24,
+    "cancelAt": 0.26,
+    "dmg": 0,
+    "knock": 0,
+    "hitstop": 0,
+    "shake": 0,
+    "fx": "land",
+    "hit": {
+     "shape": "circle",
+     "radius": 1
+    },
+    "move": {
+     "kind": "leap",
+     "maxRange": 192,
+     "height": 12
+    },
+    "self": true
+   }
+  }
  }
 }
