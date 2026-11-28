@@ -3616,5 +3616,407 @@
    "n": 1,
    "officiel": "La Surpuissante Transmutée : -1 de relance"
   }
+ ],
+ "sram": [
+  {
+   "id": "sram-01",
+   "slot": "chapeau",
+   "piece": "Chapeau Grave",
+   "sort": "Piège Fangeux",
+   "dofusId": 12916,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Piège Fangeux : +2 Portée maximale"
+  },
+  {
+   "id": "sram-02",
+   "slot": "chapeau",
+   "piece": "Chapeau Grave",
+   "sort": "Épidémie",
+   "dofusId": 12943,
+   "effet": "ligne",
+   "n": 1,
+   "officiel": "Épidémie : lancer en ligne désactivé"
+  },
+  {
+   "id": "sram-03",
+   "slot": "chapeau",
+   "piece": "Chapeau Grave",
+   "sort": "Piège Funeste",
+   "dofusId": 12948,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Piège Funeste : +2 Portée maximale"
+  },
+  {
+   "id": "sram-04",
+   "slot": "chapeau",
+   "piece": "Chapeau Grave",
+   "sort": "Effraction",
+   "dofusId": 14742,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Effraction : Portée modifiable"
+  },
+  {
+   "id": "sram-05",
+   "slot": "chapeau",
+   "piece": "Chapeau Grave",
+   "sort": "Piège Répulsif",
+   "dofusId": 12914,
+   "effet": "po",
+   "n": 3,
+   "officiel": "Piège Répulsif : +3 Portée maximale"
+  },
+  {
+   "id": "sram-06",
+   "slot": "amulette",
+   "piece": "Chapeau Grave",
+   "sort": "Piège Effroyable",
+   "dofusId": 12920,
+   "effet": "po",
+   "n": 3,
+   "officiel": "Piège Effroyable : +3 Portée maximale"
+  },
+  {
+   "id": "sram-07",
+   "slot": "arme",
+   "piece": "Chapeau Grave",
+   "sort": "Piège Sournois",
+   "dofusId": 12906,
+   "effet": "po",
+   "n": 3,
+   "officiel": "Piège Sournois : +3 Portée maximale"
+  },
+  {
+   "id": "sram-08",
+   "slot": "bouclier",
+   "piece": "Chapeau Grave",
+   "sort": "Guet-apens",
+   "dofusId": 12939,
+   "effet": "po",
+   "n": 3,
+   "officiel": "Guet-apens : +3 Portée maximale"
+  },
+  {
+   "id": "sram-09",
+   "slot": "cape",
+   "piece": "Cape Routh",
+   "sort": "Sournoiserie",
+   "dofusId": 12904,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Sournoiserie : Portée modifiable"
+  },
+  {
+   "id": "sram-10",
+   "slot": "cape",
+   "piece": "Cape Routh",
+   "sort": "Coupe-gorge",
+   "dofusId": 12935,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Coupe-gorge : Portée modifiable"
+  },
+  {
+   "id": "sram-11",
+   "slot": "cape",
+   "piece": "Cape Routh",
+   "sort": "Cruauté",
+   "dofusId": 12919,
+   "effet": "crit",
+   "n": 35,
+   "officiel": "Cruauté : +35% Critique"
+  },
+  {
+   "id": "sram-12",
+   "slot": "cape",
+   "piece": "Cape Routh",
+   "sort": "Poisse",
+   "dofusId": 12922,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Poisse : -1 PA"
+  },
+  {
+   "id": "sram-13",
+   "slot": "cape",
+   "piece": "Cape Routh",
+   "sort": "Piège Scélérat",
+   "dofusId": 12931,
+   "effet": "po",
+   "n": 3,
+   "officiel": "Piège Scélérat : +3 Portée maximale"
+  },
+  {
+   "id": "sram-14",
+   "slot": "amulette",
+   "piece": "Cape Routh",
+   "sort": "Piège à Fragmentation",
+   "dofusId": 12941,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Piège à Fragmentation : -1 PA"
+  },
+  {
+   "id": "sram-15",
+   "slot": "arme",
+   "piece": "Cape Routh",
+   "sort": "Peur",
+   "dofusId": 12908,
+   "effet": "po",
+   "n": 1,
+   "officiel": "Peur : +1 Portée maximale"
+  },
+  {
+   "id": "sram-16",
+   "slot": "bouclier",
+   "piece": "Cape Routh",
+   "sort": "Méprise",
+   "dofusId": 12945,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Méprise : -1 PA"
+  },
+  {
+   "id": "sram-17",
+   "slot": "ceinture",
+   "piece": "Sangle Glinglin",
+   "sort": "Extorsion",
+   "dofusId": 12938,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Extorsion : +2 Portée maximale"
+  },
+  {
+   "id": "sram-18",
+   "slot": "ceinture",
+   "piece": "Sangle Glinglin",
+   "sort": "Perquisition",
+   "dofusId": 12947,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Perquisition : Portée modifiable"
+  },
+  {
+   "id": "sram-19",
+   "slot": "ceinture",
+   "piece": "Sangle Glinglin",
+   "sort": "Arnaque",
+   "dofusId": 12911,
+   "effet": "ligne",
+   "n": 1,
+   "officiel": "Arnaque : lancer en ligne désactivé"
+  },
+  {
+   "id": "sram-20",
+   "slot": "ceinture",
+   "piece": "Sangle Glinglin",
+   "sort": "Pillage",
+   "dofusId": 12934,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Pillage : Portée modifiable"
+  },
+  {
+   "id": "sram-21",
+   "slot": "ceinture",
+   "piece": "Sangle Glinglin",
+   "sort": "Larcin",
+   "dofusId": 12937,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Larcin : +2 Portée maximale"
+  },
+  {
+   "id": "sram-22",
+   "slot": "amulette",
+   "piece": "Sangle Glinglin",
+   "sort": "Attaque Mortelle",
+   "dofusId": 12917,
+   "effet": "po",
+   "n": 1,
+   "officiel": "Attaque Mortelle : +1 Portée maximale"
+  },
+  {
+   "id": "sram-23",
+   "slot": "arme",
+   "piece": "Sangle Glinglin",
+   "sort": "Fourberie",
+   "dofusId": 12905,
+   "effet": "po",
+   "n": 2,
+   "officiel": "Fourberie : +2 Portée maximale"
+  },
+  {
+   "id": "sram-24",
+   "slot": "bouclier",
+   "piece": "Sangle Glinglin",
+   "sort": "Injection Toxique",
+   "dofusId": 12940,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Injection Toxique : -1 PA"
+  },
+  {
+   "id": "sram-25",
+   "slot": "bottes",
+   "piece": "Bottes Hox",
+   "sort": "Truanderie",
+   "dofusId": 12902,
+   "effet": "crit",
+   "n": 35,
+   "officiel": "Truanderie : +35% Critique"
+  },
+  {
+   "id": "sram-26",
+   "slot": "bottes",
+   "piece": "Bottes Hox",
+   "sort": "Chausse-trappe",
+   "dofusId": 12932,
+   "effet": "pom",
+   "n": 1,
+   "officiel": "Chausse-trappe : Portée modifiable"
+  },
+  {
+   "id": "sram-27",
+   "slot": "bottes",
+   "piece": "Bottes Hox",
+   "sort": "Arsenic",
+   "dofusId": 12907,
+   "effet": "ligne",
+   "n": 1,
+   "officiel": "Arsenic : lancer en ligne désactivé"
+  },
+  {
+   "id": "sram-28",
+   "slot": "bottes",
+   "piece": "Bottes Hox",
+   "sort": "Toxines",
+   "dofusId": 12933,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Toxines : -1 PA"
+  },
+  {
+   "id": "sram-29",
+   "slot": "bottes",
+   "piece": "Bottes Hox",
+   "sort": "Fourvoiement",
+   "dofusId": 12909,
+   "effet": "po",
+   "n": 1,
+   "officiel": "Fourvoiement : +1 Portée maximale"
+  },
+  {
+   "id": "sram-30",
+   "slot": "amulette",
+   "piece": "Bottes Hox",
+   "sort": "Perfidie",
+   "dofusId": 12949,
+   "effet": "po",
+   "n": 1,
+   "officiel": "Perfidie : +1 Portée maximale"
+  },
+  {
+   "id": "sram-31",
+   "slot": "arme",
+   "piece": "Bottes Hox",
+   "sort": "Piège d'Immobilisation",
+   "dofusId": 12910,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Piège d'Immobilisation : -1 PA"
+  },
+  {
+   "id": "sram-32",
+   "slot": "bouclier",
+   "piece": "Bottes Hox",
+   "sort": "Fosse Commune",
+   "dofusId": 14314,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Fosse Commune : -1 PA"
+  },
+  {
+   "id": "sram-33",
+   "slot": "anneau",
+   "piece": "Anneau Hell",
+   "sort": "Piège de Dérive",
+   "dofusId": 12942,
+   "effet": "po",
+   "n": 3,
+   "officiel": "Piège de Dérive : +3 Portée maximale"
+  },
+  {
+   "id": "sram-34",
+   "slot": "anneau",
+   "piece": "Anneau Hell",
+   "sort": "Piège Insidieux",
+   "dofusId": 12918,
+   "effet": "po",
+   "n": 3,
+   "officiel": "Piège Insidieux : +3 Portée maximale"
+  },
+  {
+   "id": "sram-35",
+   "slot": "anneau",
+   "piece": "Anneau Hell",
+   "sort": "Piège Mortel",
+   "dofusId": 12921,
+   "effet": "ligne",
+   "n": 1,
+   "officiel": "Piège Mortel : lancer en ligne désactivé"
+  },
+  {
+   "id": "sram-36",
+   "slot": "anneau",
+   "piece": "Anneau Hell",
+   "sort": "Calamité",
+   "dofusId": 12950,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Calamité : -1 PA"
+  },
+  {
+   "id": "sram-37",
+   "slot": "anneau",
+   "piece": "Anneau Hell",
+   "sort": "Concentration de Chakra",
+   "dofusId": 12903,
+   "effet": "ligne",
+   "n": 1,
+   "officiel": "Concentration de Chakra : lancer en ligne désactivé"
+  },
+  {
+   "id": "sram-38",
+   "slot": "amulette",
+   "piece": "Anneau Hell",
+   "sort": "Manigance",
+   "dofusId": 14741,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Manigance : -1 PA"
+  },
+  {
+   "id": "sram-39",
+   "slot": "arme",
+   "piece": "Anneau Hell",
+   "sort": "Invisibilité",
+   "dofusId": 12913,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Invisibilité : -1 PA"
+  },
+  {
+   "id": "sram-40",
+   "slot": "bouclier",
+   "piece": "Anneau Hell",
+   "sort": "Brume",
+   "dofusId": 12930,
+   "effet": "pa",
+   "n": 1,
+   "officiel": "Brume : -1 PA"
+  }
  ]
 }

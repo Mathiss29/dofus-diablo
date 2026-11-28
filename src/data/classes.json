@@ -9737,7 +9737,10 @@
      "maxRange": 192,
      "height": 12
     },
-    "self": true
+    "self": true,
+    "sram": {
+     "pas": true
+    }
    },
    "piege_derive": {
     "name": "Piège de Dérive",
